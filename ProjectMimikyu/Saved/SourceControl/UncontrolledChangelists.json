@@ -1,0 +1,30 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/StarterContent/Architecture/Floor_400x400.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/GAS/GE_StatAttributes.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Characters/Pokemon/Crobat/BP_Crobat.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Characters/Pokemon/Lucario/BP_Lucario.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Characters/Pokemon/Pikachu/BP_Pikachu.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/ThirdPerson/Input/Actions/IA_Left.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/ThirdPerson/Input/Actions/IA_Right.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/ThirdPerson/Input/IMC_Default.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/BP_TrainerController.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/2/YX/T06QTS13VOA9F6B0I7F665.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Widget/BWUI_FramedStat.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Widget/Textures/M_CircleBar.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Widget/Textures/MI_EffortValueCircleBar.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Widget/BWUI_FramedEffortValue.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/AI/SBT_FlyingPokemon.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Characters/Pokemon/FFlyingPokemonInfo.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/9/GB/DLYWN7Q2JAGKKE2VEE0UKD.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/Widget/BWUI_FramedValue.uasset",
+				"D:/Computer/Unreal Projects/ActiveProjects/ProjectMimikyu/Content/GAS/GE_Testing.uasset"
+			]
+		}
+	]
+}

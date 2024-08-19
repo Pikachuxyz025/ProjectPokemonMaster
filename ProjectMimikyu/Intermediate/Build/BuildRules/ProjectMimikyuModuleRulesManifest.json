@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyu\\ProjectMimikyu.Build.cs",
+		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyu.Target.cs",
+		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyuEditor.Target.cs"
+	],
+	"EngineVersion": "5.3.1"
+}

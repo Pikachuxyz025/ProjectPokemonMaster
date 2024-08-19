@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "ProjectMimikyu",
+			"Path": "..\\Source\\ProjectMimikyu.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "ProjectMimikyuEditor",
+			"Path": "..\\Source\\ProjectMimikyuEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

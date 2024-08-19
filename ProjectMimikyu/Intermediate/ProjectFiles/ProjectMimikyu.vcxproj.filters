@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\ProjectMimikyu.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\ProjectMimikyu.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\ProjectMimikyuEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.vsconfig" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGameplayTags.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Config\Tags">
+      <UniqueIdentifier>{C23A97B6-B409-38D2-A57B-078A593D2FB3}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\Tags\PokemonMoves.ini">
+      <Filter>Config\Tags</Filter>
+    </None>
+    <Filter Include="Source\ProjectMimikyu">
+      <UniqueIdentifier>{952C5D97-7994-3D11-AE1A-EDB3F5B0D5E6}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\ProjectMimikyu\ProjectMimikyu.Build.cs">
+      <Filter>Source\ProjectMimikyu</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\ProjectMimikyu.cpp">
+      <Filter>Source\ProjectMimikyu</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\ProjectMimikyu.h">
+      <Filter>Source\ProjectMimikyu</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Private">
+      <UniqueIdentifier>{01854F86-3212-345B-8AE6-2B639F4242B6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem">
+      <UniqueIdentifier>{93A8C0D0-F74C-374C-B128-D70509E50CC7}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonBaseAttributeSet.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\Abilities">
+      <UniqueIdentifier>{77B8736C-E6D9-3313-BADD-4A15307EFA07}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\PokemonGameplayAbilities.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\Abilities</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\MMC">
+      <UniqueIdentifier>{7E2449ED-199F-33DB-BCD5-0FF4D9E9E758}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_Attack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_Defense.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_HealthCalculation.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_SpecialAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_SpecialDefense.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_Speed.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\MMC\MMC_StatCalculation.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\MMC</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\ActorComponents">
+      <UniqueIdentifier>{FE1D9095-64B5-3AE2-899E-0D3DFA1883F0}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\DamageSystemComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\InventorySystemComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\ItemDataComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\MovesetComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AIControllers">
+      <UniqueIdentifier>{B6A94C6B-3C09-3327-8E37-A8253E579551}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonAIController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\TrainerAIController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\TrainerController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Characters">
+      <UniqueIdentifier>{9B6E43B1-6252-37FC-B501-64E742DF59A8}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\Pokemon_Parent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\ProjectMimikyuCharacter.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Characters</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\DataAssets">
+      <UniqueIdentifier>{5A2DECAE-78F5-3986-9116-701FCF4ECF99}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonMoveDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\DataTables">
+      <UniqueIdentifier>{2D4A5EDC-6ABF-3DC1-B157-485E2AA9723F}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataTables</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\GameModes">
+      <UniqueIdentifier>{05188F29-74AD-362B-BADC-0642682747C8}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameModes</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Interfaces">
+      <UniqueIdentifier>{06C738AD-DF50-3562-9EA3-0F68F2C1008F}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\CraftableInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\DamageInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\InteractInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonCombatInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Items">
+      <UniqueIdentifier>{2BAE987B-6AA5-3CBC-8D50-669AD8B74FCB}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\Berries.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\Item.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\PokeBall.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\Projectile.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\ProjectileAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Tasks">
+      <UniqueIdentifier>{85383F6C-FFAC-352E-807E-97F87D7ACFCD}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_ChangeMovementSpeed.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_ChargingAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_FollowTrainer.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_GoToIdealRange.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_MeleeAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_RangedAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_RoamTo.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\UI">
+      <UniqueIdentifier>{66B243AA-90FE-37D2-82F0-3BBF53A52A60}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\BasicHealthBar.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\DD_InventorySlot.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\DragPreview.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\InventoryGrid.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\InventorySlot.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PlayerInventoryMenuOverlay.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PlayerMenuOverlay.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerHUD.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerOverlay.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\UI\WidgetController">
+      <UniqueIdentifier>{E0481A3C-60F9-3531-9825-C3FEFF75B9D4}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonWidgetController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\TrainerOverlayWidgetController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Public">
+      <UniqueIdentifier>{169A1D44-44CA-3435-BEBB-DB0773658B81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem">
+      <UniqueIdentifier>{33784BD6-8EF7-3077-8CF4-8E1E0CD08B8B}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\Abilities">
+      <UniqueIdentifier>{969B45D6-0DD3-3FAF-8F32-82AE6AC6793C}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonGameplayAbilities.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\Abilities</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\MMC">
+      <UniqueIdentifier>{B945310E-3CF3-340B-9C64-5476489004D6}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_Attack.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_Defense.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_HealthCalculation.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_SpecialAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_SpecialDefense.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_Speed.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_StatCalculation.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\MMC</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\ActorComponents">
+      <UniqueIdentifier>{98703873-BB51-3C46-9B61-51485EAF98A1}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\DamageSystemComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\InventorySystemComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\ItemDataComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AIControllers">
+      <UniqueIdentifier>{B6BFAE92-5830-35BB-AF35-2E40F5D5C2EF}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h">
+      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h">
+      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h">
+      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Characters">
+      <UniqueIdentifier>{26CB2876-390F-3A2E-8B17-3D80E0356B70}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.cpp">
+      <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h">
+      <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\Pokemon_Parent.h">
+      <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\ProjectMimikyuCharacter.h">
+      <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\DataAssets">
+      <UniqueIdentifier>{1E1E6CDA-D4A1-387B-96C2-B0A8857D543E}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\DataTables">
+      <UniqueIdentifier>{6BB293ED-42B7-35FC-92EC-8A85C8A9A496}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h">
+      <Filter>Source\ProjectMimikyu\Public\DataTables</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\GameModes">
+      <UniqueIdentifier>{D3EB2469-F7A7-3AE1-947A-22FE6EEF75D9}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h">
+      <Filter>Source\ProjectMimikyu\Public\GameModes</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Interfaces">
+      <UniqueIdentifier>{B5DAC2BD-431A-34AC-A147-6BA4E2EE75BC}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\CraftableInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\DamageInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\InteractInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Items">
+      <UniqueIdentifier>{7D1E15BA-7357-3318-A1DC-D4A7B7DE96BE}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Berries.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Item.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\PokeBall.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Projectile.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\ProjectileAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Tasks">
+      <UniqueIdentifier>{BDC99664-9DA6-349E-A9EF-D0650C5AA136}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChargingAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_FollowTrainer.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_GoToIdealRange.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_MeleeAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_RangedAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_RoamTo.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\UI">
+      <UniqueIdentifier>{0576D641-0850-3EE2-A02A-C92633D72B00}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\BasicHealthBar.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\DD_InventorySlot.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\DragPreview.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\InventoryGrid.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\InventorySlot.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerInventoryMenuOverlay.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerMenuOverlay.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerOverlay.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\UI\WidgetController">
+      <UniqueIdentifier>{6C79313D-FA2B-3766-A3B6-6325FB79147D}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonWidgetController.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\TrainerOverlayWidgetController.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
