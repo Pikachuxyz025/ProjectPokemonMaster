@@ -1,8 +1,8 @@
 {
 	"SourceFiles": [
-		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyu\\ProjectMimikyu.Build.cs",
-		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyu.Target.cs",
-		"D:\\Computer\\Unreal Projects\\ActiveProjects\\ProjectMimikyu\\Source\\ProjectMimikyuEditor.Target.cs"
+		"C:\\Users\\1351d\\OneDrive\\Documents\\GitHub\\ProjectPokemonMaster\\ProjectMimikyu\\Source\\ProjectMimikyu\\ProjectMimikyu.Build.cs",
+		"C:\\Users\\1351d\\OneDrive\\Documents\\GitHub\\ProjectPokemonMaster\\ProjectMimikyu\\Source\\ProjectMimikyu.Target.cs",
+		"C:\\Users\\1351d\\OneDrive\\Documents\\GitHub\\ProjectPokemonMaster\\ProjectMimikyu\\Source\\ProjectMimikyuEditor.Target.cs"
 	],
 	"EngineVersion": "5.3.1"
 }

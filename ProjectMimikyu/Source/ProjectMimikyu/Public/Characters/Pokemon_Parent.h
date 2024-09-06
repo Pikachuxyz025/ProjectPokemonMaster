@@ -11,6 +11,7 @@ using namespace UP;
 #include "Pokemon_Parent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
+class UGameplayEffect;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -161,8 +162,6 @@ void StartBoxTrace();
 
 #pragma endregion
 
-	virtual void EnactMove();
-
 	bool bIsCharging = false;
 
 	void CombatReady(AActor* Target);
@@ -171,6 +170,7 @@ void StartBoxTrace();
 
 	void Charge();
 
+	virtual void EnactMove();
 protected:
 #pragma region Stats
 
@@ -238,7 +238,7 @@ public:
 
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return AIBehaviorTree; }
 	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo() { return PokemonUIInfo; }
-	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController ? PokemonController : Cast<APokemonAIController>(GetController()); }
+	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController; }
 	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
 	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
 	ENatureType GetNature() { return Nature; }

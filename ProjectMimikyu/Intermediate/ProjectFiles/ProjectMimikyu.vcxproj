@@ -75,7 +75,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EDF7FD8C-10A9-34A5-93D0-122A876A70AB}</ProjectGuid>
+    <ProjectGuid>{A4367FCB-B70A-3DD8-AA14-03161F2CA069}</ProjectGuid>
     <RootNamespace>ProjectMimikyu</RootNamespace>
   </PropertyGroup>
   <Import Project="UECommon.props" />
@@ -193,6 +193,8 @@
     <None Include="..\..\ProjectMimikyu.uproject"/>
     <None Include="..\..\Source\ProjectMimikyu.Target.cs"/>
     <None Include="..\..\Source\ProjectMimikyuEditor.Target.cs"/>
+    <None Include="..\..\.gitattributes"/>
+    <None Include="..\..\.gitignore"/>
     <None Include="..\..\.vsconfig"/>
     <None Include="..\..\Config\DefaultEditor.ini"/>
     <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini"/>
@@ -208,6 +210,16 @@
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClInclude Include="..\..\Source\ProjectMimikyu\ProjectMimikyu.h"/>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -458,6 +470,8 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonGameplayAbilities.h"/>
@@ -475,11 +489,6 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.cpp">
-      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\Pokemon_Parent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\ProjectMimikyuCharacter.h"/>

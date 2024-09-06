@@ -330,7 +330,7 @@ TMap<EDirectionPoint, UPokemonMoveDataAsset*> UTrainerOverlay::SetupMovesetOfAct
 	TMap<EDirectionPoint, UPokemonMoveDataAsset*> NewMoveset;
 	if (!OwnerCharacter || !OwnerCharacter->GetCurrentPokemon())
 		return NewMoveset;
-	APokemon_Parent* CurrentPokemon = Cast<APokemon_Parent>(OwnerCharacter->GetCurrentPokemon());
+	APokemon_Parent* CurrentPokemon = OwnerCharacter->GetCurrentPokemon();
 	UMovesetComponent* PokemonMoveset = CurrentPokemon->MovesetComponent;
 	for (int32 i = 0; i < PokemonMoveset->CurrentPokemonMoves.Num(); i++)
 	{

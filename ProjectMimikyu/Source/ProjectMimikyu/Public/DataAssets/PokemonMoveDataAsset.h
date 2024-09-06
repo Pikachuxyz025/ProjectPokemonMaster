@@ -33,9 +33,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	EMoveAction MoveAction = EMoveAction::EMA_None;
 
-	UPROPERTY(EditAnywhere,meta = (Categories = "PokemonMoves.MoveAction"))
-	FGameplayTag ActionType;
-
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "MoveAction == EMoveAction::EMA_Melee", EditConditionHides))
 	float IdealRange = 0;
 

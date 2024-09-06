@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/CharacterTypes.h"
 #include "UObject/Interface.h"
 #include "DamageInterface.generated.h"
 

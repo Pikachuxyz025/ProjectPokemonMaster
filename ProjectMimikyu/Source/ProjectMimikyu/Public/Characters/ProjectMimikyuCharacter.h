@@ -165,7 +165,7 @@ public:
 
 	FORCEINLINE UInventorySystemComponent* GetInventorySystem() { return InventorySystem; }
 	FORCEINLINE TArray<APokemon_Parent*> GetCurrentParty() { return CurrentParty; }
-	FORCEINLINE AActor* GetCurrentPokemon() { return Cast<AActor>( CurrentPokemon); }
+	FORCEINLINE APokemon_Parent* GetCurrentPokemon() { return CurrentPokemon; }
 
 };
 
