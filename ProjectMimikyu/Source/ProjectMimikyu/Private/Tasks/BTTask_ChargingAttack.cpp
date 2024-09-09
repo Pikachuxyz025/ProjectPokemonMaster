@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
+#include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -20,9 +21,11 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ExecuteTask(UBehaviorTreeComponent& 
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 	UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
-
+	
+	PokemonASC = GetPokemonAbilitySystemComponent(OwnerComp);
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
 	Pokemon = Cast<APokemon_Parent>(OwnerComp.GetAIOwner()->GetPawn());
+	PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
@@ -39,7 +42,8 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ExecuteTask(UBehaviorTreeComponent& 
 	Request.SetAcceptanceRadius(50);
 	MoveRequest = Request;
 	bMadeIt = false;
-	Pokemon->EnactMove();
+//	Pokemon->EnactMove();
+
 	return ProcessRequest(PokemonController);
 }
 
@@ -68,7 +72,8 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ProcessRequest(AAIController* Contro
 
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 			bMadeIt = true;
-			Pokemon->Charge();
+			PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
+			//Pokemon->Charge();
 	
 		UE_LOG(LogTemp, Display, TEXT("Made it"));
 		NodeResulted = EBTNodeResult::InProgress;

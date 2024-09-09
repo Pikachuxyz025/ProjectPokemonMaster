@@ -2,10 +2,42 @@
 
 
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "DataAssets/PokemonMoveDataAsset.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 
 void UPokemonAbilitySystemComponent::AbilityActorInfoSet()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UPokemonAbilitySystemComponent::EffectApplied);
+}
+
+void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDataAsset*> CurrentPokemonMoves)
+{ 
+	for (auto Move: CurrentPokemonMoves)
+	{	
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Move->PGAClass, 1);
+		if (const UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(Move->GetInputTag());
+			GiveAbility(AbilitySpec);
+		}
+	}
+}
+
+void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& InputTag)
+{
+	if (!InputTag.IsValid()) return;
+
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
+		{
+			//AbilitySpecInputPressed(AbilitySpec);
+			if (!AbilitySpec.IsActive())
+			{
+				TryActivateAbility(AbilitySpec.Handle);
+			}
+		}
+	}
 }
 
 void UPokemonAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)

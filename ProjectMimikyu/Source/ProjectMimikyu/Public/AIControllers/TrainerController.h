@@ -7,11 +7,12 @@
 #include "TrainerController.generated.h"
 
 class APokemon_Parent;
+class UPokemonInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 /**
- * 
+ *
  */
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerController : public APlayerController
@@ -25,7 +26,10 @@ private:
 	UPROPERTY()
 	class ATrainerHUD* TrainerHUD;
 
-class	 UEnhancedInputLocalPlayerSubsystem* Subsystem;
+	class UEnhancedInputLocalPlayerSubsystem* Subsystem;
+
+	//void AbilityInputTagPressed(FGameplayTag InputTag);
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -44,7 +48,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Left;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Right;
 
@@ -57,7 +61,7 @@ public:
 	void ShiftLeft();
 	void ShiftRight();
 	void ShowCurrentPokemonMoveset();
-	void RemoveCurrentPokemonMoveset();	
+	void RemoveCurrentPokemonMoveset();
 	FKey GetMoveKey();
 	bool IsMoveValid(int32 DirectionIndex);
 };

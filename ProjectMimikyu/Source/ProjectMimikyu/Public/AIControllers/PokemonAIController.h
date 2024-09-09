@@ -4,12 +4,12 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "GameplayTagContainer.h"
 #include "Characters/CharacterTypes.h"
 #include "PokemonAIController.generated.h"
 
-/**
- * 
- */
+class UPokemonAbilitySystemComponent;
+
 UCLASS()
 class PROJECTMIMIKYU_API APokemonAIController : public AAIController
 {
@@ -56,6 +56,9 @@ protected:
 	FName PokemonStatusKeyName = FName("PokemonStatus");
 
 	UPROPERTY(EditAnywhere, Category = "Key Names")
+	FName PokemonASCKeyName = FName("PokemonASC");
+
+	UPROPERTY(EditAnywhere, Category = "Key Names")
 	FName PokemonActionStateKeyName = FName("PokemonActionState");
 
 	UPROPERTY(EditAnywhere, Category = "Key Names")
@@ -70,6 +73,7 @@ protected:
 
 
 	void SetBlackboardTrainer();
+	void SetBlackboardASC();
 	void SetBlackboardAttackTarget();
 
 	void SetBlackboardActionState(EMoveAction DamageAction);
@@ -83,4 +87,12 @@ public:
 	void SetPokemonStatus(EPokemonStatus NewPokemonStatus);
 	EPokemonState GetPokemonState() const;
 	void SetBlackboardCurrentMove(class UPokemonMoveDataAsset* MoveData);
+	void ActivateAbilityByTag(FGameplayTag InputTag);
+private:
+
+	UPROPERTY()
+	TObjectPtr<UPokemonAbilitySystemComponent>PokemonAbilitySystemComponent;
+
+	UPokemonAbilitySystemComponent* GetASC();
+
 };

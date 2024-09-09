@@ -6,7 +6,7 @@
 #include "UI/TrainerOverlay.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
 #include "UI/TrainerHUD.h"
-#include "EnhancedInputComponent.h"
+#include "AIControllers/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
@@ -29,12 +29,12 @@ void ATrainerController::BeginPlay()
 void ATrainerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	if (UEnhancedInputComponent* EnhancedInput = CastChecked<UEnhancedInputComponent>(InputComponent))
+	if (UPokemonInputComponent* PokemonInput = CastChecked<UPokemonInputComponent>(InputComponent))
 	{
-		EnhancedInput->BindAction(IA_Inventory, ETriggerEvent::Started, this, &ATrainerController::DisplayPlayerMenu);
-		EnhancedInput->BindAction(IA_Swap, ETriggerEvent::Started, this, &ATrainerController::SwapUIMode);
-		EnhancedInput->BindAction(IA_Left, ETriggerEvent::Started, this, &ATrainerController::ShiftLeft);
-		EnhancedInput->BindAction(IA_Right, ETriggerEvent::Started, this, &ATrainerController::ShiftRight);
+		PokemonInput->BindAction(IA_Inventory, ETriggerEvent::Started, this, &ATrainerController::DisplayPlayerMenu);
+		PokemonInput->BindAction(IA_Swap, ETriggerEvent::Started, this, &ATrainerController::SwapUIMode);
+		PokemonInput->BindAction(IA_Left, ETriggerEvent::Started, this, &ATrainerController::ShiftLeft);
+		PokemonInput->BindAction(IA_Right, ETriggerEvent::Started, this, &ATrainerController::ShiftRight);
 	}
 }
 

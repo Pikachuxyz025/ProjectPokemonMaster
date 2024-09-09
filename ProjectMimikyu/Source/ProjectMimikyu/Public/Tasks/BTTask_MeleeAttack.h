@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "Tasks/BTTask_ActivateAbility.h"
 #include "BTTask_MeleeAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTMIMIKYU_API UBTTask_MeleeAttack : public UBTTaskNode
+class PROJECTMIMIKYU_API UBTTask_MeleeAttack : public UBTTask_ActivateAbility
 {
 	GENERATED_BODY()
 	
@@ -38,6 +38,12 @@ protected:
 
 	UPROPERTY()
 	class APokemon_Parent* Pokemon;
+
+	UPROPERTY()
+	UPokemonAbilitySystemComponent* PokemonASC;
+
+	UPROPERTY()
+	class UPokemonMoveDataAsset* PokemonMove;
 
 	UPROPERTY()
 	AActor* AttackTarget;

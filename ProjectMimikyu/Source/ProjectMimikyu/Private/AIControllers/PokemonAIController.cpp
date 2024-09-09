@@ -4,6 +4,8 @@
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -19,6 +21,7 @@ void APokemonAIController::BeginPlay()
 		RunBehaviorTree(AIBehaviorTree);
 		SetPokemonState(EPokemonState::EPS_Passive);
 		GetBlackboardComponent()->SetValueAsVector(SpawnLocationKeyName, ControlledPokemon->GetActorLocation());
+		SetBlackboardASC();
 	}
 }
 
@@ -37,6 +40,11 @@ void APokemonAIController::SetBlackboardTrainer()
 	GetBlackboardComponent()->SetValueAsObject(PokemonTrainerKeyName, TrainerToFollow);
 }
 
+void APokemonAIController::SetBlackboardASC()
+{
+	GetBlackboardComponent()->SetValueAsObject(PokemonASCKeyName, GetASC());
+}
+
 
 void APokemonAIController::SetBlackboardAttackTarget()
 {
@@ -49,6 +57,21 @@ void APokemonAIController::SetBlackboardCurrentMove(UPokemonMoveDataAsset* MoveD
 	GetBlackboardComponent()->SetValueAsObject(PokemonCurrentMoveKeyName, MoveData);
 	if (!MoveData)return;
 	SetBlackboardActionState(MoveData->MoveAction);
+}
+
+void APokemonAIController::ActivateAbilityByTag(FGameplayTag InputTag)
+{
+	if (GetASC())
+		GetASC()->ActivateAbilityByTag(InputTag);
+}
+
+UPokemonAbilitySystemComponent* APokemonAIController::GetASC()
+{
+	if (!PokemonAbilitySystemComponent)
+	{
+		PokemonAbilitySystemComponent = Cast<UPokemonAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return PokemonAbilitySystemComponent;
 }
 
 void APokemonAIController::SetBlackboardActionState(EMoveAction DamageAction)

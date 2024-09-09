@@ -18,7 +18,7 @@ class PROJECTMIMIKYU_API UPokemonMoveDataAsset : public UPrimaryDataAsset
 
 public:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FText MoveName;
 
 	UPROPERTY(EditAnywhere)
@@ -32,6 +32,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	EMoveAction MoveAction = EMoveAction::EMA_None;
+
+	UPROPERTY(EditAnywhere)
+	EElementalType MoveElementalType = EElementalType::EET_None;
+
+	UPROPERTY(EditAnywhere,Category = "Pokemon Ability")
+	TSubclassOf<class UPokemonGameplayAbilities> PGAClass;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "MoveAction == EMoveAction::EMA_Melee", EditConditionHides))
 	float IdealRange = 0;
@@ -48,8 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "DamageResponse == EDamageResponse::EDR_Stun", EditConditionHides))
 	float ChanceOfFlinching = 0;
 
-	UPROPERTY(EditAnywhere)
-	EElementalType MoveElementalType = EElementalType::EET_None;
+
 
 	UPROPERTY(EditAnywhere)
 	float RechargeTime = 0;
@@ -83,4 +88,10 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bHasStatus", EditConditionHides), Category = "Status Effect")
 	float ChanceOfStatus = 0;
+
+	void SetInputTag(FGameplayTag NewInputTag) { InputTag = NewInputTag; }
+	FGameplayTag GetInputTag() { return InputTag; }
+private:
+	FGameplayTag InputTag;
+
 };

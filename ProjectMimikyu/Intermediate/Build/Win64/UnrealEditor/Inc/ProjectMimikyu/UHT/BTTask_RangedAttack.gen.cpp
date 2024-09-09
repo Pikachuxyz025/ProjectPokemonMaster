@@ -10,13 +10,14 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 // Cross Module References
-	AIMODULE_API UClass* Z_Construct_UClass_UBTTaskNode();
 	AIMODULE_API UScriptStruct* Z_Construct_UScriptStruct_FBlackboardKeySelector();
 	ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemonAIController_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_ActivateAbility();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_RangedAttack();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_RangedAttack_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	DEFINE_FUNCTION(UBTTask_RangedAttack::execAttackComplete)
@@ -73,9 +74,17 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_AttackTargetKey;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMoveKey_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonMoveKey;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonController_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonController;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMove_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonMove;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Pokemon_MetaData[];
 #endif
@@ -89,7 +98,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UBTTask_RangedAttack_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UBTTaskNode,
+		(UObject* (*)())Z_Construct_UClass_UBTTask_ActivateAbility,
 		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::DependentSingletons) < 16);
@@ -114,11 +123,24 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTargetKey = { "AttackTargetKey", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_RangedAttack, AttackTargetKey), Z_Construct_UScriptStruct_FBlackboardKeySelector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTargetKey_MetaData), Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTargetKey_MetaData) }; // 3137324432
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMoveKey_MetaData[] = {
+		{ "Category", "Keys" },
+		{ "ModuleRelativePath", "Public/Tasks/BTTask_RangedAttack.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMoveKey = { "PokemonMoveKey", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_RangedAttack, PokemonMoveKey), Z_Construct_UScriptStruct_FBlackboardKeySelector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMoveKey_MetaData), Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMoveKey_MetaData) }; // 3137324432
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonController_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_RangedAttack.h" },
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonController = { "PokemonController", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_RangedAttack, PokemonController), Z_Construct_UClass_APokemonAIController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonController_MetaData), Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonController_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMove_MetaData[] = {
+		{ "ModuleRelativePath", "Public/Tasks/BTTask_RangedAttack.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMove = { "PokemonMove", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_RangedAttack, PokemonMove), Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMove_MetaData), Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMove_MetaData) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_Pokemon_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_RangedAttack.h" },
@@ -133,7 +155,9 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTarget = { "AttackTarget", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_RangedAttack, AttackTarget), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTarget_MetaData), Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTarget_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UBTTask_RangedAttack_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTargetKey,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMoveKey,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonController,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_PokemonMove,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_Pokemon,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_RangedAttack_Statics::NewProp_AttackTarget,
 	};
@@ -175,9 +199,9 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_RangedAttack() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_RangedAttack_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UBTTask_RangedAttack, UBTTask_RangedAttack::StaticClass, TEXT("UBTTask_RangedAttack"), &Z_Registration_Info_UClass_UBTTask_RangedAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_RangedAttack), 169565392U) },
+		{ Z_Construct_UClass_UBTTask_RangedAttack, UBTTask_RangedAttack::StaticClass, TEXT("UBTTask_RangedAttack"), &Z_Registration_Info_UClass_UBTTask_RangedAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_RangedAttack), 853972197U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_RangedAttack_h_3798444786(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_RangedAttack_h_2953991857(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_RangedAttack_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_RangedAttack_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

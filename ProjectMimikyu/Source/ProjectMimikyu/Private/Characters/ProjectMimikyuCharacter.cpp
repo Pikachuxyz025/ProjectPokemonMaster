@@ -12,7 +12,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "EnhancedInputComponent.h"
+#include "AIControllers/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
@@ -102,22 +102,21 @@ void AProjectMimikyuCharacter::BeginPlay()
 void AProjectMimikyuCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	SelectMove();
-
+	// SelectMove();
 }
 
-void AProjectMimikyuCharacter::SelectMove()
+void AProjectMimikyuCharacter::SelectMove(int32 Index)
 {
 	if (TrainerController && bAreMovesSelectable)
 	{
 
-		int32 i = DirectionKeyBind.Find(TrainerController->GetMoveKey());
+		//int32 i = DirectionKeyBind.Find(TrainerController->GetMoveKey());
 
-		if (i == INDEX_NONE || i < 0 || i>DirectionKeyBind.Num() - 1) return;
-		if (TrainerController->IsMoveValid(i) && !CurrentPokemon->GetIsCommandActive())
+		if (Index == INDEX_NONE || Index < 0 /*|| i>DirectionKeyBind.Num() - 1*/) return;
+		if (TrainerController->IsMoveValid(Index) && !CurrentPokemon->GetIsCommandActive())
 		{
-			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"),i);
-			ServerCallCommand(i);
+			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"),Index);
+			ServerCallCommand(Index);
 		}
 		//UE_LOG(LogTemp, Display, TEXT("%s"), *SelectedPokemonMove->MoveName.ToString());
 
@@ -233,26 +232,25 @@ void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, FVector Start,
 void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
+	if (UPokemonInputComponent* PokemonInput = Cast<UPokemonInputComponent>(PlayerInputComponent)) {
 		
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		PokemonInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		PokemonInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Move);
+		PokemonInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Look);
-		EnhancedInputComponent->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
-		EnhancedInputComponent->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
-		EnhancedInputComponent->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
-		EnhancedInputComponent->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
-		EnhancedInputComponent->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
-	}
-	else
-	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		PokemonInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Look);
+
+		PokemonInput->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
+		PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
+		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
+		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
+		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
+
+		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 	}
 }
 

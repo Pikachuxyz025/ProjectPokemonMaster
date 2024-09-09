@@ -4,7 +4,9 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PokemonGameplayTags.h"
 #include "MovesetComponent.generated.h"
+
 
 class UPokemonMoveDataAsset;
 class UPokemonGameplayAbilities;
@@ -17,7 +19,7 @@ class PROJECTMIMIKYU_API UMovesetComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UMovesetComponent();
-
+    FPokemonGameplayTags GameplayTags=FPokemonGameplayTags::Get();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -38,11 +40,19 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
 
-	TMap<FGameplayTag, UPokemonGameplayAbilities> CurrentPokemonAbilities;
+	TMap<FGameplayTag, TSubclassOf<UPokemonGameplayAbilities>> CurrentPokemonAbilities=
+	{
+		{GameplayTags.InputTag_1,nullptr},
+		{GameplayTags.InputTag_2,nullptr},
+		{GameplayTags.InputTag_3,nullptr},
+		{GameplayTags.InputTag_4,nullptr}
+	};
 
 	void CommenceCommand(int32 CurrentMoveIndex);
 	void EnactMove(UPokemonMoveDataAsset* MoveToUse);
 	void SpawnWithMoveSet(int32 CurrentPokemonLevel);
-private:
+	void SpawnWithAbilitySet(int32 CurrentPokemonLevel);
 
-};
+private:
+TArray<TSubclassOf <UPokemonGameplayAbilities>> GetGameplayAbilities(const int32& CurrentPokemonLevel);
+};	

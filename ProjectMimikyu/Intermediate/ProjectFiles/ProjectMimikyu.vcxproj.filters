@@ -68,6 +68,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemLibrary.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonBaseAttributeSet.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
@@ -122,6 +125,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonAIController.cpp">
       <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonInputComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\TrainerAIController.cpp">
       <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
     </ClCompile>
@@ -141,6 +147,9 @@
       <UniqueIdentifier>{5A2DECAE-78F5-3986-9116-701FCF4ECF99}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonInputConfig.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonMoveDataAsset.cpp">
@@ -194,6 +203,9 @@
     <Filter Include="Source\ProjectMimikyu\Private\Tasks">
       <UniqueIdentifier>{85383F6C-FFAC-352E-807E-97F87D7ACFCD}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_ActivateAbility.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_ChangeMovementSpeed.cpp">
       <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
     </ClCompile>
@@ -213,6 +225,9 @@
       <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_RoamTo.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\MyBTTask_ActivateAbility.cpp">
       <Filter>Source\ProjectMimikyu\Private\Tasks</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\UI">
@@ -269,6 +284,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemLibrary.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
@@ -323,6 +341,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h">
       <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonInputComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h">
       <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
     </ClInclude>
@@ -345,6 +366,9 @@
       <UniqueIdentifier>{1E1E6CDA-D4A1-387B-96C2-B0A8857D543E}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonInputConfig.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h">
@@ -398,6 +422,9 @@
     <Filter Include="Source\ProjectMimikyu\Public\Tasks">
       <UniqueIdentifier>{BDC99664-9DA6-349E-A9EF-D0650C5AA136}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h">
       <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
     </ClInclude>
@@ -417,6 +444,9 @@
       <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_RoamTo.h">
+      <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\MyBTTask_ActivateAbility.h">
       <Filter>Source\ProjectMimikyu\Public\Tasks</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\UI">

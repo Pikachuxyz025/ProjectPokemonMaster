@@ -6,6 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "PokemonAbilitySystemComponent.generated.h"
 
+class UPokemonGameplayAbilities;
+class UPokemonMoveDataAsset;
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTag, const FGameplayTagContainer& /*AssetTags*/);
 
 UCLASS()
@@ -17,7 +20,8 @@ public:
 	void AbilityActorInfoSet();
 	FEffectAssetTag EffectAssetTag;
 
-
+	void AddCharacterAbilities(TArray<UPokemonMoveDataAsset*> CurrentPokemonMoves);
+	void ActivateAbilityByTag(const FGameplayTag& InputTag);
 protected:
 
 	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);

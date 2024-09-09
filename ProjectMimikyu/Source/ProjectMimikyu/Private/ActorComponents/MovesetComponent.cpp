@@ -2,6 +2,8 @@
 
 
 #include "ActorComponents/MovesetComponent.h"
+#include "DataAssets/PokemonMoveDataAsset.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 
 // Sets default values for this component's properties
 UMovesetComponent::UMovesetComponent()
@@ -59,11 +61,58 @@ void UMovesetComponent::SpawnWithMoveSet(int32 CurrentPokemonLevel)
 		if (!CurrentPokemonMoves.Contains(PokemonLevelUpMoveset[PokemonLevels[i]]))
 		{
 			CurrentPokemonMoves.AddUnique(PokemonLevelUpMoveset[PokemonLevels[i]]);
+
+			int32 AbilityIndex = CurrentPokemonMoves.Num();
+			FString InputName = FString::Printf(TEXT("InputTag.%d"), AbilityIndex);
+			FGameplayTag CurrentInput = FGameplayTag::RequestGameplayTag(FName(*InputName));
+
+			if (CurrentInput.IsValid())
+				CurrentPokemonMoves[CurrentPokemonMoves.Num() - 1]->SetInputTag(CurrentInput);
+
 			if (CurrentPokemonMoves.Num() == 4)
 				break;
 			continue;
 		}
 		continue;
 	}
+}
+
+void UMovesetComponent::SpawnWithAbilitySet(int32 CurrentPokemonLevel)
+{
+	if (PokemonLevelUpAbilities.Num() == 0)
+		return;
+
+	TArray<TSubclassOf <UPokemonGameplayAbilities>> CurrentAbilities= GetGameplayAbilities(CurrentPokemonLevel);
+	for (auto Ability : CurrentAbilities)
+	{
+		int32 AbilityIndex = CurrentAbilities.IndexOfByKey(Ability) + 1;
+		FString InputName = FString::Printf(TEXT("InputTag.%s"), AbilityIndex);
+		FGameplayTag CurrentInput = FGameplayTag::RequestGameplayTag(FName(*InputName));
+		if (CurrentInput.IsValid() && CurrentPokemonAbilities.Contains(CurrentInput))
+		{
+			CurrentPokemonAbilities[CurrentInput] = Ability;
+		}
+	}
+}
+
+TArray<TSubclassOf<UPokemonGameplayAbilities>> UMovesetComponent::GetGameplayAbilities(const int32& CurrentPokemonLevel)
+{
+	TArray<int32> PokemonLevels;
+	PokemonLevelUpAbilities.GetKeys(PokemonLevels);
+	TArray<TSubclassOf <UPokemonGameplayAbilities>> CurrentAbilities;
+	for (int32 i = PokemonLevels.Num() - 1; i < PokemonLevels.Num(); i--)
+	{
+		if (CurrentPokemonLevel < PokemonLevels[i])
+			continue;
+		if (!CurrentAbilities.Contains(PokemonLevelUpAbilities[PokemonLevels[i]]))
+		{
+			CurrentAbilities.AddUnique(PokemonLevelUpAbilities[PokemonLevels[i]]);
+			if (CurrentAbilities.Num() == 4)
+				break;
+			continue;
+		}
+		continue;
+	}
+	return CurrentAbilities;
 }
 

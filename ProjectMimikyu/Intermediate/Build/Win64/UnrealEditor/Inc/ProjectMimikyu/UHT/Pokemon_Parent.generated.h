@@ -31,6 +31,7 @@ PROJECTMIMIKYU_API void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDeleg
 	DECLARE_FUNCTION(execSetBoxCollision); \
 	DECLARE_FUNCTION(execSelectRandomMove); \
 	DECLARE_FUNCTION(execGetReadyForCombat); \
+	DECLARE_FUNCTION(execCharge); \
 	DECLARE_FUNCTION(execStartBoxTrace); \
 	DECLARE_FUNCTION(execRemoveCollision); \
 	DECLARE_FUNCTION(execAddCollision); \

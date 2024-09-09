@@ -5,11 +5,13 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "GameplayTagContainer.h"
 #include "CharacterTypes.h"
 #include "ProjectMimikyuCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class UPokemonInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -139,7 +141,7 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void SelectMove();
+	void SelectMove(int32 Index);
 
 	UFUNCTION(Server, Reliable)
 	void ServerCallCommand(const int32& i);
@@ -149,6 +151,9 @@ protected:
 
 	UFUNCTION(Server,Reliable)
 	void ServerBroadcastTarget(AActor* Target);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UPokemonInputConfig> InputConfig;
 public:
 
 	/** Returns CameraBoom subobject **/

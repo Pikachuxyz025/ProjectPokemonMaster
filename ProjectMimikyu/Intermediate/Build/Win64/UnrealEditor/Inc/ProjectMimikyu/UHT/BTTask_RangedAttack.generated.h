@@ -28,7 +28,7 @@ private: \
 	static void StaticRegisterNativesUBTTask_RangedAttack(); \
 	friend struct Z_Construct_UClass_UBTTask_RangedAttack_Statics; \
 public: \
-	DECLARE_CLASS(UBTTask_RangedAttack, UBTTaskNode, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), NO_API) \
+	DECLARE_CLASS(UBTTask_RangedAttack, UBTTask_ActivateAbility, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), NO_API) \
 	DECLARE_SERIALIZER(UBTTask_RangedAttack)
 
 

@@ -19,6 +19,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemonAIController();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemonAIController_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	void APokemonAIController::StaticRegisterNativesAPokemonAIController()
@@ -80,6 +81,10 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 #endif
 		static const UECodeGen_Private::FNamePropertyParams NewProp_PokemonStatusKeyName;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonASCKeyName_MetaData[];
+#endif
+		static const UECodeGen_Private::FNamePropertyParams NewProp_PokemonASCKeyName;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonActionStateKeyName_MetaData[];
 #endif
 		static const UECodeGen_Private::FNamePropertyParams NewProp_PokemonActionStateKeyName;
@@ -95,6 +100,10 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_CombatTargetKeyName_MetaData[];
 #endif
 		static const UECodeGen_Private::FNamePropertyParams NewProp_CombatTargetKeyName;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAbilitySystemComponent_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonAbilitySystemComponent;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -106,9 +115,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_APokemonAIController_Statics::DependentSingletons) < 16);
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APokemonAIController_Statics::Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "HideCategories", "Collision Rendering Transformation" },
 		{ "IncludePath", "AIControllers/PokemonAIController.h" },
 		{ "ModuleRelativePath", "Public/AIControllers/PokemonAIController.h" },
@@ -199,6 +205,13 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 #endif
 	const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonStatusKeyName = { "PokemonStatusKeyName", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemonAIController, PokemonStatusKeyName), METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonStatusKeyName_MetaData), Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonStatusKeyName_MetaData) };
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonASCKeyName_MetaData[] = {
+		{ "Category", "Key Names" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAIController.h" },
+	};
+#endif
+	const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonASCKeyName = { "PokemonASCKeyName", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemonAIController, PokemonASCKeyName), METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonASCKeyName_MetaData), Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonASCKeyName_MetaData) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonActionStateKeyName_MetaData[] = {
 		{ "Category", "Key Names" },
 		{ "ModuleRelativePath", "Public/AIControllers/PokemonAIController.h" },
@@ -226,6 +239,13 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 	};
 #endif
 	const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_APokemonAIController_Statics::NewProp_CombatTargetKeyName = { "CombatTargetKeyName", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemonAIController, CombatTargetKeyName), METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_APokemonAIController_Statics::NewProp_CombatTargetKeyName_MetaData), Z_Construct_UClass_APokemonAIController_Statics::NewProp_CombatTargetKeyName_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAIController.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonAbilitySystemComponent = { "PokemonAbilitySystemComponent", nullptr, (EPropertyFlags)0x0044000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemonAIController, PokemonAbilitySystemComponent), Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData), Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_APokemonAIController_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_AIBehaviorTree,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_ControlledPokemon,
@@ -238,10 +258,12 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_SpawnLocationKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonStateKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonStatusKeyName,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonASCKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonActionStateKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonCurrentMoveKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonTrainerKeyName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_CombatTargetKeyName,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemonAIController_Statics::NewProp_PokemonAbilitySystemComponent,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_APokemonAIController_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<APokemonAIController>::IsAbstract,
@@ -282,9 +304,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonAIController() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_APokemonAIController, APokemonAIController::StaticClass, TEXT("APokemonAIController"), &Z_Registration_Info_UClass_APokemonAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemonAIController), 546388896U) },
+		{ Z_Construct_UClass_APokemonAIController, APokemonAIController::StaticClass, TEXT("APokemonAIController"), &Z_Registration_Info_UClass_APokemonAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemonAIController), 2379868233U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_1758507455(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_2574876048(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

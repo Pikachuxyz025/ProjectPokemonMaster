@@ -97,6 +97,13 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 		P_THIS->GetReadyForCombat(Z_Param_Target);
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(APokemon_Parent::execCharge)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->Charge();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(APokemon_Parent::execStartBoxTrace)
 	{
 		P_FINISH;
@@ -174,6 +181,7 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 		static const FNameNativePtrPair Funcs[] = {
 			{ "AddCollision", &APokemon_Parent::execAddCollision },
 			{ "AttackEnded", &APokemon_Parent::execAttackEnded },
+			{ "Charge", &APokemon_Parent::execCharge },
 			{ "Faint", &APokemon_Parent::execFaint },
 			{ "GetReadyForCombat", &APokemon_Parent::execGetReadyForCombat },
 			{ "OnBoxHit", &APokemon_Parent::execOnBoxHit },
@@ -227,6 +235,28 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokemon_Parent_AttackEnded_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_APokemon_Parent_Charge_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_APokemon_Parent_Charge_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemon_Parent_Charge_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APokemon_Parent, nullptr, "Charge", nullptr, nullptr, nullptr, 0, 0, RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_Charge_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemon_Parent_Charge_Statics::Function_MetaDataParams) };
+	UFunction* Z_Construct_UFunction_APokemon_Parent_Charge()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokemon_Parent_Charge_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -348,7 +378,7 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APokemon_Parent, nullptr, "OnBoxHit", nullptr, nullptr, Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::PropPointers), sizeof(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Pokemon_Parent_eventOnBoxHit_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00C80401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Function_MetaDataParams) };
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APokemon_Parent, nullptr, "OnBoxHit", nullptr, nullptr, Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::PropPointers), sizeof(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Pokemon_Parent_eventOnBoxHit_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C80401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Function_MetaDataParams) };
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::PropPointers) < 2048);
 	static_assert(sizeof(Z_Construct_UFunction_APokemon_Parent_OnBoxHit_Statics::Pokemon_Parent_eventOnBoxHit_Parms) < MAX_uint16);
 	UFunction* Z_Construct_UFunction_APokemon_Parent_OnBoxHit()
@@ -704,9 +734,10 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 	const FClassFunctionLinkInfo Z_Construct_UClass_APokemon_Parent_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_APokemon_Parent_AddCollision, "AddCollision" }, // 105737409
 		{ &Z_Construct_UFunction_APokemon_Parent_AttackEnded, "AttackEnded" }, // 3667749253
+		{ &Z_Construct_UFunction_APokemon_Parent_Charge, "Charge" }, // 2291067442
 		{ &Z_Construct_UFunction_APokemon_Parent_Faint, "Faint" }, // 359707403
 		{ &Z_Construct_UFunction_APokemon_Parent_GetReadyForCombat, "GetReadyForCombat" }, // 3701763976
-		{ &Z_Construct_UFunction_APokemon_Parent_OnBoxHit, "OnBoxHit" }, // 3972418770
+		{ &Z_Construct_UFunction_APokemon_Parent_OnBoxHit, "OnBoxHit" }, // 4145040275
 		{ &Z_Construct_UFunction_APokemon_Parent_OnBoxOverlap, "OnBoxOverlap" }, // 3260257497
 		{ &Z_Construct_UFunction_APokemon_Parent_RemoveCollision, "RemoveCollision" }, // 157521953
 		{ &Z_Construct_UFunction_APokemon_Parent_SelectRandomMove, "SelectRandomMove" }, // 2109357777
@@ -1019,9 +1050,9 @@ void FOnAttackEnd_DelegateWrapper(const FMulticastScriptDelegate& OnAttackEnd)
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 1869358790U) },
+		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 1634133297U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_4020898157(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_4024161965(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

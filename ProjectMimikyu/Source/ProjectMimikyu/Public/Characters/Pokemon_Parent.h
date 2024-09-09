@@ -31,6 +31,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void AddPokemonAbilities();
+
 	void SetupMeleeTimeline();
 
 	void SetupPokemonUIInfo();
@@ -71,7 +73,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual	void AttackEnded();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION()
@@ -168,6 +170,7 @@ void StartBoxTrace();
 
 	bool WithinCloseRangeOfTarget();
 
+	UFUNCTION(BlueprintCallable)
 	void Charge();
 
 	virtual void EnactMove();

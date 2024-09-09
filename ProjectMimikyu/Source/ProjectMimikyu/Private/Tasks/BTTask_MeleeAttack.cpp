@@ -3,6 +3,7 @@
 
 #include "Tasks/BTTask_MeleeAttack.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Navigation/PathFollowingComponent.h"
@@ -21,13 +22,14 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 
 	UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
+	PokemonASC = GetPokemonAbilitySystemComponent(OwnerComp);
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
 	Pokemon = Cast<APokemon_Parent>(OwnerComp.GetAIOwner()->GetPawn());
 
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
 	bMadeIt = false;
-	UPokemonMoveDataAsset* PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 
 	if(Pokemon->OnAttackEnd.IsBound())
 	{
@@ -68,7 +70,8 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ProcessRequest(AAIController* Controlle
 
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 		// use Attack
-		Pokemon->EnactMove();
+		//Pokemon->EnactMove();
+		PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
 		bMadeIt = true;
 		UE_LOG(LogTemp, Display, TEXT("In melee range"));
 		NodeResulted = EBTNodeResult::InProgress;

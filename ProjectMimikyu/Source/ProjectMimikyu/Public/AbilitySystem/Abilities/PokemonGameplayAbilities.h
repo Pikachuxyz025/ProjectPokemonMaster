@@ -19,12 +19,6 @@ class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 public:
 
 	UPROPERTY(EditAnywhere)
-	FText MoveName;
-
-	UPROPERTY(EditAnywhere)
-	FText MoveDescription;
-
-	UPROPERTY(EditAnywhere)
 	float BaseDamage = 0;
 
 	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.MoveType"))
@@ -36,24 +30,4 @@ public:
 	UPROPERTY(EditAnywhere, meta = (Categories = "Damage.Response"))
 	FGameplayTag DamageResponse;
 
-	UPROPERTY(EditAnywhere)
-	EElementalType MoveElementalType = EElementalType::EET_None;
-
-	UPROPERTY(EditAnywhere)
-	float IdealRange = 0;
-
-	UPROPERTY(EditAnywhere)
-	float RechargeTime = 0;
-
-	UPROPERTY(EditAnywhere)
-	bool bShouldDamageInvincible = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bCanBeBlocked = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bCanBeParried = false;
-
-	UPROPERTY(EditAnywhere)
-	bool bShouldForceInterrupt = false;
 };

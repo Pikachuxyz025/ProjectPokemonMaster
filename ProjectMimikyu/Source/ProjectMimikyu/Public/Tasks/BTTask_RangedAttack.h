@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "Tasks/BTTask_ActivateAbility.h"
 #include "BTTask_RangedAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTMIMIKYU_API UBTTask_RangedAttack : public UBTTaskNode
+class PROJECTMIMIKYU_API UBTTask_RangedAttack : public UBTTask_ActivateAbility
 {
 	GENERATED_BODY()
 public:
@@ -25,8 +25,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Keys")
 	FBlackboardKeySelector AttackTargetKey;
 
+	UPROPERTY(EditAnywhere, Category = "Keys")
+	FBlackboardKeySelector PokemonMoveKey;
+
 	UPROPERTY()
 	class APokemonAIController* PokemonController;
+
+	UPROPERTY()
+	class UPokemonMoveDataAsset* PokemonMove;
 
 	UPROPERTY()
 	class APokemon_Parent* Pokemon;

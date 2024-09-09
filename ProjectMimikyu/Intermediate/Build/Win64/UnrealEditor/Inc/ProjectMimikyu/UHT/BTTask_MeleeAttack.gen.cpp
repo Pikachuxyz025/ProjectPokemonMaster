@@ -10,13 +10,15 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 // Cross Module References
-	AIMODULE_API UClass* Z_Construct_UClass_UBTTaskNode();
 	AIMODULE_API UScriptStruct* Z_Construct_UScriptStruct_FBlackboardKeySelector();
 	ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemonAIController_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_ActivateAbility();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_MeleeAttack();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_MeleeAttack_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	DEFINE_FUNCTION(UBTTask_MeleeAttack::execAttackComplete)
@@ -85,6 +87,14 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_Pokemon;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonASC_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonASC;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMove_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonMove;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttackTarget_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_AttackTarget;
@@ -93,7 +103,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UBTTask_MeleeAttack_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UBTTaskNode,
+		(UObject* (*)())Z_Construct_UClass_UBTTask_ActivateAbility,
 		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::DependentSingletons) < 16);
@@ -137,6 +147,19 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_Pokemon = { "Pokemon", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_MeleeAttack, Pokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_Pokemon_MetaData), Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_Pokemon_MetaData) };
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonASC_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/Tasks/BTTask_MeleeAttack.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonASC = { "PokemonASC", nullptr, (EPropertyFlags)0x0020080000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_MeleeAttack, PokemonASC), Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonASC_MetaData), Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonASC_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMove_MetaData[] = {
+		{ "ModuleRelativePath", "Public/Tasks/BTTask_MeleeAttack.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMove = { "PokemonMove", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_MeleeAttack, PokemonMove), Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMove_MetaData), Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMove_MetaData) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_AttackTarget_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_MeleeAttack.h" },
 	};
@@ -147,6 +170,8 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMoveKey,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonController,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_Pokemon,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonASC,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_PokemonMove,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UBTTask_MeleeAttack_Statics::NewProp_AttackTarget,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UBTTask_MeleeAttack_Statics::StaticCppClassTypeInfo = {
@@ -164,7 +189,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 		UE_ARRAY_COUNT(FuncInfo),
 		UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::PropPointers),
 		0,
-		0x001000A0u,
+		0x009000A0u,
 		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::Class_MetaDataParams), Z_Construct_UClass_UBTTask_MeleeAttack_Statics::Class_MetaDataParams)
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_MeleeAttack_Statics::PropPointers) < 2048);
@@ -187,9 +212,9 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_MeleeAttack() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_MeleeAttack_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UBTTask_MeleeAttack, UBTTask_MeleeAttack::StaticClass, TEXT("UBTTask_MeleeAttack"), &Z_Registration_Info_UClass_UBTTask_MeleeAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_MeleeAttack), 3710366402U) },
+		{ Z_Construct_UClass_UBTTask_MeleeAttack, UBTTask_MeleeAttack::StaticClass, TEXT("UBTTask_MeleeAttack"), &Z_Registration_Info_UClass_UBTTask_MeleeAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_MeleeAttack), 1757948892U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_MeleeAttack_h_865024078(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_MeleeAttack_h_2803220411(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_MeleeAttack_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_MeleeAttack_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

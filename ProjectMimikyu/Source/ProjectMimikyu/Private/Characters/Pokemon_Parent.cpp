@@ -88,10 +88,20 @@ void APokemon_Parent::BeginPlay()
 	DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
 	SetupPokemonUIInfo();
 	MovesetComponent->SpawnWithMoveSet(CurrentLevel);
+	AddPokemonAbilities();
 
 	SetupMeleeTimeline();
 
 	InitAbilityActorInfo();
+}
+
+void APokemon_Parent::AddPokemonAbilities()
+{
+	UPokemonAbilitySystemComponent* PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
+	if (HasAuthority())
+	{
+		PokemonASC->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
+	}
 }
 
 void APokemon_Parent::SetupMeleeTimeline()
@@ -166,6 +176,7 @@ void APokemon_Parent::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UPokemonAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+	if(HasAuthority())
 	InitializeDefaultAttributes();
 }
 
