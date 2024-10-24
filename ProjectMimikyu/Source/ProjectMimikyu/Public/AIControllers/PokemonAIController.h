@@ -76,18 +76,18 @@ protected:
 	void SetBlackboardASC();
 	void SetBlackboardAttackTarget();
 
-	void SetBlackboardActionState(EMoveAction DamageAction);
-
 	void HandleSenseDamage(AActor* Actor);
 public:
 	void SetTrainer(AActor* NewTrainer);
 	void SetCombatTarget(AActor* NewTarget);
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AActor* GetCombatTarget() { return CombatTarget; }
 	void SetPokemonState(EPokemonState NewPokemonState);
 	void SetPokemonStatus(EPokemonStatus NewPokemonStatus);
 	EPokemonState GetPokemonState() const;
 	void SetBlackboardCurrentMove(class UPokemonMoveDataAsset* MoveData);
 	void ActivateAbilityByTag(FGameplayTag InputTag);
+	void SetBlackboardActionState(EMoveAction DamageAction);
 private:
 
 	UPROPERTY()

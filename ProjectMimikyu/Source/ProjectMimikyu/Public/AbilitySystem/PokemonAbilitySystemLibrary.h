@@ -7,6 +7,7 @@
 #include "PokemonAbilitySystemLibrary.generated.h"
 
 class UPokemonAbilitySystemComponent;
+class UPokemonMenuWidgetController;
 UCLASS(BlueprintType, Blueprintable)
 class PROJECTMIMIKYU_API UPokemonAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
@@ -15,4 +16,7 @@ class PROJECTMIMIKYU_API UPokemonAbilitySystemLibrary : public UBlueprintFunctio
 public:
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|AbilitySystemCalls")
 	static void ActivateAbilityByTag(const UObject* WorldContextObject, UPokemonAbilitySystemComponent* ASC, FGameplayTag AbilityTag);
+
+	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController")
+	static UPokemonMenuWidgetController* GetStatMenuWidgetController(const UObject* WorldContextObject);
 };

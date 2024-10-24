@@ -49,3 +49,18 @@ int32 IPokemonCombatInterface::GetELB(int32 BaseStat, EStatsType StatType)
 {
 	return 0;
 }
+
+float IPokemonCombatInterface::GetTypeMatchup(EElementalType ElementalType)
+{
+	return 0.0f;
+}
+
+FVector IPokemonCombatInterface::GetCombatSocketLocation()
+{
+	return FVector();
+}
+
+UPokemonMoveDataAsset* IPokemonCombatInterface::GetPokemonActiveMove()
+{
+	return nullptr;
+}

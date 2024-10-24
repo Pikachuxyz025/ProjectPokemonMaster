@@ -8,10 +8,14 @@ using namespace UP;
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "Pokemon_Parent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeEnd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharging);
 class UGameplayEffect;
+class UPokemonGameplayAbilities;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -22,22 +26,28 @@ public:
 	// Sets default values for this character's properties
 	APokemon_Parent();
 	FOnAttackEnd OnAttackEnd;
+	UPROPERTY(BlueprintAssignable)
+	FOnCharging OnCharging;
+	UPROPERTY(BlueprintAssignable)
+	FOnDodgeEnd OnDodgeEnd;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& Event) override;
 #endif
 
+	void AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void AddPokemonAbilities();
 
+
 	void SetupMeleeTimeline();
 
 	void SetupPokemonUIInfo();
 
-	void UpdatEPokemonUIInfo();
+	void UpdatePokemonUIInfo();
 
 	UPROPERTY(VisibleAnywhere)
 	class APokemonAIController* PokemonController;
@@ -60,8 +70,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultStatAttributes;
 
-	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DependentStatAttributes;
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
@@ -93,7 +103,9 @@ public:
 	virtual void Faint();
 
 	void DisengageFromCombat();
-
+	void Dodge(const FVector NewDodgeDirection);
+	UFUNCTION(BlueprintCallable)
+	void EndDodge();
 	UPROPERTY(EditAnywhere)
 	class UPokemonDataAsset* PokemonDataAsset;
 
@@ -143,6 +155,9 @@ public:
 	virtual int32 GetSpeed() override;
 	virtual float GetNatureMultiplier(EStatsType StatType) override;
 	virtual int32 GetELB(int32 BaseStat, EStatsType StatType) override;
+	virtual FVector GetCombatSocketLocation() override;
+	virtual float GetTypeMatchup(EElementalType ElementalType) override;
+	virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
 #pragma endregion
 
 
@@ -159,12 +174,14 @@ void AddCollision();
 UFUNCTION()
 void RemoveCollision();
 
-UFUNCTION()
-void StartBoxTrace();
+UFUNCTION(BlueprintCallable)
+void StartBoxTrace(FHitResult& HitResult);
 
 #pragma endregion
 
 	bool bIsCharging = false;
+
+	bool bIsDodging = false;
 
 	void CombatReady(AActor* Target);
 
@@ -179,6 +196,8 @@ protected:
 
 	UFUNCTION()
 	void GetReadyForCombat(AActor* Target);
+
+	FVector DodgeDirection = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	EGenderType Gender = EGenderType::EGT_None;
@@ -199,14 +218,6 @@ protected:
 #pragma endregion
 
 	TArray<AActor*>IgnoreActors;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS",meta = (AllowPrivateAccess = "true"))
-	//class UAbilitySystemComponent* AbilitySystemComponent;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS",meta = (AllowPrivateAccess = "true"))
-	//const class UPokemonStatAttributeSet* PokemonStatAttributeSet;
-
-	//FORCEINLINE virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	float WalkingSpeed = 300.f;
@@ -234,17 +245,36 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USceneComponent* BoxTraceEnd;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName PokemonSocketName;
+
 public:
 
 	UPROPERTY(Replicated)
 	bool bIsCaught = false;
 
+	UFUNCTION(BlueprintCallable)
+	void SetIsDodging(bool Dodging) { bIsDodging = Dodging; }
+
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return AIBehaviorTree; }
 	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo() { return PokemonUIInfo; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController; }
 	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
+	FORCEINLINE bool GetIsDodging() { return bIsDodging; }
 	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
 	ENatureType GetNature() { return Nature; }
+
+	UFUNCTION(BlueprintCallable)
+	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UFUNCTION(BlueprintCallable)
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	UPokemonAbilitySystemComponent* GetPokemonASC();
+
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	FVector GetDodgeDirection() { return DodgeDirection; }
 
 	void SetPokemonTrainer(AActor* NewTrainer);
 	UFUNCTION(Server,Reliable)

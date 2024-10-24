@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/AIControllers/PokemonInputComponent.h"
+#include "ProjectMimikyu/Public/Input/PokemonInputComponent.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodePokemonInputComponent() {}
 // Cross Module References
@@ -42,8 +42,8 @@ void EmptyLinkFunctionForGeneratedCodePokemonInputComponent() {}
 		{ "Comment", "/**\n * \n */" },
 #endif
 		{ "HideCategories", "Activation Components|Activation Activation Components|Activation" },
-		{ "IncludePath", "AIControllers/PokemonInputComponent.h" },
-		{ "ModuleRelativePath", "Public/AIControllers/PokemonInputComponent.h" },
+		{ "IncludePath", "Input/PokemonInputComponent.h" },
+		{ "ModuleRelativePath", "Public/Input/PokemonInputComponent.h" },
 	};
 #endif
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonInputComponent_Statics::StaticCppClassTypeInfo = {
@@ -79,15 +79,15 @@ void EmptyLinkFunctionForGeneratedCodePokemonInputComponent() {}
 	UPokemonInputComponent::UPokemonInputComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 	DEFINE_VTABLE_PTR_HELPER_CTOR(UPokemonInputComponent);
 	UPokemonInputComponent::~UPokemonInputComponent() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonInputComponent_h_Statics
+	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Input_PokemonInputComponent_h_Statics
 	{
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonInputComponent_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonInputComponent, UPokemonInputComponent::StaticClass, TEXT("UPokemonInputComponent"), &Z_Registration_Info_UClass_UPokemonInputComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonInputComponent), 4262370839U) },
+	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Input_PokemonInputComponent_h_Statics::ClassInfo[] = {
+		{ Z_Construct_UClass_UPokemonInputComponent, UPokemonInputComponent::StaticClass, TEXT("UPokemonInputComponent"), &Z_Registration_Info_UClass_UPokemonInputComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonInputComponent), 1625755916U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonInputComponent_h_2778114017(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonInputComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonInputComponent_h_Statics::ClassInfo),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Input_PokemonInputComponent_h_55236757(TEXT("/Script/ProjectMimikyu"),
+		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Input_PokemonInputComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Input_PokemonInputComponent_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

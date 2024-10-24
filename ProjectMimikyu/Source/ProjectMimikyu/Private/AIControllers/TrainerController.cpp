@@ -6,7 +6,7 @@
 #include "UI/TrainerOverlay.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
 #include "UI/TrainerHUD.h"
-#include "AIControllers/PokemonInputComponent.h"
+#include "Input/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 

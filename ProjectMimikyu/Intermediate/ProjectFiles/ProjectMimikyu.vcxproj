@@ -220,6 +220,11 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AT_TargetDataLocation.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -236,6 +241,26 @@
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\PokemonGameplayAbilities.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\ProjectileAbility.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks\AT_TickTask.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc\ExecCalc_Damage.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc\ExecCalc_KnockbackForce.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
@@ -300,11 +325,6 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonInputComponent.cpp">
-      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\TrainerAIController.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -340,12 +360,27 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Input\MyInputTriggerComboAction.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Input\PokemonInputComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
@@ -485,6 +520,16 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\Slate\SMainMenuWidget.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonMenuWidgetController.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonWidgetController.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -497,10 +542,15 @@
     </ClCompile>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AT_TargetDataLocation.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemLibrary.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonGameplayAbilities.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\ProjectileAbility.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks\AT_TickTask.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc\ExecCalc_Damage.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc\ExecCalc_KnockbackForce.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_Attack.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_Defense.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\MMC\MMC_HealthCalculation.h"/>
@@ -513,7 +563,6 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\ItemDataComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonInputComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h"/>
@@ -522,8 +571,11 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonInputConfig.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\MyInputTriggerComboAction.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\PokemonInputComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\CraftableInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\DamageInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\InteractInterface.h"/>
@@ -551,6 +603,8 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerMenuOverlay.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerOverlay.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\Slate\SMainMenuWidget.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonMenuWidgetController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonWidgetController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\TrainerOverlayWidgetController.h"/>
   </ItemGroup>

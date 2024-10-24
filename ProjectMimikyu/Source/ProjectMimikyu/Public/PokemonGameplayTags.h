@@ -48,7 +48,11 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
-
+	FGameplayTag InputTag_Dodge;
+	FGameplayTag InputTag_Dodge_Left;
+	FGameplayTag InputTag_Dodge_Right;
+	FGameplayTag InputTag_Dodge_Forward;
+	FGameplayTag InputTag_Dodge_Backward;
 private:
 	static FPokemonGameplayTags GameplayTags;
 };

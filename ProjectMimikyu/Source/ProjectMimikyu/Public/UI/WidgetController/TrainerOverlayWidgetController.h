@@ -10,7 +10,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, Ne
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
 
 struct FOnAttributeChangeData;
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class PROJECTMIMIKYU_API UTrainerOverlayWidgetController : public UPokemonWidgetController
 {
 	GENERATED_BODY()

@@ -4,6 +4,7 @@
 #include "Characters/Pokemon_Parent.h"
 #include "Components/BoxComponent.h"
 #include "BrainComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "DataAssets/PokemonDataAsset.h"
@@ -19,7 +20,9 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Net/UnrealNetwork.h"
+#include "ProjectMimikyu/ProjectMimikyu.h"
 
 // Sets default values
 APokemon_Parent::APokemon_Parent()
@@ -37,8 +40,9 @@ APokemon_Parent::APokemon_Parent()
 	CollisionBox->SetupAttachment(GetRootComponent());
 
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	CollisionBox->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
 
 	BoxTraceStart = CreateDefaultSubobject<USceneComponent>(TEXT("Box Trace Start"));
 	BoxTraceEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Box Trace End"));
@@ -52,6 +56,8 @@ APokemon_Parent::APokemon_Parent()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
+
+	GetMesh()->SetCollisionResponseToChannel(ECC_Melee,ECollisionResponse::ECR_Overlap);
 }
 
 void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
@@ -97,10 +103,17 @@ void APokemon_Parent::BeginPlay()
 
 void APokemon_Parent::AddPokemonAbilities()
 {
-	UPokemonAbilitySystemComponent* PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
 	if (HasAuthority())
 	{
-		PokemonASC->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
+		GetPokemonASC()->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
+	}
+}
+
+void APokemon_Parent::AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility,FGameplayTag AbilityInputTag)
+{
+	if (HasAuthority())
+	{
+		GetPokemonASC()->AddSingleAbility(NewAbility,AbilityInputTag);
 	}
 }
 
@@ -131,7 +144,7 @@ void APokemon_Parent::SetupPokemonUIInfo()
 	PokemonUIInfo.PokemonHPPercent = DamageSystem->GetHealthPercent();
 }
 
-void APokemon_Parent::UpdatEPokemonUIInfo()
+void APokemon_Parent::UpdatePokemonUIInfo()
 {
 	PokemonUIInfo.PokemonHPPercent = DamageSystem->GetHealthPercent();
 }
@@ -170,6 +183,7 @@ void APokemon_Parent::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEff
 void APokemon_Parent::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultStatAttributes, 1.f);
+	ApplyEffectToSelf(DependentStatAttributes, 1.f);
 }
 
 void APokemon_Parent::InitAbilityActorInfo()
@@ -189,6 +203,7 @@ void APokemon_Parent::AttackEnded()
 		bIsCharging = false;
 		GetCharacterMovement()->StopMovementImmediately();
 		GetCapsuleComponent()->SetSimulatePhysics(false);
+		
 	}
 
 	ActivePokemonMove = nullptr;
@@ -207,7 +222,8 @@ void APokemon_Parent::OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 		UE_LOG(LogTemp, Display, TEXT("Hit %s"), *ActorName);
 		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, ChargeTimer);
 		DamageTarget(Hit.GetActor());
-		AttackEnded();
+
+		//AttackEnded();
 	}
 }
 
@@ -216,17 +232,6 @@ void APokemon_Parent::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	FHitResult HitResult;
 	BoxTrace(HitResult);
 	UE_LOG(LogTemp, Display, TEXT("At Least Overlapping"));
-	//if (MeleeTimeline && MeleeTimeline->IsPlaying())
-	//{
-	//	MeleeTimeline->Stop();
-	//}
-	//if (HitResult.GetActor())
-	//{
-	//	FString ActorName = UKismetSystemLibrary::GetDisplayName(HitResult.GetActor());
-	//	UE_LOG(LogTemp, Display, TEXT("Hit %s"), *ActorName);
-
-	//	AttackEnded();
-	//}
 }
 
 // Called every frame
@@ -386,6 +391,18 @@ int32 APokemon_Parent::GetELB(int32 BaseStat, EStatsType StatType)
 {
 	return DamageSystem->CalculateEffortLevelBase(BaseStat, DamageSystem->EffortLevelBaseMap[StatType], CurrentLevel);
 }
+FVector APokemon_Parent::GetCombatSocketLocation()
+{
+	return GetMesh()->GetSocketLocation(PokemonSocketName);
+}
+float APokemon_Parent::GetTypeMatchup(EElementalType ElementalType)
+{
+	return DamageSystem->TypeChartDamageMultiplier(ElementalType);
+}
+UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
+{
+	return ActivePokemonMove;
+}
 #pragma endregion
 
 
@@ -418,10 +435,10 @@ void APokemon_Parent::RemoveCollision()
 	SetBoxCollision(ECollisionEnabled::NoCollision);
 }
 
-void APokemon_Parent::StartBoxTrace()
+void APokemon_Parent::StartBoxTrace(FHitResult& HitResult)
 {
 	UE_LOG(LogTemp, Display, TEXT("Trace Started"));
-	FHitResult HitResult;
+	;
 	BoxTrace(HitResult);
 
 	if (HitResult.GetActor())
@@ -430,8 +447,6 @@ void APokemon_Parent::StartBoxTrace()
 		UE_LOG(LogTemp, Display, TEXT("Hit %s"), *ActorName);
 		DamageTarget(HitResult.GetActor());
 	}
-
-	AttackEnded();
 }
 
 void APokemon_Parent::EnactMove()
@@ -488,11 +503,10 @@ bool APokemon_Parent::WithinCloseRangeOfTarget()
 
 void APokemon_Parent::Charge()
 {
-	GetCharacterMovement()->StopMovementImmediately();
-	GetCapsuleComponent()->SetSimulatePhysics(true);
 	FVector ToTarget = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), PokemonController->GetCombatTarget()->GetActorLocation());
-	GetCapsuleComponent()->AddImpulse(ToTarget * 100000.f);
-	GetWorldTimerManager().SetTimer(ChargeTimer, this, &APokemon_Parent::AttackEnded, 3.f, false);
+	LaunchCharacter(ToTarget * 10000.f,false,false);
+	OnCharging.Broadcast();
+	UE_LOG(LogTemp, Display, TEXT("Character Launched"));
 }
 
 
@@ -509,6 +523,18 @@ void APokemon_Parent::GetReadyForCombat(AActor* Target)
 void APokemon_Parent::DisengageFromCombat()
 {
 	PokemonController->SetCombatTarget(nullptr);
+}
+
+void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
+{
+	DodgeDirection = NewDodgeDirection;
+	PokemonController->SetBlackboardActionState(EMoveAction::EMA_Dodging);
+}
+
+void APokemon_Parent::EndDodge()
+{
+	PokemonController->SetBlackboardActionState(EMoveAction::EMA_None);
+	OnDodgeEnd.Broadcast();
 }
 
 void APokemon_Parent::SelectRandomMove()
@@ -553,6 +579,12 @@ void APokemon_Parent::BoxTrace(FHitResult& BoxHit)
 	);
 	DrawDebugSphere(GetWorld(), BoxHit.ImpactPoint, 1, 12, FColor::Blue);
 	IgnoreActors.AddUnique(BoxHit.GetActor());
+}
+
+UPokemonAbilitySystemComponent* APokemon_Parent::GetPokemonASC()
+{
+	UPokemonAbilitySystemComponent* PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
+	return PokemonASC;
 }
 
 void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)

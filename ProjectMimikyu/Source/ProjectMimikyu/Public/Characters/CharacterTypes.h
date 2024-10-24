@@ -131,6 +131,7 @@ enum class EMoveAction : uint8
 	EMA_None UMETA(DisplayName = "None"),
 	EMA_Melee UMETA(DisplayName = "Melee"),
 	EMA_Projectile UMETA(DisplayName = "Projectile"),
+	EMA_Dodging UMETA(DisplayName = "Dodging"),
 	EMA_Charging UMETA(DisplayName = "Charging"),
 	EMA_Environment UMETA(DisplayName = "Environment"),
 

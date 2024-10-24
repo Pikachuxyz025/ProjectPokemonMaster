@@ -10,12 +10,171 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 // Cross Module References
+	ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
+	ENGINE_API UClass* Z_Construct_UClass_ACharacter_NoRegister();
+	ENGINE_API UClass* Z_Construct_UClass_AController_NoRegister();
+	GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAbilitySystemComponent_NoRegister();
 	GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAttributeSet();
 	GAMEPLAYABILITIES_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayAttributeData();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister();
+	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FEffectProperties();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
+	static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_EffectProperties;
+class UScriptStruct* FEffectProperties::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_EffectProperties.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_EffectProperties.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FEffectProperties, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EffectProperties"));
+	}
+	return Z_Registration_Info_UScriptStruct_EffectProperties.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
+{
+	return FEffectProperties::StaticStruct();
+}
+	struct Z_Construct_UScriptStruct_FEffectProperties_Statics
+	{
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[];
+#endif
+		static void* NewStructOps();
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SourceAvatarActor_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_SourceAvatarActor;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SourceController_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_SourceController;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SourceCharacter_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_SourceCharacter;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SourceASC_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_SourceASC;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TargetAvatarActor_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetAvatarActor;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TargetController_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetController;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TargetCharacter_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetCharacter;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TargetASC_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetASC;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+		static const UECodeGen_Private::FStructParams ReturnStructParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	void* Z_Construct_UScriptStruct_FEffectProperties_Statics::NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FEffectProperties>();
+	}
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceAvatarActor_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceAvatarActor = { "SourceAvatarActor", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, SourceAvatarActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceAvatarActor_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceAvatarActor_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceController_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceController = { "SourceController", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, SourceController), Z_Construct_UClass_AController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceController_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceController_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceCharacter_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceCharacter = { "SourceCharacter", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, SourceCharacter), Z_Construct_UClass_ACharacter_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceCharacter_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceCharacter_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceASC_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceASC = { "SourceASC", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, SourceASC), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceASC_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceASC_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetAvatarActor_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetAvatarActor = { "TargetAvatarActor", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, TargetAvatarActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetAvatarActor_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetAvatarActor_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetController_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetController = { "TargetController", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, TargetController), Z_Construct_UClass_AController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetController_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetController_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetCharacter_MetaData[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetCharacter = { "TargetCharacter", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, TargetCharacter), Z_Construct_UClass_ACharacter_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetCharacter_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetCharacter_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetASC_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetASC = { "TargetASC", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEffectProperties, TargetASC), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetASC_MetaData), Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetASC_MetaData) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FEffectProperties_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceAvatarActor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceController,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceCharacter,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_SourceASC,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetAvatarActor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetController,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetCharacter,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEffectProperties_Statics::NewProp_TargetASC,
+	};
+	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FEffectProperties_Statics::ReturnStructParams = {
+		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+		nullptr,
+		&NewStructOps,
+		"EffectProperties",
+		Z_Construct_UScriptStruct_FEffectProperties_Statics::PropPointers,
+		UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::PropPointers),
+		sizeof(FEffectProperties),
+		alignof(FEffectProperties),
+		RF_Public|RF_Transient|RF_MarkAsNative,
+		EStructFlags(0x00000005),
+		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FEffectProperties_Statics::Struct_MetaDataParams)
+	};
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEffectProperties_Statics::PropPointers) < 2048);
+	UScriptStruct* Z_Construct_UScriptStruct_FEffectProperties()
+	{
+		if (!Z_Registration_Info_UScriptStruct_EffectProperties.InnerSingleton)
+		{
+			UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_EffectProperties.InnerSingleton, Z_Construct_UScriptStruct_FEffectProperties_Statics::ReturnStructParams);
+		}
+		return Z_Registration_Info_UScriptStruct_EffectProperties.InnerSingleton;
+	}
+	DEFINE_FUNCTION(UPokemonBaseAttributeSet::execOnRep_DodgeForce)
+	{
+		P_GET_STRUCT_REF(FGameplayAttributeData,Z_Param_Out_OldDodgeForce);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->OnRep_DodgeForce(Z_Param_Out_OldDodgeForce);
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UPokemonBaseAttributeSet::execOnRep_Defense)
 	{
 		P_GET_STRUCT_REF(FGameplayAttributeData,Z_Param_Out_OldDefense);
@@ -78,6 +237,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 		static const FNameNativePtrPair Funcs[] = {
 			{ "OnRep_Attack", &UPokemonBaseAttributeSet::execOnRep_Attack },
 			{ "OnRep_Defense", &UPokemonBaseAttributeSet::execOnRep_Defense },
+			{ "OnRep_DodgeForce", &UPokemonBaseAttributeSet::execOnRep_DodgeForce },
 			{ "OnRep_Health", &UPokemonBaseAttributeSet::execOnRep_Health },
 			{ "OnRep_MaxHealth", &UPokemonBaseAttributeSet::execOnRep_MaxHealth },
 			{ "OnRep_SpecialAttack", &UPokemonBaseAttributeSet::execOnRep_SpecialAttack },
@@ -167,6 +327,48 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Defense_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics
+	{
+		struct PokemonBaseAttributeSet_eventOnRep_DodgeForce_Parms
+		{
+			FGameplayAttributeData OldDodgeForce;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_OldDodgeForce_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_OldDodgeForce;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::NewProp_OldDodgeForce_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::NewProp_OldDodgeForce = { "OldDodgeForce", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonBaseAttributeSet_eventOnRep_DodgeForce_Parms, OldDodgeForce), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::NewProp_OldDodgeForce_MetaData), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::NewProp_OldDodgeForce_MetaData) }; // 2151517668
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::NewProp_OldDodgeForce,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonBaseAttributeSet, nullptr, "OnRep_DodgeForce", nullptr, nullptr, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PokemonBaseAttributeSet_eventOnRep_DodgeForce_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x40420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::PokemonBaseAttributeSet_eventOnRep_DodgeForce_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -420,6 +622,18 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Speed_MetaData[];
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_Speed;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DodgeForce_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_DodgeForce;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_IncomingDamage_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_IncomingDamage;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackForce_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_KnockbackForce;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -432,6 +646,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Attack, "OnRep_Attack" }, // 2637875421
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Defense, "OnRep_Defense" }, // 279985021
+		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce, "OnRep_DodgeForce" }, // 2369934102
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Health, "OnRep_Health" }, // 2131322654
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_MaxHealth, "OnRep_MaxHealth" }, // 3067209289
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_SpecialAttack, "OnRep_SpecialAttack" }, // 3580028604
@@ -441,9 +656,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::FuncInfo) < 2048);
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "IncludePath", "AbilitySystem/PokemonBaseAttributeSet.h" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
 	};
@@ -497,6 +709,27 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 	};
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Speed = { "Speed", "OnRep_Speed", (EPropertyFlags)0x0010000100000034, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, Speed), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Speed_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Speed_MetaData) }; // 2151517668
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce_MetaData[] = {
+		{ "Category", "Vital Stat Attributes" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce = { "DodgeForce", "OnRep_DodgeForce", (EPropertyFlags)0x0010000100000034, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, DodgeForce), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce_MetaData) }; // 2151517668
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData[] = {
+		{ "Category", "Meta Attributes" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage = { "IncomingDamage", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, IncomingDamage), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData) }; // 2151517668
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData[] = {
+		{ "Category", "Meta Attributes" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce = { "KnockbackForce", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, KnockbackForce), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData) }; // 2151517668
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Health,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_MaxHealth,
@@ -505,6 +738,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Attack,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Defense,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Speed,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UPokemonBaseAttributeSet>::IsAbstract,
@@ -547,6 +783,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 		static const FName Name_Attack(TEXT("Attack"));
 		static const FName Name_Defense(TEXT("Defense"));
 		static const FName Name_Speed(TEXT("Speed"));
+		static const FName Name_DodgeForce(TEXT("DodgeForce"));
 
 		const bool bIsValid = true
 			&& Name_Health == ClassReps[(int32)ENetFields_Private::Health].Property->GetFName()
@@ -555,7 +792,8 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 			&& Name_SpecialAttack == ClassReps[(int32)ENetFields_Private::SpecialAttack].Property->GetFName()
 			&& Name_Attack == ClassReps[(int32)ENetFields_Private::Attack].Property->GetFName()
 			&& Name_Defense == ClassReps[(int32)ENetFields_Private::Defense].Property->GetFName()
-			&& Name_Speed == ClassReps[(int32)ENetFields_Private::Speed].Property->GetFName();
+			&& Name_Speed == ClassReps[(int32)ENetFields_Private::Speed].Property->GetFName()
+			&& Name_DodgeForce == ClassReps[(int32)ENetFields_Private::DodgeForce].Property->GetFName();
 
 		checkf(bIsValid, TEXT("UHT Generated Rep Indices do not match runtime populated Rep Indices for properties in UPokemonBaseAttributeSet"));
 	}
@@ -563,13 +801,17 @@ void EmptyLinkFunctionForGeneratedCodePokemonBaseAttributeSet() {}
 	UPokemonBaseAttributeSet::~UPokemonBaseAttributeSet() {}
 	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics
 	{
+		static const FStructRegisterCompiledInInfo ScriptStructInfo[];
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonBaseAttributeSet, UPokemonBaseAttributeSet::StaticClass, TEXT("UPokemonBaseAttributeSet"), &Z_Registration_Info_UClass_UPokemonBaseAttributeSet, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBaseAttributeSet), 3811024623U) },
+	const FStructRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ScriptStructInfo[] = {
+		{ FEffectProperties::StaticStruct, Z_Construct_UScriptStruct_FEffectProperties_Statics::NewStructOps, TEXT("EffectProperties"), &Z_Registration_Info_UScriptStruct_EffectProperties, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEffectProperties), 2370998886U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_2957498432(TEXT("/Script/ProjectMimikyu"),
+	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo[] = {
+		{ Z_Construct_UClass_UPokemonBaseAttributeSet, UPokemonBaseAttributeSet::StaticClass, TEXT("UPokemonBaseAttributeSet"), &Z_Registration_Info_UClass_UPokemonBaseAttributeSet, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBaseAttributeSet), 584063903U) },
+	};
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_317093288(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo),
-		nullptr, 0,
+		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ScriptStructInfo),
 		nullptr, 0);
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

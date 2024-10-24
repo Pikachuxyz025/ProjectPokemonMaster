@@ -23,6 +23,16 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDa
 	}
 }
 
+void UPokemonAbilitySystemComponent::AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility,FGameplayTag AbilityInputTag)
+{
+	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewAbility, 1);
+	if (const UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
+	{
+		AbilitySpec.DynamicAbilityTags.AddTag(AbilityInputTag);
+		GiveAbility(AbilitySpec);
+	}
+}
+
 void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid()) return;

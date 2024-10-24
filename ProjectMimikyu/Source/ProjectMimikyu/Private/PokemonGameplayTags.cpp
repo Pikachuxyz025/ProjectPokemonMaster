@@ -110,6 +110,31 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 		FString("Input Tag for 4 Key")
 	);
 
+	GameplayTags.InputTag_Dodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dodge"),
+		FString("Input Tag for the Dodge Key")
+	);
+
+	GameplayTags.InputTag_Dodge_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dodge.Left"),
+		FString("Input Tag for Dodging Left")
+	);
+	
+	GameplayTags.InputTag_Dodge_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dodge.Right"),
+		FString("Input Tag for Dodging Right")
+	);
+
+	GameplayTags.InputTag_Dodge_Forward = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dodge.Forward"),
+		FString("Input Tag for Dodging Forward")
+	);
+
+	GameplayTags.InputTag_Dodge_Backward = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dodge.Backward"),
+		FString("Input Tag for Dodging Backward")
+	);
+
 	GameplayTags.PokemonMoves_MoveAction_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.MoveAction.Melee"),
 		FString("Pokemon goes to an ideal range and hits the target")

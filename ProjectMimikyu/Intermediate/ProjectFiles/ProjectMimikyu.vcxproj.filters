@@ -65,6 +65,9 @@
     <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem">
       <UniqueIdentifier>{93A8C0D0-F74C-374C-B128-D70509E50CC7}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AT_TargetDataLocation.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
@@ -79,6 +82,24 @@
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\PokemonGameplayAbilities.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem\Abilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\ProjectileAbility.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\Abilities</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks">
+      <UniqueIdentifier>{4704043B-9C42-34F8-A9DD-931AF887F1E1}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks\AT_TickTask.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc">
+      <UniqueIdentifier>{41B5229E-4066-36CA-9B2B-645A91BB765B}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc\ExecCalc_Damage.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc\ExecCalc_KnockbackForce.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\MMC">
       <UniqueIdentifier>{7E2449ED-199F-33DB-BCD5-0FF4D9E9E758}</UniqueIdentifier>
@@ -125,9 +146,6 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonAIController.cpp">
       <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonInputComponent.cpp">
-      <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\TrainerAIController.cpp">
       <Filter>Source\ProjectMimikyu\Private\AIControllers</Filter>
     </ClCompile>
@@ -155,6 +173,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonMoveDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\DataTables">
       <UniqueIdentifier>{2D4A5EDC-6ABF-3DC1-B157-485E2AA9723F}</UniqueIdentifier>
     </Filter>
@@ -166,6 +187,15 @@
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
       <Filter>Source\ProjectMimikyu\Private\GameModes</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Input">
+      <UniqueIdentifier>{3E2D2E0E-4BB1-3592-879F-3A2EDA7A0DAB}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Input\MyInputTriggerComboAction.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Input\PokemonInputComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Input</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Interfaces">
       <UniqueIdentifier>{06C738AD-DF50-3562-9EA3-0F68F2C1008F}</UniqueIdentifier>
@@ -260,9 +290,18 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerOverlay.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\UI\Slate">
+      <UniqueIdentifier>{785883A2-B578-38B1-B5F6-5658FDB823B1}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\Slate\SMainMenuWidget.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\Slate</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\UI\WidgetController">
       <UniqueIdentifier>{E0481A3C-60F9-3531-9825-C3FEFF75B9D4}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonMenuWidgetController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonWidgetController.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
     </ClCompile>
@@ -281,6 +320,9 @@
     <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem">
       <UniqueIdentifier>{33784BD6-8EF7-3077-8CF4-8E1E0CD08B8B}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AT_TargetDataLocation.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
@@ -295,6 +337,24 @@
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonGameplayAbilities.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\ProjectileAbility.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\Abilities</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks">
+      <UniqueIdentifier>{F994CFF1-1CB3-3B4E-A626-D266A54A4608}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks\AT_TickTask.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc">
+      <UniqueIdentifier>{74548AE2-4819-332F-ABA4-CE58C7516A72}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc\ExecCalc_Damage.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc\ExecCalc_KnockbackForce.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\MMC">
       <UniqueIdentifier>{B945310E-3CF3-340B-9C64-5476489004D6}</UniqueIdentifier>
@@ -341,9 +401,6 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h">
       <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonInputComponent.h">
-      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h">
       <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
     </ClInclude>
@@ -374,6 +431,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\DataTables">
       <UniqueIdentifier>{6BB293ED-42B7-35FC-92EC-8A85C8A9A496}</UniqueIdentifier>
     </Filter>
@@ -385,6 +445,15 @@
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h">
       <Filter>Source\ProjectMimikyu\Public\GameModes</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Input">
+      <UniqueIdentifier>{71D546B3-B282-31E8-A216-AB48D2E46BBD}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\MyInputTriggerComboAction.h">
+      <Filter>Source\ProjectMimikyu\Public\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\PokemonInputComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\Input</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Interfaces">
       <UniqueIdentifier>{B5DAC2BD-431A-34AC-A147-6BA4E2EE75BC}</UniqueIdentifier>
@@ -479,9 +548,18 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerOverlay.h">
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\UI\Slate">
+      <UniqueIdentifier>{E37B99C6-6E4D-3E46-8F74-1E05D2ED9D33}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\Slate\SMainMenuWidget.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\Slate</Filter>
+    </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\UI\WidgetController">
       <UniqueIdentifier>{6C79313D-FA2B-3766-A3B6-6325FB79147D}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonMenuWidgetController.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonWidgetController.h">
       <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
     </ClInclude>

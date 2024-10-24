@@ -18,9 +18,6 @@ class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 	
 public:
 
-	UPROPERTY(EditAnywhere)
-	float BaseDamage = 0;
-
 	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.MoveType"))
 	FGameplayTag MoveType;
 
@@ -29,5 +26,13 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (Categories = "Damage.Response"))
 	FGameplayTag DamageResponse;
+
+	UFUNCTION(BlueprintCallable)
+	void CauseDamage(AActor* TargetActor);
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
 
 };

@@ -5,6 +5,7 @@
 #include "UI/TrainerOverlay.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
 #include "UI/PlayerMenuOverlay.h"
+#include "UI/WidgetController/PokemonMenuWidgetController.h"
 
 void ATrainerHUD::AddTrainerOverlay()
 {
@@ -36,4 +37,15 @@ void ATrainerHUD::AddPlayerMenuOverlay()
 		MenuOverlay->AddToViewport();
 		MenuOverlay->DisplayOverlay(PlayerController);
 	}
+}
+
+UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (!PokemonMenuWidgetController)
+	{
+		PokemonMenuWidgetController = NewObject<UPokemonMenuWidgetController>(this, PokemonMenuWidgetControllerClass);
+		PokemonMenuWidgetController->SetWidgetControllerParams(WCParams);
+		PokemonMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return PokemonMenuWidgetController;
 }

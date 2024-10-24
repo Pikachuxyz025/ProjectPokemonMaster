@@ -76,6 +76,9 @@ public:
 	FOnPokemonHealthUpdated OnPokemonHealthUpdated;
 
 	void UpdateCurrentPokemonHealth();
+
+	void CommandDodge(FGameplayTag GameplayTag);
+
 protected:
 
 	/** Called for movement input */
@@ -107,6 +110,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere,Category = "Pokemon Party")
 	TArray<APokemon_Parent*> CurrentParty;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UPokemonGameplayAbilities> DodgeAbility;
+
 	// Multiplayer testing
 	
 	//UPROPERTY(Replicated)

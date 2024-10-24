@@ -23,6 +23,18 @@ struct FPokemonInputAction
 	 int32 Index = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FPokemonInputDodgeAction
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	const UInputAction* InputAction = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag InputTag = FGameplayTag();
+};
+
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonInputConfig : public UDataAsset
 {
@@ -30,7 +42,10 @@ class PROJECTMIMIKYU_API UPokemonInputConfig : public UDataAsset
 	
 public:
 	const UInputAction* FindAbilityInputActionForIndex(const int32 Index, bool bLogNotFound = false) const;
+	const FVector FindInputActionForDodgeDirection(FGameplayTag GameplayTag, bool bLogNotFound = false) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		TArray<FPokemonInputAction> AbilityInputActions;
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		TArray<FPokemonInputDodgeAction> DodgeInputActions;
 };

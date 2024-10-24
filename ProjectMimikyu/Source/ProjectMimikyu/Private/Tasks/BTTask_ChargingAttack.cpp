@@ -39,9 +39,10 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ExecuteTask(UBehaviorTreeComponent& 
 	
 	FAIMoveRequest Request;
 	Request.SetGoalActor(AttackTarget);
-	Request.SetAcceptanceRadius(50);
+	Request.SetAcceptanceRadius(5);
 	MoveRequest = Request;
 	bMadeIt = false;
+	PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
 //	Pokemon->EnactMove();
 
 	return ProcessRequest(PokemonController);
@@ -72,10 +73,11 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ProcessRequest(AAIController* Contro
 
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 			bMadeIt = true;
-			PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
+			UE_LOG(LogTemp, Display, TEXT("Made it"));
+			// If target is elevated or in the air
 			//Pokemon->Charge();
 	
-		UE_LOG(LogTemp, Display, TEXT("Made it"));
+
 		NodeResulted = EBTNodeResult::InProgress;
 		break;
 
@@ -89,7 +91,7 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ProcessRequest(AAIController* Contro
 
 void UBTTask_ChargingAttack::AttackComplete()
 {
-
+	Pokemon->GetMovementComponent()->StopMovementImmediately();
 	UBehaviorTreeComponent* OwnerComp = Cast<UBehaviorTreeComponent>(GetOuter());
 	if (OwnerComp)
 	{

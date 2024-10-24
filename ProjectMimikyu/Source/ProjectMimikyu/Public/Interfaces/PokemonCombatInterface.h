@@ -7,6 +7,7 @@
 #include "Characters/CharacterTypes.h"
 #include "PokemonCombatInterface.generated.h"
 
+class UPokemonMoveDataAsset;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UPokemonCombatInterface : public UInterface
@@ -33,4 +34,7 @@ public:
 	virtual int32 GetSpeed();
 	virtual float GetNatureMultiplier(EStatsType StatType);
 	virtual int32 GetELB(int32 BaseStat, EStatsType StatType);
+	virtual float GetTypeMatchup(EElementalType ElementalType);
+	virtual FVector GetCombatSocketLocation();
+	virtual UPokemonMoveDataAsset* GetPokemonActiveMove();
 };

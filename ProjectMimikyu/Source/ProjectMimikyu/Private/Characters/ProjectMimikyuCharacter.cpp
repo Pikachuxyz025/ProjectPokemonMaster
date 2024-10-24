@@ -12,10 +12,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "AIControllers/PokemonInputComponent.h"
+#include "Input/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
+#include "PokemonGameplayTags.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -106,25 +107,19 @@ void AProjectMimikyuCharacter::Tick(float DeltaTime)
 }
 
 void AProjectMimikyuCharacter::SelectMove(int32 Index)
-{
-	if (TrainerController && bAreMovesSelectable)
-	{
-
-		//int32 i = DirectionKeyBind.Find(TrainerController->GetMoveKey());
-
-		if (Index == INDEX_NONE || Index < 0 /*|| i>DirectionKeyBind.Num() - 1*/) return;
-		if (TrainerController->IsMoveValid(Index) && !CurrentPokemon->GetIsCommandActive())
-		{
-			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"),Index);
-			ServerCallCommand(Index);
-		}
-		//UE_LOG(LogTemp, Display, TEXT("%s"), *SelectedPokemonMove->MoveName.ToString());
-
-		// Pokemon Does move
+{	
+	// Pokemon Does move
 		// call a bool that prevents you from calling a move while pokemon is attacking
 		// pokemon's move recharges maybe we give them stamina we'll see...
+	if (TrainerController && bAreMovesSelectable)
+	{
+		if (Index == INDEX_NONE || Index < 0 ) return;
+		if (TrainerController->IsMoveValid(Index) && !CurrentPokemon->GetIsCommandActive())
+		{
+			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
+			ServerCallCommand(Index);
+		}
 	}
-
 }
 
 void AProjectMimikyuCharacter::SetCurrentPokemon(APokemon_Parent* LeadPokemon)
@@ -174,6 +169,7 @@ void AProjectMimikyuCharacter::CatchPokemon()
 			if (CurrentParty.Num() < 6)
 			{
 				CurrentParty.Add(CaughtPokemon);
+				CaughtPokemon->AddNewPokemonAbility(DodgeAbility,FPokemonGameplayTags::Get().InputTag_Dodge);
 				ServerAddToCurrentParty(OutHit.GetActor());
 				OnPartyUpdated.Broadcast();
 			}
@@ -251,12 +247,22 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
+		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
 	}
 }
 
 void AProjectMimikyuCharacter::UpdateCurrentPokemonHealth()
 {
 	OnPokemonHealthUpdated.Broadcast();
+}
+
+void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
+{
+	if (bAreMovesSelectable && !CurrentPokemon->GetIsCommandActive())
+	{
+		FVector NewDodgeDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
+		CurrentPokemon->Dodge(NewDodgeDirection);
+	}
 }
 
 void AProjectMimikyuCharacter::Move(const FInputActionValue& Value)

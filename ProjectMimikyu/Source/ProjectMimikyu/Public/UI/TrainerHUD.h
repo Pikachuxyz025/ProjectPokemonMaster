@@ -6,9 +6,12 @@
 #include "GameFramework/HUD.h"
 #include "TrainerHUD.generated.h"
 
-/**
- * 
- */
+class UPokemonMenuWidgetController;
+class UPlayerInventoryMenuOverlay;
+class UPlayerMenuOverlay;
+class UTrainerOverlay;
+struct FWidgetControllerParams;
+
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerHUD : public AHUD
 {
@@ -26,7 +29,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UUserWidget>MenuOverlayClass;
 
+	UPROPERTY()
+	TObjectPtr<	UPokemonMenuWidgetController> PokemonMenuWidgetController;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonMenuWidgetController>PokemonMenuWidgetControllerClass;
 public:
 
 	void AddTrainerOverlay();
@@ -34,11 +41,13 @@ public:
 	void AddPlayerMenuOverlay();
 
 	UPROPERTY()
-	class UPlayerInventoryMenuOverlay* InventoryOverlay;
+	 TObjectPtr<UPlayerInventoryMenuOverlay> InventoryOverlay;
 
 	UPROPERTY()
-	class UPlayerMenuOverlay* MenuOverlay;	
+	 TObjectPtr<UPlayerMenuOverlay> MenuOverlay;	
 	
 	UPROPERTY()
-	class UTrainerOverlay* TrainerOverlay;
+	 TObjectPtr<UTrainerOverlay> TrainerOverlay;
+
+	 UPokemonMenuWidgetController* GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams);
 };

@@ -25,6 +25,7 @@ void EmptyLinkFunctionForGeneratedCodeProjectMimikyuCharacter() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerController_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySystemComponent_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyUpdated__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonHealthUpdated__DelegateSignature();
@@ -454,6 +455,10 @@ void FOnPokemonSentOut_DelegateWrapper(const FMulticastScriptDelegate& OnPokemon
 #endif
 		static const UECodeGen_Private::FArrayPropertyParams NewProp_CurrentParty;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DodgeAbility_MetaData[];
+#endif
+		static const UECodeGen_Private::FClassPropertyParams NewProp_DodgeAbility;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_TrainerController_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerController;
@@ -664,6 +669,13 @@ void FOnPokemonSentOut_DelegateWrapper(const FMulticastScriptDelegate& OnPokemon
 #endif
 	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty = { "CurrentParty", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, CurrentParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty_MetaData), Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty_MetaData) };
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DodgeAbility_MetaData[] = {
+		{ "Category", "ProjectMimikyuCharacter" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+#endif
+	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DodgeAbility = { "DodgeAbility", nullptr, (EPropertyFlags)0x0044000000010001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, DodgeAbility), Z_Construct_UClass_UClass, Z_Construct_UClass_UPokemonGameplayAbilities_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DodgeAbility_MetaData), Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DodgeAbility_MetaData) };
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerController_MetaData[] = {
 #if !UE_BUILD_SHIPPING
 		{ "Comment", "//UPROPERTY(Replicated)\n//FPokemonParty CurrentSParty;\n" },
@@ -763,6 +775,7 @@ void FOnPokemonSentOut_DelegateWrapper(const FMulticastScriptDelegate& OnPokemon
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentPokemon,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DodgeAbility,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerController,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_InventorySystem,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CatchingDistance,
@@ -823,9 +836,9 @@ void FOnPokemonSentOut_DelegateWrapper(const FMulticastScriptDelegate& OnPokemon
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 1576015422U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 1413692855U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_2292381982(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_1087554792(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);
