@@ -254,6 +254,8 @@ struct FPokemonUIInfo
 
 	UPROPERTY()
 	float PokemonHPPercent = 0;
+
+
 };
 
 USTRUCT(BlueprintType)

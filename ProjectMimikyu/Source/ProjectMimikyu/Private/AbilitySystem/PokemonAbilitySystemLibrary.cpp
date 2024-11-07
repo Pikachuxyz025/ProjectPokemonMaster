@@ -20,6 +20,7 @@ UPokemonMenuWidgetController* UPokemonAbilitySystemLibrary::GetStatMenuWidgetCon
 			/**
 			* TODO::
 			* Get Trainer's Pokemon Party
+			* 
 			* Get AttributeSet and AbilitySystem from each individual Pokemon
 			* Set In Pokemon Menu Widget Controller
 			*/

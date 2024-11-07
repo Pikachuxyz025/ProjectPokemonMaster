@@ -22,6 +22,7 @@ void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& At
 {
 	FPokemonStatInfo Info = StatInfo->FindStatInfoForTag(AttributeTag);
 	Info.StatValue = Attribute.GetNumericValue(AttributeSet);
+	// Get The Corresponding Effort Value From the Pokemon
 	StatInfoDelegate.Broadcast(Info);
 }
 

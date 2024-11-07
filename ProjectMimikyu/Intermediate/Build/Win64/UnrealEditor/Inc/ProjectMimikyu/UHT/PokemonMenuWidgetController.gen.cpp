@@ -24,6 +24,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonMenuWidgetController() {}
 		{
 			FPokemonStatInfo Info;
 		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Info_MetaData[];
+#endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_Info;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
@@ -31,7 +34,12 @@ void EmptyLinkFunctionForGeneratedCodePokemonMenuWidgetController() {}
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info = { "Info", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventStatInfoSignature_Parms, Info), Z_Construct_UScriptStruct_FPokemonStatInfo, METADATA_PARAMS(0, nullptr) }; // 3322745617
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info = { "Info", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventStatInfoSignature_Parms, Info), Z_Construct_UScriptStruct_FPokemonStatInfo, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info_MetaData), Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info_MetaData) }; // 3322745617
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature_Statics::NewProp_Info,
 	};
@@ -52,7 +60,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonMenuWidgetController() {}
 		}
 		return ReturnFunction;
 	}
-void FStatInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& StatInfoSignature, FPokemonStatInfo& Info)
+void FStatInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& StatInfoSignature, FPokemonStatInfo const& Info)
 {
 	struct _Script_ProjectMimikyu_eventStatInfoSignature_Parms
 	{
@@ -61,7 +69,6 @@ void FStatInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& StatInfo
 	_Script_ProjectMimikyu_eventStatInfoSignature_Parms Parms;
 	Parms.Info=Info;
 	StatInfoSignature.ProcessMulticastDelegate<UObject>(&Parms);
-	Info=Parms.Info;
 }
 	DEFINE_FUNCTION(UPokemonMenuWidgetController::execBroadcastInitialValues)
 	{
@@ -147,7 +154,7 @@ void FStatInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& StatInfo
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonMenuWidgetController.h" },
 	};
 #endif
-	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate = { "StatInfoDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonMenuWidgetController, StatInfoDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate_MetaData), Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate_MetaData) }; // 726373855
+	const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate = { "StatInfoDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonMenuWidgetController, StatInfoDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_StatInfoSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate_MetaData), Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfoDelegate_MetaData) }; // 1920424119
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonMenuWidgetController_Statics::NewProp_StatInfo_MetaData[] = {
 		{ "Category", "PokemonMenuWidgetController" },
@@ -198,9 +205,9 @@ void FStatInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& StatInfo
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonMenuWidgetController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonMenuWidgetController, UPokemonMenuWidgetController::StaticClass, TEXT("UPokemonMenuWidgetController"), &Z_Registration_Info_UClass_UPokemonMenuWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMenuWidgetController), 3422367257U) },
+		{ Z_Construct_UClass_UPokemonMenuWidgetController, UPokemonMenuWidgetController::StaticClass, TEXT("UPokemonMenuWidgetController"), &Z_Registration_Info_UClass_UPokemonMenuWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMenuWidgetController), 2897825293U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonMenuWidgetController_h_4091683956(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonMenuWidgetController_h_3306515345(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonMenuWidgetController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonMenuWidgetController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

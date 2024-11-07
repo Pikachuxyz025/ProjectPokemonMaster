@@ -284,6 +284,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PlayerMenuOverlay.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonUserWidget.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerHUD.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
@@ -540,6 +543,9 @@
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerMenuOverlay.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonUserWidget.h">
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h">

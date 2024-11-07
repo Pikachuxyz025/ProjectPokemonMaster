@@ -16,6 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharging);
 class UGameplayEffect;
 class UPokemonGameplayAbilities;
+class UPokemonStatInfoDataAsset;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -59,7 +60,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* AIBehaviorTree;
 	FPokemonUIInfo PokemonUIInfo;
-
+	UPokemonStatInfoDataAsset* PokemonStatInfo;
 #pragma region Attributes Setup
 	UPROPERTY()
 	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;

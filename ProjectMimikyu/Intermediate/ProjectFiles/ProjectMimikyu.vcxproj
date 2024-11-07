@@ -510,6 +510,11 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonUserWidget.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerHUD.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -601,6 +606,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\InventorySlot.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerInventoryMenuOverlay.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerMenuOverlay.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonUserWidget.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerOverlay.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\Slate\SMainMenuWidget.h"/>

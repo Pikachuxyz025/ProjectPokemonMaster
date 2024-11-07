@@ -12,7 +12,8 @@ void ATrainerHUD::AddTrainerOverlay()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-		TrainerOverlay = !TrainerOverlay ? CreateWidget<UTrainerOverlay>(PlayerController, TrainerOverlayClass):TrainerOverlay;
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), TrainerOverlayClass);
+		TrainerOverlay = Cast<UTrainerOverlay>(Widget);
 		TrainerOverlay->AddToViewport();
 
 	}
@@ -23,8 +24,9 @@ void ATrainerHUD::AddInventoryOverlay()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-	InventoryOverlay = !InventoryOverlay ? CreateWidget<UPlayerInventoryMenuOverlay>(PlayerController,InventoryOverlayClass) :InventoryOverlay;
-	InventoryOverlay->AddToViewport();
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), InventoryOverlayClass);
+		InventoryOverlay = Cast<UPlayerInventoryMenuOverlay>(Widget);
+		InventoryOverlay->AddToViewport();
 	}
 }
 
@@ -33,7 +35,8 @@ void ATrainerHUD::AddPlayerMenuOverlay()
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if (PlayerController)
 	{
-		MenuOverlay = !MenuOverlay ? CreateWidget<UPlayerMenuOverlay>(PlayerController, MenuOverlayClass) : MenuOverlay;
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), MenuOverlayClass);
+		MenuOverlay = Cast<UPlayerMenuOverlay>(Widget);
 		MenuOverlay->AddToViewport();
 		MenuOverlay->DisplayOverlay(PlayerController);
 	}

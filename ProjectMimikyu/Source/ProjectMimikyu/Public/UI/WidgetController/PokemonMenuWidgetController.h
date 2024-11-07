@@ -4,6 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "UI/WidgetController/PokemonWidgetController.h"
+#include "DataAssets/PokemonStatInfoDataAsset.h"
 #include "GameplayTagContainer.h"
 #include "PokemonMenuWidgetController.generated.h"
 
@@ -11,7 +12,7 @@ class UPokemonStatInfoDataAsset;
 struct FPokemonStatInfo;
 struct FGameplayAttribute;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStatInfoSignature, FPokemonStatInfo&, Info);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStatInfoSignature, const FPokemonStatInfo&, Info);
 
 UCLASS(BlueprintType,Blueprintable)
 class PROJECTMIMIKYU_API UPokemonMenuWidgetController : public UPokemonWidgetController

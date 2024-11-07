@@ -23,6 +23,9 @@ struct FPokemonStatInfo
 
 	UPROPERTY( BlueprintReadOnly)
 	float StatValue = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 EffortLevelValue = 0;
 };
 
 UCLASS()
