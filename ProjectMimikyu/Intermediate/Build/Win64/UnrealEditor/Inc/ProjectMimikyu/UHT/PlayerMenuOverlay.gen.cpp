@@ -36,6 +36,18 @@ void EmptyLinkFunctionForGeneratedCodePlayerMenuOverlay() {}
 #endif
 		static const UECodeGen_Private::FClassPropertyParams NewProp_InventoryMenuClass;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_TrainerOverlayClass_MetaData[];
+#endif
+		static const UECodeGen_Private::FClassPropertyParams NewProp_TrainerOverlayClass;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_MenuOverlayClass_MetaData[];
+#endif
+		static const UECodeGen_Private::FClassPropertyParams NewProp_MenuOverlayClass;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonStatInfoOverlayClass_MetaData[];
+#endif
+		static const UECodeGen_Private::FClassPropertyParams NewProp_PokemonStatInfoOverlayClass;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_InventoryMenu_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_InventoryMenu;
@@ -59,11 +71,32 @@ void EmptyLinkFunctionForGeneratedCodePlayerMenuOverlay() {}
 #endif
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenuClass_MetaData[] = {
-		{ "Category", "PlayerMenuOverlay" },
+		{ "Category", "Widget Classes" },
 		{ "ModuleRelativePath", "Public/UI/PlayerMenuOverlay.h" },
 	};
 #endif
 	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenuClass = { "InventoryMenuClass", nullptr, (EPropertyFlags)0x0014000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPlayerMenuOverlay, InventoryMenuClass), Z_Construct_UClass_UClass, Z_Construct_UClass_UUserWidget_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenuClass_MetaData), Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenuClass_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_TrainerOverlayClass_MetaData[] = {
+		{ "Category", "Widget Classes" },
+		{ "ModuleRelativePath", "Public/UI/PlayerMenuOverlay.h" },
+	};
+#endif
+	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_TrainerOverlayClass = { "TrainerOverlayClass", nullptr, (EPropertyFlags)0x0014000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPlayerMenuOverlay, TrainerOverlayClass), Z_Construct_UClass_UClass, Z_Construct_UClass_UUserWidget_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_TrainerOverlayClass_MetaData), Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_TrainerOverlayClass_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_MenuOverlayClass_MetaData[] = {
+		{ "Category", "Widget Classes" },
+		{ "ModuleRelativePath", "Public/UI/PlayerMenuOverlay.h" },
+	};
+#endif
+	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_MenuOverlayClass = { "MenuOverlayClass", nullptr, (EPropertyFlags)0x0014000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPlayerMenuOverlay, MenuOverlayClass), Z_Construct_UClass_UClass, Z_Construct_UClass_UUserWidget_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_MenuOverlayClass_MetaData), Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_MenuOverlayClass_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_PokemonStatInfoOverlayClass_MetaData[] = {
+		{ "Category", "Widget Classes" },
+		{ "ModuleRelativePath", "Public/UI/PlayerMenuOverlay.h" },
+	};
+#endif
+	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_PokemonStatInfoOverlayClass = { "PokemonStatInfoOverlayClass", nullptr, (EPropertyFlags)0x0014000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPlayerMenuOverlay, PokemonStatInfoOverlayClass), Z_Construct_UClass_UClass, Z_Construct_UClass_UUserWidget_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_PokemonStatInfoOverlayClass_MetaData), Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_PokemonStatInfoOverlayClass_MetaData) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenu_MetaData[] = {
 		{ "Category", "PlayerMenuOverlay" },
@@ -74,6 +107,9 @@ void EmptyLinkFunctionForGeneratedCodePlayerMenuOverlay() {}
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenu = { "InventoryMenu", nullptr, (EPropertyFlags)0x00100000000a0009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPlayerMenuOverlay, InventoryMenu), Z_Construct_UClass_UPlayerInventoryMenuOverlay_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenu_MetaData), Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenu_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPlayerMenuOverlay_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenuClass,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_TrainerOverlayClass,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_MenuOverlayClass,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_PokemonStatInfoOverlayClass,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPlayerMenuOverlay_Statics::NewProp_InventoryMenu,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPlayerMenuOverlay_Statics::StaticCppClassTypeInfo = {
@@ -115,9 +151,9 @@ void EmptyLinkFunctionForGeneratedCodePlayerMenuOverlay() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PlayerMenuOverlay_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPlayerMenuOverlay, UPlayerMenuOverlay::StaticClass, TEXT("UPlayerMenuOverlay"), &Z_Registration_Info_UClass_UPlayerMenuOverlay, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPlayerMenuOverlay), 4066307680U) },
+		{ Z_Construct_UClass_UPlayerMenuOverlay, UPlayerMenuOverlay::StaticClass, TEXT("UPlayerMenuOverlay"), &Z_Registration_Info_UClass_UPlayerMenuOverlay, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPlayerMenuOverlay), 1580453142U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PlayerMenuOverlay_h_2529674718(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PlayerMenuOverlay_h_2312121203(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PlayerMenuOverlay_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PlayerMenuOverlay_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

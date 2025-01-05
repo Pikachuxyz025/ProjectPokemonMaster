@@ -17,6 +17,28 @@ ATrainerController::ATrainerController()
 	//bReplicates = true;
 }
 
+void ATrainerController::AddMouseCursor(UUserWidget* CurrentWidget, bool bSetUpMode)
+{
+	FInputModeUIOnly UIInputMode;
+		UIInputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
+	UIInputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	bShowMouseCursor = true;
+	if(bSetUpMode)
+	SetInputMode(UIInputMode);
+}
+
+void ATrainerController::RemoveMouseCursor()
+{
+	FInputModeGameOnly GameInputMode;
+	SetInputMode(GameInputMode);
+	bShowMouseCursor = false;
+}
+
+void ATrainerController::FocusNewWidget(UUserWidget* NewWidget)
+{
+	NewWidget->SetFocus();
+}
+
 void ATrainerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -41,7 +63,7 @@ void ATrainerController::SetupInputComponent()
 void ATrainerController::DisplayPlayerMenu()
 {
 	UE_LOG(LogTemp, Display, TEXT("Menu Added"));
-	TrainerHUD->AddPlayerMenuOverlay();
+	TrainerHUD->AddPlayerInventoryMenuOverlay();
 }
 
 void ATrainerController::HandleGameHasStarted()

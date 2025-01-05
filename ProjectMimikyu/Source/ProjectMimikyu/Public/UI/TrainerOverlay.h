@@ -12,6 +12,8 @@ class UImage;
 class UTextBlock;
 class APokemon_Parent;
 class UPokemonMoveDataAsset;
+class UPokemonMoveList;
+class UTrainerOverlayWidgetController;
 /**
  *
  */
@@ -51,6 +53,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UInventorySystemComponent* InventorySystem;
 
+	UPROPERTY(meta = (BindWidget))
+	UPokemonMoveList* PokemonMoveList;
+
 	void ShiftUILeft();
 	void ShiftUIRight();
 	void SetLeftRightImages(const int32 RightIndex, const int32 LeftIndex);
@@ -77,13 +82,14 @@ public:
 	void ChangeInputMode(FInputModeDataBase& NewMode);
 private:
 
+	UPROPERTY()
+	UTrainerOverlayWidgetController* WidgetController;
 
 	UPROPERTY(VisibleAnywhere)
 	ESlotType CurrentSlotMode = ESlotType::EST_Inventory;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<APokemon_Parent*> PokemonPartyInfo;
-	//TMap<int32, APokemon_Parent*> PokemonPartyInfo;
 
 	UPROPERTY(VisibleAnywhere)
 	TMap<EDirectionPoint, UPokemonMoveDataAsset*> PokemonMovesetOptions;

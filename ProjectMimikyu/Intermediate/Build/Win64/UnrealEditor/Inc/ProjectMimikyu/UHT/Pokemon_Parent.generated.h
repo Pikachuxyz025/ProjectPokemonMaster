@@ -14,8 +14,10 @@ class APokemonAIController;
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UPokemonAbilitySystemComponent;
+class UPokemonBaseAttributeSet;
 class UPrimitiveComponent;
 struct FHitResult;
+struct FPokemonUIInfo;
 #ifdef PROJECTMIMIKYU_Pokemon_Parent_generated_h
 #error "Pokemon_Parent.generated.h already included, missing '#pragma once' in Pokemon_Parent.h"
 #endif
@@ -41,10 +43,12 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
  \
 	DECLARE_FUNCTION(execServerSetTrainer); \
 	DECLARE_FUNCTION(execGetDodgeDirection); \
+	DECLARE_FUNCTION(execGetPokemonAS); \
 	DECLARE_FUNCTION(execGetPokemonASC); \
 	DECLARE_FUNCTION(execGetAttributeSet); \
 	DECLARE_FUNCTION(execGetAbilitySystemComponent); \
 	DECLARE_FUNCTION(execGetPokemonController); \
+	DECLARE_FUNCTION(execGetPokemonUIInfo); \
 	DECLARE_FUNCTION(execSetIsDodging); \
 	DECLARE_FUNCTION(execSetBoxCollision); \
 	DECLARE_FUNCTION(execSelectRandomMove); \

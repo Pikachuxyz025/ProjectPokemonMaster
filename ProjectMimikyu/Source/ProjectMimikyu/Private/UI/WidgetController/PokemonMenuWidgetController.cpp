@@ -3,7 +3,9 @@
 
 #include "UI/WidgetController/PokemonMenuWidgetController.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "Interfaces/PokemonCombatInterface.h"
 #include "Engine/DataTable.h"
 #include "PokemonGameplayTags.h"
 #include "DataAssets/PokemonStatInfoDataAsset.h"
@@ -21,8 +23,8 @@ void UPokemonMenuWidgetController::BroadcastInitialValues()
 void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const
 {
 	FPokemonStatInfo Info = StatInfo->FindStatInfoForTag(AttributeTag);
-	Info.StatValue = Attribute.GetNumericValue(AttributeSet);
-	// Get The Corresponding Effort Value From the Pokemon
+	TScriptInterface<IPokemonCombatInterface> PokemonInterface = AbilitySystemComponent->GetAvatarActor();
+	Info.StatBaseValue = PokemonInterface->GetBaseStatFromTag(AttributeTag);
 	StatInfoDelegate.Broadcast(Info);
 }
 
@@ -40,3 +42,6 @@ void UPokemonMenuWidgetController::BindCallbacksToDependencies()
 		);
 	}
 }
+
+
+

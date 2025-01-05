@@ -5,8 +5,11 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Characters/CharacterTypes.h"
+#include "PokemonGameplayTags.h"
 #include "DamageSystemComponent.generated.h"
 
+class UPokemonStatInfoDataAsset;
+class UPokemonBaseAttributeSet;
 
 UENUM()
 enum class EDamageOutput :uint8
@@ -28,6 +31,7 @@ public:
 	friend class APokemon_Parent;
 
 	EDamageOutput MacroDamageOutput(bool bShouldDamageBeInvincible, bool bCanBeBlocked);
+	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -51,11 +55,10 @@ private:
 		{ 10, 25 }
 	};
 	void SetupElementalType(EElementalType TypeOne, EElementalType TypeTwo);
-	int32 CalculateEffortLevelBase(int32 BaseStat, int32 CurrentEffortLevel, int32 CurrentLevel);
+	int32 CalculateEffortLevelBase(int32 BaseStat, int32 CurrentLevel, const FGameplayTag& StatTag);
 	int32 CalulateMaxHP(int32 CurrentLevel, int32 BaseHP);
-	int32 CalulateOtherStats(int32 CurrentLevel, int32 BaseStat, EStatsType StatType, ENatureType NatureType);
-	float NatureModifier(ENatureType CurrentNature, EStatsType StatToBeModified);
-
+	int32 CalulateOtherStats(int32 CurrentLevel, int32 BaseStat, const FGameplayTag& StatTag, ENatureType NatureType);
+	float NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified);
 	float TypeChartDamageMultiplier(EElementalType DamageElementType);
 
 	TMap<EElementalType, FName> TypeResponse =
@@ -79,6 +82,9 @@ private:
 		{EElementalType::EET_Water,"Water" },
 		{EElementalType::EET_Steel,"Steel" }
 	};
+	void SetStatInfo(UPokemonBaseAttributeSet* PokemonAttributes);
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UPokemonStatInfoDataAsset> StatInfo;
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -122,14 +128,14 @@ public:
 	int32 DefenseCounter(UPokemonMoveDataAsset* AttackingMove);
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<EStatsType, int32> EffortLevelBaseMap =
+	TMap<FGameplayTag, int32> EffortLevelBaseMap =
 	{
-		{EStatsType::EST_Attack, 0},
-		{EStatsType::EST_SpecialAttack, 0},
-		{EStatsType::EST_SpecialDefense, 0},
-		{EStatsType::EST_Speed, 0},
-		{EStatsType::EST_HealthPoints, 0},
-		{EStatsType::EST_Defense, 0}
+		{GameplayTags.Attributes_Stats_Attack, 0},
+		{GameplayTags.Attributes_Stats_Defense, 0},
+		{GameplayTags.Attributes_Stats_MaxHP, 0},
+		{GameplayTags.Attributes_Stats_SpecialAttack, 0},
+		{GameplayTags.Attributes_Stats_SpecialDefense, 0},
+		{GameplayTags.Attributes_Stats_Speed, 0}
 	};
 
 	UPROPERTY(EditAnywhere, Category = "Stats")

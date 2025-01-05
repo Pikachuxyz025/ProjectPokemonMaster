@@ -31,6 +31,10 @@ public:
 	FStatInfoSignature StatInfoDelegate;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<UPokemonStatInfoDataAsset>StatInfo;
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UPokemonStatInfoDataAsset> StatInfo;
+
+public:
+
+	void SetStatInfo(UPokemonStatInfoDataAsset* NewStatInfo) { StatInfo = NewStatInfo; }
 };

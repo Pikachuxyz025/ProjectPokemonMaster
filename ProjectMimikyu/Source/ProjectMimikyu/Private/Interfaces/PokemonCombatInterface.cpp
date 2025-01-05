@@ -40,12 +40,17 @@ int32 IPokemonCombatInterface::GetSpeed()
 	return 0;
 }
 
-float IPokemonCombatInterface::GetNatureMultiplier(EStatsType StatType)
+float IPokemonCombatInterface::GetNatureMultiplier(const FGameplayTag& StatTagToBeModified)
 {
 	return 0.0f;
 }
 
-int32 IPokemonCombatInterface::GetELB(int32 BaseStat, EStatsType StatType)
+int32 IPokemonCombatInterface::GetELB(int32 BaseStat, const FGameplayTag& StatTag)
+{
+	return 0;
+}
+
+int32 IPokemonCombatInterface::GetELBValue(const FGameplayTag& StatTag)
 {
 	return 0;
 }
@@ -58,6 +63,11 @@ float IPokemonCombatInterface::GetTypeMatchup(EElementalType ElementalType)
 FVector IPokemonCombatInterface::GetCombatSocketLocation()
 {
 	return FVector();
+}
+
+int32 IPokemonCombatInterface::GetBaseStatFromTag(const FGameplayTag& StatTag)
+{
+	return int32();
 }
 
 UPokemonMoveDataAsset* IPokemonCombatInterface::GetPokemonActiveMove()

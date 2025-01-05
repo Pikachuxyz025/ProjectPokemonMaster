@@ -238,24 +238,22 @@ struct FTypeChartMatchup:public FTableRowBase
 	};
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FPokemonUIInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FText PokemonName;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class	UTexture2D* PokemonSpriteImage;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 PokemonLevel = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float PokemonHPPercent = 0;
-
-
 };
 
 USTRUCT(BlueprintType)

@@ -5,6 +5,7 @@
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/DataTable.h"
+#include "DataAssets/PokemonStatInfoDataAsset.h"
 #include "Characters/CharacterTypes.h"
 
 // Sets default values for this component's properties
@@ -57,28 +58,28 @@ void UDamageSystemComponent::SetupElementalType(EElementalType TypeOne, EElement
 	SecondType = TypeTwo;
 }
 
-int32 UDamageSystemComponent::CalculateEffortLevelBase(int32 BaseStat, int32 CurrentEffortLevel, int32 CurrentLevel)
+int32 UDamageSystemComponent::CalculateEffortLevelBase(int32 BaseStat, int32 CurrentLevel, const FGameplayTag& StatTag)
 {
-	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[CurrentEffortLevel]) + CurrentLevel) / 2.5f);
+	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[StatInfo->FindStatInfoForTag(StatTag).EffortLevelValue]) + CurrentLevel) / 2.5f);
 }
 
 int32 UDamageSystemComponent::CalulateMaxHP(int32 CurrentLevel, int32 BaseHP)
 {
 	float X = ((float)CurrentLevel / 100.f) + 1.f;
-	float NewHealth = ((X * BaseHP) + CurrentLevel) + CalculateEffortLevelBase(BaseHP, EffortLevelBaseMap[EStatsType::EST_HealthPoints], CurrentLevel);
+	float NewHealth = ((X * BaseHP) + CurrentLevel) + CalculateEffortLevelBase(BaseHP, CurrentLevel,GameplayTags.Attributes_Stats_MaxHP );
 	return NewHealth;
 }
 
-int32 UDamageSystemComponent::CalulateOtherStats(int32 CurrentLevel, int32 BaseStat, EStatsType StatType, ENatureType NatureType)
+int32 UDamageSystemComponent::CalulateOtherStats(int32 CurrentLevel, int32 BaseStat, const FGameplayTag& StatTag, ENatureType NatureType)
 {
 	float X = ((float)CurrentLevel / 50.f) + 1;
 	float Y = (X * (float)BaseStat) / 1.5;
-	float Nature = NatureModifier(NatureType, StatType);
-	float ELB = CalculateEffortLevelBase(BaseStat, EffortLevelBaseMap[StatType], CurrentLevel);
+	float Nature = NatureModifier(NatureType, StatTag);
+	float ELB = CalculateEffortLevelBase(BaseStat, CurrentLevel, StatTag);
 	return (Y * Nature) + ELB;
 }
 
-float UDamageSystemComponent::NatureModifier(ENatureType CurrentNature, EStatsType StatToBeModified)
+float UDamageSystemComponent::NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified)
 {
 	float StatModifier = 1;
 	switch (CurrentNature)
@@ -96,123 +97,123 @@ float UDamageSystemComponent::NatureModifier(ENatureType CurrentNature, EStatsTy
 	case ENatureType::ENT_Serious:
 		break;
 	case ENatureType::ENT_Adamant:
-		if (StatToBeModified == EStatsType::EST_Attack)	
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))	
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Modest:
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Bold:
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Brave:
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Calm:
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Careful:
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Gentle:
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Hasty:
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Jolly:
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Lax:
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Lonely:
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Mild:
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Naughty:
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Quiet:
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Timid:
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Attack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Relaxed:
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Sassy:
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Rash:
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Naive:
-		if (StatToBeModified == EStatsType::EST_Speed)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialDefense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
 			StatModifier = 0.9f;
 		break;
 	case ENatureType::ENT_Impish:
-		if (StatToBeModified == EStatsType::EST_Defense)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
 			StatModifier = 1.1f;
-		if (StatToBeModified == EStatsType::EST_SpecialAttack)
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
 			StatModifier = 0.9f;
 		break;
 	default:
@@ -240,6 +241,11 @@ float UDamageSystemComponent::TypeChartDamageMultiplier(EElementalType DamageEle
 }
 
 
+void UDamageSystemComponent::SetStatInfo(UPokemonBaseAttributeSet* PokemonAttributes)
+{
+	StatInfo->SetPokemonAttribute(PokemonAttributes);
+}
+
 // Called every frame
 void UDamageSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -262,11 +268,11 @@ void UDamageSystemComponent::SetupStats
 {
 	MaxHP = CalulateMaxHP(CurrentLevel, BaseHealth);
 	CurrentHP = MaxHP;
-	Attack = CalulateOtherStats(CurrentLevel, BaseAttack, EStatsType::EST_Attack, CurrentNature);
-	Speed = CalulateOtherStats(CurrentLevel, BaseSpeed, EStatsType::EST_Speed, CurrentNature);
-	SpecialAttack = CalulateOtherStats(CurrentLevel, BaseSpecialAttack, EStatsType::EST_SpecialAttack, CurrentNature);
-	Defense = CalulateOtherStats(CurrentLevel, BaseDefense, EStatsType::EST_Defense, CurrentNature);
-	SpecialDefense = CalulateOtherStats(CurrentLevel, BaseSpecialDefense, EStatsType::EST_SpecialDefense, CurrentNature);
+	Attack = CalulateOtherStats(CurrentLevel, BaseAttack, GameplayTags.Attributes_Stats_Attack, CurrentNature);
+	Speed = CalulateOtherStats(CurrentLevel, BaseSpeed, GameplayTags.Attributes_Stats_Speed, CurrentNature);
+	SpecialAttack = CalulateOtherStats(CurrentLevel, BaseSpecialAttack, GameplayTags.Attributes_Stats_SpecialAttack, CurrentNature);
+	Defense = CalulateOtherStats(CurrentLevel, BaseDefense, GameplayTags.Attributes_Stats_Defense, CurrentNature);
+	SpecialDefense = CalulateOtherStats(CurrentLevel, BaseSpecialDefense, GameplayTags.Attributes_Stats_SpecialDefense, CurrentNature);
 }
 
 float UDamageSystemComponent::GetRunningSpeed()

@@ -4,6 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Characters/CharacterTypes.h"
 #include "PokemonWidgetController.generated.h"
 
 class UAbilitySystemComponent;
@@ -14,14 +15,17 @@ struct FWidgetControllerParams
 {
 	GENERATED_BODY()
 	FWidgetControllerParams() {}
-	FWidgetControllerParams( UAbilitySystemComponent* ASC, UAttributeSet* AS) :
-		 AbilitySystemComponent(ASC), AttributeSet(AS) {}
+	FWidgetControllerParams(FPokemonUIInfo Info, UAbilitySystemComponent* ASC, UAttributeSet* AS) :
+		 PokeUIInfo(Info), AbilitySystemComponent(ASC), AttributeSet(AS) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FPokemonUIInfo PokeUIInfo;
 };
 
 
@@ -43,4 +47,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY( BlueprintReadOnly, Category = "WidgetController")
+	FPokemonUIInfo PokeUIInfo;
 };

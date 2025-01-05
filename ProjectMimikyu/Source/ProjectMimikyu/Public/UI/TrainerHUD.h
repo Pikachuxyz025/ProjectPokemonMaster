@@ -11,6 +11,7 @@ class UPlayerInventoryMenuOverlay;
 class UPlayerMenuOverlay;
 class UTrainerOverlay;
 struct FWidgetControllerParams;
+class UPokemonUIInfoWidgetController;
 
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerHUD : public AHUD
@@ -29,17 +30,28 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UUserWidget>MenuOverlayClass;
 
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UUserWidget> PokemonStatInfoOverlayClass;
+
 	UPROPERTY()
 	TObjectPtr<	UPokemonMenuWidgetController> PokemonMenuWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonMenuWidgetController>PokemonMenuWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonUIInfoWidgetController>PokemonUIInfoWidgetController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPokemonUIInfoWidgetController>PokemonUIInfoWidgetControllerClass;
 public:
 
 	void AddTrainerOverlay();
-	void AddInventoryOverlay();
-	void AddPlayerMenuOverlay();
+	//void AddInventoryOverlay();
+	void AddPlayerInventoryMenuOverlay();
 
+	UFUNCTION(BlueprintCallable)
+	void SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWidget);//,bool bRemoveMouse);
 	UPROPERTY()
 	 TObjectPtr<UPlayerInventoryMenuOverlay> InventoryOverlay;
 
@@ -50,4 +62,5 @@ public:
 	 TObjectPtr<UTrainerOverlay> TrainerOverlay;
 
 	 UPokemonMenuWidgetController* GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams);
+	 UPokemonUIInfoWidgetController* GetPokemonUIInfoWidgetController(const FWidgetControllerParams& WCParams);
 };

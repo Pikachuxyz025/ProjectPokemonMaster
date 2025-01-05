@@ -21,6 +21,13 @@ class PROJECTMIMIKYU_API ATrainerController : public APlayerController
 
 public:
 	ATrainerController();
+
+UFUNCTION(BlueprintCallable)
+	void AddMouseCursor(UUserWidget* CurrentWidget, bool bSetUpMode);
+UFUNCTION(BlueprintCallable)
+	void RemoveMouseCursor();
+	UFUNCTION(BlueprintCallable)
+	void FocusNewWidget(UUserWidget* NewWidget);
 private:
 
 	UPROPERTY()

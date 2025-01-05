@@ -164,6 +164,9 @@
     <Filter Include="Source\ProjectMimikyu\Private\DataAssets">
       <UniqueIdentifier>{5A2DECAE-78F5-3986-9116-701FCF4ECF99}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\EffortLevelBaseDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
@@ -207,6 +210,9 @@
       <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\InteractInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\MouseInterface.cpp">
       <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonCombatInterface.cpp">
@@ -284,7 +290,22 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PlayerMenuOverlay.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonChartSummary.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonMove.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonMoveList.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonPartyRow.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\PokemonUserWidget.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TextValueSection.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerHUD.cpp">
@@ -303,6 +324,9 @@
       <UniqueIdentifier>{E0481A3C-60F9-3531-9825-C3FEFF75B9D4}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonMenuWidgetController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonUIInfoWidgetController.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonWidgetController.cpp">
@@ -425,6 +449,9 @@
     <Filter Include="Source\ProjectMimikyu\Public\DataAssets">
       <UniqueIdentifier>{1E1E6CDA-D4A1-387B-96C2-B0A8857D543E}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\EffortLevelBaseDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
@@ -468,6 +495,9 @@
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\InteractInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\MouseInterface.h">
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h">
@@ -545,7 +575,22 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PlayerMenuOverlay.h">
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonChartSummary.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonMove.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonMoveList.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonPartyRow.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\PokemonUserWidget.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TextValueSection.h">
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h">
@@ -564,6 +609,9 @@
       <UniqueIdentifier>{6C79313D-FA2B-3766-A3B6-6325FB79147D}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonMenuWidgetController.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonUIInfoWidgetController.h">
       <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonWidgetController.h">

@@ -2,7 +2,9 @@
 
 
 #include "UI/PlayerInventoryMenuOverlay.h"
+#include "AIControllers/TrainerController.h"
 #include "UI/InventoryGrid.h"
+#include "UI/TrainerHUD.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 
 void UPlayerInventoryMenuOverlay::DisplayInventory()
@@ -11,6 +13,8 @@ void UPlayerInventoryMenuOverlay::DisplayInventory()
 	if (PlayerCharacter)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Found Player Character"));
+		PokemonPartyInfo = PlayerCharacter->GetCurrentParty();
+		AllocatePokemonInfo();
 		InventoryGrid->DisplayInventory(PlayerCharacter->GetInventorySystem());
 	}
 }
@@ -59,7 +63,11 @@ FReply UPlayerInventoryMenuOverlay::NativeOnKeyDown(const FGeometry& InGeometry,
 	if (InKeyEvent.GetKey() == ExitKey)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Remove"));
-		RemoveFromParent();
+		CurrentController = CurrentController ? CurrentController : GetOwningPlayer();
+		ATrainerHUD* TrainerHUD = CastChecked<ATrainerHUD>(CurrentController->GetHUD());
+		ATrainerController* TrainerController = CastChecked<ATrainerController>(CurrentController);
+		TrainerController->RemoveMouseCursor();
+		TrainerHUD->SwitchOverlays(this,ReturnToWidget);
 	}
 	else
 	{
@@ -71,14 +79,17 @@ FReply UPlayerInventoryMenuOverlay::NativeOnKeyDown(const FGeometry& InGeometry,
 
 void UPlayerInventoryMenuOverlay::NativeDestruct()
 {
-	RemoveMouseCursor();
+	//RemoveMouseCursor();
 	Super::NativeDestruct();
 }
 
 void UPlayerInventoryMenuOverlay::NativeConstruct()
 {
 	DisplayInventory();
-	AddMouseCursor();
+	CurrentController = CurrentController ? CurrentController : GetOwningPlayer();
+	ATrainerController* TrainerController = CastChecked<ATrainerController>(CurrentController);
+	TrainerController->AddMouseCursor(InventoryGrid,true);
+	//AddMouseCursor();
 
 	Super::NativeConstruct();
 }

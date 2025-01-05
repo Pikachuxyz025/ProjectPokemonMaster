@@ -92,13 +92,14 @@ void APokemon_Parent::BeginPlay()
 	);
 
 	DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
-	SetupPokemonUIInfo();
+
 	MovesetComponent->SpawnWithMoveSet(CurrentLevel);
 	AddPokemonAbilities();
 
 	SetupMeleeTimeline();
 
-	InitAbilityActorInfo();
+	InitAbilityActorInfo();	
+	SetupPokemonUIInfo();
 }
 
 void APokemon_Parent::AddPokemonAbilities()
@@ -141,12 +142,13 @@ void APokemon_Parent::SetupPokemonUIInfo()
 	PokemonUIInfo.PokemonLevel = CurrentLevel;
 	PokemonUIInfo.PokemonName = PokemonDataAsset->Name;
 	PokemonUIInfo.PokemonSpriteImage = PokemonDataAsset->SpriteImage;
-	PokemonUIInfo.PokemonHPPercent = DamageSystem->GetHealthPercent();
+	
+	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();//DamageSystem->GetHealthPercent();
 }
 
 void APokemon_Parent::UpdatePokemonUIInfo()
 {
-	PokemonUIInfo.PokemonHPPercent = DamageSystem->GetHealthPercent();
+	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();//DamageSystem->GetHealthPercent();
 }
 
 void APokemon_Parent::PossessedBy(AController* NewController)
@@ -163,6 +165,13 @@ void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(APokemon_Parent, PokemonStatus);
 	DOREPLIFETIME(APokemon_Parent, bIsCaught);
 
+}
+
+UPokemonStatInfoDataAsset* APokemon_Parent::GetPokemonStatInfo()
+{
+	UPokemonBaseAttributeSet* PokemonAttributes = Cast<UPokemonBaseAttributeSet>(GetAttributeSet());
+	DamageSystem->SetStatInfo(PokemonAttributes);
+	return DamageSystem->StatInfo;
 }
 
 UAbilitySystemComponent* APokemon_Parent::GetAbilitySystemComponent() const
@@ -383,13 +392,17 @@ int32 APokemon_Parent::GetSpeed()
 {
 	return PokemonDataAsset->BaseSpeed;
 }
-float APokemon_Parent::GetNatureMultiplier(EStatsType StatType)
+float APokemon_Parent::GetNatureMultiplier(const FGameplayTag& StatTagToBeModified)
 {
-	return DamageSystem->NatureModifier(Nature, StatType);
+	return DamageSystem->NatureModifier(Nature, StatTagToBeModified);
 }
-int32 APokemon_Parent::GetELB(int32 BaseStat, EStatsType StatType)
+int32 APokemon_Parent::GetELB(int32 BaseStat, const FGameplayTag& StatTag)
 {
-	return DamageSystem->CalculateEffortLevelBase(BaseStat, DamageSystem->EffortLevelBaseMap[StatType], CurrentLevel);
+	return DamageSystem->CalculateEffortLevelBase(BaseStat, CurrentLevel, StatTag);
+}
+int32 APokemon_Parent::GetELBValue(const FGameplayTag& StatTag)
+{
+	return DamageSystem->EffortLevelBaseMap[StatTag];
 }
 FVector APokemon_Parent::GetCombatSocketLocation()
 {
@@ -402,6 +415,10 @@ float APokemon_Parent::GetTypeMatchup(EElementalType ElementalType)
 UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
 {
 	return ActivePokemonMove;
+}
+int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
+{
+	return PokemonDataAsset->GetStatFromTag(StatTag);
 }
 #pragma endregion
 
@@ -585,6 +602,12 @@ UPokemonAbilitySystemComponent* APokemon_Parent::GetPokemonASC()
 {
 	UPokemonAbilitySystemComponent* PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
 	return PokemonASC;
+}
+
+UPokemonBaseAttributeSet* APokemon_Parent::GetPokemonAS()
+{
+	UPokemonBaseAttributeSet* PokemonAS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
+	return PokemonAS;
 }
 
 void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)

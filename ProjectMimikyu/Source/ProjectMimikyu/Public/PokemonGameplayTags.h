@@ -53,6 +53,7 @@ public:
 	FGameplayTag InputTag_Dodge_Right;
 	FGameplayTag InputTag_Dodge_Forward;
 	FGameplayTag InputTag_Dodge_Backward;
+
 private:
 	static FPokemonGameplayTags GameplayTags;
 };

@@ -6,9 +6,9 @@
 
 void UTrainerOverlayWidgetController::BroadcastInitialValues()
 {
-	const  UPokemonBaseAttributeSet* AuraAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-	OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
+	const  UPokemonBaseAttributeSet* PokemonAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
+	OnHealthChanged.Broadcast(PokemonAttributeSet->GetHealth());
+	OnMaxHealthChanged.Broadcast(PokemonAttributeSet->GetMaxHealth());
 }
 
 void UTrainerOverlayWidgetController::BindCallbacksToDependencies()

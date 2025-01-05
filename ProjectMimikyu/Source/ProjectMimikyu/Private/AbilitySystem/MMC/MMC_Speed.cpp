@@ -6,11 +6,12 @@
 
 float UMMC_Speed::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
+	FGameplayTag Speed = GameplayTags.Get().Attributes_Stats_Speed;
 	IPokemonCombatInterface* CombatInterface = Cast<IPokemonCombatInterface>(Spec.GetContext().GetSourceObject());
 	int32 CurrentLevel = CombatInterface->GetPokemonLevel();
-	int32 BaseStat = CombatInterface->GetSpeed();
+	int32 BaseStat = CombatInterface->GetBaseStatFromTag(Speed);
 
-	float Nature = CombatInterface->GetNatureMultiplier(EStatsType::EST_Speed);
-	float ELB = CombatInterface->GetELB(BaseStat, EStatsType::EST_Speed);
+	float Nature = CombatInterface->GetNatureMultiplier(Speed);
+	float ELB = CombatInterface->GetELB(BaseStat, Speed);
 	return (float)CalculateOtherStats(CurrentLevel, BaseStat, Nature, ELB);
 }

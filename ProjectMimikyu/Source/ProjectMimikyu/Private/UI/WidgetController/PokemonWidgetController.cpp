@@ -7,6 +7,7 @@ void UPokemonWidgetController::SetWidgetControllerParams(const FWidgetController
 {
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;
 	AttributeSet = WCParams.AttributeSet;
+	PokeUIInfo = WCParams.PokeUIInfo;
 }
 
 void UPokemonWidgetController::BroadcastInitialValues()

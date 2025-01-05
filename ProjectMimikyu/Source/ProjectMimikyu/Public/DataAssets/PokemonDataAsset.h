@@ -4,6 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "GameplayTagContainer.h"
 #include "Characters/CharacterTypes.h"
 #include "PokemonDataAsset.generated.h"
 
@@ -46,8 +47,13 @@ public:
 	int32 BaseSpeed = 0;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
+	TMap<FGameplayTag, int32> TagsToBaseStats;
+
+	UPROPERTY(EditAnywhere, Category = "Stats")
 	EElementalType FirstType = EElementalType::EET_None;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	EElementalType SecondType = EElementalType::EET_None;
+
+	int32 GetStatFromTag(const FGameplayTag& StatTag);
 };

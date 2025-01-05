@@ -4,26 +4,27 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Interfaces/MouseInterface.h"
 #include "PlayerInventoryMenuOverlay.generated.h"
 
-/**
- * 
- */
+class APokemon_Parent;
+class AProjectMimikyuCharacter;
+class UInventoryGrid;
 UCLASS()
-class PROJECTMIMIKYU_API UPlayerInventoryMenuOverlay : public UUserWidget
+class PROJECTMIMIKYU_API UPlayerInventoryMenuOverlay : public UUserWidget,public IMouseInterface
 {
 	GENERATED_BODY()
 	
 public:
 	
 	UPROPERTY(meta = (BindWidget))
-	class UInventoryGrid* InventoryGrid;
+	 UInventoryGrid* InventoryGrid;
 
 	UPROPERTY(EditAnywhere)
-	class AProjectMimikyuCharacter* PlayerCharacter;
+ AProjectMimikyuCharacter* PlayerCharacter;
 
-	void AddMouseCursor();
-	void RemoveMouseCursor();
+	virtual void AddMouseCursor() override;
+	virtual void RemoveMouseCursor() override;
 	UPROPERTY()
 	APlayerController* CurrentController;
 
@@ -38,5 +39,18 @@ public:
 	virtual void NativePreConstruct() override;
 	virtual void NativeDestruct() override;
 	virtual void NativeConstruct() override;
- FORCEINLINE	void SetPlayerController(APlayerController* PlayerController) { CurrentController = PlayerController; }
+
+ FORCEINLINE void SetPlayerController(APlayerController* PlayerController) { CurrentController = PlayerController; }
+
+ UFUNCTION(BlueprintImplementableEvent)
+ void AllocatePokemonInfo();
+
+
+ void SetReturnToWidegt(UUserWidget* ReturnWidget) { ReturnToWidget = ReturnWidget; }
+protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	TArray<APokemon_Parent*> PokemonPartyInfo;
+
+	UPROPERTY(VisibleAnywhere)
+	UUserWidget* ReturnToWidget = nullptr;
 };

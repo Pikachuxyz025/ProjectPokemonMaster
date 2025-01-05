@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayModMagnitudeCalculation.h"
+#include "PokemonGameplayTags.h"
 #include "MMC_StatCalculation.generated.h"
 
 /**
@@ -16,4 +17,5 @@ class PROJECTMIMIKYU_API UMMC_StatCalculation : public UGameplayModMagnitudeCalc
 	
 public:
 	int32 CalculateOtherStats(int CurrentLevel, int BaseStat, float Nature, float ELB) const;
+	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
 };

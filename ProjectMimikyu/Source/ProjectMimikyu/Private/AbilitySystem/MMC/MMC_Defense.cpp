@@ -6,11 +6,12 @@
 
 float UMMC_Defense::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
+	FGameplayTag Defense = GameplayTags.Get().Attributes_Stats_Defense;
 	TScriptInterface<IPokemonCombatInterface>  CombatInterface = Spec.GetContext().GetSourceObject();
 	int32 CurrentLevel = CombatInterface->GetPokemonLevel();
-	int32 BaseStat = CombatInterface->GetDefense();
+	int32 BaseStat = CombatInterface->GetBaseStatFromTag(Defense);
 
-	float Nature = CombatInterface->GetNatureMultiplier(EStatsType::EST_Defense);
-	float ELB = CombatInterface->GetELB(BaseStat, EStatsType::EST_Defense);
+	float Nature = CombatInterface->GetNatureMultiplier(Defense);
+	float ELB = CombatInterface->GetELB(BaseStat, Defense);
 	return (float)CalculateOtherStats(CurrentLevel, BaseStat, Nature, ELB);
 }

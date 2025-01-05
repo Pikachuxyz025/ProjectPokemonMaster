@@ -2,8 +2,10 @@
 
 
 #include "UI/TrainerOverlay.h"
+#include "UI/PokemonMoveList.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "ActorComponents/InventorySystemComponent.h"
+#include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "Components/Image.h"
@@ -69,7 +71,7 @@ void UTrainerOverlay::ShiftUIRight()
 		break;
 	case ESlotType::EST_PokemonParty:
 
-	if (!HasPokemon()||HowManyPokemon()<2)
+	if (!HasPokemon()||HowManyPokemon() < 2)
 		return;
 
 		SetIndexRight(PartyIndex, 0, HowManyPokemon()-1);
@@ -350,6 +352,8 @@ void UTrainerOverlay::CreateMovesetUI()
 	PokemonMovesetOptions.Empty();
 	PokemonMovesetOptions = SetupMovesetOfActivePokemon();
 	UE_LOG(LogTemp, Display, TEXT("create moveset"));
+	PokemonMoveList->SetVisibility(ESlateVisibility::Visible);
+	PokemonMoveList->SetupMoveList(PokemonMovesetOptions);
 	// Set up moveset widget here
 
 }
@@ -357,6 +361,7 @@ void UTrainerOverlay::CreateMovesetUI()
 void UTrainerOverlay::RemoveMovesetUI()
 {
 	PokemonMovesetOptions.Empty();
+	PokemonMoveList->SetVisibility(ESlateVisibility::Hidden);
 	// Set up moveset widget here
 }
 

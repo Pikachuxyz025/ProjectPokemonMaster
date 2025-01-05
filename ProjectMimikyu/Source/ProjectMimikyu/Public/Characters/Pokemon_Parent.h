@@ -60,7 +60,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* AIBehaviorTree;
 	FPokemonUIInfo PokemonUIInfo;
-	UPokemonStatInfoDataAsset* PokemonStatInfo;
 #pragma region Attributes Setup
 	UPROPERTY()
 	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
@@ -154,11 +153,13 @@ public:
 	virtual int32 GetAttack() override;
 	virtual int32 GetDefense() override;
 	virtual int32 GetSpeed() override;
-	virtual float GetNatureMultiplier(EStatsType StatType) override;
-	virtual int32 GetELB(int32 BaseStat, EStatsType StatType) override;
+	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
+	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
+	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
 	virtual FVector GetCombatSocketLocation() override;
 	virtual float GetTypeMatchup(EElementalType ElementalType) override;
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
+	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
 #pragma endregion
 
 
@@ -258,13 +259,20 @@ public:
 	void SetIsDodging(bool Dodging) { bIsDodging = Dodging; }
 
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return AIBehaviorTree; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo() { return PokemonUIInfo; }
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController; }
+
 	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
 	FORCEINLINE bool GetIsDodging() { return bIsDodging; }
 	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
+
 	ENatureType GetNature() { return Nature; }
+
+	UPokemonStatInfoDataAsset* GetPokemonStatInfo();
 
 	UFUNCTION(BlueprintCallable)
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -273,6 +281,9 @@ public:
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	UPokemonAbilitySystemComponent* GetPokemonASC();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	UPokemonBaseAttributeSet* GetPokemonAS();
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() { return DodgeDirection; }

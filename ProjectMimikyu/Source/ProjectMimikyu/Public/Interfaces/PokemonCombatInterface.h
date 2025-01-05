@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayTagContainer.h" 
 #include "Characters/CharacterTypes.h"
 #include "PokemonCombatInterface.generated.h"
 
@@ -32,9 +33,11 @@ public:
 	virtual int32 GetAttack();
 	virtual int32 GetDefense();
 	virtual int32 GetSpeed();
-	virtual float GetNatureMultiplier(EStatsType StatType);
-	virtual int32 GetELB(int32 BaseStat, EStatsType StatType);
+	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified);
+	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag);
+	virtual int32 GetELBValue(const FGameplayTag& StatTag);
 	virtual float GetTypeMatchup(EElementalType ElementalType);
 	virtual FVector GetCombatSocketLocation();
+	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag);
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove();
 };

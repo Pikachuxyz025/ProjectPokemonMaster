@@ -16,8 +16,10 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySystemComponent_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveList_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlay();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlay_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ESlotType();
 	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
@@ -172,6 +174,14 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_InventorySystem_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_InventorySystem;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMoveList_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonMoveList;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_WidgetController_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_WidgetController;
 		static const UECodeGen_Private::FBytePropertyParams NewProp_CurrentSlotMode_Underlying;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_CurrentSlotMode_MetaData[];
@@ -300,6 +310,20 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_InventorySystem = { "InventorySystem", nullptr, (EPropertyFlags)0x00100000000a0009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlay, InventorySystem), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_InventorySystem_MetaData), Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_InventorySystem_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMoveList_MetaData[] = {
+		{ "BindWidget", "" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/UI/TrainerOverlay.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMoveList = { "PokemonMoveList", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlay, PokemonMoveList), Z_Construct_UClass_UPokemonMoveList_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMoveList_MetaData), Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMoveList_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_WidgetController_MetaData[] = {
+		{ "ModuleRelativePath", "Public/UI/TrainerOverlay.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_WidgetController = { "WidgetController", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlay, WidgetController), Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_WidgetController_MetaData), Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_WidgetController_MetaData) };
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_CurrentSlotMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_CurrentSlotMode_MetaData[] = {
@@ -322,13 +346,7 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMovesetOptions_MetaData[] = {
 		{ "Category", "TrainerOverlay" },
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "//TMap<int32, APokemon_Parent*> PokemonPartyInfo;\n" },
-#endif
 		{ "ModuleRelativePath", "Public/UI/TrainerOverlay.h" },
-#if !UE_BUILD_SHIPPING
-		{ "ToolTip", "TMap<int32, APokemon_Parent*> PokemonPartyInfo;" },
-#endif
 	};
 #endif
 	const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMovesetOptions = { "PokemonMovesetOptions", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlay, PokemonMovesetOptions), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMovesetOptions_MetaData), Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMovesetOptions_MetaData) }; // 493927155
@@ -371,6 +389,8 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonHealth,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_OwnerCharacter,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_InventorySystem,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonMoveList,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_WidgetController,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_CurrentSlotMode_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_CurrentSlotMode,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlay_Statics::NewProp_PokemonPartyInfo_Inner,
@@ -424,9 +444,9 @@ void EmptyLinkFunctionForGeneratedCodeTrainerOverlay() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UTrainerOverlay, UTrainerOverlay::StaticClass, TEXT("UTrainerOverlay"), &Z_Registration_Info_UClass_UTrainerOverlay, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlay), 3014054805U) },
+		{ Z_Construct_UClass_UTrainerOverlay, UTrainerOverlay::StaticClass, TEXT("UTrainerOverlay"), &Z_Registration_Info_UClass_UTrainerOverlay, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlay), 583220460U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_1410404062(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_3766171945(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

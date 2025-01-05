@@ -18,10 +18,20 @@ public:
 
 	void DisplayOverlay(APlayerController* PlayerController);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UUserWidget> InventoryMenuClass;
+
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UUserWidget>TrainerOverlayClass;
+
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UUserWidget>MenuOverlayClass;
+
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UUserWidget> PokemonStatInfoOverlayClass;
 
 	UPROPERTY(VisibleAnywhere)
 	class UPlayerInventoryMenuOverlay* InventoryMenu;
 
 };
+

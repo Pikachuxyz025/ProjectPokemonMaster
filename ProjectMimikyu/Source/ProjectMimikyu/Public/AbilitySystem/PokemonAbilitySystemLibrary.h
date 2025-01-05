@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Characters/CharacterTypes.h"
 #include "PokemonAbilitySystemLibrary.generated.h"
 
 class UPokemonAbilitySystemComponent;
 class UPokemonMenuWidgetController;
+class UPokemonUIInfoWidgetController;
 UCLASS(BlueprintType, Blueprintable)
 class PROJECTMIMIKYU_API UPokemonAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
@@ -18,5 +20,8 @@ public:
 	static void ActivateAbilityByTag(const UObject* WorldContextObject, UPokemonAbilitySystemComponent* ASC, FGameplayTag AbilityTag);
 
 	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController")
-	static UPokemonMenuWidgetController* GetStatMenuWidgetController(const UObject* WorldContextObject);
+	static UPokemonMenuWidgetController* GetPokemonMenuWidgetController(AActor* ObjectActor);
+
+	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController")
+	static UPokemonUIInfoWidgetController* GetPokemonUIInfoWidgetController(AActor* ObjectActor);
 };

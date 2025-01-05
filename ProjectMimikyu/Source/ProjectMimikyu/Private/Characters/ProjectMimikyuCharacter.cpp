@@ -164,8 +164,6 @@ void AProjectMimikyuCharacter::CatchPokemon()
 		APokemon_Parent* CaughtPokemon = Cast<APokemon_Parent>(OutHit.GetActor());
 		if (CaughtPokemon && !CaughtPokemon->bIsCaught)
 		{
-			//for (int32 i = 1; i < 7; i++)
-			//{
 			if (CurrentParty.Num() < 6)
 			{
 				CurrentParty.Add(CaughtPokemon);
@@ -173,11 +171,6 @@ void AProjectMimikyuCharacter::CatchPokemon()
 				ServerAddToCurrentParty(OutHit.GetActor());
 				OnPartyUpdated.Broadcast();
 			}
-			//else
-			//{
-			//	continue;
-			//}
-		//}
 		}
 	}
 }
@@ -197,11 +190,7 @@ void AProjectMimikyuCharacter::RemovePokemonMoveset()
 void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, FVector Start, FVector End)
 {
 	UWorld* World = GetWorld();
-	if (!World)return;
-	//const FName TraceTag("MyTraceTag");
-	//World->DebugDrawTraceTag = TraceTag;
-	//FCollisionQueryParams CollisionParams;
-	//CollisionParams.TraceTag = TraceTag;
+	if (!World) return;
 	DrawDebugLine
 	(
 		World,
@@ -323,13 +312,6 @@ void AProjectMimikyuCharacter::TargetAndEngage()
 	{
 		UE_LOG(LogTemp, Display, TEXT("Hit something"));
 		EngagedTarget = OutHit.GetActor();
-		//IDamageInterface* DamageInterface = Cast<IDamageInterface>(EngagedTarget);
-		//if (DamageInterface && IDamageInterface::Execute_HasFainted(EngagedTarget))
-		//{
-		//	UE_LOG(LogTemp, Display, TEXT("No health"));
-		//	EngagedTarget = nullptr;
-		//}
-		//OnTargetRegistered.Broadcast(EngagedTarget);
 		ServerBroadcastTarget(EngagedTarget);
 	}
 }
