@@ -50,4 +50,7 @@ protected:
 
 	UPROPERTY( BlueprintReadOnly, Category = "WidgetController")
 	FPokemonUIInfo PokeUIInfo;
+
+public:
+	FText GetPokemonName();
 };

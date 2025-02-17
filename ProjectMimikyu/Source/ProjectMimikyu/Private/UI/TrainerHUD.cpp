@@ -65,6 +65,9 @@ void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWid
 
 UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams)
 {
+	if (PokemonMenuWidgetController && !WCParams.PokeUIInfo.PokemonName.EqualTo(PokemonMenuWidgetController->GetPokemonName()))
+		PokemonMenuWidgetController = nullptr;
+
 	if (!PokemonMenuWidgetController)
 	{
 		PokemonMenuWidgetController = NewObject<UPokemonMenuWidgetController>(this, PokemonMenuWidgetControllerClass);

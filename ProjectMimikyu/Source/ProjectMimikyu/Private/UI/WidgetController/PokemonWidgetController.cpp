@@ -17,3 +17,8 @@ void UPokemonWidgetController::BroadcastInitialValues()
 void UPokemonWidgetController::BindCallbacksToDependencies()
 {
 }
+
+FText UPokemonWidgetController::GetPokemonName()
+{
+	return PokeUIInfo.PokemonName;
+}
