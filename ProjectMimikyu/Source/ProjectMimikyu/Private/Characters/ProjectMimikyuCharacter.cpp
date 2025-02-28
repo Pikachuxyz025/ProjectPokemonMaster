@@ -247,7 +247,7 @@ void AProjectMimikyuCharacter::UpdateCurrentPokemonHealth()
 
 void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
 {
-	if (bAreMovesSelectable && !CurrentPokemon->GetIsCommandActive())
+	if (/*bAreMovesSelectable &&*/ !CurrentPokemon->GetIsCommandActive())
 	{
 		FVector NewDodgeDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
 		CurrentPokemon->Dodge(NewDodgeDirection);

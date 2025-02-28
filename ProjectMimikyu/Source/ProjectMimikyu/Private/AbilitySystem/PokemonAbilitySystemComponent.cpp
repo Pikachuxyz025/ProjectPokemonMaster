@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 
@@ -48,6 +49,18 @@ void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& In
 			}
 		}
 	}
+}
+
+int32 UPokemonAbilitySystemComponent::GetPokemonLevel() const
+{
+	const UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
+	return (int32)PAS->GetLevel();
+}
+
+int32 UPokemonAbilitySystemComponent::GetXP() const
+{
+	const UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
+	return (int32)PAS->GetXP();
 }
 
 void UPokemonAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)

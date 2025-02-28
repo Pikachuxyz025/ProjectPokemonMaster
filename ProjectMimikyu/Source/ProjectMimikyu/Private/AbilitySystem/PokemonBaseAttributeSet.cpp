@@ -34,6 +34,8 @@ void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Attack, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Speed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, DodgeForce, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, XP, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Level , COND_None, REPNOTIFY_Always);
 }
 
 void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -107,9 +109,29 @@ void UPokemonBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& Old
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, MaxHealth, OldMaxHealth);
 }
 
+void UPokemonBaseAttributeSet::OnRep_PowerPoints(const FGameplayAttributeData& OldPowerPoints) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, PowerPoints, OldPowerPoints);
+}
+
+void UPokemonBaseAttributeSet::OnRep_MaxPowerPoints(const FGameplayAttributeData & OldMaxPowerPoints) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, MaxPowerPoints, OldMaxPowerPoints);
+}
+
 void UPokemonBaseAttributeSet::OnRep_Speed(const FGameplayAttributeData& OldSpeed) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, Speed, OldSpeed);
+}
+
+void UPokemonBaseAttributeSet::OnRep_XP(const FGameplayAttributeData& OldXP) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, XP, OldXP);
+}
+
+void UPokemonBaseAttributeSet::OnRep_Level(const FGameplayAttributeData& OldLevel) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, Level, OldLevel);
 }
 
 void UPokemonBaseAttributeSet::OnRep_SpecialAttack(const FGameplayAttributeData& OldSpecialAttack) const

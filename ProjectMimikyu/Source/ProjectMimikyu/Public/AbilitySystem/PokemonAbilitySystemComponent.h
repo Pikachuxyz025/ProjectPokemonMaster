@@ -25,6 +25,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ActivateAbilityByTag(const FGameplayTag& InputTag);
+	int32 GetPokemonLevel() const;
+	int32 GetXP() const;
 protected:
 
 	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);

@@ -79,6 +79,14 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, MaxHealth);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PowerPoints, Category = "Vital Stat Attributes")
+	FGameplayAttributeData PowerPoints;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, PowerPoints);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxPowerPoints, Category = "Vital Stat Attributes")
+	FGameplayAttributeData MaxPowerPoints;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, MaxPowerPoints);
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_SpecialDefense, Category = "Vital Stat Attributes")
 	FGameplayAttributeData SpecialDefense;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, SpecialDefense);
@@ -101,9 +109,17 @@ public:
 
 #pragma endregion
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeForce, Category = "Vital Stat Attributes")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeForce, Category = "Secondary Stat Attributes")
 	FGameplayAttributeData DodgeForce;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, DodgeForce);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_XP, Category = "Vital Stat Attributes")
+	FGameplayAttributeData XP;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, XP);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Level, Category = "Vital Stat Attributes")
+	FGameplayAttributeData Level;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, Level);
 
 #pragma region Meta Attributes
 
@@ -115,6 +131,10 @@ public:
 	FGameplayAttributeData KnockbackForce;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, KnockbackForce);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingXP;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, IncomingXP);
+
 #pragma endregion
 
 	UFUNCTION()
@@ -124,7 +144,19 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION()
+	void OnRep_PowerPoints(const FGameplayAttributeData& OldPowerPoints) const;
+
+	UFUNCTION()
+	void OnRep_MaxPowerPoints(const FGameplayAttributeData& OldMaxPowerPoints) const;
+
+	UFUNCTION()
 	void OnRep_Speed(const FGameplayAttributeData& OldSpeed) const;
+
+	UFUNCTION()
+	void OnRep_XP(const FGameplayAttributeData& OldXP) const;
+
+	UFUNCTION()
+	void OnRep_Level(const FGameplayAttributeData& OldLevel) const;
 
 	UFUNCTION()
 	void OnRep_SpecialDefense(const FGameplayAttributeData& OldSpecialDefense) const;

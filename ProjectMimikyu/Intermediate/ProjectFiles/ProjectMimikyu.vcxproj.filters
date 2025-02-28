@@ -218,6 +218,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonCombatInterface.cpp">
       <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonLevelInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Items">
       <UniqueIdentifier>{2BAE987B-6AA5-3CBC-8D50-669AD8B74FCB}</UniqueIdentifier>
     </Filter>
@@ -501,6 +504,9 @@
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonLevelInterface.h">
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Items">

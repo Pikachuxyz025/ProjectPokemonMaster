@@ -33,7 +33,11 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FEffectProperti
 	DECLARE_FUNCTION(execOnRep_Attack); \
 	DECLARE_FUNCTION(execOnRep_SpecialAttack); \
 	DECLARE_FUNCTION(execOnRep_SpecialDefense); \
+	DECLARE_FUNCTION(execOnRep_Level); \
+	DECLARE_FUNCTION(execOnRep_XP); \
 	DECLARE_FUNCTION(execOnRep_Speed); \
+	DECLARE_FUNCTION(execOnRep_MaxPowerPoints); \
+	DECLARE_FUNCTION(execOnRep_PowerPoints); \
 	DECLARE_FUNCTION(execOnRep_MaxHealth); \
 	DECLARE_FUNCTION(execOnRep_Health);
 
@@ -51,13 +55,17 @@ public: \
 		NETFIELD_REP_START=(uint16)((int32)Super::ENetFields_Private::NETFIELD_REP_END + (int32)1), \
 		Health=NETFIELD_REP_START, \
 		MaxHealth, \
+		PowerPoints, \
+		MaxPowerPoints, \
 		SpecialDefense, \
 		SpecialAttack, \
 		Attack, \
 		Defense, \
 		Speed, \
 		DodgeForce, \
-		NETFIELD_REP_END=DodgeForce	}; \
+		XP, \
+		Level, \
+		NETFIELD_REP_END=Level	}; \
 	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override; \
 private: \
 	REPLICATED_BASE_CLASS(UPokemonBaseAttributeSet) \
