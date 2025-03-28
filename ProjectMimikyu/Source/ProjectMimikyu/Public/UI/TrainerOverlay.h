@@ -4,6 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PokemonUserWidget.h"
 #include "Characters/CharacterTypes.h"
 #include "TrainerOverlay.generated.h"
 
@@ -18,7 +19,7 @@ class UTrainerOverlayWidgetController;
  *
  */
 UCLASS()
-class PROJECTMIMIKYU_API UTrainerOverlay : public UUserWidget
+class PROJECTMIMIKYU_API UTrainerOverlay : public UPokemonUserWidget
 {
 	GENERATED_BODY()
 
@@ -48,9 +49,6 @@ public:
 	class UProgressBar* PokemonHealth;
 
 	UPROPERTY(VisibleAnywhere)
-	class AProjectMimikyuCharacter* OwnerCharacter;
-
-	UPROPERTY(VisibleAnywhere)
 	class UInventorySystemComponent* InventorySystem;
 
 	UPROPERTY(meta = (BindWidget))
@@ -64,6 +62,7 @@ public:
 	void SetIndexRight(int32& CurrentIndex, int32 LowestIndex, int32 HighestIndex);
 	void SetIndexFromScratch(int32 CurrentIndex, int32& LeftIndex, int32& RightIndex, int32 LowestIndex, int32 HighestIndex);
 	void SwapSlotModes();
+
 	void AllocatePokemonInfo();
 
 
@@ -72,7 +71,7 @@ public:
 	void AllocateInventoryInfo();
 
 	UFUNCTION()
-	void SetupPartyInfo();
+	void SetupPartyInfo(TArray<APokemon_Parent*> PokemonParty);
 	UFUNCTION()
 	void SetupInventoryInfo();
 	//virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
@@ -80,11 +79,13 @@ public:
 	void RemoveMovesetUI();
 
 	void ChangeInputMode(FInputModeDataBase& NewMode);
+
+protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UTrainerOverlayWidgetController* TrainerOverlayWidgetController;
+
 private:
-
-	UPROPERTY()
-	UTrainerOverlayWidgetController* WidgetController;
-
 	UPROPERTY(VisibleAnywhere)
 	ESlotType CurrentSlotMode = ESlotType::EST_Inventory;
 

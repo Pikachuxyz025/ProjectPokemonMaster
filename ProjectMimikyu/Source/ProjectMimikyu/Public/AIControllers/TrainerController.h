@@ -11,9 +11,9 @@ class UPokemonInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-/**
- *
- */
+
+DECLARE_MULTICAST_DELEGATE(FOnEventCaller);
+
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerController : public APlayerController
 {
@@ -63,6 +63,11 @@ protected:
 	UInputAction* IA_MoveSelection;
 
 public:
+
+	FOnEventCaller SwapUIModeDelegate;
+	FOnEventCaller ShiftLeftDelegate;
+	FOnEventCaller ShiftRightDelegate;
+
 	void HandleGameHasStarted();
 	void SwapUIMode();
 	void ShiftLeft();

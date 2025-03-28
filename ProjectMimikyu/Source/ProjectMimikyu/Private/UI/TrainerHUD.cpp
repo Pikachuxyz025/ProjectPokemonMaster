@@ -5,19 +5,28 @@
 #include "UI/TrainerOverlay.h"
 #include "Interfaces/MouseInterface.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
+#include "AbilitySystemComponent.h"
 #include "UI/PlayerMenuOverlay.h"
+#include "UI/PokemonUserWidget.h"
+#include "Player/TrainerPlayerState.h"
 #include "UI/WidgetController/PokemonMenuWidgetController.h"
-#include "UI/WidgetController/PokemonUIInfoWidgetController.h"
+#include "UI/WidgetController/TrainerOverlayWidgetController.h"
 
 void ATrainerHUD::AddTrainerOverlay()
 {
-	APlayerController* PlayerController = GetOwningPlayerController();
-	check(PlayerController);
+	APlayerController* PC = GetOwningPlayerController();
+	ATrainerPlayerState* PS = PC->GetPlayerState<ATrainerPlayerState>();
+
+	check(TrainerOverlayClass);
+	check(TrainerOverlayWidgetControllerClass);
 
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), TrainerOverlayClass);
-	TrainerOverlay = Cast<UTrainerOverlay>(Widget);
-	TrainerOverlay->AddToViewport();
+	TrainerOverlay = Cast<UPokemonUserWidget>(Widget);
 
+	FWidgetControllerParams Params = FWidgetControllerParams(PS, PC);
+	TrainerOverlay->SetWidgetController(GetTrainerOverlayWidgetController(Params));
+
+	Widget->AddToViewport();
 }
 
 /*void ATrainerHUD::AddInventoryOverlay()
@@ -65,7 +74,7 @@ void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWid
 
 UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams)
 {
-	if (PokemonMenuWidgetController && !WCParams.PokeUIInfo.PokemonName.EqualTo(PokemonMenuWidgetController->GetPokemonName()))
+	if (PokemonMenuWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor()!=PokemonMenuWidgetController->GetWidgetAvatarActor())
 		PokemonMenuWidgetController = nullptr;
 
 	if (!PokemonMenuWidgetController)
@@ -77,13 +86,16 @@ UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const 
 	return PokemonMenuWidgetController;
 }
 
-UPokemonUIInfoWidgetController* ATrainerHUD::GetPokemonUIInfoWidgetController(const FWidgetControllerParams& WCParams)
+UTrainerOverlayWidgetController* ATrainerHUD::GetTrainerOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
-	if (!PokemonUIInfoWidgetController)
+	if (TrainerOverlayWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor() != TrainerOverlayWidgetController->GetWidgetAvatarActor())
+		TrainerOverlayWidgetController = nullptr;
+
+	if (!TrainerOverlayWidgetController)
 	{
-		PokemonUIInfoWidgetController = NewObject<UPokemonUIInfoWidgetController>(this, PokemonUIInfoWidgetControllerClass);
-		PokemonUIInfoWidgetController->SetWidgetControllerParams(WCParams);
-		PokemonUIInfoWidgetController->BindCallbacksToDependencies();
+		TrainerOverlayWidgetController = NewObject<UTrainerOverlayWidgetController>(this, TrainerOverlayWidgetControllerClass);
+		TrainerOverlayWidgetController->SetWidgetControllerParams(WCParams);
+		TrainerOverlayWidgetController->BindCallbacksToDependencies();
 	}
-	return PokemonUIInfoWidgetController;
+	return TrainerOverlayWidgetController;
 }

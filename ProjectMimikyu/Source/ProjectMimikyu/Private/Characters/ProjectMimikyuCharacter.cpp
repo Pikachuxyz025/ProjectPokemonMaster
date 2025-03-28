@@ -1,9 +1,16 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+/*
+*  TO DO
+* Tie an event call to TrainerController. Connecting the OverlayWidget controller to the Pokemon trainer an pairing the On PartyChanged
+* Rename Script To Trainer Character
+**/
+
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "AIControllers/TrainerController.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
+#include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Interfaces/DamageInterface.h"
@@ -164,15 +171,26 @@ void AProjectMimikyuCharacter::CatchPokemon()
 		APokemon_Parent* CaughtPokemon = Cast<APokemon_Parent>(OutHit.GetActor());
 		if (CaughtPokemon && !CaughtPokemon->bIsCaught)
 		{
-			if (CurrentParty.Num() < 6)
-			{
-				CurrentParty.Add(CaughtPokemon);
-				CaughtPokemon->AddNewPokemonAbility(DodgeAbility,FPokemonGameplayTags::Get().InputTag_Dodge);
-				ServerAddToCurrentParty(OutHit.GetActor());
-				OnPartyUpdated.Broadcast();
-			}
+			AddToParty(CaughtPokemon);
+			//if (CurrentParty.Num() < 6)
+			//{
+				//CurrentParty.Add(CaughtPokemon);
+				
+				//CaughtPokemon->AddNewPokemonAbility(DodgeAbility,FPokemonGameplayTags::Get().InputTag_Dodge);
+				//ServerAddToCurrentParty(OutHit.GetActor());
+				// TODO:: Remove Pokemon from world. Save data to an FStruct for saving/loading
+				//OnPartyUpdated.Broadcast(CurrentParty);
+			//}
 		}
 	}
+}
+
+void AProjectMimikyuCharacter::AddToParty(APokemon_Parent* NewPokemon)
+{
+	 ATrainerPlayerState* TrainerPlayerState = GetPlayerState<ATrainerPlayerState>();
+	check(TrainerPlayerState);
+
+	TrainerPlayerState->AddToParty(NewPokemon);
 }
 
 void AProjectMimikyuCharacter::ShowPokemonMoveset()
@@ -240,10 +258,10 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	}
 }
 
-void AProjectMimikyuCharacter::UpdateCurrentPokemonHealth()
-{
-	OnPokemonHealthUpdated.Broadcast();
-}
+//void AProjectMimikyuCharacter::UpdateCurrentPokemonHealth()
+//{
+//	OnPokemonHealthUpdated.Broadcast();
+//}
 
 void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
 {

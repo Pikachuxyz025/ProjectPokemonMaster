@@ -10,6 +10,7 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class UObject;
+class USizeBox;
 #ifdef PROJECTMIMIKYU_PokemonUserWidget_generated_h
 #error "PokemonUserWidget.generated.h already included, missing '#pragma once' in PokemonUserWidget.h"
 #endif
@@ -20,6 +21,7 @@ class UObject;
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h_15_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h_15_RPC_WRAPPERS_NO_PURE_DECLS \
  \
+	DECLARE_FUNCTION(execUpdateBoxSize); \
 	DECLARE_FUNCTION(execSetWidgetController);
 
 

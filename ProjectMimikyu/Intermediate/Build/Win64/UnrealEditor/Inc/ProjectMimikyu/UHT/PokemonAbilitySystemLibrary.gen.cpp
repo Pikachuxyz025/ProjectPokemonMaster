@@ -18,15 +18,15 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemLibrary();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemLibrary_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMenuWidgetController_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonUIInfoWidgetController_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
-	DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetPokemonUIInfoWidgetController)
+	DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetTrainerOverlayWidgetController)
 	{
 		P_GET_OBJECT(AActor,Z_Param_ObjectActor);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(UPokemonUIInfoWidgetController**)Z_Param__Result=UPokemonAbilitySystemLibrary::GetPokemonUIInfoWidgetController(Z_Param_ObjectActor);
+		*(UTrainerOverlayWidgetController**)Z_Param__Result=UPokemonAbilitySystemLibrary::GetTrainerOverlayWidgetController(Z_Param_ObjectActor);
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetPokemonMenuWidgetController)
@@ -53,7 +53,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 		static const FNameNativePtrPair Funcs[] = {
 			{ "ActivateAbilityByTag", &UPokemonAbilitySystemLibrary::execActivateAbilityByTag },
 			{ "GetPokemonMenuWidgetController", &UPokemonAbilitySystemLibrary::execGetPokemonMenuWidgetController },
-			{ "GetPokemonUIInfoWidgetController", &UPokemonAbilitySystemLibrary::execGetPokemonUIInfoWidgetController },
+			{ "GetTrainerOverlayWidgetController", &UPokemonAbilitySystemLibrary::execGetTrainerOverlayWidgetController },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
@@ -155,12 +155,12 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 		}
 		return ReturnFunction;
 	}
-	struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics
+	struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics
 	{
-		struct PokemonAbilitySystemLibrary_eventGetPokemonUIInfoWidgetController_Parms
+		struct PokemonAbilitySystemLibrary_eventGetTrainerOverlayWidgetController_Parms
 		{
 			AActor* ObjectActor;
-			UPokemonUIInfoWidgetController* ReturnValue;
+			UTrainerOverlayWidgetController* ReturnValue;
 		};
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ObjectActor;
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
@@ -170,27 +170,27 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::NewProp_ObjectActor = { "ObjectActor", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetPokemonUIInfoWidgetController_Parms, ObjectActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetPokemonUIInfoWidgetController_Parms, ReturnValue), Z_Construct_UClass_UPokemonUIInfoWidgetController_NoRegister, METADATA_PARAMS(0, nullptr) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::NewProp_ObjectActor,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::NewProp_ReturnValue,
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::NewProp_ObjectActor = { "ObjectActor", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetTrainerOverlayWidgetController_Parms, ObjectActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetTrainerOverlayWidgetController_Parms, ReturnValue), Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::NewProp_ObjectActor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::NewProp_ReturnValue,
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::Function_MetaDataParams[] = {
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::Function_MetaDataParams[] = {
 		{ "Category", "PokemonAbilitySystemLibrary|WidgetController" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilitySystemLibrary.h" },
 	};
 #endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonAbilitySystemLibrary, nullptr, "GetPokemonUIInfoWidgetController", nullptr, nullptr, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PokemonAbilitySystemLibrary_eventGetPokemonUIInfoWidgetController_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14022401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::PokemonAbilitySystemLibrary_eventGetPokemonUIInfoWidgetController_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController()
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonAbilitySystemLibrary, nullptr, "GetTrainerOverlayWidgetController", nullptr, nullptr, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PokemonAbilitySystemLibrary_eventGetTrainerOverlayWidgetController_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14022401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::PokemonAbilitySystemLibrary_eventGetTrainerOverlayWidgetController_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController()
 	{
 		static UFunction* ReturnFunction = nullptr;
 		if (!ReturnFunction)
 		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController_Statics::FuncParams);
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -217,7 +217,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ActivateAbilityByTag, "ActivateAbilityByTag" }, // 1806656304
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonMenuWidgetController, "GetPokemonMenuWidgetController" }, // 3184998104
-		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonUIInfoWidgetController, "GetPokemonUIInfoWidgetController" }, // 1614503462
+		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController, "GetTrainerOverlayWidgetController" }, // 952593985
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics::FuncInfo) < 2048);
 #if WITH_METADATA
@@ -266,9 +266,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemLibrary() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 350102694U) },
+		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 4162390883U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_2029069229(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_1250446981(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

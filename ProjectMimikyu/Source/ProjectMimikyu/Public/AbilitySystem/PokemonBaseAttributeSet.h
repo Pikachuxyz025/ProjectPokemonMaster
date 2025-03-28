@@ -66,7 +66,6 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data);
 
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
-
 	void HandleIncomingDamage(FEffectProperties& Props);
 
 #pragma region Primary Stat Attributes

@@ -5,12 +5,48 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "PokemonGameplayTags.h"
 #include "Characters/CharacterTypes.h"
 #include "PokemonDataAsset.generated.h"
 
-/**
- * 
- */
+class UTexture2D;
+class UPokemonMoveDataAsset;
+
+USTRUCT(BlueprintType)
+struct FPokemonMovesetList
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 LevelLearned = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<TObjectPtr<UPokemonMoveDataAsset>> PokemonMovesLearntAtLevel;
+};
+
+USTRUCT(BlueprintType)
+struct FPokemonStatInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag StatTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText StatName = FText();
+
+	UPROPERTY(BlueprintReadOnly)
+	float StatValue = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 StatBaseValue = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 EffortLevelValue = 0;
+};
+
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonDataAsset : public UPrimaryDataAsset
 {
@@ -26,28 +62,22 @@ public:
 	USkeletalMesh* Model;
 
 	UPROPERTY(EditAnywhere)
-	class UTexture2D* SpriteImage;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseHealthPoints = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseAttack = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseDefense = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseSpecialAttack = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseSpecialDefense = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 BaseSpeed = 0;
+	UTexture2D* SpriteImage;
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	TMap<FGameplayTag, int32> TagsToBaseStats;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stats")
+	TMap<FGameplayTag, FText> TagsToNames =
+	{
+{ FPokemonGameplayTags::Get().Attributes_Stats_Attack,FText::FromString("Attack") },
+{ FPokemonGameplayTags::Get().Attributes_Stats_SpecialAttack,FText::FromString("Special Attack") },
+{ FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense,FText::FromString("Special Defense") },
+{ FPokemonGameplayTags::Get().Attributes_Stats_Defense,FText::FromString("Defense") },
+{ FPokemonGameplayTags::Get().Attributes_Stats_Speed,FText::FromString("Speed") },
+{ FPokemonGameplayTags::Get().Attributes_Stats_MaxHP,FText::FromString("HP") },
+{ FPokemonGameplayTags::Get().Attributes_Vital_HP,FText::FromString("HP") }
+	};
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	EElementalType FirstType = EElementalType::EET_None;
@@ -55,5 +85,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	EElementalType SecondType = EElementalType::EET_None;
 
+	UPROPERTY(EditAnywhere, Category = "Moves")
+	TArray<FPokemonMovesetList> PokemonMoveInfo;
+
 	int32 GetStatFromTag(const FGameplayTag& StatTag);
+	FText GetNameFromTag(const FGameplayTag& StatTag);
+	FPokemonStatInfo CreateStatInfo(const FGameplayTag& StatTag, const float PokemonStatValue);
 };

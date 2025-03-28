@@ -16,10 +16,11 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class AItem;
+class APokemon_Parent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPartyUpdated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPokemonHealthUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPokemonHealthUpdated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,AActor*,CombatTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
@@ -73,9 +74,7 @@ public:
 	FOnPartyUpdated OnPartyUpdated;
 	FOnTargetRegistered OnTargetRegistered;
 	FOnPokemonSentOut OnPokemonSentOut;
-	FOnPokemonHealthUpdated OnPokemonHealthUpdated;
-
-	void UpdateCurrentPokemonHealth();
+	//FOnPokemonHealthUpdated OnPokemonHealthUpdated;
 
 	void CommandDodge(FGameplayTag GameplayTag);
 
@@ -90,7 +89,7 @@ protected:
 	void Pickup();
 	void TargetAndEngage();
 	void CatchPokemon();
-
+	void AddToParty(APokemon_Parent* NewPokemon);
 	UFUNCTION(Server, Reliable)
 	void ServerAddToCurrentParty(AActor* AddedActor);
 	void ShowPokemonMoveset();
@@ -100,13 +99,13 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
-	class	 UEnhancedInputLocalPlayerSubsystem* Subsystem;
+	class UEnhancedInputLocalPlayerSubsystem* Subsystem;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
 	bool bHasPokemon = false;
 
 	UPROPERTY(VisibleAnywhere,Replicated,Category = "Pokemon Party")
-	class APokemon_Parent* CurrentPokemon = nullptr;
+	APokemon_Parent* CurrentPokemon = nullptr;
 
 	UPROPERTY(VisibleAnywhere,Category = "Pokemon Party")
 	TArray<APokemon_Parent*> CurrentParty;

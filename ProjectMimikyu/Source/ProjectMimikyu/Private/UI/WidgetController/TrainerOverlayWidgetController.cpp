@@ -3,29 +3,83 @@
 
 #include "UI/WidgetController/TrainerOverlayWidgetController.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "Player/TrainerPlayerState.h"
+#include "AIControllers/TrainerController.h"
+#include "Interfaces/PokemonCombatInterface.h"
+#include "DataAssets/PokemonDataAsset.h"
 
 void UTrainerOverlayWidgetController::BroadcastInitialValues()
 {
-	const  UPokemonBaseAttributeSet* PokemonAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-	OnHealthChanged.Broadcast(PokemonAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(PokemonAttributeSet->GetMaxHealth());
+	UE_LOG(LogTemp, Display, TEXT("Broadcast"));
+	//OnHealthChanged.Broadcast(GetPAS()->GetHealth());
+	//OnMaxHealthChanged.Broadcast(GetPAS()->GetMaxHealth());
 }
 
 void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
-{
-	const  UPokemonBaseAttributeSet* PokemonAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
+{	
+	GetTPS()->OnPartyUpdatedDelegate.AddLambda(
+		[this](TArray<APokemon_Parent*> PokemonParty)
+		{
+			OnPartyChanged.Broadcast(PokemonParty);
+		}
+	);
+
+	GetTC()->ShiftLeftDelegate.AddLambda(
+		[this]()
+		{
+			ShiftUILeftDelegate.Broadcast();
+		}
+	);
+		
+	GetTC()->ShiftRightDelegate.AddLambda(
+		[this]()
+		{
+			ShiftUIRightDelegate.Broadcast();
+		}
+	);
+		
+	GetTC()->SwapUIModeDelegate.AddLambda(
+		[this]()
+		{
+			SwapSlotModesDelegate.Broadcast();
+		}
+	);
+
+	if (!AbilitySystemComponent) return;
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PokemonAttributeSet->GetHealthAttribute()).AddUObject(this, &UTrainerOverlayWidgetController::HealthChanged);
+		GetPAS()->GetHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				TScriptInterface<IPokemonCombatInterface> PokemonCombatInterface = GetPASC()->GetAvatarActor();
+				FPokemonUIInfo UIInfo;
+				UIInfo.PokemonSpriteImage = GetPokemonData()->SpriteImage;
+				UIInfo.PokemonLevel = PokemonCombatInterface->GetPokemonLevel();
+				UIInfo.PokemonName = GetPokemonData()->Name;
+				UIInfo.PokemonHPPercent = Data.NewValue / GetPAS()->GetMaxHealth();
+
+				PokemonUI_InfoDelegate.Broadcast(UIInfo);
+			}
+	);
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PokemonAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &UTrainerOverlayWidgetController::MaxHealthChanged);
+		GetPAS()->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				GetPAS()->SetHealth(Data.NewValue);
+			}
+	);
+
+
 }
 
-void UTrainerOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnHealthChanged.Broadcast(Data.NewValue);
-}
-
-void UTrainerOverlayWidgetController::MaxHealthChanged(const FOnAttributeChangeData & Data) const
-{
-	OnMaxHealthChanged.Broadcast(Data.NewValue);
-}
+//void UTrainerOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
+//{
+//	OnHealthChanged.Broadcast(Data.NewValue);
+//}
+//
+//void UTrainerOverlayWidgetController::MaxHealthChanged(const FOnAttributeChangeData & Data) const
+//{
+//	OnMaxHealthChanged.Broadcast(Data.NewValue);
+//}

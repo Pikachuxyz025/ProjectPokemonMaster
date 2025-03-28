@@ -215,6 +215,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\MouseInterface.cpp">
       <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PlayerInterface.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonCombatInterface.cpp">
       <Filter>Source\ProjectMimikyu\Private\Interfaces</Filter>
     </ClCompile>
@@ -238,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\ProjectileAttack.cpp">
       <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Player">
+      <UniqueIdentifier>{BB521800-F902-35DA-B172-55E2620B78A9}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Player\TrainerPlayerState.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Player</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Tasks">
       <UniqueIdentifier>{85383F6C-FFAC-352E-807E-97F87D7ACFCD}</UniqueIdentifier>
@@ -503,6 +512,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\MouseInterface.h">
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PlayerInterface.h">
+      <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h">
       <Filter>Source\ProjectMimikyu\Public\Interfaces</Filter>
     </ClInclude>
@@ -526,6 +538,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\ProjectileAttack.h">
       <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Player">
+      <UniqueIdentifier>{C382BF70-6FE5-3F8E-8FA7-AD85C0D3B156}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h">
+      <Filter>Source\ProjectMimikyu\Public\Player</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Tasks">
       <UniqueIdentifier>{BDC99664-9DA6-349E-A9EF-D0650C5AA136}</UniqueIdentifier>

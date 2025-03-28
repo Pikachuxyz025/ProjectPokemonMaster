@@ -13,7 +13,7 @@ class AActor;
 class UObject;
 class UPokemonAbilitySystemComponent;
 class UPokemonMenuWidgetController;
-class UPokemonUIInfoWidgetController;
+class UTrainerOverlayWidgetController;
 struct FGameplayTag;
 #ifdef PROJECTMIMIKYU_PokemonAbilitySystemLibrary_generated_h
 #error "PokemonAbilitySystemLibrary.generated.h already included, missing '#pragma once' in PokemonAbilitySystemLibrary.h"
@@ -25,7 +25,7 @@ struct FGameplayTag;
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_16_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
  \
-	DECLARE_FUNCTION(execGetPokemonUIInfoWidgetController); \
+	DECLARE_FUNCTION(execGetTrainerOverlayWidgetController); \
 	DECLARE_FUNCTION(execGetPokemonMenuWidgetController); \
 	DECLARE_FUNCTION(execActivateAbilityByTag);
 

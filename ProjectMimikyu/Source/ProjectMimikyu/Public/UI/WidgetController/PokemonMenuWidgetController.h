@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() override;
 
-	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
+	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute);
 
 	virtual void BindCallbacksToDependencies() override;
 
@@ -31,10 +31,10 @@ public:
 	FStatInfoSignature StatInfoDelegate;
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UPokemonStatInfoDataAsset> StatInfo;
+	//UPROPERTY(BlueprintReadOnly)
+	//TObjectPtr<UPokemonStatInfoDataAsset> StatInfo;
 
 public:
 
-	void SetStatInfo(UPokemonStatInfoDataAsset* NewStatInfo) { StatInfo = NewStatInfo; }
+	//void SetStatInfo(UPokemonStatInfoDataAsset* NewStatInfo) { StatInfo = NewStatInfo; }
 };

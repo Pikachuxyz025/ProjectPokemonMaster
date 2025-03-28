@@ -10,36 +10,6 @@ int32 IPokemonCombatInterface::GetPokemonLevel()
 	return 0;
 }
 
-int32 IPokemonCombatInterface::GetHP()
-{
-	return 0;
-}
-
-int32 IPokemonCombatInterface::GetSpecialDefense()
-{
-	return 0;
-}
-
-int32 IPokemonCombatInterface::GetSpecialAttack()
-{
-	return 0;
-}
-
-int32 IPokemonCombatInterface::GetAttack()
-{
-	return 0;
-}
-
-int32 IPokemonCombatInterface::GetDefense()
-{
-	return 0;
-}
-
-int32 IPokemonCombatInterface::GetSpeed()
-{
-	return 0;
-}
-
 float IPokemonCombatInterface::GetNatureMultiplier(const FGameplayTag& StatTagToBeModified)
 {
 	return 0.0f;

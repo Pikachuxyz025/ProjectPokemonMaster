@@ -2,11 +2,13 @@
 using namespace UP;
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "PokemonGameplayTags.h"
 #include "Items/Projectile.h"
 #include "CharacterTypes.generated.h"
 
-
-
+class UPokemonMoveDataAsset;
+class UPokemonDataAsset;
+class APokemon_Parent;
 #pragma region Enums
 UENUM(BlueprintType)
 enum class EGenderType :uint8
@@ -247,7 +249,7 @@ struct FPokemonUIInfo
 	FText PokemonName;
 
 	UPROPERTY(BlueprintReadOnly)
-	class	UTexture2D* PokemonSpriteImage;
+    class UTexture2D* PokemonSpriteImage;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 PokemonLevel = 0;
@@ -262,19 +264,30 @@ struct FPokemonInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	class UPokemonDataAsset* PokemonDataAsset;
+	TSubclassOf<APokemon_Parent> StoredPokemonClass;
 
 	UPROPERTY(EditAnywhere)
-	TArray<class UPokemonMoveDataAsset*> CurrentPokemonMoves;
+	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
 
 	UPROPERTY(EditAnywhere)
-	int32 CurrentLevel = 0;
+	FPokemonUIInfo CurrentUiInfo;
 
 	UPROPERTY(EditAnywhere)
 	float XP = 0.f;
 
 	UPROPERTY(EditAnywhere)
 	ENatureType Nature = ENatureType::ENT_None;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FGameplayTag, int32> StoredEffortLevelBaseMap =
+	{
+		{FPokemonGameplayTags::Get().Attributes_Stats_Attack, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_Defense, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_MaxHP, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialAttack, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_Speed, 0}
+	};
 };
 
 USTRUCT(BlueprintType)
@@ -283,7 +296,7 @@ struct FPokemonParty
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	class APokemon_Parent* Slot1;
+	APokemon_Parent* Slot1;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
 	APokemon_Parent* Slot2;
@@ -295,7 +308,7 @@ struct FPokemonParty
 	APokemon_Parent* Slot4;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	 APokemon_Parent* Slot5;
+	APokemon_Parent* Slot5;
 
 	UPROPERTY(VisibleAnywhere,meta=(MakeStructureDefaultValue="nullptr"))
 	APokemon_Parent* Slot6;
@@ -348,7 +361,7 @@ public:
 	FText Description;
 
 	UPROPERTY(EditAnywhere)
-	class UTexture2D* Thumbnail;
+	UTexture2D* Thumbnail;
 
 	UPROPERTY(EditAnywhere)
 	int32 StackSize;

@@ -151,9 +151,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonMoveDataAsset() {}
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMoveDataAsset_Statics::DependentSingletons) < 16);
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonMoveDataAsset_Statics::Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n *\n */" },
-#endif
 		{ "IncludePath", "DataAssets/PokemonMoveDataAsset.h" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonMoveDataAsset.h" },
 	};
@@ -439,9 +436,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonMoveDataAsset() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonMoveDataAsset_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonMoveDataAsset, UPokemonMoveDataAsset::StaticClass, TEXT("UPokemonMoveDataAsset"), &Z_Registration_Info_UClass_UPokemonMoveDataAsset, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMoveDataAsset), 2940840800U) },
+		{ Z_Construct_UClass_UPokemonMoveDataAsset, UPokemonMoveDataAsset::StaticClass, TEXT("UPokemonMoveDataAsset"), &Z_Registration_Info_UClass_UPokemonMoveDataAsset, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMoveDataAsset), 3865163284U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonMoveDataAsset_h_1150773398(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonMoveDataAsset_h_947325832(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonMoveDataAsset_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonMoveDataAsset_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

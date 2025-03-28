@@ -7,17 +7,14 @@
 
 void UPokemonUIInfoWidgetController::BroadcastInitialValues()
 {
-	const UPokemonBaseAttributeSet* AS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-	OnMaxHealthChanged.Broadcast(AS->GetMaxHealth());
-	OnHealthChanged.Broadcast(AS->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetPAS()->GetMaxHealth());
+	OnHealthChanged.Broadcast(GetPAS()->GetHealth());
 }
 
 void UPokemonUIInfoWidgetController::BindCallbacksToDependencies()
 {
-	const  UPokemonBaseAttributeSet* PokemonAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PokemonAttributeSet->GetHealthAttribute()).AddLambda
+		GetPAS()->GetHealthAttribute()).AddLambda
 		(
 			[this](const FOnAttributeChangeData& Data)
 			{
@@ -26,7 +23,7 @@ void UPokemonUIInfoWidgetController::BindCallbacksToDependencies()
 	);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PokemonAttributeSet->GetMaxHealthAttribute()).AddLambda
+		GetPAS()->GetMaxHealthAttribute()).AddLambda
 		(
 			[this](const FOnAttributeChangeData& Data)
 			{
@@ -37,7 +34,6 @@ void UPokemonUIInfoWidgetController::BindCallbacksToDependencies()
 
 void UPokemonUIInfoWidgetController::SetInitialHealthValues(float& CurrentHealth, float& MaxHealth)
 {
-	const UPokemonBaseAttributeSet* AS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-	MaxHealth= AS->GetMaxHealth();
-	CurrentHealth=AS->GetHealth();
+	MaxHealth = GetPAS()->GetMaxHealth();
+	CurrentHealth = GetPAS()->GetHealth();
 }

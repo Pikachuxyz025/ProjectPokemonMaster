@@ -6,8 +6,8 @@
 
 float UMMC_Speed::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	FGameplayTag Speed = GameplayTags.Get().Attributes_Stats_Speed;
-	IPokemonCombatInterface* CombatInterface = Cast<IPokemonCombatInterface>(Spec.GetContext().GetSourceObject());
+	FGameplayTag Speed = FPokemonGameplayTags::Get().Attributes_Stats_Speed;
+	TScriptInterface<IPokemonCombatInterface> CombatInterface = Spec.GetContext().GetSourceObject();
 	int32 CurrentLevel = CombatInterface->GetPokemonLevel();
 	int32 BaseStat = CombatInterface->GetBaseStatFromTag(Speed);
 

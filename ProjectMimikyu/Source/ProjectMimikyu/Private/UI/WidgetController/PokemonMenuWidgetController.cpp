@@ -8,31 +8,27 @@
 #include "Interfaces/PokemonCombatInterface.h"
 #include "Engine/DataTable.h"
 #include "PokemonGameplayTags.h"
-#include "DataAssets/PokemonStatInfoDataAsset.h"
+#include "DataAssets/PokemonDataAsset.h"
 
 void UPokemonMenuWidgetController::BroadcastInitialValues()
 {
-	const UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-	check(StatInfo);
-	for (auto& Pair : PAS->TagsToAttributes)
+	//check(StatInfo);
+	for (auto& Pair : GetPAS()->TagsToAttributes)
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
 }
 
-void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const
+void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) 
 {
-	FPokemonStatInfo Info = StatInfo->FindStatInfoForTag(AttributeTag);
-	TScriptInterface<IPokemonCombatInterface> PokemonInterface = AbilitySystemComponent->GetAvatarActor();
-	Info.StatBaseValue = PokemonInterface->GetBaseStatFromTag(AttributeTag);
+	const float PokemonStatValue = Attribute.GetNumericValue(AttributeSet);
+	FPokemonStatInfo Info = GetPokemonData()->CreateStatInfo(AttributeTag, PokemonStatValue);
 	StatInfoDelegate.Broadcast(Info);
 }
 
 void UPokemonMenuWidgetController::BindCallbacksToDependencies()
 {
-	const  UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
-
-	for (auto& Pair : PAS->TagsToAttributes)
+	for (auto& Pair : GetPAS()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 			[this, Pair](const FOnAttributeChangeData& Data)

@@ -56,6 +56,7 @@ void UPokemonBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 	SetEffectProperties(Data, Props);
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
+		//GetHealthAttribute().
 		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth()));
 		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s. Health %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}

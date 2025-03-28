@@ -60,7 +60,7 @@ void UDamageSystemComponent::SetupElementalType(EElementalType TypeOne, EElement
 
 int32 UDamageSystemComponent::CalculateEffortLevelBase(int32 BaseStat, int32 CurrentLevel, const FGameplayTag& StatTag)
 {
-	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[StatInfo->FindStatInfoForTag(StatTag).EffortLevelValue]) + CurrentLevel) / 2.5f);
+	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[EffortLevelBaseMap[StatTag]]) + CurrentLevel) / 2.5f);
 }
 
 int32 UDamageSystemComponent::CalulateMaxHP(int32 CurrentLevel, int32 BaseHP)
@@ -240,11 +240,6 @@ float UDamageSystemComponent::TypeChartDamageMultiplier(EElementalType DamageEle
 	return X * Y;
 }
 
-
-void UDamageSystemComponent::SetStatInfo(UPokemonBaseAttributeSet* PokemonAttributes)
-{
-	StatInfo->SetPokemonAttribute(PokemonAttributes);
-}
 
 // Called every frame
 void UDamageSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

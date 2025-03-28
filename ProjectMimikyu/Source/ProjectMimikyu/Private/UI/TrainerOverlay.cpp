@@ -26,7 +26,7 @@ void UTrainerOverlay::NativeConstruct()
 		UE_LOG(LogTemp, Display, TEXT(" not Constructed"));
 	InventorySystem->OnInventoryUpdated.AddDynamic(this, &UTrainerOverlay::SetupInventoryInfo);
 	OwnerCharacter->OnPartyUpdated.AddDynamic(this, &UTrainerOverlay::SetupPartyInfo);
-	OwnerCharacter->OnPokemonHealthUpdated.AddDynamic(this, &UTrainerOverlay::SetCurrentPokemonUI);
+	//OwnerCharacter->OnPokemonHealthUpdated.AddDynamic(this, &UTrainerOverlay::SetCurrentPokemonUI);
 }
 
 void UTrainerOverlay::ShiftUILeft()
@@ -105,7 +105,7 @@ void UTrainerOverlay::SetLeftRightImages(const int32 RightIndex, const int32 Lef
 	}
 	else
 	{
-		PokemonRightImage->SetBrushFromTexture(PokemonPartyInfo[RightIndex]->GetPokemonUIInfo().PokemonSpriteImage);
+		PokemonRightImage->SetBrushFromTexture(PokemonPartyInfo[RightIndex]->GetPokemonUIInfo(false).PokemonSpriteImage);
 	}
 	if (PokemonPartyInfo.IsValidIndex(LeftIndex) && !PokemonPartyInfo[LeftIndex])
 	{
@@ -113,7 +113,7 @@ void UTrainerOverlay::SetLeftRightImages(const int32 RightIndex, const int32 Lef
 	}
 	else
 	{
-		PokemonLeftImage->SetBrushFromTexture(PokemonPartyInfo[LeftIndex]->GetPokemonUIInfo().PokemonSpriteImage);
+		PokemonLeftImage->SetBrushFromTexture(PokemonPartyInfo[LeftIndex]->GetPokemonUIInfo(false).PokemonSpriteImage);
 	}
 
 
@@ -181,7 +181,7 @@ void UTrainerOverlay::SwapSlotModes()
 {
 	if (CurrentSlotMode == ESlotType::EST_Inventory)
 	{
-		SetupPartyInfo();
+		SetupPartyInfo(PokemonPartyInfo);
 	}
 	else if (CurrentSlotMode == ESlotType::EST_PokemonParty)
 	{
@@ -213,7 +213,7 @@ void UTrainerOverlay::AllocatePokemonInfo()
 	default:
 		break;
 	}
-	SelectedPokemonImage->SetBrushFromTexture(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo().PokemonSpriteImage);
+	SelectedPokemonImage->SetBrushFromTexture(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo(false).PokemonSpriteImage);
 
 	if (HowManyPokemon() >= 2)
 	{
@@ -232,11 +232,11 @@ void UTrainerOverlay::SetCurrentPokemonUI()
 
 	OwnerCharacter->SetCurrentPokemon(PokemonPartyInfo[PartyIndex]);
 
-	PokemonName->SetText(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo().PokemonName);
+	PokemonName->SetText(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo(false).PokemonName);
 
-	PokemonLevel->SetText(FText::FromString(FString::FromInt(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo().PokemonLevel)));
+	PokemonLevel->SetText(FText::FromString(FString::FromInt(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo(false).PokemonLevel)));
 
-	PokemonHealth->SetPercent(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo().PokemonHPPercent);
+	PokemonHealth->SetPercent(PokemonPartyInfo[PartyIndex]->GetPokemonUIInfo(false).PokemonHPPercent);
 }
 
 void UTrainerOverlay::AllocateInventoryInfo()
@@ -291,11 +291,11 @@ void UTrainerOverlay::AllocateInventoryInfo()
 	}
 }
 
-void UTrainerOverlay::SetupPartyInfo()
+void UTrainerOverlay::SetupPartyInfo(TArray<APokemon_Parent*> PokemonParty)
 {
 	if(OwnerCharacter)
 	{
-		PokemonPartyInfo = OwnerCharacter->GetCurrentParty();
+		PokemonPartyInfo = PokemonParty;
 		CurrentSlotMode = ESlotType::EST_PokemonParty;
 		AllocatePokemonInfo();
 	}

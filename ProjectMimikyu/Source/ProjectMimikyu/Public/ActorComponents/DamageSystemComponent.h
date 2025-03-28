@@ -82,9 +82,7 @@ private:
 		{EElementalType::EET_Water,"Water" },
 		{EElementalType::EET_Steel,"Steel" }
 	};
-	void SetStatInfo(UPokemonBaseAttributeSet* PokemonAttributes);
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UPokemonStatInfoDataAsset> StatInfo;
+
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

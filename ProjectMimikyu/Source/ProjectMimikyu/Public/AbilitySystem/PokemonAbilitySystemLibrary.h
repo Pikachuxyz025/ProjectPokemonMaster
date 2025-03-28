@@ -9,7 +9,7 @@
 
 class UPokemonAbilitySystemComponent;
 class UPokemonMenuWidgetController;
-class UPokemonUIInfoWidgetController;
+class UTrainerOverlayWidgetController;
 UCLASS(BlueprintType, Blueprintable)
 class PROJECTMIMIKYU_API UPokemonAbilitySystemLibrary : public UBlueprintFunctionLibrary
 {
@@ -23,5 +23,5 @@ public:
 	static UPokemonMenuWidgetController* GetPokemonMenuWidgetController(AActor* ObjectActor);
 
 	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController")
-	static UPokemonUIInfoWidgetController* GetPokemonUIInfoWidgetController(AActor* ObjectActor);
+	static UTrainerOverlayWidgetController* GetTrainerOverlayWidgetController(AActor* ObjectActor);
 };

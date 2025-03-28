@@ -77,44 +77,47 @@ void ATrainerController::HandleGameHasStarted()
 
 void ATrainerController::SwapUIMode()
 {
-	if (TrainerHUD->TrainerOverlay)
-	{
-		UE_LOG(LogTemp, Display, TEXT("X"));
-		TrainerHUD->TrainerOverlay->SwapSlotModes();
-}
+//	if (TrainerHUD->TrainerOverlay)
+//	{
+//		UE_LOG(LogTemp, Display, TEXT("X"));
+//		TrainerHUD->TrainerOverlay->SwapSlotModes();
+//}
+	SwapUIModeDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftLeft()
 {
-	if (TrainerHUD->TrainerOverlay)
-	{
-		TrainerHUD->TrainerOverlay->ShiftUILeft();
-	}
+	//if (TrainerHUD->TrainerOverlay)
+	//{
+	//	TrainerHUD->TrainerOverlay->ShiftUILeft();
+	//}
+	ShiftLeftDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftRight()
 {
-	if (TrainerHUD->TrainerOverlay)
-	{
-		TrainerHUD->TrainerOverlay->ShiftUIRight();
-	}
+	//if (TrainerHUD->TrainerOverlay)
+	//{
+	//	TrainerHUD->TrainerOverlay->ShiftUIRight();
+	//}
+	ShiftRightDelegate.Broadcast();
 }
 
 void ATrainerController::ShowCurrentPokemonMoveset()
 {
-	UE_LOG(LogTemp, Display, TEXT("Pokemon Moveset"));
-	if (TrainerHUD->TrainerOverlay)
-	{
-		TrainerHUD->TrainerOverlay->CreateMovesetUI();
-	}
+	//UE_LOG(LogTemp, Display, TEXT("Pokemon Moveset"));
+	//if (TrainerHUD->TrainerOverlay)
+	//{
+	//	TrainerHUD->TrainerOverlay->CreateMovesetUI();
+	//}
 }
 
 void ATrainerController::RemoveCurrentPokemonMoveset()
 {
-	if (TrainerHUD->TrainerOverlay)
-	{
-		TrainerHUD->TrainerOverlay->RemoveMovesetUI();
-	}
+	//if (TrainerHUD->TrainerOverlay)
+	//{
+	//	TrainerHUD->TrainerOverlay->RemoveMovesetUI();
+	//}
 }
 
 
@@ -134,8 +137,8 @@ FKey ATrainerController::GetMoveKey()
 bool ATrainerController::IsMoveValid(int32 DirectionIndex)
 {
 	EDirectionPoint SelectedDirection = static_cast<EDirectionPoint>(DirectionIndex);
-	UPokemonMoveDataAsset* SelectedPokemonMove = TrainerHUD->TrainerOverlay->GetMove(SelectedDirection); 
-	bool IsValid = SelectedPokemonMove ? true : false;
+	//UPokemonMoveDataAsset* SelectedPokemonMove = TrainerHUD->TrainerOverlay->GetMove(SelectedDirection); 
+	bool IsValid = false;// SelectedPokemonMove ? true : false;
 	return IsValid;
 ;
 }

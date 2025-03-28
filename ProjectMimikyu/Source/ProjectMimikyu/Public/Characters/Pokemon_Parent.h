@@ -8,15 +8,23 @@ using namespace UP;
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemInterface.h"
+#include "PokemonGameplayTags.h"
 #include "GameplayTagContainer.h"
 #include "Pokemon_Parent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharging);
+
 class UGameplayEffect;
 class UPokemonGameplayAbilities;
 class UPokemonStatInfoDataAsset;
+class UAbilitySystemComponent;
+class UAttributeSet;
+class UDataTable;
+class UPokemonDataAsset;
+class UBoxComponent;
+class UPokemonMoveDataAsset;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -26,11 +34,14 @@ class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInte
 public:
 	// Sets default values for this character's properties
 	APokemon_Parent();
+
 	FOnAttackEnd OnAttackEnd;
 	UPROPERTY(BlueprintAssignable)
 	FOnCharging OnCharging;
 	UPROPERTY(BlueprintAssignable)
 	FOnDodgeEnd OnDodgeEnd;
+
+	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& Event) override;
@@ -42,7 +53,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	void AddPokemonAbilities();
-
 
 	void SetupMeleeTimeline();
 
@@ -59,13 +69,22 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UBehaviorTree* AIBehaviorTree;
+
 	FPokemonUIInfo PokemonUIInfo;
+	FPokemonInfo PokemonInfo;
+
 #pragma region Attributes Setup
 	UPROPERTY()
-	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
-	TObjectPtr<class UAttributeSet> AttributeSet;
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonAbilitySystemComponent> PokemonASC;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonBaseAttributeSet> PokemonAS;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultStatAttributes;
@@ -90,7 +109,7 @@ protected:
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-class	UBoxComponent* CollisionBox;
+UBoxComponent* CollisionBox;
 
 public:
 	// Called every frame
@@ -104,13 +123,12 @@ public:
 
 	void DisengageFromCombat();
 	void Dodge(const FVector NewDodgeDirection);
+
 	UFUNCTION(BlueprintCallable)
 	void EndDodge();
-	UPROPERTY(EditAnywhere)
-	class UPokemonDataAsset* PokemonDataAsset;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	class UDamageSystemComponent* DamageSystem;
+	UPROPERTY(EditAnywhere)
+	UPokemonDataAsset* PokemonDataAsset;
 
 	UPROPERTY(VisibleDefaultsOnly)
 	class UMovesetComponent* MovesetComponent;
@@ -130,7 +148,7 @@ public:
 	EPokemonStatus PokemonStatus = EPokemonStatus::EPS_Wild;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UPokemonMoveDataAsset* ActivePokemonMove = nullptr;
+	UPokemonMoveDataAsset* ActivePokemonMove = nullptr;
 
 #pragma region IDamageInterface
 	virtual float GetCurrentHealth() override;
@@ -147,12 +165,6 @@ public:
 
 #pragma region IPokemonCombatInterface
 	virtual int32 GetPokemonLevel() override;
-	virtual int32 GetHP() override;
-	virtual int32 GetSpecialDefense() override;
-	virtual int32 GetSpecialAttack() override;
-	virtual int32 GetAttack() override;
-	virtual int32 GetDefense() override;
-	virtual int32 GetSpeed() override;
 	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
 	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
@@ -194,6 +206,74 @@ void StartBoxTrace(FHitResult& HitResult);
 
 	virtual void EnactMove();
 protected:
+
+#pragma region Damage Component
+	float NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified);
+
+	int32 CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentLevel, const FGameplayTag& StatTag);
+
+	float TypeChartDamageMultiplier(EElementalType DamageElementType);
+
+	UPROPERTY()
+	TMap<int32, int32> MultiplierMap =
+	{
+		{ 0, 0 },
+		{ 1, 2 },
+		{ 2, 3 },
+		{ 3, 4 },
+		{ 4, 7 },
+		{ 5, 8 },
+		{ 6, 9 },
+		{ 7, 14 },
+		{ 8, 15 },
+		{ 9, 16 },
+		{ 10, 25 }
+	};
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FGameplayTag, int32> EffortLevelBaseMap =
+	{
+		{FPokemonGameplayTags::Get().Attributes_Stats_Attack, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_Defense, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_MaxHP, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialAttack, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense, 0},
+		{FPokemonGameplayTags::Get().Attributes_Stats_Speed, 0}
+	};
+
+	UPROPERTY()
+	TMap<EElementalType, FName> TypeResponse =
+	{
+		{EElementalType::EET_Bug,"Bug" },
+		{EElementalType::EET_Dark,"Dark" },
+		{EElementalType::EET_Dragon,"Dragon" },
+		{EElementalType::EET_Electric,"Electric" },
+		{EElementalType::EET_Fairy,"Fairy" },
+		{EElementalType::EET_Fighting,"Fighting" },
+		{EElementalType::EET_Fire,"Fire" },
+		{EElementalType::EET_Flying,"Flying" },
+		{EElementalType::EET_Ghost,"Ghost" },
+		{EElementalType::EET_Grass,"Grass" },
+		{EElementalType::EET_Ground,"Ground" },
+		{EElementalType::EET_Ice,"Ice" },
+		{EElementalType::EET_Normal,"Normal" },
+		{EElementalType::EET_Poison,"Poison" },
+		{EElementalType::EET_Psychic,"Psychic" },
+		{EElementalType::EET_Rock,"Rock" },
+		{EElementalType::EET_Water,"Water" },
+		{EElementalType::EET_Steel,"Steel" }
+	};
+
+	bool bIsDead = false;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* TypeChartDataTable;
+
+	float GetRunningSpeed();
+	float GetWalkingSpeed();
+	float GetEngagedSpeed(float MoveMultiplier = 1.f);
+#pragma endregion
+
 #pragma region Stats
 
 	UFUNCTION()
@@ -218,6 +298,8 @@ protected:
 
 	FTimerHandle ChargeTimer;
 #pragma endregion
+
+	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
 
@@ -251,6 +333,7 @@ protected:
 	FName PokemonSocketName;
 
 public:
+	FPokemonInfo GetPokemonInfo();
 
 	UPROPERTY(Replicated)
 	bool bIsCaught = false;
@@ -261,7 +344,7 @@ public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return AIBehaviorTree; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo() { return PokemonUIInfo; }
+	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo(bool bNeedsSetup);
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController; }
@@ -271,8 +354,6 @@ public:
 	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
 
 	ENatureType GetNature() { return Nature; }
-
-	UPokemonStatInfoDataAsset* GetPokemonStatInfo();
 
 	UFUNCTION(BlueprintCallable)
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;

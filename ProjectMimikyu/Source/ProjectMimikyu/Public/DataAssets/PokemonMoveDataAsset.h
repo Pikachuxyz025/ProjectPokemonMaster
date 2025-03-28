@@ -8,9 +8,8 @@ using namespace UP;
 #include "Characters/CharacterTypes.h"
 #include "PokemonMoveDataAsset.generated.h"
 
-/**
- *
- */
+class UPokemonGameplayAbilities;
+
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonMoveDataAsset : public UPrimaryDataAsset
 {
@@ -37,7 +36,7 @@ public:
 	EElementalType MoveElementalType = EElementalType::EET_None;
 
 	UPROPERTY(EditAnywhere,Category = "Pokemon Ability")
-	TSubclassOf<class UPokemonGameplayAbilities> PGAClass;
+	TSubclassOf<UPokemonGameplayAbilities> PGAClass;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "MoveAction == EMoveAction::EMA_Melee", EditConditionHides))
 	float IdealRange = 0;
@@ -53,8 +52,6 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "DamageResponse == EDamageResponse::EDR_Stun", EditConditionHides))
 	float ChanceOfFlinching = 0;
-
-
 
 	UPROPERTY(EditAnywhere)
 	float RechargeTime = 0;
@@ -91,7 +88,8 @@ public:
 
 	void SetInputTag(FGameplayTag NewInputTag) { InputTag = NewInputTag; }
 	FGameplayTag GetInputTag() { return InputTag; }
-private:
-	FGameplayTag InputTag;
 
+private:
+
+	FGameplayTag InputTag;
 };

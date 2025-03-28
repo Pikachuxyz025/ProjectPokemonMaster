@@ -410,6 +410,11 @@
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PlayerInterface.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonCombatInterface.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -441,6 +446,11 @@
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\ProjectileAttack.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Player\TrainerPlayerState.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ClCompile_ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>$(ClCompile_AdditionalOptions)</AdditionalOptions>
@@ -631,6 +641,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\DamageInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\InteractInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\MouseInterface.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PlayerInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonLevelInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Berries.h"/>
@@ -638,6 +649,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\PokeBall.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Projectile.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\ProjectileAttack.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChargingAttack.h"/>

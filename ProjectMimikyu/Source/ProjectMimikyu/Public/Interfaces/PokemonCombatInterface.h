@@ -27,12 +27,6 @@ class PROJECTMIMIKYU_API IPokemonCombatInterface
 public:
 
 	virtual int32 GetPokemonLevel();
-	virtual int32 GetHP();
-	virtual int32 GetSpecialDefense();
-	virtual int32 GetSpecialAttack();
-	virtual int32 GetAttack();
-	virtual int32 GetDefense();
-	virtual int32 GetSpeed();
 	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified);
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag);
 	virtual int32 GetELBValue(const FGameplayTag& StatTag);

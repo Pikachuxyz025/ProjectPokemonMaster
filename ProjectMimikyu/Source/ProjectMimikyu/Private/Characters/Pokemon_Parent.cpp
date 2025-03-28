@@ -33,7 +33,7 @@ APokemon_Parent::APokemon_Parent()
 	{
 		GetMesh()->SetSkeletalMeshAsset(PokemonDataAsset->Model);
 	}
-	DamageSystem = CreateDefaultSubobject<UDamageSystemComponent>(TEXT("Damage System"));
+	//DamageSystem = CreateDefaultSubobject<UDamageSystemComponent>(TEXT("Damage System"));
 	MovesetComponent = CreateDefaultSubobject<UMovesetComponent>(TEXT("Moveset Component"));
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
@@ -79,19 +79,8 @@ void APokemon_Parent::BeginPlay()
 	Super::BeginPlay();
 	//PokemonController = Cast<APokemonAIController>(GetController());
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APokemon_Parent::OnBoxOverlap);
-	DamageSystem->SetupStats
-	(
-		PokemonDataAsset->BaseHealthPoints,
-		PokemonDataAsset->BaseAttack,
-		PokemonDataAsset->BaseSpecialAttack,
-		PokemonDataAsset->BaseDefense,
-		PokemonDataAsset->BaseSpecialDefense,
-		PokemonDataAsset->BaseSpeed,
-		CurrentLevel,
-		Nature
-	);
 
-	DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
+	//DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
 
 	MovesetComponent->SpawnWithMoveSet(CurrentLevel);
 	AddPokemonAbilities();
@@ -99,7 +88,7 @@ void APokemon_Parent::BeginPlay()
 	SetupMeleeTimeline();
 
 	InitAbilityActorInfo();	
-	SetupPokemonUIInfo();
+	GetPokemonUIInfo(true);
 }
 
 void APokemon_Parent::AddPokemonAbilities()
@@ -151,6 +140,37 @@ void APokemon_Parent::UpdatePokemonUIInfo()
 	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();//DamageSystem->GetHealthPercent();
 }
 
+FPokemonInfo APokemon_Parent::GetPokemonInfo()
+{
+	if (!PokemonInfo.StoredPokemonClass)
+		PokemonInfo = SetupPokemonInfo();
+	return PokemonInfo;
+}
+
+FPokemonInfo APokemon_Parent::SetupPokemonInfo()
+{
+	FPokemonInfo NewInfo;
+	NewInfo.CurrentPokemonMoves = MovesetComponent->CurrentPokemonMoves;
+	NewInfo.CurrentUiInfo = GetPokemonUIInfo(true);
+	NewInfo.StoredEffortLevelBaseMap = EffortLevelBaseMap;
+	NewInfo.Nature = Nature;
+	NewInfo.XP = 0.f;
+	NewInfo.StoredPokemonClass = GetClass();
+	return NewInfo;
+}
+
+FPokemonUIInfo APokemon_Parent::GetPokemonUIInfo(bool bNeedsSetup)
+{
+	if (bNeedsSetup)
+	{
+		PokemonUIInfo.PokemonLevel = CurrentLevel;
+		PokemonUIInfo.PokemonName = PokemonDataAsset->Name;
+		PokemonUIInfo.PokemonSpriteImage = PokemonDataAsset->SpriteImage;
+	}
+	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();
+	return PokemonUIInfo;
+}
+
 void APokemon_Parent::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -165,13 +185,6 @@ void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(APokemon_Parent, PokemonStatus);
 	DOREPLIFETIME(APokemon_Parent, bIsCaught);
 
-}
-
-UPokemonStatInfoDataAsset* APokemon_Parent::GetPokemonStatInfo()
-{
-	UPokemonBaseAttributeSet* PokemonAttributes = Cast<UPokemonBaseAttributeSet>(GetAttributeSet());
-	DamageSystem->SetStatInfo(PokemonAttributes);
-	return DamageSystem->StatInfo;
 }
 
 UAbilitySystemComponent* APokemon_Parent::GetAbilitySystemComponent() const
@@ -283,16 +296,16 @@ void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed)
 		NewSpeed = 0.0f;
 		break;
 	case EMovementSpeed::EMS_Walking:
-		NewSpeed = DamageSystem->GetWalkingSpeed();
+		NewSpeed = GetWalkingSpeed();
 		break;
 	case  EMovementSpeed::EMS_Running:
-		NewSpeed = DamageSystem->GetRunningSpeed();
+		NewSpeed = GetRunningSpeed();
 		break;
 	case EMovementSpeed::EMS_Engaging:
 		if (ActivePokemonMove)
-			NewSpeed = DamageSystem->GetEngagedSpeed(ActivePokemonMove->SpeedMultiplier);
+			NewSpeed = GetEngagedSpeed(ActivePokemonMove->SpeedMultiplier);
 		else
-			NewSpeed = DamageSystem->GetEngagedSpeed();
+			NewSpeed = GetEngagedSpeed();
 		break;
 	case EMovementSpeed::EMS_DefaultMax:
 		break;
@@ -312,12 +325,12 @@ void APokemon_Parent::FireAt()
 
 float APokemon_Parent::GetCurrentHealth()
 {
-	return DamageSystem->GetCurrentHealth();
+	return GetPokemonAS()->GetHealth();
 }
 
 float APokemon_Parent::GetMaxHealth()
 {
-	return DamageSystem->GetMaxHealth();
+	return GetPokemonAS()->GetMaxHealth();
 }
 
 void APokemon_Parent::RecieveHealth_Implementation(float AddHealthPercent)
@@ -326,7 +339,7 @@ void APokemon_Parent::RecieveHealth_Implementation(float AddHealthPercent)
 
 void APokemon_Parent::RecieveDamage(FDamageInfo DamageInfo)
 {
-	bool bWasDamaged = false;
+	/*	bool bWasDamaged = false;
 	float Random = FMath::RandRange(85.f, 100.f) / 100.f;
 	float Type = DamageSystem->TypeChartDamageMultiplier(DamageInfo.PokemonMove->MoveElementalType);
 	DamageInfo.DamageAmount = ((DamageInfo.DamageAmount / (float)DamageSystem->DefenseCounter(DamageInfo.PokemonMove)) / 5.f) * Random * Type;
@@ -342,8 +355,7 @@ void APokemon_Parent::RecieveDamage(FDamageInfo DamageInfo)
 				Trainer->UpdateCurrentPokemonHealth();
 			}
 		}
-	}
-
+	}*/
 }
 
 bool APokemon_Parent::IsAttacking_Implementation()
@@ -353,7 +365,7 @@ bool APokemon_Parent::IsAttacking_Implementation()
 
 bool APokemon_Parent::HasFainted_Implementation()
 {
-	return !DamageSystem->bIsDead;
+	return bIsDead;
 }
 
 #pragma region IPokemonCombatInterface
@@ -363,59 +375,36 @@ int32 APokemon_Parent::GetPokemonLevel()
 	return CurrentLevel;
 }
 
-int32 APokemon_Parent::GetHP()
-{
-	return PokemonDataAsset->BaseHealthPoints;
-}
-
-int32 APokemon_Parent::GetSpecialDefense()
-{
-	return PokemonDataAsset->BaseSpecialDefense;
-}
-
-int32 APokemon_Parent::GetSpecialAttack()
-{
-	return PokemonDataAsset->BaseSpecialAttack;
-}
-
-int32 APokemon_Parent::GetAttack()
-{
-	return PokemonDataAsset->BaseAttack;
-}
-
-int32 APokemon_Parent::GetDefense()
-{
-	return PokemonDataAsset->BaseDefense;
-}
-
-int32 APokemon_Parent::GetSpeed()
-{
-	return PokemonDataAsset->BaseSpeed;
-}
 float APokemon_Parent::GetNatureMultiplier(const FGameplayTag& StatTagToBeModified)
 {
-	return DamageSystem->NatureModifier(Nature, StatTagToBeModified);
+	return NatureModifier(Nature, StatTagToBeModified);
 }
+
 int32 APokemon_Parent::GetELB(int32 BaseStat, const FGameplayTag& StatTag)
 {
-	return DamageSystem->CalculateEffortLevelBase(BaseStat, CurrentLevel, StatTag);
+	return CalculateEffortLevelBase(BaseStat, CurrentLevel, StatTag);
 }
+
 int32 APokemon_Parent::GetELBValue(const FGameplayTag& StatTag)
 {
-	return DamageSystem->EffortLevelBaseMap[StatTag];
+	return EffortLevelBaseMap[StatTag];
 }
+
 FVector APokemon_Parent::GetCombatSocketLocation()
 {
 	return GetMesh()->GetSocketLocation(PokemonSocketName);
 }
+
 float APokemon_Parent::GetTypeMatchup(EElementalType ElementalType)
 {
-	return DamageSystem->TypeChartDamageMultiplier(ElementalType);
+	return TypeChartDamageMultiplier(ElementalType);
 }
+
 UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
 {
 	return ActivePokemonMove;
 }
+
 int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
 {
 	return PokemonDataAsset->GetStatFromTag(StatTag);
@@ -426,7 +415,7 @@ int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
 
 void APokemon_Parent::DamageTarget(AActor* Target)
 {
-	FDamageInfo NewDamageInfo;
+/*FDamageInfo NewDamageInfo;
 	if (ActivePokemonMove)
 		NewDamageInfo.PokemonMove = ActivePokemonMove;
 	NewDamageInfo.DamageAmount = (float)DamageSystem->SendDamage(ActivePokemonMove, CurrentLevel);
@@ -437,7 +426,7 @@ void APokemon_Parent::DamageTarget(AActor* Target)
 	if (DamageInterface)
 	{
 		DamageInterface->RecieveDamage(NewDamageInfo);
-	}
+	}*/	
 }
 
 void APokemon_Parent::AddCollision()
@@ -600,13 +589,15 @@ void APokemon_Parent::BoxTrace(FHitResult& BoxHit)
 
 UPokemonAbilitySystemComponent* APokemon_Parent::GetPokemonASC()
 {
-	UPokemonAbilitySystemComponent* PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
+	if (!PokemonASC)
+		PokemonASC = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
 	return PokemonASC;
 }
 
 UPokemonBaseAttributeSet* APokemon_Parent::GetPokemonAS()
 {
-	UPokemonBaseAttributeSet* PokemonAS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
+	if (!PokemonAS)
+		PokemonAS = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
 	return PokemonAS;
 }
 
@@ -647,5 +638,187 @@ void APokemon_Parent::CallCommand(int32 Direction)
 	PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
 }
 
+#pragma region Damage Component
 
+float APokemon_Parent::NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified)
+{
+	float StatModifier = 1;
+	switch (CurrentNature)
+	{
+	case ENatureType::ENT_None:
+		break;
+	case ENatureType::ENT_Bashful:
+		break;
+	case ENatureType::ENT_Docile:
+		break;
+	case ENatureType::ENT_Hardy:
+		break;
+	case ENatureType::ENT_Quirky:
+		break;
+	case ENatureType::ENT_Serious:
+		break;
+	case ENatureType::ENT_Adamant:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Modest:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Bold:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Brave:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Calm:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Careful:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Gentle:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Hasty:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Jolly:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Lax:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Lonely:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Mild:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Naughty:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Quiet:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Timid:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Attack))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Relaxed:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Sassy:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Rash:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Naive:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Speed))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialDefense))
+			StatModifier = 0.9f;
+		break;
+	case ENatureType::ENT_Impish:
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_Defense))
+			StatModifier = 1.1f;
+		if (StatTagToBeModified.MatchesTagExact(GameplayTags.Attributes_Stats_SpecialAttack))
+			StatModifier = 0.9f;
+		break;
+	default:
+		break;
+	}
+	return StatModifier;
+}
+
+int32 APokemon_Parent::CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentLevel, const FGameplayTag& StatTag)
+{
+	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[EffortLevelBaseMap[StatTag]]) + AsCurrentLevel) / 2.5f);
+}
+
+float APokemon_Parent::TypeChartDamageMultiplier(EElementalType DamageElementType)
+{
+	FString FirstTypeContextString;
+	float X = 1;
+	float Y = 1;
+	FTypeChartMatchup* FirstTypeChart;
+	FTypeChartMatchup* SecondTypeChart;
+
+	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonDataAsset->FirstType], FirstTypeContextString, true);
+	X = FirstTypeChart->TypeResponse[DamageElementType];
+	if (PokemonDataAsset->SecondType != EElementalType::EET_None)
+	{
+		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonDataAsset->SecondType], FirstTypeContextString, true);
+		Y = SecondTypeChart->TypeResponse[DamageElementType];
+	}
+	return X * Y;
+}
+
+float APokemon_Parent::GetRunningSpeed()
+{
+	return GetPokemonAS()->GetSpeed() * 3.5f * .75f;
+}
+
+float APokemon_Parent::GetWalkingSpeed()
+{
+	return GetPokemonAS()->GetSpeed() * 3.5f * .55f;
+}
+
+float APokemon_Parent::GetEngagedSpeed(float MoveMultiplier)
+{
+	return GetPokemonAS()->GetSpeed() * MoveMultiplier * 3.5f;
+}
+#pragma endregion
 

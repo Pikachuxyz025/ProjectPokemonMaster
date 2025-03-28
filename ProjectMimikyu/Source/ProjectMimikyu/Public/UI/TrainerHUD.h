@@ -10,8 +10,9 @@ class UPokemonMenuWidgetController;
 class UPlayerInventoryMenuOverlay;
 class UPlayerMenuOverlay;
 class UTrainerOverlay;
+class UPokemonUserWidget;
 struct FWidgetControllerParams;
-class UPokemonUIInfoWidgetController;
+class UTrainerOverlayWidgetController;
 
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerHUD : public AHUD
@@ -22,13 +23,13 @@ private:
 
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
-	TSubclassOf<UUserWidget>InventoryOverlayClass;
+	TSubclassOf<UUserWidget> InventoryOverlayClass;
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
-	TSubclassOf<UUserWidget>TrainerOverlayClass;
+	TSubclassOf<UPokemonUserWidget> TrainerOverlayClass;
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
-	TSubclassOf<UUserWidget>MenuOverlayClass;
+	TSubclassOf<UUserWidget> MenuOverlayClass;
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UUserWidget> PokemonStatInfoOverlayClass;
@@ -37,13 +38,13 @@ private:
 	TObjectPtr<	UPokemonMenuWidgetController> PokemonMenuWidgetController;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPokemonMenuWidgetController>PokemonMenuWidgetControllerClass;
+	TSubclassOf<UPokemonMenuWidgetController> PokemonMenuWidgetControllerClass;
 
 	UPROPERTY()
-	TObjectPtr<UPokemonUIInfoWidgetController>PokemonUIInfoWidgetController;
+	TObjectPtr<UTrainerOverlayWidgetController> TrainerOverlayWidgetController;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UPokemonUIInfoWidgetController>PokemonUIInfoWidgetControllerClass;
+	TSubclassOf<UTrainerOverlayWidgetController> TrainerOverlayWidgetControllerClass;
 public:
 
 	void AddTrainerOverlay();
@@ -59,8 +60,8 @@ public:
 	 TObjectPtr<UPlayerMenuOverlay> MenuOverlay;	
 	
 	UPROPERTY()
-	 TObjectPtr<UTrainerOverlay> TrainerOverlay;
+	 TObjectPtr<UPokemonUserWidget> TrainerOverlay;
 
 	 UPokemonMenuWidgetController* GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams);
-	 UPokemonUIInfoWidgetController* GetPokemonUIInfoWidgetController(const FWidgetControllerParams& WCParams);
+	 UTrainerOverlayWidgetController* GetTrainerOverlayWidgetController(const FWidgetControllerParams& WCParams);
 };

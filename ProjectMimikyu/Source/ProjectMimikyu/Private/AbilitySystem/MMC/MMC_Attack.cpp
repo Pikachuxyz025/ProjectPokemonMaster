@@ -6,8 +6,8 @@
 
 float UMMC_Attack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	FGameplayTag Attack = GameplayTags.Get().Attributes_Stats_Attack;
-	IPokemonCombatInterface* CombatInterface = Cast<IPokemonCombatInterface>(Spec.GetContext().GetSourceObject());
+	FGameplayTag Attack = FPokemonGameplayTags::Get().Attributes_Stats_Attack;
+	TScriptInterface<IPokemonCombatInterface> CombatInterface = Spec.GetContext().GetSourceObject();
 	int32 CurrentLevel = CombatInterface->GetPokemonLevel(); 
 	int32 BaseStat = CombatInterface->GetBaseStatFromTag(Attack);
 
