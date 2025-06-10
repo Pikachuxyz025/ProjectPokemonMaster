@@ -339,7 +339,7 @@ TMap<EDirectionPoint, UPokemonMoveDataAsset*> UTrainerOverlay::SetupMovesetOfAct
 		EDirectionPoint GamepadDirection = static_cast<EDirectionPoint>(i);
 		if (PokemonMoveset->CurrentPokemonMoves[i])
 		{
-			UE_LOG(LogTemp, Display, TEXT("Map Added: %s, %s"), *UEnum::GetValueAsString(GamepadDirection), *PokemonMoveset->CurrentPokemonMoves[i]->MoveName.ToString());
+			//UE_LOG(LogTemp, Display, TEXT("Map Added: %s, %s"), *UEnum::GetValueAsString(GamepadDirection), *PokemonMoveset->CurrentPokemonMoves[i]->MoveName.ToString());
 
 			NewMoveset.Add(GamepadDirection, PokemonMoveset->CurrentPokemonMoves[i]);
 		}

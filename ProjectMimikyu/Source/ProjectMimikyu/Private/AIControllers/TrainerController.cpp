@@ -57,6 +57,8 @@ void ATrainerController::SetupInputComponent()
 		PokemonInput->BindAction(IA_Swap, ETriggerEvent::Started, this, &ATrainerController::SwapUIMode);
 		PokemonInput->BindAction(IA_Left, ETriggerEvent::Started, this, &ATrainerController::ShiftLeft);
 		PokemonInput->BindAction(IA_Right, ETriggerEvent::Started, this, &ATrainerController::ShiftRight);
+
+		PokemonInput->BindKeySequenceActions(InputConfig, this, &ThisClass::GetKeyForSequence);
 	}
 }
 
@@ -110,6 +112,7 @@ void ATrainerController::ShowCurrentPokemonMoveset()
 	//{
 	//	TrainerHUD->TrainerOverlay->CreateMovesetUI();
 	//}
+	ShowMoveSetDelegate.Broadcast();
 }
 
 void ATrainerController::RemoveCurrentPokemonMoveset()
@@ -118,6 +121,7 @@ void ATrainerController::RemoveCurrentPokemonMoveset()
 	//{
 	//	TrainerHUD->TrainerOverlay->RemoveMovesetUI();
 	//}
+	RemoveMoveSetDelegate.Broadcast();
 }
 
 
@@ -132,6 +136,11 @@ FKey ATrainerController::GetMoveKey()
 		}
 	}
 	return EKeys::Invalid;
+}
+
+void ATrainerController::GetKeyForSequence(EDirectionPoint KeyDirection)
+{
+	KeyCalledDelegate.Broadcast(KeyDirection);
 }
 
 bool ATrainerController::IsMoveValid(int32 DirectionIndex)

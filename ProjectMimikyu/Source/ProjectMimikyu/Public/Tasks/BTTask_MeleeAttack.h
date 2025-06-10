@@ -6,9 +6,9 @@
 #include "Tasks/BTTask_ActivateAbility.h"
 #include "BTTask_MeleeAttack.generated.h"
 
-/**
- * 
- */
+class UPokemonGameplayAbilities;
+class UPokemonMoveDataAsset;
+
 UCLASS()
 class PROJECTMIMIKYU_API UBTTask_MeleeAttack : public UBTTask_ActivateAbility
 {
@@ -43,7 +43,7 @@ protected:
 	UPokemonAbilitySystemComponent* PokemonASC;
 
 	UPROPERTY()
-	class UPokemonMoveDataAsset* PokemonMove;
+	TObjectPtr<UPokemonGameplayAbilities> PokemonMove;
 
 	UPROPERTY()
 	AActor* AttackTarget;

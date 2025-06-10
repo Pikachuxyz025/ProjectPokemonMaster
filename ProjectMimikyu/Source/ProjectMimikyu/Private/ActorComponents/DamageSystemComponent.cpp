@@ -287,7 +287,8 @@ float UDamageSystemComponent::GetEngagedSpeed(float MoveMultiplier)
 
 int32 UDamageSystemComponent::SendDamage(UPokemonMoveDataAsset* CurrentMove, int CurrentLevel)
 {
-	EMoveType MoveType = CurrentMove->Category;
+	/* Deprecated 
+		EMoveType MoveType = CurrentMove->Category;
 
 	float PokemonAttackStat = 0;
 	float DamageSent = 0;
@@ -304,10 +305,13 @@ int32 UDamageSystemComponent::SendDamage(UPokemonMoveDataAsset* CurrentMove, int
 	}
 	DamageSent = ((100.f + PokemonAttackStat + (15.f * CurrentLevel)) * CurrentMove->BaseDamage);
 	return DamageSent;
+	*/
+	return 0.0f;
 }
 
 int32 UDamageSystemComponent::DefenseCounter(UPokemonMoveDataAsset* AttackingMove)
 {
+/* Deprecated
 	EMoveType MoveType = AttackingMove->Category;
 	float PokemonDefenseStat = 0;
 	switch (MoveType)
@@ -322,10 +326,13 @@ int32 UDamageSystemComponent::DefenseCounter(UPokemonMoveDataAsset* AttackingMov
 		break;
 	}
 	return PokemonDefenseStat + 50.f;
+	*/
+	return 0;
 }
 
 void UDamageSystemComponent::RecieveDamage(FDamageInfo DamageInfo, bool& bWasDamaged)
 {
+	/* Deprecated
 	if (!DamageInfo.PokemonMove) return;
 	EDamageOutput DamageOutput = MacroDamageOutput(DamageInfo.PokemonMove->bShouldDamageInvincible, DamageInfo.PokemonMove->bCanBeBlocked);
 
@@ -363,7 +370,8 @@ void UDamageSystemComponent::RecieveDamage(FDamageInfo DamageInfo, bool& bWasDam
 		break;
 	default:
 		break;
-	}
+	}*/
+	
 }
 
 

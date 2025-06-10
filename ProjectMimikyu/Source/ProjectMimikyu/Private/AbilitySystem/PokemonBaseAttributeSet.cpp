@@ -20,6 +20,7 @@ UPokemonBaseAttributeSet::UPokemonBaseAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_MaxHP, GetMaxHealthAttribute);
 
 	TagsToAttributes.Add(GameplayTags.Attributes_Vital_HP, GetHealthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Vital_PP, GetPowerPointsAttribute);
 }
 
 void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -36,6 +37,8 @@ void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, DodgeForce, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, XP, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Level , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, PowerPoints , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, MaxPowerPoints , COND_None, REPNOTIFY_Always);
 }
 
 void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -44,6 +47,11 @@ void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0, GetMaxHealth());
+	}
+
+	if (Attribute == GetPowerPointsAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0, GetMaxPowerPoints());
 	}
 }
 
@@ -61,6 +69,12 @@ void UPokemonBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s. Health %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
 
+	if (Data.EvaluatedData.Attribute == GetPowerPointsAttribute())
+	{
+		//GetHealthAttribute().
+		SetPowerPoints(FMath::Clamp(GetPowerPoints(), 0, GetMaxPowerPoints()));
+		UE_LOG(LogTemp, Warning, TEXT("Changed PowerPoints on %s. Power Points %f"), *Props.TargetAvatarActor->GetName(), GetPowerPoints());
+	}
 
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
@@ -192,4 +206,25 @@ void UPokemonBaseAttributeSet::SetEffectProperties(const FGameplayEffectModCallb
 
 		Props.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
 	}
+}
+
+TMap<FGameplayAttribute, float> UPokemonBaseAttributeSet::GetAttributeValues()
+{
+	for (auto Pair : TagsToAttributes)
+	{
+		const FGameplayAttribute Attribute = Pair.Value();
+		AttributeValues.Add(Attribute, Attribute.GetNumericValue(this));
+	}
+	return AttributeValues;
+}
+
+
+TMap<FGameplayTag, float> UPokemonBaseAttributeSet::GetAttributeTagValues()
+{
+	TMap<FGameplayTag, float> AttributeTagValues;
+	for (auto Pair : TagsToAttributes)
+	{
+		AttributeTagValues.Add(Pair.Key, Pair.Value().GetNumericValue(this));
+	}
+	return AttributeTagValues;
 }

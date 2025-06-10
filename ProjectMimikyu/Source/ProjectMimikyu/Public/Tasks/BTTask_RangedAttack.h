@@ -6,9 +6,8 @@
 #include "Tasks/BTTask_ActivateAbility.h"
 #include "BTTask_RangedAttack.generated.h"
 
-/**
- * 
- */
+class UPokemonGameplayAbilities;
+
 UCLASS()
 class PROJECTMIMIKYU_API UBTTask_RangedAttack : public UBTTask_ActivateAbility
 {
@@ -32,7 +31,7 @@ protected:
 	class APokemonAIController* PokemonController;
 
 	UPROPERTY()
-	class UPokemonMoveDataAsset* PokemonMove;
+	TObjectPtr<UPokemonGameplayAbilities> PokemonMove;
 
 	UPROPERTY()
 	class APokemon_Parent* Pokemon;

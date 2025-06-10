@@ -9,6 +9,7 @@
 #include "PokemonCombatInterface.generated.h"
 
 class UPokemonMoveDataAsset;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UPokemonCombatInterface : public UInterface
@@ -34,4 +35,5 @@ public:
 	virtual FVector GetCombatSocketLocation();
 	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag);
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove();
+	virtual FPokemonTypeInfo GetPokemonElementalTypes();
 };

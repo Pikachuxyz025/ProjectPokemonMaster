@@ -9,6 +9,6 @@ public class ProjectMimikyu : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "EnhancedInput", "GeometryCollectionEngine", "UMG", "AIModule", "GameplayTasks", "GameplayAbilities", "GameplayTags", "AnimGraphRuntime", "NavigationSystem", "Slate", "SlateCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "EnhancedInput", "GeometryCollectionEngine", "UMG", "AIModule", "GameplayTasks", "GameplayAbilities", "GameplayTags", "AnimGraphRuntime", "NavigationSystem", "Slate", "SlateCore", "GameplayBehaviorsModule" });
 	}
 }

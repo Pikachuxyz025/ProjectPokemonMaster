@@ -21,6 +21,9 @@ public:
 
 	template<class UserClass, typename PressedFuncType>
 	void BindDodgeActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc);
+
+	template<class UserClass, typename PressedFuncType>
+	void BindKeySequenceActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc);
 };
 
 template<class UserClass, typename PressedFuncType>
@@ -52,6 +55,23 @@ template<class UserClass, typename PressedFuncType>
 			 if (PressedFunc)
 			 {
 				 BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag);
+			 }
+		 }
+	 }
+ }
+
+ template<class UserClass, typename PressedFuncType>
+ void UPokemonInputComponent::BindKeySequenceActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc)
+ {
+	 check(InputConfig);
+
+	 for (const FPokemonInputKeySequenceAction& Action : InputConfig->KeySequenceInputActions)
+	 {
+		 if (Action.InputAction)
+		 {
+			 if (PressedFunc)
+			 {
+				 BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.KeyDirection);
 			 }
 		 }
 	 }

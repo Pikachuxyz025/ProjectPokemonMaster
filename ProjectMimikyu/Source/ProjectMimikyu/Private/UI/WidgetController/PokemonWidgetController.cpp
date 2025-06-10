@@ -16,6 +16,12 @@ void UPokemonWidgetController::SetWidgetControllerParams(const FWidgetController
 	PlayerController = WCParams.PlayerController;
 }
 
+void UPokemonWidgetController::SetUpPokemonAbilitySystem(const FWidgetControllerParams& WCParams)
+{
+	AbilitySystemComponent = WCParams.AbilitySystemComponent;
+	AttributeSet = WCParams.AttributeSet;
+}
+
 void UPokemonWidgetController::BroadcastInitialValues()
 {
 }

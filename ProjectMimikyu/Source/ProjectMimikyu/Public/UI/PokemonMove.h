@@ -4,6 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PokemonUserWidget.h"
 #include "Characters/CharacterTypes.h"
 #include "PokemonMove.generated.h"
 
@@ -11,22 +12,22 @@ class UTextBlock;
 class UProgressBar;
 class UPokemonMoveDataAsset;
 UCLASS()
-class PROJECTMIMIKYU_API UPokemonMove : public UUserWidget
+class PROJECTMIMIKYU_API UPokemonMove : public UPokemonUserWidget
 {
 	GENERATED_BODY()
 
 public:
 
-	UPROPERTY(meta = (BindWidget))
-	UProgressBar* MoveReloadingBar;
+	//UPROPERTY(meta = (BindWidget))
+	//UProgressBar* MoveReloadingBar;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* PokemonMoveName;
+	//UPROPERTY(meta = (BindWidget))
+	//UTextBlock* PokemonMoveName;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	UPokemonMoveDataAsset* CurrentPokemonMove;
 
-	void SetCurrentPokemonMove(UPokemonMoveDataAsset* NewPokemonMove);
+	//void SetCurrentPokemonMove(UPokemonMoveDataAsset* NewPokemonMove);
 
-	void SetName(FText NewName);
+	//void SetName(FText NewName);
 };

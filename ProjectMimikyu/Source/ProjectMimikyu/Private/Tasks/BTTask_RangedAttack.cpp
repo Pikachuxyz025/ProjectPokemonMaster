@@ -7,6 +7,7 @@
 #include "Characters/Pokemon_Parent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 
 UBTTask_RangedAttack::UBTTask_RangedAttack()
@@ -23,7 +24,7 @@ EBTNodeResult::Type UBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
 	Pokemon = Cast<APokemon_Parent>(OwnerComp.GetAIOwner()->GetPawn());
-	PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 	UPokemonAbilitySystemComponent* PokemonASC = GetPokemonAbilitySystemComponent(OwnerComp);
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
@@ -34,7 +35,7 @@ EBTNodeResult::Type UBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_RangedAttack::AttackComplete);
 	PokemonController->SetFocus(AttackTarget);
 	//Pokemon->EnactMove();
-	PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
+	PokemonASC->ActivateAbilityByTag(PokemonMove->InputTag);
 	return EBTNodeResult::InProgress;
 }
 

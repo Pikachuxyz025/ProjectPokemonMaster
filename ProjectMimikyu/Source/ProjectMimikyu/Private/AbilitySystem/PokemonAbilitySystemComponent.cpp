@@ -15,12 +15,22 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDa
 { 
 	for (auto Move: CurrentPokemonMoves)
 	{	
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Move->PGAClass, 1);
-		if (const UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
+		if (UPokemonGameplayAbilities* PokemonAbility = Move->Ability->GetDefaultObject<UPokemonGameplayAbilities>())//NewObject<UPokemonGameplayAbilities>(this, Move->Ability))
 		{
-			AbilitySpec.DynamicAbilityTags.AddTag(Move->GetInputTag());
+			PokemonAbility->CooldownTag = Move->CooldownTag;
+			FGameplayAbilitySpec AbilitySpec(PokemonAbility, 1);
+			AbilitySpec.DynamicAbilityTags.AddTag(Move->InputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(Move->CooldownTag);
 			GiveAbility(AbilitySpec);
 		}
+		
+		//FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Move->Ability, 1);
+		//if (UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
+		//{
+		//	AbilitySpec.DynamicAbilityTags.AddTag(Move->InputTag);
+		//	PokemonAbility->CooldownTag=Move->CooldownTag;
+		//	GiveAbility(AbilitySpec);
+		//}
 	}
 }
 
@@ -51,16 +61,20 @@ void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& In
 	}
 }
 
-int32 UPokemonAbilitySystemComponent::GetPokemonLevel() const
+void UPokemonAbilitySystemComponent::RestoreStatAttributes(const TMap<FGameplayAttribute, float>& AttributeValueInfo)
 {
-	const UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
-	return (int32)PAS->GetLevel();
+	for (const auto& StatPair : AttributeValueInfo)
+	{
+		SetNumericAttributeBase(StatPair.Key, StatPair.Value);
+	}
 }
 
-int32 UPokemonAbilitySystemComponent::GetXP() const
+void UPokemonAbilitySystemComponent::RestoreStatTagAttributes(const TMap<FGameplayTag, float>& AttributeValueInfo)
 {
-	const UPokemonBaseAttributeSet* PAS = CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
-	return (int32)PAS->GetXP();
+	for (const auto& StatPair : GetPAS()->TagsToAttributes)
+	{
+		SetNumericAttributeBase(StatPair.Value(), AttributeValueInfo[StatPair.Key]);
+	}
 }
 
 void UPokemonAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
@@ -69,4 +83,11 @@ void UPokemonAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* Abil
 	EffectSpec.GetAllAssetTags(AssetTagContainer);
 
 	EffectAssetTag.Broadcast(AssetTagContainer);
+}
+
+UPokemonBaseAttributeSet* UPokemonAbilitySystemComponent::GetPAS()
+{
+	if(!PokemonAttributeSet)
+		CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
+	return PokemonAttributeSet;
 }

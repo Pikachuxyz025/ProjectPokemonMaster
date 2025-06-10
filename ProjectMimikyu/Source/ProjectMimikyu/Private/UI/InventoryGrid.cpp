@@ -26,7 +26,7 @@ void UInventoryGrid::Inventory()
 void UInventoryGrid::DisplayInventory(UInventorySystemComponent* NewInventorySystem)
 {
 	InventoryComponent = NewInventorySystem;
-	InventoryComponent->OnInventoryUpdated.AddDynamic(this, &UInventoryGrid::UpdateInventory);
+	InventoryComponent->OnInventoryUpdated.AddUniqueDynamic(this, &UInventoryGrid::UpdateInventory);
 
 	UpdateInventory();
 }

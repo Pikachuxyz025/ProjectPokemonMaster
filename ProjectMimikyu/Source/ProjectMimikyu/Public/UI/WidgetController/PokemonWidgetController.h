@@ -16,6 +16,8 @@ class APokemon_Parent;
 class UPokemonDataAsset;
 class ATrainerController;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonStatChangedSignature, int32, NewValue);
+
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
 {
@@ -23,6 +25,7 @@ struct FWidgetControllerParams
 
 	FWidgetControllerParams() {}
 	FWidgetControllerParams(APlayerState* PS) : PlayerState(PS) {}
+	FWidgetControllerParams(UAbilitySystemComponent* ASC, UAttributeSet* AS) : AbilitySystemComponent(ASC), AttributeSet(AS) {}
 	FWidgetControllerParams(APlayerState* PS,APlayerController* PC) : PlayerState(PS)  ,PlayerController(PC){}
 	FWidgetControllerParams(APlayerState* PS, APlayerController* PC, UAbilitySystemComponent* ASC, UAttributeSet* AS) :
 		 PlayerState(PS), PlayerController(PC), AbilitySystemComponent(ASC), AttributeSet(AS) {}
@@ -47,6 +50,8 @@ class PROJECTMIMIKYU_API UPokemonWidgetController: public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+
+	void SetUpPokemonAbilitySystem(const FWidgetControllerParams& WCParams);
 
 	virtual void BroadcastInitialValues();
 
@@ -82,13 +87,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<ATrainerController> TrainerController;
 
+public:
+
+	//FText GetPokemonName();
+	AActor* GetWidgetAvatarActor();
+
 	APokemon_Parent* GetPokemon();
-	ATrainerPlayerState* GetTPS();
 	UPokemonAbilitySystemComponent* GetPASC();
 	UPokemonBaseAttributeSet* GetPAS();
 	UPokemonDataAsset* GetPokemonData();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "WidgetController")
 	ATrainerController* GetTC();
-public:
-	//FText GetPokemonName();
-	AActor* GetWidgetAvatarActor();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "WidgetController")
+	ATrainerPlayerState* GetTPS();
 };

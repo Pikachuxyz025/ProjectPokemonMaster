@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_ChangeMovementSpeed::ExecuteTask(UBehaviorTreeCompon
 
 	if (Pokemon)
 	{
-		Pokemon->SetMovementSpeed(NewMovement);
+		Pokemon->SetMovementSpeed(NewMovement, 1.f);
 	}
 	return EBTNodeResult::Succeeded;
 }

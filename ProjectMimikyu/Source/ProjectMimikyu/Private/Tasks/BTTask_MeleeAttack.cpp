@@ -3,6 +3,7 @@
 
 #include "Tasks/BTTask_MeleeAttack.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
@@ -29,14 +30,14 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
 	bMadeIt = false;
-	PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	 PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 
 	if(Pokemon->OnAttackEnd.IsBound())
 	{
 		Pokemon->OnAttackEnd.Clear();
 	}
 	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_MeleeAttack::AttackComplete);
-	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging);
+	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, PokemonMove->SpeedMultiplier);
 	FAIMoveRequest Request;
 	Request.SetGoalActor(AttackTarget);
 	Request.SetAcceptanceRadius(PokemonMove->IdealRange);
@@ -71,7 +72,7 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ProcessRequest(AAIController* Controlle
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 		// use Attack
 		//Pokemon->EnactMove();
-		PokemonASC->ActivateAbilityByTag(PokemonMove->GetInputTag());
+		PokemonASC->ActivateAbilityByTag(PokemonMove->InputTag);
 		bMadeIt = true;
 		UE_LOG(LogTemp, Display, TEXT("In melee range"));
 		NodeResulted = EBTNodeResult::InProgress;

@@ -61,11 +61,13 @@ void ATrainerHUD::AddPlayerInventoryMenuOverlay()
 
 void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWidget)//, bool bRemoveMouse)
 {
-	//if (bRemoveMouse)
-	//{
-	//TScriptInterface<IMouseInterface> Mouse = CurrentWidget;
-	//Mouse->RemoveMouseCursor();
-	//}
+	if (CurrentWidget->IsA(UPokemonUserWidget::StaticClass()) &&NewWidget->IsA(UPokemonUserWidget::StaticClass()))
+	{
+		UPokemonUserWidget* NewPokemonWidget = Cast<UPokemonUserWidget>(NewWidget);
+		UPokemonUserWidget* CurrentPokemonWidget = Cast<UPokemonUserWidget>(CurrentWidget);
+		NewPokemonWidget->SetWidgetController(CurrentPokemonWidget->WidgetController);
+	}
+
 	CurrentWidget->RemoveFromParent();
 	NewWidget->AddToViewport();
 }
@@ -74,7 +76,7 @@ void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWid
 
 UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams)
 {
-	if (PokemonMenuWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor()!=PokemonMenuWidgetController->GetWidgetAvatarActor())
+	//if (PokemonMenuWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor()!=PokemonMenuWidgetController->GetWidgetAvatarActor())
 		PokemonMenuWidgetController = nullptr;
 
 	if (!PokemonMenuWidgetController)
@@ -88,7 +90,7 @@ UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const 
 
 UTrainerOverlayWidgetController* ATrainerHUD::GetTrainerOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
-	if (TrainerOverlayWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor() != TrainerOverlayWidgetController->GetWidgetAvatarActor())
+	//if (TrainerOverlayWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor() != TrainerOverlayWidgetController->GetWidgetAvatarActor())
 		TrainerOverlayWidgetController = nullptr;
 
 	if (!TrainerOverlayWidgetController)

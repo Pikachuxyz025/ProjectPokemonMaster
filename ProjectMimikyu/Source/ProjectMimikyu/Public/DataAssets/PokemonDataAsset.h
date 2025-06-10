@@ -52,6 +52,10 @@ class PROJECTMIMIKYU_API UPokemonDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APokemon_Parent> StoredPokemonClass;
+
 	UPROPERTY(EditAnywhere)
 	FText Name;
 
@@ -90,5 +94,7 @@ public:
 
 	int32 GetStatFromTag(const FGameplayTag& StatTag);
 	FText GetNameFromTag(const FGameplayTag& StatTag);
-	FPokemonStatInfo CreateStatInfo(const FGameplayTag& StatTag, const float PokemonStatValue);
+	UPokemonMoveDataAsset* FindPokemonMoveForLevel(int32 CurrentLevel);
+	UFUNCTION(BlueprintCallable)
+	FPokemonStatInfo CreateStatInfo(const FGameplayTag StatTag, const float PokemonStatValue);
 };

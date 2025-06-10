@@ -12,9 +12,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonMove() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMove();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMove_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UProgressBar_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UTextBlock_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UUserWidget();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonUserWidget();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	void UPokemonMove::StaticRegisterNativesUPokemonMove()
@@ -32,14 +30,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonMove() {}
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_MoveReloadingBar_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_MoveReloadingBar;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMoveName_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonMoveName;
-#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_CurrentPokemonMove_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_CurrentPokemonMove;
@@ -48,7 +38,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonMove() {}
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UPokemonMove_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UUserWidget,
+		(UObject* (*)())Z_Construct_UClass_UPokemonUserWidget,
 		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMove_Statics::DependentSingletons) < 16);
@@ -59,31 +49,19 @@ void EmptyLinkFunctionForGeneratedCodePokemonMove() {}
 	};
 #endif
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonMove_Statics::NewProp_MoveReloadingBar_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonMove.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonMove_Statics::NewProp_MoveReloadingBar = { "MoveReloadingBar", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonMove, MoveReloadingBar), Z_Construct_UClass_UProgressBar_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMove_Statics::NewProp_MoveReloadingBar_MetaData), Z_Construct_UClass_UPokemonMove_Statics::NewProp_MoveReloadingBar_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonMove_Statics::NewProp_PokemonMoveName_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonMove.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonMove_Statics::NewProp_PokemonMoveName = { "PokemonMoveName", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonMove, PokemonMoveName), Z_Construct_UClass_UTextBlock_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMove_Statics::NewProp_PokemonMoveName_MetaData), Z_Construct_UClass_UPokemonMove_Statics::NewProp_PokemonMoveName_MetaData) };
-#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonMove_Statics::NewProp_CurrentPokemonMove_MetaData[] = {
 		{ "Category", "PokemonMove" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//UPROPERTY(meta = (BindWidget))\n//UTextBlock* PokemonMoveName;\n" },
+#endif
 		{ "ModuleRelativePath", "Public/UI/PokemonMove.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "UPROPERTY(meta = (BindWidget))\nUTextBlock* PokemonMoveName;" },
+#endif
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonMove_Statics::NewProp_CurrentPokemonMove = { "CurrentPokemonMove", nullptr, (EPropertyFlags)0x0010000000020015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonMove, CurrentPokemonMove), Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonMove_Statics::NewProp_CurrentPokemonMove_MetaData), Z_Construct_UClass_UPokemonMove_Statics::NewProp_CurrentPokemonMove_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonMove_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonMove_Statics::NewProp_MoveReloadingBar,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonMove_Statics::NewProp_PokemonMoveName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonMove_Statics::NewProp_CurrentPokemonMove,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonMove_Statics::StaticCppClassTypeInfo = {
@@ -125,9 +103,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonMove() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMove_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonMove, UPokemonMove::StaticClass, TEXT("UPokemonMove"), &Z_Registration_Info_UClass_UPokemonMove, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMove), 2537313416U) },
+		{ Z_Construct_UClass_UPokemonMove, UPokemonMove::StaticClass, TEXT("UPokemonMove"), &Z_Registration_Info_UClass_UPokemonMove, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonMove), 2193870369U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMove_h_457319959(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMove_h_3094159604(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMove_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMove_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

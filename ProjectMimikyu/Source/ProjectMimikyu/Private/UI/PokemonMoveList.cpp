@@ -11,7 +11,7 @@ void UPokemonMoveList::SetupMoveList(TMap<EDirectionPoint, UPokemonMoveDataAsset
 		EDirectionPoint GamepadDirection = static_cast<EDirectionPoint>(i);
 		if (NewMoveSet.Contains(GamepadDirection))
 		{
-			PokemonMoves[i]->SetCurrentPokemonMove(NewMoveSet[GamepadDirection]);
+			//PokemonMoves[i]->SetCurrentPokemonMove(NewMoveSet[GamepadDirection]);
 		}
 		else
 			continue;

@@ -7,7 +7,9 @@
 **/
 
 #include "Characters/ProjectMimikyuCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "AIControllers/TrainerController.h"
+#include "DataAssets/PokemonDataAsset.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
@@ -75,7 +77,7 @@ void AProjectMimikyuCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(AProjectMimikyuCharacter, CurrentPokemon, COND_OwnerOnly);
+	DOREPLIFETIME(AProjectMimikyuCharacter, CurrentPokemon);
 }
 
 void AProjectMimikyuCharacter::SetOverlappingItem(AItem* NewItem)
@@ -92,17 +94,11 @@ void AProjectMimikyuCharacter::PostInitializeComponents()
 
 void AProjectMimikyuCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
-	TrainerController = Cast<ATrainerController>(Controller);
-	//Add Input Mapping Context
-	if (!TrainerController)
-		return;
 
-	Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(TrainerController->GetLocalPlayer());
-		if(Subsystem)
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		
+	Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetTC()->GetLocalPlayer());
+	if (Subsystem)
+		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 
 	TrainerController->HandleGameHasStarted();
 }
@@ -113,20 +109,51 @@ void AProjectMimikyuCharacter::Tick(float DeltaTime)
 	// SelectMove();
 }
 
-void AProjectMimikyuCharacter::SelectMove(int32 Index)
-{	
-	// Pokemon Does move
-		// call a bool that prevents you from calling a move while pokemon is attacking
-		// pokemon's move recharges maybe we give them stamina we'll see...
-	if (TrainerController && bAreMovesSelectable)
+void AProjectMimikyuCharacter::ComeOnOut()
+{
+	if (GetTPS() && !GetTPS()->IsCurrentPartyEmpty() && !CurrentPokemon)
 	{
-		if (Index == INDEX_NONE || Index < 0 ) return;
-		if (TrainerController->IsMoveValid(Index) && !CurrentPokemon->GetIsCommandActive())
+		FPokemonInfo PokemonOut = GetTPS()->GetCurrentPokemonInfo();
+
+		FHitResult OutHit;
+		FVector Start = GetActorLocation();
+		FVector End = FollowCamera->GetComponentLocation() + (FollowCamera->GetForwardVector() * CatchingDistance);
+		BasicLineTrace(OutHit, Start, End);
+
+		if (OutHit.bBlockingHit && PokemonOut.PartyMode == EPartyStatus::EPS_Ready)
 		{
-			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
-			ServerCallCommand(Index);
+			FTransform SpawnTransform;
+			SpawnTransform.SetLocation(OutHit.ImpactPoint + FVector(0, 0, 90.f));
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			SpawnTransform.SetRotation((UKismetMathLibrary::FindLookAtRotation(OutHit.ImpactPoint + FVector(0, 0, 90.f), GetActorLocation())).Quaternion());
+			APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
+				(
+					PokemonOut.StoredPokemonDataAsset->StoredPokemonClass,
+					SpawnTransform,
+					this,
+					this,
+					ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+				);
+			IChooseYou->SetPokemonStartup(PokemonOut);
+			IChooseYou->SetPokemonTrainer(this);
+			IChooseYou->FinishSpawning(SpawnTransform);
+			CurrentPokemon = IChooseYou;
+			GetTPS()->PokemonIsOut(IChooseYou);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
+	}
+}
+
+FPokemonInfo AProjectMimikyuCharacter::GetCurrentPokemonInfo()
+{
+	return FPokemonInfo();
 }
 
 void AProjectMimikyuCharacter::SetCurrentPokemon(APokemon_Parent* LeadPokemon)
@@ -172,6 +199,7 @@ void AProjectMimikyuCharacter::CatchPokemon()
 		if (CaughtPokemon && !CaughtPokemon->bIsCaught)
 		{
 			AddToParty(CaughtPokemon);
+			CaughtPokemon->Return();
 			//if (CurrentParty.Num() < 6)
 			//{
 				//CurrentParty.Add(CaughtPokemon);
@@ -187,10 +215,7 @@ void AProjectMimikyuCharacter::CatchPokemon()
 
 void AProjectMimikyuCharacter::AddToParty(APokemon_Parent* NewPokemon)
 {
-	 ATrainerPlayerState* TrainerPlayerState = GetPlayerState<ATrainerPlayerState>();
-	check(TrainerPlayerState);
-
-	TrainerPlayerState->AddToParty(NewPokemon);
+	GetTPS()->AddToParty(NewPokemon);
 }
 
 void AProjectMimikyuCharacter::ShowPokemonMoveset()
@@ -232,6 +257,32 @@ void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, FVector Start,
 //////////////////////////////////////////////////////////////////////////
 // Input
 
+ATrainerController* AProjectMimikyuCharacter::GetTC()
+{
+	if (!TrainerController)
+		TrainerController = CastChecked<ATrainerController>(Controller);
+	return TrainerController;
+}
+
+ATrainerPlayerState* AProjectMimikyuCharacter::GetTPS()
+{
+	if (!TrainerPlayerState)
+		TrainerPlayerState = GetPlayerState<ATrainerPlayerState>();
+	return TrainerPlayerState;
+}
+
+UPokemonAbilitySystemComponent* AProjectMimikyuCharacter::GetPASC()
+{
+	if (!CurrentPokemon)
+		return nullptr;
+
+	if (!PokemonASC)
+	{
+		PokemonASC = CurrentPokemon->GetPokemonASC();
+	}
+	return PokemonASC;
+}
+
 void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -249,6 +300,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		PokemonInput->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
 		PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
+		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ComeOnOut);
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
@@ -262,6 +314,22 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 //{
 //	OnPokemonHealthUpdated.Broadcast();
 //}
+
+void AProjectMimikyuCharacter::SelectMove(int32 Index)
+{
+	// Pokemon Does move
+		// call a bool that prevents you from calling a move while pokemon is attacking
+		// pokemon's move recharges maybe we give them stamina we'll see...
+	if (TrainerController && bAreMovesSelectable)
+	{
+		if (Index == INDEX_NONE || Index < 0) return;
+		if (/*TrainerController->IsMoveValid(Index) && */!CurrentPokemon->GetIsCommandActive())
+		{
+			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
+			ServerCallCommand(Index);
+		}
+	}
+}
 
 void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
 {
@@ -330,6 +398,7 @@ void AProjectMimikyuCharacter::TargetAndEngage()
 	{
 		UE_LOG(LogTemp, Display, TEXT("Hit something"));
 		EngagedTarget = OutHit.GetActor();
+		GetTPS()->SetTrainerIsInCombat(EngagedTarget);
 		ServerBroadcastTarget(EngagedTarget);
 	}
 }

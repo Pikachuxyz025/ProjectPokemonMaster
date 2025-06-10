@@ -17,7 +17,26 @@ FText UPokemonDataAsset::GetNameFromTag(const FGameplayTag& StatTag)
 	return FText();
 }
 
-FPokemonStatInfo UPokemonDataAsset::CreateStatInfo(const FGameplayTag& StatTag, const float PokemonStatValue)
+UPokemonMoveDataAsset* UPokemonDataAsset::FindPokemonMoveForLevel(int32 CurrentLevel)
+{
+	for (FPokemonMovesetList MoveInfo : PokemonMoveInfo)
+	{
+		if (MoveInfo.LevelLearned == CurrentLevel)
+		{
+			int32 MoveCount = MoveInfo.PokemonMovesLearntAtLevel.Num();
+			if (MoveCount > 1)
+			{
+				int32 SelectIndex = FMath::RandRange(0, MoveCount - 1);
+				return MoveInfo.PokemonMovesLearntAtLevel[SelectIndex];
+			}
+			else
+				return MoveInfo.PokemonMovesLearntAtLevel[0];
+		}
+	}
+	return nullptr;
+}
+
+FPokemonStatInfo UPokemonDataAsset::CreateStatInfo(const FGameplayTag StatTag, const float PokemonStatValue)
 {
 	FPokemonStatInfo Info;
 	Info.StatTag = StatTag;

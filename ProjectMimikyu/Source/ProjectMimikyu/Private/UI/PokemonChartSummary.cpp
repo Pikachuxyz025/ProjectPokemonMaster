@@ -31,16 +31,16 @@ void UPokemonChartSummary::RemoveMouseCursor()
 	}
 }
 
-void UPokemonChartSummary::SetPokemonParty(const TArray<APokemon_Parent*> PokemonParty)
+void UPokemonChartSummary::SetPokemonParty(const TArray<FPokemonInfo> PokemonParty)
 {
 	PokemonPartyInfo = PokemonParty;
 }
 
-void UPokemonChartSummary::SetPokemonIndex(APokemon_Parent* SelectedPokemon)
+void UPokemonChartSummary::SetPokemonIndex(const FPokemonInfo SelectedPokemon)
 {
 	if (PokemonPartyInfo.Num() <= 0 || !PokemonPartyInfo.Contains(SelectedPokemon)) return;
 
- CurrentPartyIndex= PokemonPartyInfo.IndexOfByKey(SelectedPokemon);
+	CurrentPartyIndex = PokemonPartyInfo.Find(SelectedPokemon);
 }
 
 FReply UPokemonChartSummary::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)

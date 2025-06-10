@@ -9,17 +9,13 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 // Cross Module References
-	COREUOBJECT_API UClass* Z_Construct_UClass_UObject_NoRegister();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FLinearColor();
 	ENGINE_API UClass* Z_Construct_UClass_UTexture2D_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonPartyRow();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonPartyRow_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UBorder_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UButton_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonUserWidget();
 	UMG_API UClass* Z_Construct_UClass_UImage_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UProgressBar_NoRegister();
 	UMG_API UClass* Z_Construct_UClass_UTextBlock_NoRegister();
-	UMG_API UClass* Z_Construct_UClass_UUserWidget();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	struct PokemonPartyRow_eventSetHealth_Parms
@@ -29,7 +25,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 	};
 	struct PokemonPartyRow_eventSetIcon_Parms
 	{
-		UObject* NewImage;
+		UTexture2D* NewImage;
 	};
 	struct PokemonPartyRow_eventSetNameAndLevel_Parms
 	{
@@ -45,7 +41,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 		ProcessEvent(FindFunctionChecked(NAME_UPokemonPartyRow_SetHealth),&Parms);
 	}
 	static FName NAME_UPokemonPartyRow_SetIcon = FName(TEXT("SetIcon"));
-	void UPokemonPartyRow::SetIcon(UObject* NewImage)
+	void UPokemonPartyRow::SetIcon(UTexture2D* NewImage)
 	{
 		PokemonPartyRow_eventSetIcon_Parms Parms;
 		Parms.NewImage=NewImage;
@@ -120,7 +116,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonPartyRow_SetIcon_Statics::NewProp_NewImage = { "NewImage", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonPartyRow_eventSetIcon_Parms, NewImage), Z_Construct_UClass_UObject_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonPartyRow_SetIcon_Statics::NewProp_NewImage = { "NewImage", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonPartyRow_eventSetIcon_Parms, NewImage), Z_Construct_UClass_UTexture2D_NoRegister, METADATA_PARAMS(0, nullptr) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonPartyRow_SetIcon_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonPartyRow_SetIcon_Statics::NewProp_NewImage,
 	};
@@ -195,21 +191,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_SelectImageButton_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectImageButton;
-#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_SelectorArrow_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectorArrow;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_HealthBar_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_HealthBar;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_ExperienceBar_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_ExperienceBar;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Health_MetaData[];
 #endif
@@ -227,10 +211,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonLevel;
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_SelectImageButtonBorder_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectImageButtonBorder;
-#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_HighlightedColor_MetaData[];
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_HighlightedColor;
@@ -247,13 +227,13 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UPokemonPartyRow_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UUserWidget,
+		(UObject* (*)())Z_Construct_UClass_UPokemonUserWidget,
 		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonPartyRow_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonPartyRow_SetHealth, "SetHealth" }, // 4024266150
-		{ &Z_Construct_UFunction_UPokemonPartyRow_SetIcon, "SetIcon" }, // 191308258
+		{ &Z_Construct_UFunction_UPokemonPartyRow_SetIcon, "SetIcon" }, // 4132941242
 		{ &Z_Construct_UFunction_UPokemonPartyRow_SetNameAndLevel, "SetNameAndLevel" }, // 3899820316
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::FuncInfo) < 2048);
@@ -264,47 +244,32 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 	};
 #endif
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButton_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "Category", "PokemonPartyRow" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButton = { "SelectImageButton", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, SelectImageButton), Z_Construct_UClass_UButton_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButton_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButton_MetaData) };
-#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectorArrow_MetaData[] = {
 		{ "BindWidget", "" },
 		{ "Category", "PokemonPartyRow" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)\n//UButton* SelectImageButton;\n" },
+#endif
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "UPROPERTY(meta = (BindWidget), BlueprintReadOnly)\nUButton* SelectImageButton;" },
+#endif
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectorArrow = { "SelectorArrow", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, SelectorArrow), Z_Construct_UClass_UImage_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectorArrow_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectorArrow_MetaData) };
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HealthBar_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "Category", "PokemonPartyRow" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HealthBar = { "HealthBar", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, HealthBar), Z_Construct_UClass_UProgressBar_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HealthBar_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HealthBar_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExperienceBar_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "Category", "PokemonPartyRow" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExperienceBar = { "ExperienceBar", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, ExperienceBar), Z_Construct_UClass_UProgressBar_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExperienceBar_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExperienceBar_MetaData) };
-#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_Health_MetaData[] = {
 		{ "BindWidget", "" },
 		{ "Category", "PokemonPartyRow" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)\n//UProgressBar* ExperienceBar;\n" },
+#endif
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "UPROPERTY(meta = (BindWidget), BlueprintReadOnly)\nUProgressBar* ExperienceBar;" },
+#endif
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_Health = { "Health", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, Health), Z_Construct_UClass_UTextBlock_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_Health_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_Health_MetaData) };
@@ -336,15 +301,6 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_PokemonLevel = { "PokemonLevel", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, PokemonLevel), Z_Construct_UClass_UTextBlock_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_PokemonLevel_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_PokemonLevel_MetaData) };
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButtonBorder_MetaData[] = {
-		{ "BindWidget", "" },
-		{ "Category", "PokemonPartyRow" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButtonBorder = { "SelectImageButtonBorder", nullptr, (EPropertyFlags)0x002008000008001c, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, SelectImageButtonBorder), Z_Construct_UClass_UBorder_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButtonBorder_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButtonBorder_MetaData) };
-#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HighlightedColor_MetaData[] = {
 		{ "Category", "PokemonPartyRow" },
 		{ "ModuleRelativePath", "Public/UI/PokemonPartyRow.h" },
@@ -366,15 +322,11 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_DefaultImage = { "DefaultImage", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonPartyRow, DefaultImage), Z_Construct_UClass_UTexture2D_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_DefaultImage_MetaData), Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_DefaultImage_MetaData) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonPartyRow_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButton,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectorArrow,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HealthBar,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExperienceBar,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_Health,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_ExpLeft,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_PokemonName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_PokemonLevel,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_SelectImageButtonBorder,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_HighlightedColor,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_RegularColor,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonPartyRow_Statics::NewProp_DefaultImage,
@@ -418,9 +370,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonPartyRow() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonPartyRow_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonPartyRow, UPokemonPartyRow::StaticClass, TEXT("UPokemonPartyRow"), &Z_Registration_Info_UClass_UPokemonPartyRow, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonPartyRow), 3908955850U) },
+		{ Z_Construct_UClass_UPokemonPartyRow, UPokemonPartyRow::StaticClass, TEXT("UPokemonPartyRow"), &Z_Registration_Info_UClass_UPokemonPartyRow, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonPartyRow), 2054821382U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonPartyRow_h_2024933867(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonPartyRow_h_2216008084(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonPartyRow_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonPartyRow_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

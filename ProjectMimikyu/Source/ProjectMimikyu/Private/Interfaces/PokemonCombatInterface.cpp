@@ -44,3 +44,8 @@ UPokemonMoveDataAsset* IPokemonCombatInterface::GetPokemonActiveMove()
 {
 	return nullptr;
 }
+
+FPokemonTypeInfo IPokemonCombatInterface::GetPokemonElementalTypes()
+{
+	return FPokemonTypeInfo();
+}

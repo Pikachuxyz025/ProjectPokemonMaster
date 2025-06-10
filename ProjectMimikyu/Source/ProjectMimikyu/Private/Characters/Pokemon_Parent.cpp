@@ -1,5 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+// TO DO: 
+// Add FGameplaytags for spawn points, this determines how their stats spawn
+// Activate their behavior tree with trainer set
+//
+
+
 
 #include "Characters/Pokemon_Parent.h"
 #include "Components/BoxComponent.h"
@@ -82,7 +88,9 @@ void APokemon_Parent::BeginPlay()
 
 	//DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
 
-	MovesetComponent->SpawnWithMoveSet(CurrentLevel);
+	if(!SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
+	MovesetComponent->SpawnWithDataMoveSet(CurrentLevel,PokemonDataAsset);
+
 	AddPokemonAbilities();
 
 	SetupMeleeTimeline();
@@ -142,9 +150,18 @@ void APokemon_Parent::UpdatePokemonUIInfo()
 
 FPokemonInfo APokemon_Parent::GetPokemonInfo()
 {
-	if (!PokemonInfo.StoredPokemonClass)
-		PokemonInfo = SetupPokemonInfo();
+	PokemonInfo = SetupPokemonInfo();
 	return PokemonInfo;
+}
+
+void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
+{
+	//XP = SetupInfo.XP;
+	Gender = SetupInfo.Gender;
+	Nature = SetupInfo.Nature;
+	EffortLevelBaseMap = SetupInfo.StoredEffortLevelBaseMap;
+	MovesetComponent->SetupMoveset(SetupInfo.CurrentPokemonMoves);
+	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
 
 FPokemonInfo APokemon_Parent::SetupPokemonInfo()
@@ -153,9 +170,11 @@ FPokemonInfo APokemon_Parent::SetupPokemonInfo()
 	NewInfo.CurrentPokemonMoves = MovesetComponent->CurrentPokemonMoves;
 	NewInfo.CurrentUiInfo = GetPokemonUIInfo(true);
 	NewInfo.StoredEffortLevelBaseMap = EffortLevelBaseMap;
+	NewInfo.StoredAttributeValue = GetPokemonAS()->GetAttributeTagValues();
 	NewInfo.Nature = Nature;
+	NewInfo.Gender = Gender;
 	NewInfo.XP = 0.f;
-	NewInfo.StoredPokemonClass = GetClass();
+	NewInfo.StoredPokemonDataAsset = PokemonDataAsset;
 	return NewInfo;
 }
 
@@ -168,13 +187,21 @@ FPokemonUIInfo APokemon_Parent::GetPokemonUIInfo(bool bNeedsSetup)
 		PokemonUIInfo.PokemonSpriteImage = PokemonDataAsset->SpriteImage;
 	}
 	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();
+	PokemonUIInfo.PokemonPPPercent = GetPokemonAS()->GetPowerPoints() / GetPokemonAS()->GetMaxPowerPoints();
 	return PokemonUIInfo;
 }
 
 void APokemon_Parent::PossessedBy(AController* NewController)
 {
+	//AActor* NewTrainer = nullptr;
+	//if (SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
+	//NewTrainer = GetOwner();
+
 	Super::PossessedBy(NewController);
 	PokemonController = Cast<APokemonAIController>(GetController());
+	PokemonController->SetTree(AIBehaviorTree, this);
+	//if (NewTrainer)
+		//SetPokemonTrainer(NewTrainer);
 }
 
 void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -231,7 +258,7 @@ void APokemon_Parent::AttackEnded()
 	ActivePokemonMove = nullptr;
 	UE_LOG(LogTemp, Display, TEXT("Attack Ended"));
 	PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
-	SetMovementSpeed(EMovementSpeed::EMS_Running);
+	SetMovementSpeed(EMovementSpeed::EMS_Running, 1.f);
 
 	OnAttackEnd.Broadcast();
 }
@@ -256,18 +283,6 @@ void APokemon_Parent::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	UE_LOG(LogTemp, Display, TEXT("At Least Overlapping"));
 }
 
-// Called every frame
-void APokemon_Parent::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void APokemon_Parent::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
 
 void APokemon_Parent::Faint()
 {
@@ -287,7 +302,33 @@ void APokemon_Parent::Faint()
 	}
 }
 
-void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed)
+void APokemon_Parent::Return()
+{
+	if (PokemonController)
+	{	
+		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
+		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned")));
+
+		Dissolve();
+	}
+}
+
+void APokemon_Parent::Dissolve()
+{
+	if (IsValid(ReturnMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(ReturnMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicMatInst);
+		StartDissolveTimeline(DynamicMatInst);
+	}
+}
+
+void APokemon_Parent::SetupPokemonOnSpawn(UPokemonDataAsset* ResetAsset)
+{
+}
+
+
+void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier)
 {
 	float NewSpeed = 0.0f;
 	switch (NewMovementSpeed)
@@ -303,7 +344,7 @@ void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed)
 		break;
 	case EMovementSpeed::EMS_Engaging:
 		if (ActivePokemonMove)
-			NewSpeed = GetEngagedSpeed(ActivePokemonMove->SpeedMultiplier);
+			NewSpeed = GetEngagedSpeed(MoveMultiplier);
 		else
 			NewSpeed = GetEngagedSpeed();
 		break;
@@ -400,6 +441,14 @@ float APokemon_Parent::GetTypeMatchup(EElementalType ElementalType)
 	return TypeChartDamageMultiplier(ElementalType);
 }
 
+FPokemonTypeInfo APokemon_Parent::GetPokemonElementalTypes()
+{
+	FPokemonTypeInfo NewTypeInfo;
+	NewTypeInfo.FirstType = PokemonDataAsset->FirstType;
+	NewTypeInfo.SecondType = PokemonDataAsset->SecondType;
+	return NewTypeInfo;
+}
+
 UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
 {
 	return ActivePokemonMove;
@@ -459,7 +508,7 @@ void APokemon_Parent::EnactMove()
 {
 	if (ActivePokemonMove)
 	{
-		EMoveAction ActiveMoveAction = ActivePokemonMove->MoveAction;
+		EMoveAction ActiveMoveAction = EMoveAction::EMA_None;// ActivePokemonMove->MoveAction;
 		FTimerHandle Timer;
 
 		switch (ActiveMoveAction)
@@ -486,7 +535,6 @@ void APokemon_Parent::EnactMove()
 			GetWorldTimerManager().SetTimer(Timer, this, &APokemon_Parent::AttackEnded, 4.f, false);
 			break;
 		}
-		UE_LOG(LogTemp, Display, TEXT("%s"), *ActivePokemonMove->MoveName.ToString());
 	}
 }
 
@@ -605,15 +653,15 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 {
 	CurrentTrainer = NewTrainer;
 
-	PokemonController = PokemonController ? PokemonController : Cast<APokemonAIController>(GetController());
-	PokemonController->SetTrainer(CurrentTrainer);
+	//PokemonController = PokemonController ? PokemonController : Cast<APokemonAIController>(GetController());
+	//PokemonController->SetTrainer(CurrentTrainer);
 
 	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer);
 	if (Trainer)
 	{
 		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
 		PokemonStatus = EPokemonStatus::EPS_PlayerTrainer;
-		PokemonController->SetPokemonStatus(PokemonStatus);
+		//PokemonController->SetPokemonStatus(PokemonStatus);
 	}
 	UE_LOG(LogTemp, Display, TEXT("Call to server test"));
 }
@@ -635,6 +683,16 @@ void APokemon_Parent::ServerSetTrainer_Implementation(AActor* NewTrainer)
 void APokemon_Parent::CallCommand(int32 Direction)
 {
 	ActivePokemonMove = MovesetComponent->CurrentPokemonMoves[Direction];
+
+	// Can we use this move?
+	FGameplayTag MoveCooldowntag = ActivePokemonMove->CooldownTag;
+	if (GetPokemonASC()->HasMatchingGameplayTag(MoveCooldowntag))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Move is in cooldown"));
+		ActivePokemonMove = nullptr;
+		return;
+	}
+
 	PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
 }
 

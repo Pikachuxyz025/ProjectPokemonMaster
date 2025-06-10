@@ -6,18 +6,18 @@
 #include "Components/ProgressBar.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 
-void UPokemonMove::SetCurrentPokemonMove(UPokemonMoveDataAsset* NewPokemonMove)
-{
-	CurrentPokemonMove = NewPokemonMove;
-	if (!CurrentPokemonMove)
-	{
-		SetName(FText::FromString(FString::Printf(TEXT(" "))));
-		return;
-	}
-	SetName(CurrentPokemonMove->MoveName);
-}
-
-void UPokemonMove::SetName(FText NewName)
-{
-	PokemonMoveName->SetText(NewName);
-}
+//void UPokemonMove::SetCurrentPokemonMove(UPokemonMoveDataAsset* NewPokemonMove)
+//{
+//	CurrentPokemonMove = NewPokemonMove;
+//	if (!CurrentPokemonMove)
+//	{
+//		SetName(FText::FromString(FString::Printf(TEXT(" "))));
+//		return;
+//	}
+//	SetName(CurrentPokemonMove->MoveName);
+//}
+//
+//void UPokemonMove::SetName(FText NewName)
+//{
+//	PokemonMoveName->SetText(NewName);
+//}

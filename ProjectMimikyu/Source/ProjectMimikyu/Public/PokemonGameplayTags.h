@@ -23,6 +23,10 @@ public:
 	FGameplayTag Attributes_Stats_Defense;
 	FGameplayTag Attributes_Stats_Speed;
 
+	FGameplayTag SpawnPoint_Trees;
+	FGameplayTag SpawnPoint_ComeOnOut;
+	FGameplayTag SpawnPoint_Bushes;
+
 	FGameplayTag Damage_Status_Burned;
 	FGameplayTag Damage_Status_Poisoned;
 	FGameplayTag Damage_Status_Sleep;
@@ -37,6 +41,7 @@ public:
 	FGameplayTag PokemonMoves_MoveAction_Melee;
 	FGameplayTag PokemonMoves_MoveAction_Projectile;
 	FGameplayTag PokemonMoves_MoveAction_Ramming;
+	FGameplayTag PokemonMoves_MoveAction_Dodging;
 	FGameplayTag PokemonMoves_MoveAction_Environment;
 	FGameplayTag PokemonMoves_MoveAction_Stats;
 
@@ -44,16 +49,59 @@ public:
 	FGameplayTag PokemonMoves_MoveType_Special;
 	FGameplayTag PokemonMoves_MoveType_Status;
 
+	FGameplayTag Abilities_Status_Locked;
+	FGameplayTag Abilities_Status_Unlocked;
+	FGameplayTag Abilities_Status_Equipped;
+	FGameplayTag Abilities_Status_Eligible;
+
+	FGameplayTag Abilities_Upgrades;
+
+	FGameplayTag Abilities_IronDefense;
+	FGameplayTag Abilities_FlashCannon;
+	FGameplayTag Abilities_MachPunch;
+	FGameplayTag Abilities_QuickAttack;
+	FGameplayTag Abilities_Thunderbolt;
+	FGameplayTag Abilities_Bite;
+	FGameplayTag Abilities_AuraSphere;
+	FGameplayTag Abilities_DoubleTeam;
+	FGameplayTag Abilities_Dig;
+	FGameplayTag Abilities_Nuzzle;
+	FGameplayTag Abilities_BulletPunch;
+	FGameplayTag Abilities_Earthquake;
+	FGameplayTag Abilities_IronTail;
+	FGameplayTag Abilities_BulletSeed;
+	FGameplayTag Abilities_AirCutter;
+
 	FGameplayTag InputTag_1;
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
 	FGameplayTag InputTag_Dodge;
+	FGameplayTag InputTag_Dodge_Jump;
 	FGameplayTag InputTag_Dodge_Left;
 	FGameplayTag InputTag_Dodge_Right;
 	FGameplayTag InputTag_Dodge_Forward;
 	FGameplayTag InputTag_Dodge_Backward;
 
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+
+	FGameplayTag Buff_Chance;
+	FGameplayTag Buff_DamageMultiplier;
+	FGameplayTag Buff_Duration;
+	FGameplayTag Buff_Frequency;
+
+	FGameplayTag Cooldown_InputTag;
+	FGameplayTag Cooldown_InputTag_1;
+	FGameplayTag Cooldown_InputTag_2;
+	FGameplayTag Cooldown_InputTag_3;
+	FGameplayTag Cooldown_InputTag_4;
+
+	FGameplayTag Data_PowerPointCost;
+	TMap<FGameplayTag, FGameplayTag> InputsToCooldowns;
+	TMap<FGameplayTag, FGameplayTag> CooldownsToInputs;
 private:
 	static FPokemonGameplayTags GameplayTags;
 };

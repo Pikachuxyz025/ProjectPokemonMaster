@@ -7,13 +7,14 @@
 #include "UObject/GeneratedCppIncludes.h"
 #include "ProjectMimikyu/Public/UI/PokemonChartSummary.h"
 #include "InputCoreTypes.h"
+#include "ProjectMimikyu/Public/Characters/CharacterTypes.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 // Cross Module References
 	INPUTCORE_API UScriptStruct* Z_Construct_UScriptStruct_FKey();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonChartSummary();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonChartSummary_NoRegister();
+	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 	UMG_API UClass* Z_Construct_UClass_UUserWidget();
 	UMG_API UClass* Z_Construct_UClass_UUserWidget_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
@@ -28,7 +29,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 	}
 	DEFINE_FUNCTION(UPokemonChartSummary::execSetPokemonIndex)
 	{
-		P_GET_OBJECT(APokemon_Parent,Z_Param_SelectedPokemon);
+		P_GET_STRUCT(FPokemonInfo,Z_Param_SelectedPokemon);
 		P_FINISH;
 		P_NATIVE_BEGIN;
 		P_THIS->SetPokemonIndex(Z_Param_SelectedPokemon);
@@ -36,7 +37,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 	}
 	DEFINE_FUNCTION(UPokemonChartSummary::execSetPokemonParty)
 	{
-		P_GET_TARRAY(APokemon_Parent*,Z_Param_PokemonParty);
+		P_GET_TARRAY(FPokemonInfo,Z_Param_PokemonParty);
 		P_FINISH;
 		P_NATIVE_BEGIN;
 		P_THIS->SetPokemonParty(Z_Param_PokemonParty);
@@ -116,16 +117,24 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 	{
 		struct PokemonChartSummary_eventSetPokemonIndex_Parms
 		{
-			APokemon_Parent* SelectedPokemon;
+			FPokemonInfo SelectedPokemon;
 		};
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectedPokemon;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SelectedPokemon_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_SelectedPokemon;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon = { "SelectedPokemon", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonChartSummary_eventSetPokemonIndex_Parms, SelectedPokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon = { "SelectedPokemon", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonChartSummary_eventSetPokemonIndex_Parms, SelectedPokemon), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon_MetaData), Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon_MetaData) }; // 2839312099
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex_Statics::NewProp_SelectedPokemon,
 	};
@@ -150,9 +159,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 	{
 		struct PokemonChartSummary_eventSetPokemonParty_Parms
 		{
-			TArray<APokemon_Parent*> PokemonParty;
+			TArray<FPokemonInfo> PokemonParty;
 		};
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonParty_Inner;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonParty_Inner;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonParty_MetaData[];
 #endif
@@ -163,13 +172,13 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_Inner = { "PokemonParty", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_Inner = { "PokemonParty", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 2839312099
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_MetaData[] = {
 		{ "NativeConst", "" },
 	};
 #endif
-	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty = { "PokemonParty", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonChartSummary_eventSetPokemonParty_Parms, PokemonParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_MetaData), Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_MetaData) };
+	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty = { "PokemonParty", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonChartSummary_eventSetPokemonParty_Parms, PokemonParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_MetaData), Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_MetaData) }; // 2839312099
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty_Statics::NewProp_PokemonParty,
@@ -245,7 +254,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonPartyInfo_Inner;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonPartyInfo_Inner;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonPartyInfo_MetaData[];
 #endif
@@ -274,8 +283,8 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonChartSummary_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonChartSummary_AddMouseCursor, "AddMouseCursor" }, // 4199932182
 		{ &Z_Construct_UFunction_UPokemonChartSummary_RemoveMouseCursor, "RemoveMouseCursor" }, // 3313240156
-		{ &Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex, "SetPokemonIndex" }, // 1022629815
-		{ &Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty, "SetPokemonParty" }, // 3839448192
+		{ &Z_Construct_UFunction_UPokemonChartSummary_SetPokemonIndex, "SetPokemonIndex" }, // 180045464
+		{ &Z_Construct_UFunction_UPokemonChartSummary_SetPokemonParty, "SetPokemonParty" }, // 1717924361
 		{ &Z_Construct_UFunction_UPokemonChartSummary_SetReturnWidget, "SetReturnWidget" }, // 3721603676
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonChartSummary_Statics::FuncInfo) < 2048);
@@ -285,14 +294,14 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 		{ "ModuleRelativePath", "Public/UI/PokemonChartSummary.h" },
 	};
 #endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_Inner = { "PokemonPartyInfo", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_Inner = { "PokemonPartyInfo", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 2839312099
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_MetaData[] = {
 		{ "Category", "PokemonChartSummary" },
 		{ "ModuleRelativePath", "Public/UI/PokemonChartSummary.h" },
 	};
 #endif
-	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo = { "PokemonPartyInfo", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonChartSummary, PokemonPartyInfo), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_MetaData), Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_MetaData) };
+	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo = { "PokemonPartyInfo", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonChartSummary, PokemonPartyInfo), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_MetaData), Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_PokemonPartyInfo_MetaData) }; // 2839312099
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonChartSummary_Statics::NewProp_CurrentPartyIndex_MetaData[] = {
 		{ "Category", "PokemonChartSummary" },
@@ -361,9 +370,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonChartSummary() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonChartSummary_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonChartSummary, UPokemonChartSummary::StaticClass, TEXT("UPokemonChartSummary"), &Z_Registration_Info_UClass_UPokemonChartSummary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonChartSummary), 2954421255U) },
+		{ Z_Construct_UClass_UPokemonChartSummary, UPokemonChartSummary::StaticClass, TEXT("UPokemonChartSummary"), &Z_Registration_Info_UClass_UPokemonChartSummary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonChartSummary), 2754222302U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonChartSummary_h_2036161397(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonChartSummary_h_3640200634(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonChartSummary_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonChartSummary_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

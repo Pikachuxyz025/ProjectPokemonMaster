@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Characters/CharacterTypes.h"
 #include "TrainerController.generated.h"
 
 class APokemon_Parent;
@@ -13,6 +14,7 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_MULTICAST_DELEGATE(FOnEventCaller);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnKeyCalled,const EDirectionPoint);
 
 UCLASS()
 class PROJECTMIMIKYU_API ATrainerController : public APlayerController
@@ -42,6 +44,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UPokemonInputConfig> InputConfig;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMappingContext;
 
@@ -67,6 +72,10 @@ public:
 	FOnEventCaller SwapUIModeDelegate;
 	FOnEventCaller ShiftLeftDelegate;
 	FOnEventCaller ShiftRightDelegate;
+	FOnEventCaller ShowMoveSetDelegate;
+	FOnEventCaller RemoveMoveSetDelegate;
+	
+	FOnKeyCalled KeyCalledDelegate;
 
 	void HandleGameHasStarted();
 	void SwapUIMode();
@@ -75,5 +84,6 @@ public:
 	void ShowCurrentPokemonMoveset();
 	void RemoveCurrentPokemonMoveset();
 	FKey GetMoveKey();
+	void GetKeyForSequence(EDirectionPoint KeyDirection);
 	bool IsMoveValid(int32 DirectionIndex);
 };

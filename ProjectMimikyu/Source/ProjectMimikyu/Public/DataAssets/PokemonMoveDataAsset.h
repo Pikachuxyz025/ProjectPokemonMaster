@@ -9,6 +9,7 @@ using namespace UP;
 #include "PokemonMoveDataAsset.generated.h"
 
 class UPokemonGameplayAbilities;
+class UGameplayAbility; 
 
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonMoveDataAsset : public UPrimaryDataAsset
@@ -17,7 +18,8 @@ class PROJECTMIMIKYU_API UPokemonMoveDataAsset : public UPrimaryDataAsset
 
 public:
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	/*
+	* UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FText MoveName;
 
 	UPROPERTY(EditAnywhere)
@@ -89,7 +91,36 @@ public:
 	void SetInputTag(FGameplayTag NewInputTag) { InputTag = NewInputTag; }
 	FGameplayTag GetInputTag() { return InputTag; }
 
+		FGameplayTag InputTag;
+	*/
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText MoveName;
+
+	UPROPERTY(EditAnywhere)
+	FText MoveDescription;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Abilities"))
+	FGameplayTag AbilityTag = FGameplayTag();
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag StatusTag = FGameplayTag();
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag InputTag = FGameplayTag();
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag CooldownTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityType = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr <const UTexture2D> Icon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UPokemonGameplayAbilities> Ability;
 private:
 
-	FGameplayTag InputTag;
+
 };

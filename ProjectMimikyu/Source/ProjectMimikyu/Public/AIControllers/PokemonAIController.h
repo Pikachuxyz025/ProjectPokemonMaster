@@ -9,7 +9,9 @@ using namespace UP;
 #include "PokemonAIController.generated.h"
 
 class UPokemonAbilitySystemComponent;
-
+class APokemon_Parent;
+class UAIPerceptionComponent;
+class UBehaviorTree;
 UCLASS()
 class PROJECTMIMIKYU_API APokemonAIController : public AAIController
 {
@@ -18,15 +20,15 @@ class PROJECTMIMIKYU_API APokemonAIController : public AAIController
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
-	class UBehaviorTree* AIBehaviorTree;
+	UBehaviorTree* AIBehaviorTree;
 
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	class APokemon_Parent* ControlledPokemon;
+	APokemon_Parent* ControlledPokemon;
 
 	UPROPERTY(VisibleAnywhere)
-	class UAIPerceptionComponent* AIPerception;
+	UAIPerceptionComponent* AIPerception;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAISenseConfig_Sight> SightSense = nullptr;
@@ -75,11 +77,12 @@ protected:
 	void SetBlackboardTrainer();
 	void SetBlackboardASC();
 	void SetBlackboardAttackTarget();
-
+	virtual void OnPossess(APawn* InPawn) override;
 	void HandleSenseDamage(AActor* Actor);
 public:
 	void SetTrainer(AActor* NewTrainer);
 	void SetCombatTarget(AActor* NewTarget);
+	void SetTree(UBehaviorTree* NewBehaviorTree, APokemon_Parent* NewPokemon);
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AActor* GetCombatTarget() { return CombatTarget; }
 	void SetPokemonState(EPokemonState NewPokemonState);

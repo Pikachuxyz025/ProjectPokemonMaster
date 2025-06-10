@@ -4,14 +4,16 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PokemonUserWidget.h"
 #include "Interfaces/MouseInterface.h"
 #include "PlayerInventoryMenuOverlay.generated.h"
 
 class APokemon_Parent;
 class AProjectMimikyuCharacter;
 class UInventoryGrid;
+struct FPokemonInfo;
 UCLASS()
-class PROJECTMIMIKYU_API UPlayerInventoryMenuOverlay : public UUserWidget,public IMouseInterface
+class PROJECTMIMIKYU_API UPlayerInventoryMenuOverlay : public UPokemonUserWidget,public IMouseInterface
 {
 	GENERATED_BODY()
 	
@@ -49,7 +51,7 @@ public:
  void SetReturnToWidegt(UUserWidget* ReturnWidget) { ReturnToWidget = ReturnWidget; }
 protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-	TArray<APokemon_Parent*> PokemonPartyInfo;
+	TArray<FPokemonInfo> PokemonPartyInfo;
 
 	UPROPERTY(VisibleAnywhere)
 	UUserWidget* ReturnToWidget = nullptr;

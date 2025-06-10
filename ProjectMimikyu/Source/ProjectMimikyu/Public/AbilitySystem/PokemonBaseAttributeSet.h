@@ -173,4 +173,11 @@ public:
 	void OnRep_DodgeForce(const FGameplayAttributeData& OldDodgeForce) const;
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
+
+
+	TMap<FGameplayAttribute, float> AttributeValues;
+
+	public:
+		TMap<FGameplayAttribute, float> GetAttributeValues();
+		TMap<FGameplayTag, float> GetAttributeTagValues();
 };

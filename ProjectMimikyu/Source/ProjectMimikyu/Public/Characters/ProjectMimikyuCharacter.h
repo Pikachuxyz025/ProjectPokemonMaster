@@ -12,11 +12,14 @@ using namespace UP;
 class USpringArmComponent;
 class UCameraComponent;
 class UPokemonInputConfig;
+class ATrainerController;
+class ATrainerPlayerState;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class AItem;
 class APokemon_Parent;
+class UPokemonAbilitySystemComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -60,6 +63,9 @@ class AProjectMimikyuCharacter : public ACharacter
 	UInputAction* IA_Throw;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_ThrowPokeball;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Engage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -90,6 +96,10 @@ protected:
 	void TargetAndEngage();
 	void CatchPokemon();
 	void AddToParty(APokemon_Parent* NewPokemon);
+	void ComeOnOut();
+
+	FPokemonInfo GetCurrentPokemonInfo();
+
 	UFUNCTION(Server, Reliable)
 	void ServerAddToCurrentParty(AActor* AddedActor);
 	void ShowPokemonMoveset();
@@ -119,7 +129,19 @@ private:
 	//FPokemonParty CurrentSParty;
 
 	UPROPERTY()
-	class ATrainerController* TrainerController;
+	TObjectPtr<ATrainerController> TrainerController;
+
+	UPROPERTY()
+	TObjectPtr<ATrainerPlayerState> TrainerPlayerState;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonAbilitySystemComponent> PokemonASC;
+
+	ATrainerController* GetTC();
+
+	ATrainerPlayerState* GetTPS();
+
+	UPokemonAbilitySystemComponent* GetPASC();
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInventorySystemComponent* InventorySystem;

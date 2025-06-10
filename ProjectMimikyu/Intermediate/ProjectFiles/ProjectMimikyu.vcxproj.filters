@@ -56,6 +56,9 @@
     <Filter Include="Source\ProjectMimikyu\Private">
       <UniqueIdentifier>{01854F86-3212-345B-8AE6-2B639F4242B6}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAbilityTypes.cpp">
+      <Filter>Source\ProjectMimikyu\Private</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
       <Filter>Source\ProjectMimikyu\Private</Filter>
     </ClCompile>
@@ -69,6 +72,9 @@
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemGlobals.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemLibrary.cpp">
@@ -91,6 +97,12 @@
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks\AT_TickTask.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\AsyncTasks">
+      <UniqueIdentifier>{0BDB9853-1ED9-3EE8-B0DF-F4EF1C3B8E7E}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AsyncTasks\WaitCooldownChange.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\AsyncTasks</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\ExecCalc">
       <UniqueIdentifier>{41B5229E-4066-36CA-9B2B-645A91BB765B}</UniqueIdentifier>
@@ -350,6 +362,9 @@
     <Filter Include="Source\ProjectMimikyu\Public">
       <UniqueIdentifier>{169A1D44-44CA-3435-BEBB-DB0773658B81}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAbilityTypes.h">
+      <Filter>Source\ProjectMimikyu\Public</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
     </ClInclude>
@@ -363,6 +378,9 @@
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemGlobals.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemLibrary.h">
@@ -385,6 +403,12 @@
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks\AT_TickTask.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\AsyncTasks">
+      <UniqueIdentifier>{04524260-433A-3F30-8EA3-95265BDE1E2F}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AsyncTasks\WaitCooldownChange.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\AsyncTasks</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\ExecCalc">
       <UniqueIdentifier>{74548AE2-4819-332F-ABA4-CE58C7516A72}</UniqueIdentifier>

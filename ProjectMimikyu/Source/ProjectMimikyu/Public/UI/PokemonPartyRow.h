@@ -4,32 +4,34 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/PokemonUserWidget.h"
 #include "PokemonPartyRow.generated.h"
 
 class UImage;
 class UTextBlock;
+class UTexture2D;
 class UButton;
 class UProgressBar;
 class UBorder;
 
 UCLASS()
-class PROJECTMIMIKYU_API UPokemonPartyRow : public UUserWidget
+class PROJECTMIMIKYU_API UPokemonPartyRow : public UPokemonUserWidget
 {
 	GENERATED_BODY()
 
 protected:
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UButton* SelectImageButton;
+	//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	//UButton* SelectImageButton;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UImage* SelectorArrow;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UProgressBar* HealthBar;
+	//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	//UProgressBar* HealthBar;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UProgressBar* ExperienceBar;
+	//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	//UProgressBar* ExperienceBar;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UTextBlock* Health;
@@ -43,13 +45,13 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
 	UTextBlock* PokemonLevel;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
-	UBorder* SelectImageButtonBorder;
+	//UPROPERTY(meta = (BindWidget), BlueprintReadOnly)
+	//UBorder* SelectImageButtonBorder;
 
 public:
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
-	void SetIcon(UObject* NewImage);
+	void SetIcon(UTexture2D* NewImage);
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 	void SetHealth(const float CurrentHealth, const float MaxHealth);

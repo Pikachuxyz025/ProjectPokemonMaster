@@ -14,6 +14,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemComponent() {}
 	GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	DEFINE_FUNCTION(UPokemonAbilitySystemComponent::execActivateAbilityByTag)
@@ -86,6 +87,11 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemComponent() {}
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAttributeSet_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonAttributeSet;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
@@ -105,6 +111,16 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemComponent() {}
 		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilitySystemComponent.h" },
 	};
 #endif
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::NewProp_PokemonAttributeSet_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilitySystemComponent.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::NewProp_PokemonAttributeSet = { "PokemonAttributeSet", nullptr, (EPropertyFlags)0x0024080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonAbilitySystemComponent, PokemonAttributeSet), Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::NewProp_PokemonAttributeSet_MetaData), Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::NewProp_PokemonAttributeSet_MetaData) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::NewProp_PokemonAttributeSet,
+	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UPokemonAbilitySystemComponent>::IsAbstract,
 	};
@@ -114,15 +130,16 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemComponent() {}
 		&StaticCppClassTypeInfo,
 		DependentSingletons,
 		FuncInfo,
-		nullptr,
+		Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::PropPointers,
 		nullptr,
 		UE_ARRAY_COUNT(DependentSingletons),
 		UE_ARRAY_COUNT(FuncInfo),
-		0,
+		UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::PropPointers),
 		0,
 		0x00B010A4u,
 		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::Class_MetaDataParams), Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::Class_MetaDataParams)
 	};
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonAbilitySystemComponent_Statics::PropPointers) < 2048);
 	UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent()
 	{
 		if (!Z_Registration_Info_UClass_UPokemonAbilitySystemComponent.OuterSingleton)
@@ -143,9 +160,9 @@ void EmptyLinkFunctionForGeneratedCodePokemonAbilitySystemComponent() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemComponent_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonAbilitySystemComponent, UPokemonAbilitySystemComponent::StaticClass, TEXT("UPokemonAbilitySystemComponent"), &Z_Registration_Info_UClass_UPokemonAbilitySystemComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemComponent), 3507043876U) },
+		{ Z_Construct_UClass_UPokemonAbilitySystemComponent, UPokemonAbilitySystemComponent::StaticClass, TEXT("UPokemonAbilitySystemComponent"), &Z_Registration_Info_UClass_UPokemonAbilitySystemComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemComponent), 2840025245U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemComponent_h_374095985(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemComponent_h_1112084889(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemComponent_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

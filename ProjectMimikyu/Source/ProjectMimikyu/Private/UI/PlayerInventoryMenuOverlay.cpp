@@ -3,18 +3,24 @@
 
 #include "UI/PlayerInventoryMenuOverlay.h"
 #include "AIControllers/TrainerController.h"
+#include "UI/WidgetController/PokemonWidgetController.h"
+#include "Player/TrainerPlayerState.h"
 #include "UI/InventoryGrid.h"
 #include "UI/TrainerHUD.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 
 void UPlayerInventoryMenuOverlay::DisplayInventory()
 {
+	UPokemonWidgetController* PWC = Cast<UPokemonWidgetController>(WidgetController);
+
 	PlayerCharacter = PlayerCharacter ? PlayerCharacter : Cast<AProjectMimikyuCharacter>(GetOwningPlayerPawn());
+
+	PokemonPartyInfo = PWC->GetTPS()->GetCurrentPokemonParty();
+	AllocatePokemonInfo();
+
 	if (PlayerCharacter)
-	{
+	{	
 		UE_LOG(LogTemp, Display, TEXT("Found Player Character"));
-		PokemonPartyInfo = PlayerCharacter->GetCurrentParty();
-		AllocatePokemonInfo();
 		InventoryGrid->DisplayInventory(PlayerCharacter->GetInventorySystem());
 	}
 }

@@ -20,6 +20,15 @@ enum class EGenderType :uint8
 };
 
 UENUM(BlueprintType)
+enum class EPartyStatus :uint8
+{
+	EPS_Empty UMETA(DisplayName = "Empty"),
+	EPS_Out UMETA(DisplayName = "Out"),
+	EPS_Ready UMETA(DisplayName = "Ready"),
+	EPS_Fainted UMETA(DisplayName = "Fainted")
+};
+
+UENUM(BlueprintType)
 enum class EMovementSpeed :uint8
 {
 	EMS_Idle UMETA(DisplayName = "Idle"),
@@ -212,6 +221,28 @@ enum class EPokemonState :uint8
 #pragma region Structs
 
 USTRUCT(BlueprintType)
+struct FPokemonTypeInfo
+{
+	GENERATED_BODY()
+
+	FPokemonTypeInfo() {}
+
+	UPROPERTY(EditDefaultsOnly)
+	EElementalType FirstType = EElementalType::EET_None;
+
+	UPROPERTY(EditDefaultsOnly)
+	EElementalType SecondType = EElementalType::EET_None;
+};
+
+USTRUCT(BlueprintType)
+struct FPokemonMoveChart :public FTableRowBase
+{
+	GENERATED_BODY()
+
+
+};
+
+USTRUCT(BlueprintType)
 struct FTypeChartMatchup:public FTableRowBase
 {
 	GENERATED_BODY()
@@ -256,27 +287,33 @@ struct FPokemonUIInfo
 
 	UPROPERTY(BlueprintReadOnly)
 	float PokemonHPPercent = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	float PokemonPPPercent = 0;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FPokemonInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<APokemon_Parent> StoredPokemonClass;
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UPokemonDataAsset> StoredPokemonDataAsset;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 	FPokemonUIInfo CurrentUiInfo;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 	float XP = 0.f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly)
 	ENatureType Nature = ENatureType::ENT_None;
+
+	UPROPERTY(BlueprintReadOnly)
+	EGenderType Gender = EGenderType::EGT_None;
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FGameplayTag, int32> StoredEffortLevelBaseMap =
@@ -288,6 +325,18 @@ struct FPokemonInfo
 		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense, 0},
 		{FPokemonGameplayTags::Get().Attributes_Stats_Speed, 0}
 	};
+
+	UPROPERTY(BlueprintReadOnly)
+	TMap<FGameplayTag, float> StoredAttributeValue;
+
+	UPROPERTY(EditAnywhere)
+	EPartyStatus PartyMode = EPartyStatus::EPS_Empty;
+
+	// Overload the equality operator
+	bool operator == (const FPokemonInfo& Other) const
+	{
+		return CurrentUiInfo.PokemonName.EqualTo(Other.CurrentUiInfo.PokemonName) && StoredPokemonDataAsset == Other.StoredPokemonDataAsset;
+	}
 };
 
 USTRUCT(BlueprintType)

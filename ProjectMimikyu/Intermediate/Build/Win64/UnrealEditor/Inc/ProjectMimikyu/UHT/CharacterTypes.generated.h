@@ -14,7 +14,22 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define PROJECTMIMIKYU_CharacterTypes_generated_h
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_217_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_226_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonTypeInfo>();
+
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_240_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FPokemonMoveChart_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
+	typedef FTableRowBase Super;
+
+
+template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonMoveChart>();
+
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_248_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FTypeChartMatchup_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
@@ -22,42 +37,42 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FTypeChartMatchup>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_246_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_277_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonUIInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonUIInfo>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_264_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_298_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonInfo>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_296_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_345_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonParty_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonParty>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_321_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_370_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FSlotInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FSlotInfo>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_336_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_385_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FDamageInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
 template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FDamageInfo>();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_354_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_403_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
@@ -77,6 +92,16 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FInventoryItemI
 enum class EGenderType : uint8;
 template<> struct TIsUEnumClass<EGenderType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EGenderType>();
+
+#define FOREACH_ENUM_EPARTYSTATUS(op) \
+	op(EPartyStatus::EPS_Empty) \
+	op(EPartyStatus::EPS_Out) \
+	op(EPartyStatus::EPS_Ready) \
+	op(EPartyStatus::EPS_Fainted) 
+
+enum class EPartyStatus : uint8;
+template<> struct TIsUEnumClass<EPartyStatus> { enum { Value = true }; };
+template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPartyStatus>();
 
 #define FOREACH_ENUM_EMOVEMENTSPEED(op) \
 	op(EMovementSpeed::EMS_Idle) \

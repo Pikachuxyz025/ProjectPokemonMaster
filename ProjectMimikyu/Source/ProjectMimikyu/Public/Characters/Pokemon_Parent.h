@@ -25,6 +25,7 @@ class UDataTable;
 class UPokemonDataAsset;
 class UBoxComponent;
 class UPokemonMoveDataAsset;
+struct FPokemonTypeInfo;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -32,7 +33,7 @@ class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInte
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+
 	APokemon_Parent();
 
 	FOnAttackEnd OnAttackEnd;
@@ -49,7 +50,7 @@ public:
 
 	void AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 	void AddPokemonAbilities();
@@ -112,14 +113,27 @@ protected:
 UBoxComponent* CollisionBox;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
 	virtual void Faint();
+	void Return();
+	void Dissolve();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	void SetupPokemonOnSpawn(UPokemonDataAsset* ResetAsset);
+
+	// Dynamic instance that we can change at runtime
+	UPROPERTY(VisibleAnywhere, Category = "Elim")
+	TObjectPtr<UMaterialInstanceDynamic> DynamicDissolveMaterialInstance;
+
+	// Material instance set on the Blueprint, used with the dynamic material instance
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Elim")
+	TObjectPtr<UMaterialInstance> ReturnMaterialInstance;
 
 	void DisengageFromCombat();
 	void Dodge(const FVector NewDodgeDirection);
@@ -133,7 +147,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UMovesetComponent* MovesetComponent;
 
-	void SetMovementSpeed(EMovementSpeed NewMovementSpeed);
+	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
 	virtual void ChargeIn();
 	virtual void FireAt();
@@ -149,6 +163,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UPokemonMoveDataAsset* ActivePokemonMove = nullptr;
+	FGameplayTag SpawnPointTag;
 
 #pragma region IDamageInterface
 	virtual float GetCurrentHealth() override;
@@ -170,10 +185,10 @@ public:
 	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
 	virtual FVector GetCombatSocketLocation() override;
 	virtual float GetTypeMatchup(EElementalType ElementalType) override;
+	virtual FPokemonTypeInfo GetPokemonElementalTypes() override;
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
 	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
 #pragma endregion
-
 
 	void DamageTarget(AActor* Target);
 
@@ -205,6 +220,8 @@ void StartBoxTrace(FHitResult& HitResult);
 	void Charge();
 
 	virtual void EnactMove();
+
+	void SetPokemonStartup(const FPokemonInfo SetupInfo);
 protected:
 
 #pragma region Damage Component
@@ -289,9 +306,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Stats", meta = (ClampMin = "1", ClampMax = "100"))
 	int32 CurrentLevel = 1;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 CurrentEffortLevel = 0;
 
 	UPROPERTY(VisibleAnywhere)
 	bool bIsUsingMove = false;

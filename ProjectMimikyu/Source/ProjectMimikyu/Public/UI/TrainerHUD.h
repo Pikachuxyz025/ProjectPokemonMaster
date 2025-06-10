@@ -35,7 +35,7 @@ private:
 	TSubclassOf<UUserWidget> PokemonStatInfoOverlayClass;
 
 	UPROPERTY()
-	TObjectPtr<	UPokemonMenuWidgetController> PokemonMenuWidgetController;
+	TObjectPtr<UPokemonMenuWidgetController> PokemonMenuWidgetController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPokemonMenuWidgetController> PokemonMenuWidgetControllerClass;

@@ -5,6 +5,7 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "Characters/CharacterTypes.h"
 #include "PokemonInputConfig.generated.h"
 
 class UInputAction;
@@ -21,6 +22,18 @@ struct FPokemonInputAction
 
 	UPROPERTY(EditDefaultsOnly)
 	 int32 Index = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FPokemonInputKeySequenceAction
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	const UInputAction* InputAction = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	EDirectionPoint KeyDirection = EDirectionPoint();
 };
 
 USTRUCT(BlueprintType)
@@ -46,6 +59,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		TArray<FPokemonInputAction> AbilityInputActions;
+
 		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 		TArray<FPokemonInputDodgeAction> DodgeInputActions;
+		
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+		TArray<FPokemonInputKeySequenceAction> KeySequenceInputActions;
 };

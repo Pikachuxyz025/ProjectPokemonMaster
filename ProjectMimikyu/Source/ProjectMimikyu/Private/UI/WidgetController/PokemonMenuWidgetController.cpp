@@ -13,9 +13,19 @@
 void UPokemonMenuWidgetController::BroadcastInitialValues()
 {
 	//check(StatInfo);
-	for (auto& Pair : GetPAS()->TagsToAttributes)
+	if (AbilitySystemComponent)
 	{
-		BroadcastAttributeInfo(Pair.Key, Pair.Value());
+		for (auto& Pair : GetPAS()->TagsToAttributes)
+		{
+			BroadcastAttributeInfo(Pair.Key, Pair.Value());
+		}
+	}
+	else
+	{
+		for(auto& Pair:AttributeTags)
+		{
+			BroadcastAttributeInfo(Pair);
+		}
 	}
 }
 
@@ -26,8 +36,15 @@ void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& At
 	StatInfoDelegate.Broadcast(Info);
 }
 
+void UPokemonMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag)
+{
+	AttributeInfoDelegate.Broadcast(AttributeTag);
+}
+
 void UPokemonMenuWidgetController::BindCallbacksToDependencies()
 {
+	if (!AbilitySystemComponent) return;
+
 	for (auto& Pair : GetPAS()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(

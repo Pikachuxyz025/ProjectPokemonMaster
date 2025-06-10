@@ -9,6 +9,8 @@ using namespace UP;
 
 
 class UPokemonMoveDataAsset;
+class 	UPokemonDataAsset;
+struct FPokemonMovesetList;
 class UPokemonGameplayAbilities;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -17,25 +19,17 @@ class PROJECTMIMIKYU_API UMovesetComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+
 	UMovesetComponent();
     FPokemonGameplayTags GameplayTags=FPokemonGameplayTags::Get();
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<int32, UPokemonMoveDataAsset*> PokemonLevelUpMoveset;
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<int32, TSubclassOf<UPokemonGameplayAbilities>> PokemonLevelUpAbilities;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int32> AvailibleTMMoves;
 
 	UPROPERTY(VisibleAnywhere)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
@@ -48,11 +42,11 @@ public:
 		{GameplayTags.InputTag_4,nullptr}
 	};
 
-	void CommenceCommand(int32 CurrentMoveIndex);
-	void EnactMove(UPokemonMoveDataAsset* MoveToUse);
 	void SpawnWithMoveSet(int32 CurrentPokemonLevel);
 	void SpawnWithAbilitySet(int32 CurrentPokemonLevel);
-
+	void SetupMoveset(TArray< UPokemonMoveDataAsset*> NewMoveset);
+	void SpawnWithDataMoveSet(int32 CurrentPokemonLevel, UPokemonDataAsset* PokemonMoveList);
 private:
+
 TArray<TSubclassOf <UPokemonGameplayAbilities>> GetGameplayAbilities(const int32& CurrentPokemonLevel);
 };	

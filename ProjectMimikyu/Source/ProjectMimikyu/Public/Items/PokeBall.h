@@ -18,9 +18,12 @@ class PROJECTMIMIKYU_API APokeBall : public AProjectile
 	
 public:
 	APokeBall();
+
+protected:
+
+
 private:
 	
-
 	UPROPERTY(VisibleAnywhere)
 	class USkeletalMeshComponent* ProjectileMesh;
 
