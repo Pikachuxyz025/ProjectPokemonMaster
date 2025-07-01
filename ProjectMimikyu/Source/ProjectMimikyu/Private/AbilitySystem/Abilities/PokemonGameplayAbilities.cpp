@@ -69,11 +69,27 @@ TArray<EDirectionPoint> UPokemonGameplayAbilities::GetKeySequenceFromTag(const F
 
 void UPokemonGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
+	//Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
+	//if (!CostGameplayEffectClass)
+	//{
+		//UE_LOG(LogTemp, Error, TEXT("CostGameplayEffectClass is null! Cannot apply cost."));
+		//return;
+	//}
+	FGameplayTag CostTag = FPokemonGameplayTags::Get().Data_PowerPointCost;
 	FGameplayEffectSpecHandle CostSpecHandle = MakeOutgoingGameplayEffectSpec(CostGameplayEffectClass, GetAbilityLevel());
-	CostSpecHandle.Data->SetSetByCallerMagnitude(FPokemonGameplayTags::Get().Data_PowerPointCost, -PowerPointCost);
+	CostSpecHandle.Data->SetSetByCallerMagnitude(CostTag, -PowerPointCost);
+	float* FoundMagnitude = CostSpecHandle.Data->SetByCallerTagMagnitudes.Find(CostTag);
 
-	if(CostSpecHandle.IsValid()&& CostSpecHandle.Data.IsValid())
-	ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, CostSpecHandle);
+
+	if (CostSpecHandle.IsValid() && FoundMagnitude)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Found the Magnitude! Applying cost. Is this before or after the error?"));
+		ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, CostSpecHandle);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("Found Magnitude is null! Cannot apply cost."));
+	}
 }
 
 void UPokemonGameplayAbilities::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const

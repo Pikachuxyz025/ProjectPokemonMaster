@@ -32,8 +32,25 @@ public:
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag);
 	virtual int32 GetELBValue(const FGameplayTag& StatTag);
 	virtual float GetTypeMatchup(EElementalType ElementalType);
-	virtual FVector GetCombatSocketLocation();
+	virtual void AdjustXP(int32 NewXP) = 0;
+	virtual void AdjustLevel(int32 NewLevel) = 0;
+	virtual int32 GetXPBaseReward();
+	virtual void ReinitializeDefaultAttributes() = 0;
+	virtual int32 GetExperienceNeededAtLevel(int32 Level);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetCombatSocketLocation(const FGameplayTag& MontageTag);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	AActor* GetAvatar();
+
 	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag);
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove();
 	virtual FPokemonTypeInfo GetPokemonElementalTypes();
+
+	virtual void Fainted(const FVector& DeathImpulse) = 0;
+	virtual void DisengageFromCombat() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsDead() const;
 };

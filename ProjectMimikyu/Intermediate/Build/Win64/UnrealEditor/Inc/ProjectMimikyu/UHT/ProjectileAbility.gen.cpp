@@ -6,11 +6,13 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "ProjectMimikyu/Public/AbilitySystem/Abilities/ProjectileAbility.h"
+#include "GameplayTagContainer.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 // Cross Module References
 	COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
+	GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectileAttack_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UProjectileAbility();
@@ -20,9 +22,10 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 	DEFINE_FUNCTION(UProjectileAbility::execSpawnProjectile)
 	{
 		P_GET_STRUCT_REF(FVector,Z_Param_Out_ProjectileTargetLocation);
+		P_GET_STRUCT_REF(FGameplayTag,Z_Param_Out_SocketTag);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->SpawnProjectile(Z_Param_Out_ProjectileTargetLocation);
+		P_THIS->SpawnProjectile(Z_Param_Out_ProjectileTargetLocation,Z_Param_Out_SocketTag);
 		P_NATIVE_END;
 	}
 	void UProjectileAbility::StaticRegisterNativesUProjectileAbility()
@@ -38,11 +41,16 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 		struct ProjectileAbility_eventSpawnProjectile_Parms
 		{
 			FVector ProjectileTargetLocation;
+			FGameplayTag SocketTag;
 		};
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileTargetLocation_MetaData[];
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_ProjectileTargetLocation;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_SocketTag_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_SocketTag;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
@@ -55,8 +63,15 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 	};
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation = { "ProjectileTargetLocation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, ProjectileTargetLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation_MetaData), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation_MetaData) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag = { "SocketTag", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, SocketTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData) }; // 2083603574
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag,
 	};
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams[] = {
@@ -102,7 +117,7 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_UProjectileAbility_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UProjectileAbility_SpawnProjectile, "SpawnProjectile" }, // 283866308
+		{ &Z_Construct_UFunction_UProjectileAbility_SpawnProjectile, "SpawnProjectile" }, // 2751801605
 	};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::FuncInfo) < 2048);
 #if WITH_METADATA
@@ -160,9 +175,9 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UProjectileAbility, UProjectileAbility::StaticClass, TEXT("UProjectileAbility"), &Z_Registration_Info_UClass_UProjectileAbility, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UProjectileAbility), 1166701126U) },
+		{ Z_Construct_UClass_UProjectileAbility, UProjectileAbility::StaticClass, TEXT("UProjectileAbility"), &Z_Registration_Info_UClass_UProjectileAbility, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UProjectileAbility), 939832052U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_2927920341(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_1599665068(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

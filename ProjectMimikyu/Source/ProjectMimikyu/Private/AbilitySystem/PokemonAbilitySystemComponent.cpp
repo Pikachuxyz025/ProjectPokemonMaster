@@ -15,14 +15,15 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDa
 { 
 	for (auto Move: CurrentPokemonMoves)
 	{	
-		if (UPokemonGameplayAbilities* PokemonAbility = Move->Ability->GetDefaultObject<UPokemonGameplayAbilities>())//NewObject<UPokemonGameplayAbilities>(this, Move->Ability))
-		{
-			PokemonAbility->CooldownTag = Move->CooldownTag;
-			FGameplayAbilitySpec AbilitySpec(PokemonAbility, 1);
+		//if (UPokemonGameplayAbilities* PokemonAbility = Move->Ability->GetDefaultObject<UPokemonGameplayAbilities>())//NewObject<UPokemonGameplayAbilities>(this, Move->Ability))
+		//{
+		//	PokemonAbility->CooldownTag = Move->CooldownTag;
+
+		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1);
 			AbilitySpec.DynamicAbilityTags.AddTag(Move->InputTag);
 			AbilitySpec.DynamicAbilityTags.AddTag(Move->CooldownTag);
 			GiveAbility(AbilitySpec);
-		}
+//		}
 		
 		//FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Move->Ability, 1);
 		//if (UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))

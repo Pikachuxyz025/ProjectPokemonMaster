@@ -30,9 +30,14 @@ float IPokemonCombatInterface::GetTypeMatchup(EElementalType ElementalType)
 	return 0.0f;
 }
 
-FVector IPokemonCombatInterface::GetCombatSocketLocation()
+int32 IPokemonCombatInterface::GetXPBaseReward()
 {
-	return FVector();
+	return int32();
+}
+
+int32 IPokemonCombatInterface::GetExperienceNeededAtLevel(int32 Level)
+{
+	return int32();
 }
 
 int32 IPokemonCombatInterface::GetBaseStatFromTag(const FGameplayTag& StatTag)

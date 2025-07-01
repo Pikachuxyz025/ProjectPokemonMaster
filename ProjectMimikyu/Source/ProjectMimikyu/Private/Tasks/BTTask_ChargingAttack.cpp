@@ -6,6 +6,7 @@
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -25,7 +26,7 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ExecuteTask(UBehaviorTreeComponent& 
 	PokemonASC = GetPokemonAbilitySystemComponent(OwnerComp);
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
 	Pokemon = Cast<APokemon_Parent>(OwnerComp.GetAIOwner()->GetPawn());
-	PokemonMove = Cast<UPokemonMoveDataAsset>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 

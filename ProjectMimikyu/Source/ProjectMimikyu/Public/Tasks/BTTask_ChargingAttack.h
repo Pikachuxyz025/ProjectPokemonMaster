@@ -6,9 +6,7 @@
 #include "Tasks/BTTask_ActivateAbility.h"
 #include "BTTask_ChargingAttack.generated.h"
 
-/**
- * 
- */
+class UPokemonGameplayAbilities;
 UCLASS()
 class PROJECTMIMIKYU_API UBTTask_ChargingAttack : public UBTTask_ActivateAbility
 {
@@ -41,7 +39,7 @@ protected:
 	UPokemonAbilitySystemComponent* PokemonASC;
 
 	UPROPERTY()
-	class UPokemonMoveDataAsset* PokemonMove;
+	TObjectPtr<UPokemonGameplayAbilities> PokemonMove;
 
 	FAIMoveRequest MoveRequest;
 

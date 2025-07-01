@@ -4,7 +4,7 @@
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameModes/ProjectMimikyuGameMode.h"
-#include "PokemonGameplayTags.h"
+#include "DataAssets/PokemonDataAsset.h"
 #include "Characters/Pokemon_Parent.h"
 #include "UI/WidgetController/PokemonWidgetController.h"
 #include "UI/WidgetController/PokemonMenuWidgetController.h"
@@ -17,6 +17,37 @@
 void UPokemonAbilitySystemLibrary::ActivateAbilityByTag(const UObject* WorldContextObject, UPokemonAbilitySystemComponent* ASC, FGameplayTag AbilityTag)
 {
 	ASC->ActivateAbilityByTag(AbilityTag);
+}
+
+int32 UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag)
+{
+	AProjectMimikyuGameMode* PokemonGameMode = Cast<AProjectMimikyuGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (!PokemonGameMode) return 0;
+
+	int32 NewExperience=PokemonGameMode->GetExperienceAtLevel(PokemonXPTag, PokemonLevel);
+	return NewExperience;
+}
+
+int32 UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag)
+{
+	AProjectMimikyuGameMode* PokemonGameMode = Cast<AProjectMimikyuGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (!PokemonGameMode) return 0;
+
+	return PokemonGameMode->GetExperienceNeededToLevelUp(PokemonXPTag, PokemonLevel);
+}
+
+float UPokemonAbilitySystemLibrary::GetCurrentXPPercentage(const UObject* WorldContextObject, const FPokemonInfo PokemonData, int32& XPRemaining)
+{
+	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
+	float ExperienceAtLevel = float(GetPokemonXPAtLevel(WorldContextObject, PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_Level], PokemonData.StoredPokemonDataAsset->XpStyle));
+	float ExperienceNeededAtLevel = float(GetNeededPokemonXPAtLevel(WorldContextObject, PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_Level], PokemonData.StoredPokemonDataAsset->XpStyle));
+	float CurrentExperience = PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_XP];
+
+	float ExperienceInBetween = ExperienceNeededAtLevel - ExperienceAtLevel;
+	float CurrentInBetweenExperience = CurrentExperience - ExperienceAtLevel;
+	XPRemaining = ExperienceNeededAtLevel - CurrentInBetweenExperience;
+
+	return CurrentInBetweenExperience / ExperienceNeededAtLevel;
 }
 
 UPokemonMenuWidgetController* UPokemonAbilitySystemLibrary::GetPokemonMenuWidgetController(AActor* ObjectActor)
@@ -89,6 +120,34 @@ FGameplayEffectContextHandle UPokemonAbilitySystemLibrary::ApplyDamageEffect(con
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 
 	return EffectContextHandle;
+}
+
+void UPokemonAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
+{
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	TArray<FOverlapResult> Overlaps;
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType
+		(
+			Overlaps,
+			SphereOrigin,
+			FQuat::Identity,
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+			FCollisionShape::MakeSphere(Radius),
+			SphereParams
+		);
+
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UPokemonCombatInterface>() && !IPokemonCombatInterface::Execute_IsDead(Overlap.GetActor()))
+			{
+				OutOverlappingActors.AddUnique(IPokemonCombatInterface::Execute_GetAvatar(Overlap.GetActor()));
+			}
+		}
+	}
 }
 
 float UPokemonAbilitySystemLibrary::GetTypeMatchup(const UObject* WorldContextObject, EElementalType AttackingType, const FPokemonTypeInfo& TargetPokemonTypes)

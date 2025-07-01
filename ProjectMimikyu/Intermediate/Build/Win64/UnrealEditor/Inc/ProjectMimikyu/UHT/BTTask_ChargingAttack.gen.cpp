@@ -18,7 +18,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_ChargingAttack() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_ChargingAttack();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UBTTask_ChargingAttack_NoRegister();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
+	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities_NoRegister();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	DEFINE_FUNCTION(UBTTask_ChargingAttack::execAttackComplete)
@@ -93,7 +93,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_ChargingAttack() {}
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonMove_MetaData[];
 #endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonMove;
+		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonMove;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttackTarget_MetaData[];
 #endif
@@ -113,9 +113,6 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_ChargingAttack() {}
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_ChargingAttack_Statics::FuncInfo) < 2048);
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_ChargingAttack_Statics::Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "IncludePath", "Tasks/BTTask_ChargingAttack.h" },
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_ChargingAttack.h" },
 	};
@@ -158,7 +155,7 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_ChargingAttack() {}
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_ChargingAttack.h" },
 	};
 #endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove = { "PokemonMove", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_ChargingAttack, PokemonMove), Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove_MetaData), Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove_MetaData) };
+	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove = { "PokemonMove", nullptr, (EPropertyFlags)0x0024080000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UBTTask_ChargingAttack, PokemonMove), Z_Construct_UClass_UPokemonGameplayAbilities_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove_MetaData), Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_PokemonMove_MetaData) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UBTTask_ChargingAttack_Statics::NewProp_AttackTarget_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Tasks/BTTask_ChargingAttack.h" },
@@ -212,9 +209,9 @@ void EmptyLinkFunctionForGeneratedCodeBTTask_ChargingAttack() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_ChargingAttack_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UBTTask_ChargingAttack, UBTTask_ChargingAttack::StaticClass, TEXT("UBTTask_ChargingAttack"), &Z_Registration_Info_UClass_UBTTask_ChargingAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_ChargingAttack), 338105165U) },
+		{ Z_Construct_UClass_UBTTask_ChargingAttack, UBTTask_ChargingAttack::StaticClass, TEXT("UBTTask_ChargingAttack"), &Z_Registration_Info_UClass_UBTTask_ChargingAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UBTTask_ChargingAttack), 3141432335U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_ChargingAttack_h_1010640210(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_ChargingAttack_h_1265463219(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_ChargingAttack_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Tasks_BTTask_ChargingAttack_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -16,12 +16,18 @@ public:
 
 	FGameplayTag Attributes_Vital_HP;
 	FGameplayTag Attributes_Vital_PP;
+
 	FGameplayTag Attributes_Stats_MaxHP;
 	FGameplayTag Attributes_Stats_Attack;
 	FGameplayTag Attributes_Stats_SpecialAttack;
 	FGameplayTag Attributes_Stats_SpecialDefense;
 	FGameplayTag Attributes_Stats_Defense;
 	FGameplayTag Attributes_Stats_Speed;
+	FGameplayTag Attributes_Stats_XP;
+	FGameplayTag Attributes_Stats_Level;
+
+	FGameplayTag Attributes_Meta_IncomingDamage;
+	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag SpawnPoint_Trees;
 	FGameplayTag SpawnPoint_ComeOnOut;
@@ -98,6 +104,19 @@ public:
 	FGameplayTag Cooldown_InputTag_2;
 	FGameplayTag Cooldown_InputTag_3;
 	FGameplayTag Cooldown_InputTag_4;
+
+	FGameplayTag CombatSocket_Projectile;
+	FGameplayTag CombatSocket_Melee_RightHand;
+	FGameplayTag CombatSocket_Melee;
+	FGameplayTag CombatSocket_Melee_LeftHand;
+	FGameplayTag CombatSocket_Melee_Tail;
+
+	FGameplayTag XP_Fluctuating;
+	FGameplayTag XP_Slow;
+	FGameplayTag XP_MediumSlow;
+	FGameplayTag XP_MediumFast;
+	FGameplayTag XP_Fast;
+	FGameplayTag XP_Erratic;
 
 	FGameplayTag Data_PowerPointCost;
 	TMap<FGameplayTag, FGameplayTag> InputsToCooldowns;

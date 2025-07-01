@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Characters/CharacterTypes.h"
+#include "PokemonGameplayTags.h"
 #include <PokemonAbilityTypes.h>
 #include "PokemonAbilitySystemLibrary.generated.h"
 
@@ -23,6 +24,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|AbilitySystemCalls")
 	static void ActivateAbilityByTag(const UObject* WorldContextObject, UPokemonAbilitySystemComponent* ASC, FGameplayTag AbilityTag);
 
+	static int32 GetPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag);
+
+	static int32 GetNeededPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag);
+
+	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static float GetCurrentXPPercentage(const UObject* WorldContextObject, const FPokemonInfo PokemonData, int32& XPRemaining);
+
 	UFUNCTION(BlueprintPure, Category = "PokemonAbilitySystemLibrary|WidgetController")
 	static UPokemonMenuWidgetController* GetPokemonMenuWidgetController(AActor* ObjectActor);
 
@@ -31,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|GameplayEffects")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics", meta = (DefaultToSelf = "WorldContextObject"))
+	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
 
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|PokemonTypes")
 	static float GetTypeMatchup(const UObject* WorldContextObject, EElementalType AttackingType, const FPokemonTypeInfo& TargetPokemonTypes);
@@ -95,7 +106,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|GameplayEffects")
 	static void SetTypeMultiplier(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InTypeMultiplier);
 
-//private:
+private:
+
 	//FPokemonGameplayEffectContext* PokemonContext;
 	//FPokemonGameplayEffectContext* GetPokemonContext(FGameplayEffectContextHandle& EffectContextHandle);
 };

@@ -7,6 +7,18 @@
 FPokemonGameplayTags FPokemonGameplayTags::GameplayTags;
 void FPokemonGameplayTags::InitializeNativeGameplayTags()
 {
+#pragma region Meta Attributes
+	GameplayTags.Attributes_Meta_IncomingDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingDamage"),
+		FString("Incoming Damage Meta Attribute")
+	);
+
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("Incoming XP Meta Attribute")
+	);
+#pragma endregion
+
 #pragma region Stat Attributes
 
 	GameplayTags.Attributes_Stats_MaxHP = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -37,6 +49,15 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Stats_Speed = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Stats.Speed"),
 		FString("How fast is the Pokemon's mobility")
+	);
+
+	GameplayTags.Attributes_Stats_XP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Stats.XP"),
+		FString("The amount of experience the pokemon has")
+	);
+	GameplayTags.Attributes_Stats_Level = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Stats.Level"),
+		FString("THe current level of the Pokemon")
 	);
 
 	GameplayTags.Attributes_Vital_HP = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -179,6 +200,31 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 		FString("Pokemon opts to avoid a move or dodge")
 	);
 #pragma endregion
+
+	GameplayTags.CombatSocket_Projectile = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Projectile"),
+		FString("Default Projectile Socket")
+	);
+
+	GameplayTags.CombatSocket_Melee = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Melee"),
+		FString("Default Melee Combat Socket")
+	);
+
+	GameplayTags.CombatSocket_Melee_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Melee.RightHand"),
+		FString("Right Hand Combat Socket")
+	);
+
+	GameplayTags.CombatSocket_Melee_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Melee.LeftHand"),
+		FString("Left Hand Combat Socket")
+	);
+
+	GameplayTags.CombatSocket_Melee_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CombatSocket.Melee.Tail"),
+		FString("Tail Combat Socket")
+	);
 
 #pragma region Move Types
 
@@ -378,6 +424,36 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.InputTag.4"),
 		FString("Cooldown Tag For Slot 4")
+	);
+
+	GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.Fluctuating"),
+		FString("XP Gain Fluctuating Tag")
+	);
+
+	GameplayTags.XP_Slow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.Slow"),
+		FString("XP Gain Slow Tag")
+	);
+
+	GameplayTags.XP_MediumSlow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.MediumSlow"),
+		FString("XP Gain MediumSlow Tag")
+	);
+
+	GameplayTags.XP_Fast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.Fast"),
+		FString("XP Gain Fast Tag")
+	);
+
+	GameplayTags.XP_MediumFast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.MediumFast"),
+		FString("XP Gain Medium Fast Tag")
+	);
+
+	GameplayTags.XP_Erratic = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("XP.Erratic"),
+		FString("XP Gain Erratic Tag")
 	);
 
 	GameplayTags.InputsToCooldowns.Add(GameplayTags.InputTag_1, GameplayTags.Cooldown_InputTag_1);

@@ -9,6 +9,8 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class AActor;
+struct FGameplayTag;
 #ifdef PROJECTMIMIKYU_PokemonCombatInterface_generated_h
 #error "PokemonCombatInterface.generated.h already included, missing '#pragma once' in PokemonCombatInterface.h"
 #endif
@@ -17,8 +19,18 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_SPARSE_DATA
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_SPARSE_DATA_PROPERTY_ACCESSORS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+	virtual bool IsDead_Implementation() const { return false; }; \
+	virtual AActor* GetAvatar_Implementation() { return NULL; }; \
+	virtual FVector GetCombatSocketLocation_Implementation(FGameplayTag const& MontageTag) { return FVector(ForceInit); }; \
+ \
+	DECLARE_FUNCTION(execIsDead); \
+	DECLARE_FUNCTION(execGetAvatar); \
+	DECLARE_FUNCTION(execGetCombatSocketLocation);
+
+
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_ACCESSORS
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_CALLBACK_WRAPPERS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	PROJECTMIMIKYU_API UPokemonCombatInterface(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
@@ -56,6 +68,9 @@ protected: \
 public: \
 	typedef UPokemonCombatInterface UClassType; \
 	typedef IPokemonCombatInterface ThisClass; \
+	static AActor* Execute_GetAvatar(UObject* O); \
+	static FVector Execute_GetCombatSocketLocation(UObject* O, FGameplayTag const& MontageTag); \
+	static bool Execute_IsDead(const UObject* O); \
 	virtual UObject* _getUObject() const { return nullptr; }
 
 
@@ -68,6 +83,7 @@ public: \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_ACCESSORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_CALLBACK_WRAPPERS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonCombatInterface_h_17_INCLASS_IINTERFACE_NO_PURE_DECLS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

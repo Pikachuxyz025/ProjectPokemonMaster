@@ -116,9 +116,9 @@ public:
 	FGameplayAttributeData XP;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, XP);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Level, Category = "Vital Stat Attributes")
-	FGameplayAttributeData Level;
-	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, Level);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentLevel, Category = "Vital Stat Attributes")
+	FGameplayAttributeData CurrentLevel;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, CurrentLevel);
 
 #pragma region Meta Attributes
 
@@ -126,9 +126,9 @@ public:
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, IncomingDamage);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
-	FGameplayAttributeData KnockbackForce;
-	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, KnockbackForce);
+	//UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	//FGameplayAttributeData KnockbackForce;
+	//ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, KnockbackForce);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingXP;
@@ -155,7 +155,7 @@ public:
 	void OnRep_XP(const FGameplayAttributeData& OldXP) const;
 
 	UFUNCTION()
-	void OnRep_Level(const FGameplayAttributeData& OldLevel) const;
+	void OnRep_CurrentLevel(const FGameplayAttributeData& OldCurrentLevel) const;
 
 	UFUNCTION()
 	void OnRep_SpecialDefense(const FGameplayAttributeData& OldSpecialDefense) const;
@@ -173,8 +173,11 @@ public:
 	void OnRep_DodgeForce(const FGameplayAttributeData& OldDodgeForce) const;
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
+	void HandleIncomingXP(const FEffectProperties& Props);
+	void SendXPEvent(const FEffectProperties& Props);
 
-
+	void SetPokemonXP(ACharacter* AlteredPokemon, float NewXP);
+	void SetPokemonLevel(ACharacter* AlteredPokemon, float NewLevel);
 	TMap<FGameplayAttribute, float> AttributeValues;
 
 	public:

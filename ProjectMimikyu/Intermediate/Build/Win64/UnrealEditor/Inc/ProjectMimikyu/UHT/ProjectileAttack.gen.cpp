@@ -8,6 +8,7 @@
 #include "ProjectMimikyu/Public/Items/ProjectileAttack.h"
 #include "../../Source/Runtime/Engine/Classes/Engine/HitResult.h"
 #include "GameplayEffectTypes.h"
+#include "ProjectMimikyu/Public/PokemonAbilityTypes.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeProjectileAttack() {}
 // Cross Module References
@@ -23,6 +24,7 @@ void EmptyLinkFunctionForGeneratedCodeProjectileAttack() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectileAttack();
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectileAttack_NoRegister();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnProjectileImpact__DelegateSignature();
+	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FDamageEffectParams();
 	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // End Cross Module References
 	struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnProjectileImpact__DelegateSignature_Statics
@@ -98,6 +100,10 @@ void FOnProjectileImpact_DelegateWrapper(const FMulticastScriptDelegate& OnProje
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_DamageEffectSpecHandle;
 #if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DamageEffectParams_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_DamageEffectParams;
+#if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_ImpactParticles_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ImpactParticles;
@@ -162,6 +168,14 @@ void FOnProjectileImpact_DelegateWrapper(const FMulticastScriptDelegate& OnProje
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectSpecHandle = { "DamageEffectSpecHandle", nullptr, (EPropertyFlags)0x0011000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectileAttack, DamageEffectSpecHandle), Z_Construct_UScriptStruct_FGameplayEffectSpecHandle, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectSpecHandle_MetaData), Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectSpecHandle_MetaData) }; // 2882128022
 #if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectParams_MetaData[] = {
+		{ "Category", "ProjectileAttack" },
+		{ "ExposeOnSpawn", "TRUE" },
+		{ "ModuleRelativePath", "Public/Items/ProjectileAttack.h" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectParams = { "DamageEffectParams", nullptr, (EPropertyFlags)0x0011008000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectileAttack, DamageEffectParams), Z_Construct_UScriptStruct_FDamageEffectParams, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectParams_MetaData), Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectParams_MetaData) }; // 85173987
+#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AProjectileAttack_Statics::NewProp_ImpactParticles_MetaData[] = {
 		{ "Category", "ProjectileAttack" },
 		{ "ModuleRelativePath", "Public/Items/ProjectileAttack.h" },
@@ -225,6 +239,7 @@ void FOnProjectileImpact_DelegateWrapper(const FMulticastScriptDelegate& OnProje
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectileAttack_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_ProjectileMesh,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectSpecHandle,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_DamageEffectParams,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_ImpactParticles,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_ImpactSound,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectileAttack_Statics::NewProp_TrailSystem,
@@ -272,9 +287,9 @@ void FOnProjectileImpact_DelegateWrapper(const FMulticastScriptDelegate& OnProje
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_ProjectileAttack_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectileAttack, AProjectileAttack::StaticClass, TEXT("AProjectileAttack"), &Z_Registration_Info_UClass_AProjectileAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectileAttack), 3788210863U) },
+		{ Z_Construct_UClass_AProjectileAttack, AProjectileAttack::StaticClass, TEXT("AProjectileAttack"), &Z_Registration_Info_UClass_AProjectileAttack, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectileAttack), 3999857481U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_ProjectileAttack_h_580661387(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_ProjectileAttack_h_4026572227(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_ProjectileAttack_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_ProjectileAttack_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

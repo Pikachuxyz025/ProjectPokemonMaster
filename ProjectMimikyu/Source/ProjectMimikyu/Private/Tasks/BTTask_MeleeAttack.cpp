@@ -36,11 +36,13 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	{
 		Pokemon->OnAttackEnd.Clear();
 	}
-	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_MeleeAttack::AttackComplete);
-	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, PokemonMove->SpeedMultiplier);
+	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_MeleeAttack::AttackComplete);	
 	FAIMoveRequest Request;
+		Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, PokemonMove->SpeedMultiplier);
+		Request.SetAcceptanceRadius(PokemonMove->IdealRange);
+
 	Request.SetGoalActor(AttackTarget);
-	Request.SetAcceptanceRadius(PokemonMove->IdealRange);
+
 	MoveRequest = Request;
 
 	return ProcessRequest(PokemonController);
@@ -72,9 +74,10 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ProcessRequest(AAIController* Controlle
 	case EPathFollowingRequestResult::AlreadyAtGoal:
 		// use Attack
 		//Pokemon->EnactMove();
+		UE_LOG(LogTemp, Display, TEXT("In melee range"));
 		PokemonASC->ActivateAbilityByTag(PokemonMove->InputTag);
 		bMadeIt = true;
-		UE_LOG(LogTemp, Display, TEXT("In melee range"));
+
 		NodeResulted = EBTNodeResult::InProgress;
 		break;
 

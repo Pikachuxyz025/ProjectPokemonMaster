@@ -307,9 +307,6 @@ struct FPokemonInfo
 	FPokemonUIInfo CurrentUiInfo;
 
 	UPROPERTY(BlueprintReadOnly)
-	float XP = 0.f;
-
-	UPROPERTY(BlueprintReadOnly)
 	ENatureType Nature = ENatureType::ENT_None;
 
 	UPROPERTY(BlueprintReadOnly)

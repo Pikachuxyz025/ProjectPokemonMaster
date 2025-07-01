@@ -2,7 +2,9 @@
 
 
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "GameplayEffectExtension.h"
+#include "Interfaces/PokemonCombatInterface.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include <AbilitySystemBlueprintLibrary.h>
@@ -18,6 +20,8 @@ UPokemonBaseAttributeSet::UPokemonBaseAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_SpecialDefense, GetSpecialDefenseAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_Speed, GetSpeedAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_MaxHP, GetMaxHealthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Stats_XP, GetXPAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Stats_Level, GetCurrentLevelAttribute);
 
 	TagsToAttributes.Add(GameplayTags.Attributes_Vital_HP, GetHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Vital_PP, GetPowerPointsAttribute);
@@ -36,7 +40,7 @@ void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Speed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, DodgeForce, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, XP, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Level , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, CurrentLevel , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, PowerPoints , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, MaxPowerPoints , COND_None, REPNOTIFY_Always);
 }
@@ -53,6 +57,11 @@ void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	{
 		NewValue = FMath::Clamp(NewValue, 0, GetMaxPowerPoints());
 	}
+
+	if (Attribute == GetCurrentLevelAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0, 100);
+	}
 }
 
 void UPokemonBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -64,9 +73,14 @@ void UPokemonBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 	SetEffectProperties(Data, Props);
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		//GetHealthAttribute().
 		SetHealth(FMath::Clamp(GetHealth(), 0, GetMaxHealth()));
 		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s. Health %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
+	}
+
+	if (Data.EvaluatedData.Attribute == GetCurrentLevelAttribute())
+	{
+		SetCurrentLevel(FMath::Clamp(GetCurrentLevel(), 0, 100));	
+		UE_LOG(LogTemp, Warning, TEXT("Changed Level on %s. Level %f"), *Props.TargetAvatarActor->GetName(), GetCurrentLevel());
 	}
 
 	if (Data.EvaluatedData.Attribute == GetPowerPointsAttribute())
@@ -92,25 +106,26 @@ void UPokemonBaseAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 		UE_LOG(LogTemp, Warning, TEXT("Damaged Health on %s. Health %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 
-		const FVector KnockbackForcer = (Props.TargetCharacter->GetActorLocation() - Props.SourceCharacter->GetActorLocation()).GetSafeNormal() * 1000.f;
-		Props.TargetCharacter->LaunchCharacter(KnockbackForcer, true, true);
-		/*const bool bFatal = NewHealth <= 0.f;
+
+		const bool bFatal = NewHealth <= 0.f;
 		if (bFatal)
 		{
-		TScriptInterface<ICombatInterface> CombatInteface = Props.TargetAvatarActor;
-		if (CombatInteface)
-		{
-		CombatInteface->Die();
-		}
+			TScriptInterface<IPokemonCombatInterface> TargetCombatInteface = Props.TargetAvatarActor;
+			TScriptInterface<IPokemonCombatInterface> SourceCombatInteface = Props.SourceAvatarActor;
+			if (TargetCombatInteface)
+			{
+				TargetCombatInteface->Fainted(UPokemonAbilitySystemLibrary::GetDeathImpulse(Props.EffectContext));
+			}
+			if (SourceCombatInteface)
+			{
+				SourceCombatInteface->DisengageFromCombat();
+			}
 		}
 		else
 		{
-		FGameplayTagContainer TagContainer;
-		TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-		Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			const FVector& KnockbackForce = UPokemonAbilitySystemLibrary::GetKnockbackForce(Props.EffectContext);
+			Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, true);
 		}
-
-		ShowFloatingText(Props, LocalIncomingDamage);*/
 	}
 }
 
@@ -144,9 +159,9 @@ void UPokemonBaseAttributeSet::OnRep_XP(const FGameplayAttributeData& OldXP) con
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, XP, OldXP);
 }
 
-void UPokemonBaseAttributeSet::OnRep_Level(const FGameplayAttributeData& OldLevel) const
+void UPokemonBaseAttributeSet::OnRep_CurrentLevel(const FGameplayAttributeData& OldCurrentLevel) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, Level, OldLevel);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, CurrentLevel, OldCurrentLevel);
 }
 
 void UPokemonBaseAttributeSet::OnRep_SpecialAttack(const FGameplayAttributeData& OldSpecialAttack) const
@@ -207,6 +222,65 @@ void UPokemonBaseAttributeSet::SetEffectProperties(const FGameplayEffectModCallb
 		Props.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
 	}
 }
+
+void UPokemonBaseAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
+{
+	const float LocalIncomingXP = GetIncomingXP();
+	SetIncomingXP(0.f);
+	UE_LOG(LogTemp, Display, TEXT("Incoming XP: %f"), LocalIncomingXP);
+
+	if (GetCurrentLevel() == 100.f) return;
+
+	const float NewXP = GetXP() + LocalIncomingXP;
+
+	TScriptInterface<IPokemonCombatInterface> SourcePokemon = Props.SourceCharacter;
+
+	bool bCheckingLevelUp = true;
+	int32 NewLevel = GetCurrentLevel();
+	while (bCheckingLevelUp)
+	{
+		if (NewXP >= SourcePokemon->GetExperienceNeededAtLevel(NewLevel))
+		{
+			++NewLevel;
+		}
+		else
+		{
+			bCheckingLevelUp = false;
+		}
+	}
+	if (NewLevel > GetCurrentLevel())
+	{
+		SetPokemonLevel(Props.SourceCharacter, NewLevel);
+	}
+	SetPokemonXP(Props.SourceCharacter, NewXP);
+}
+
+void UPokemonBaseAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	TScriptInterface<IPokemonCombatInterface> TargetPokemon = Props.TargetCharacter;
+	FGameplayTag IncomingXPTag = FPokemonGameplayTags::Get().Attributes_Meta_IncomingXP;
+	FGameplayEventData Payload;
+	Payload.EventTag = IncomingXPTag;
+	Payload.EventMagnitude = (float)TargetPokemon->GetXPBaseReward();
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, IncomingXPTag, Payload);
+}
+
+void UPokemonBaseAttributeSet::SetPokemonXP(ACharacter* AlteredPokemon, float NewXP)
+{
+	TScriptInterface<IPokemonCombatInterface> SourcePokemon = AlteredPokemon;
+	SourcePokemon->AdjustXP(int32(NewXP));	
+	SetXP(NewXP);
+}
+
+void UPokemonBaseAttributeSet::SetPokemonLevel(ACharacter * AlteredPokemon, float NewLevel)
+{
+	TScriptInterface<IPokemonCombatInterface> SourcePokemon = AlteredPokemon;
+	SourcePokemon->AdjustXP(int32(NewLevel));
+	SetCurrentLevel(NewLevel);
+	SourcePokemon->ReinitializeDefaultAttributes();
+}
+
 
 TMap<FGameplayAttribute, float> UPokemonBaseAttributeSet::GetAttributeValues()
 {

@@ -33,7 +33,7 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FEffectProperti
 	DECLARE_FUNCTION(execOnRep_Attack); \
 	DECLARE_FUNCTION(execOnRep_SpecialAttack); \
 	DECLARE_FUNCTION(execOnRep_SpecialDefense); \
-	DECLARE_FUNCTION(execOnRep_Level); \
+	DECLARE_FUNCTION(execOnRep_CurrentLevel); \
 	DECLARE_FUNCTION(execOnRep_XP); \
 	DECLARE_FUNCTION(execOnRep_Speed); \
 	DECLARE_FUNCTION(execOnRep_MaxPowerPoints); \
@@ -64,8 +64,8 @@ public: \
 		Speed, \
 		DodgeForce, \
 		XP, \
-		Level, \
-		NETFIELD_REP_END=Level	}; \
+		CurrentLevel, \
+		NETFIELD_REP_END=CurrentLevel	}; \
 	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override; \
 private: \
 	REPLICATED_BASE_CLASS(UPokemonBaseAttributeSet) \

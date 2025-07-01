@@ -71,6 +71,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	TMap<FGameplayTag, int32> TagsToBaseStats;
 
+	UPROPERTY(EditAnywhere, Category = "Stats")
+	int32 BaseXPReward = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Stats", meta = (Categories = "XP"))
+	FGameplayTag XpStyle;
+
 	UPROPERTY(VisibleAnywhere, Category = "Stats")
 	TMap<FGameplayTag, FText> TagsToNames =
 	{

@@ -9,6 +9,7 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+struct FGameplayTag;
 #ifdef PROJECTMIMIKYU_ProjectileAbility_generated_h
 #error "ProjectileAbility.generated.h already included, missing '#pragma once' in ProjectileAbility.h"
 #endif

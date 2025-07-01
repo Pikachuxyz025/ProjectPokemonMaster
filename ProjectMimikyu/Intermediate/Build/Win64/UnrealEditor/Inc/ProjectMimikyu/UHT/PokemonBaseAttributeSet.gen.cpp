@@ -207,12 +207,12 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		P_THIS->OnRep_SpecialDefense(Z_Param_Out_OldSpecialDefense);
 		P_NATIVE_END;
 	}
-	DEFINE_FUNCTION(UPokemonBaseAttributeSet::execOnRep_Level)
+	DEFINE_FUNCTION(UPokemonBaseAttributeSet::execOnRep_CurrentLevel)
 	{
-		P_GET_STRUCT_REF(FGameplayAttributeData,Z_Param_Out_OldLevel);
+		P_GET_STRUCT_REF(FGameplayAttributeData,Z_Param_Out_OldCurrentLevel);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		P_THIS->OnRep_Level(Z_Param_Out_OldLevel);
+		P_THIS->OnRep_CurrentLevel(Z_Param_Out_OldCurrentLevel);
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(UPokemonBaseAttributeSet::execOnRep_XP)
@@ -268,10 +268,10 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		UClass* Class = UPokemonBaseAttributeSet::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
 			{ "OnRep_Attack", &UPokemonBaseAttributeSet::execOnRep_Attack },
+			{ "OnRep_CurrentLevel", &UPokemonBaseAttributeSet::execOnRep_CurrentLevel },
 			{ "OnRep_Defense", &UPokemonBaseAttributeSet::execOnRep_Defense },
 			{ "OnRep_DodgeForce", &UPokemonBaseAttributeSet::execOnRep_DodgeForce },
 			{ "OnRep_Health", &UPokemonBaseAttributeSet::execOnRep_Health },
-			{ "OnRep_Level", &UPokemonBaseAttributeSet::execOnRep_Level },
 			{ "OnRep_MaxHealth", &UPokemonBaseAttributeSet::execOnRep_MaxHealth },
 			{ "OnRep_MaxPowerPoints", &UPokemonBaseAttributeSet::execOnRep_MaxPowerPoints },
 			{ "OnRep_PowerPoints", &UPokemonBaseAttributeSet::execOnRep_PowerPoints },
@@ -321,6 +321,48 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Attack_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics
+	{
+		struct PokemonBaseAttributeSet_eventOnRep_CurrentLevel_Parms
+		{
+			FGameplayAttributeData OldCurrentLevel;
+		};
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_OldCurrentLevel_MetaData[];
+#endif
+		static const UECodeGen_Private::FStructPropertyParams NewProp_OldCurrentLevel;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::NewProp_OldCurrentLevel_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::NewProp_OldCurrentLevel = { "OldCurrentLevel", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonBaseAttributeSet_eventOnRep_CurrentLevel_Parms, OldCurrentLevel), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::NewProp_OldCurrentLevel_MetaData), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::NewProp_OldCurrentLevel_MetaData) }; // 2151517668
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::NewProp_OldCurrentLevel,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonBaseAttributeSet, nullptr, "OnRep_CurrentLevel", nullptr, nullptr, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PokemonBaseAttributeSet_eventOnRep_CurrentLevel_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x40420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::PokemonBaseAttributeSet_eventOnRep_CurrentLevel_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -447,48 +489,6 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Health_Statics::FuncParams);
-		}
-		return ReturnFunction;
-	}
-	struct Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics
-	{
-		struct PokemonBaseAttributeSet_eventOnRep_Level_Parms
-		{
-			FGameplayAttributeData OldLevel;
-		};
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_OldLevel_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_OldLevel;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::NewProp_OldLevel_MetaData[] = {
-		{ "NativeConst", "" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::NewProp_OldLevel = { "OldLevel", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonBaseAttributeSet_eventOnRep_Level_Parms, OldLevel), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::NewProp_OldLevel_MetaData), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::NewProp_OldLevel_MetaData) }; // 2151517668
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::NewProp_OldLevel,
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::Function_MetaDataParams[] = {
-		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
-	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonBaseAttributeSet, nullptr, "OnRep_Level", nullptr, nullptr, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PokemonBaseAttributeSet_eventOnRep_Level_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x40420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::PokemonBaseAttributeSet_eventOnRep_Level_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level()
-	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -843,17 +843,13 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_XP;
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_Level_MetaData[];
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_CurrentLevel_MetaData[];
 #endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_Level;
+		static const UECodeGen_Private::FStructPropertyParams NewProp_CurrentLevel;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_IncomingDamage_MetaData[];
 #endif
 		static const UECodeGen_Private::FStructPropertyParams NewProp_IncomingDamage;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackForce_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_KnockbackForce;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_IncomingXP_MetaData[];
 #endif
@@ -869,10 +865,10 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::DependentSingletons) < 16);
 	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Attack, "OnRep_Attack" }, // 2637875421
+		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_CurrentLevel, "OnRep_CurrentLevel" }, // 3918012186
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Defense, "OnRep_Defense" }, // 279985021
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_DodgeForce, "OnRep_DodgeForce" }, // 2369934102
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Health, "OnRep_Health" }, // 2131322654
-		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_Level, "OnRep_Level" }, // 3982879642
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_MaxHealth, "OnRep_MaxHealth" }, // 3067209289
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_MaxPowerPoints, "OnRep_MaxPowerPoints" }, // 2330897218
 		{ &Z_Construct_UFunction_UPokemonBaseAttributeSet_OnRep_PowerPoints, "OnRep_PowerPoints" }, // 2098471278
@@ -966,12 +962,12 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_XP = { "XP", "OnRep_XP", (EPropertyFlags)0x0010000100000034, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, XP), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_XP_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_XP_MetaData) }; // 2151517668
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Level_MetaData[] = {
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_CurrentLevel_MetaData[] = {
 		{ "Category", "Vital Stat Attributes" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Level = { "Level", "OnRep_Level", (EPropertyFlags)0x0010000100000034, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, Level), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Level_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Level_MetaData) }; // 2151517668
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_CurrentLevel = { "CurrentLevel", "OnRep_CurrentLevel", (EPropertyFlags)0x0010000100000034, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, CurrentLevel), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_CurrentLevel_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_CurrentLevel_MetaData) }; // 2151517668
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData[] = {
 		{ "Category", "Meta Attributes" },
@@ -980,16 +976,15 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage = { "IncomingDamage", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, IncomingDamage), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage_MetaData) }; // 2151517668
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData[] = {
-		{ "Category", "Meta Attributes" },
-		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce = { "KnockbackForce", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, KnockbackForce), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce_MetaData) }; // 2151517668
-#if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingXP_MetaData[] = {
 		{ "Category", "Meta Attributes" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//UPROPERTY(BlueprintReadOnly, Category = \"Meta Attributes\")\n//FGameplayAttributeData KnockbackForce;\n//ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, KnockbackForce);\n" },
+#endif
 		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonBaseAttributeSet.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "UPROPERTY(BlueprintReadOnly, Category = \"Meta Attributes\")\nFGameplayAttributeData KnockbackForce;\nATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, KnockbackForce);" },
+#endif
 	};
 #endif
 	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingXP = { "IncomingXP", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBaseAttributeSet, IncomingXP), Z_Construct_UScriptStruct_FGameplayAttributeData, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingXP_MetaData), Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingXP_MetaData) }; // 2151517668
@@ -1005,9 +1000,8 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Speed,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_DodgeForce,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_XP,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_Level,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_CurrentLevel,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingDamage,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_KnockbackForce,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::NewProp_IncomingXP,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonBaseAttributeSet_Statics::StaticCppClassTypeInfo = {
@@ -1055,7 +1049,7 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		static const FName Name_Speed(TEXT("Speed"));
 		static const FName Name_DodgeForce(TEXT("DodgeForce"));
 		static const FName Name_XP(TEXT("XP"));
-		static const FName Name_Level(TEXT("Level"));
+		static const FName Name_CurrentLevel(TEXT("CurrentLevel"));
 
 		const bool bIsValid = true
 			&& Name_Health == ClassReps[(int32)ENetFields_Private::Health].Property->GetFName()
@@ -1069,7 +1063,7 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 			&& Name_Speed == ClassReps[(int32)ENetFields_Private::Speed].Property->GetFName()
 			&& Name_DodgeForce == ClassReps[(int32)ENetFields_Private::DodgeForce].Property->GetFName()
 			&& Name_XP == ClassReps[(int32)ENetFields_Private::XP].Property->GetFName()
-			&& Name_Level == ClassReps[(int32)ENetFields_Private::Level].Property->GetFName();
+			&& Name_CurrentLevel == ClassReps[(int32)ENetFields_Private::CurrentLevel].Property->GetFName();
 
 		checkf(bIsValid, TEXT("UHT Generated Rep Indices do not match runtime populated Rep Indices for properties in UPokemonBaseAttributeSet"));
 	}
@@ -1084,9 +1078,9 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FEffectProperties>()
 		{ FEffectProperties::StaticStruct, Z_Construct_UScriptStruct_FEffectProperties_Statics::NewStructOps, TEXT("EffectProperties"), &Z_Registration_Info_UScriptStruct_EffectProperties, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEffectProperties), 2370998886U) },
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonBaseAttributeSet, UPokemonBaseAttributeSet::StaticClass, TEXT("UPokemonBaseAttributeSet"), &Z_Registration_Info_UClass_UPokemonBaseAttributeSet, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBaseAttributeSet), 369531164U) },
+		{ Z_Construct_UClass_UPokemonBaseAttributeSet, UPokemonBaseAttributeSet::StaticClass, TEXT("UPokemonBaseAttributeSet"), &Z_Registration_Info_UClass_UPokemonBaseAttributeSet, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBaseAttributeSet), 3394114500U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_2817993518(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_2300993739(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ClassInfo),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_Statics::ScriptStructInfo),
 		nullptr, 0);

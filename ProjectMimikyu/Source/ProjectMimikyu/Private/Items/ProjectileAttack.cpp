@@ -11,6 +11,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AbilitySystemComponent.h"
+#include <AbilitySystem/PokemonAbilitySystemLibrary.h>
 
 AProjectileAttack::AProjectileAttack()
 {
@@ -50,12 +51,32 @@ void AProjectileAttack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 {
 	//Super::OnHit(HitComp, OtherActor, OtherComp, NormalImpulse, Hit);
 	UE_LOG(LogTemp, Display, TEXT("Projectile hit: %s"), *UKismetSystemLibrary::GetDisplayName(OtherActor));
+	//if (HasAuthority())
+	//{
+	//	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	//	{
+	//		TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+
+	//	}
+	//	Destroy();
+	//}
+
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 
+			DamageEffectParams.DeathImpulse = DeathImpulse;
+			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
+			if (bKnockback)
+			{
+				const FVector KnockbackDirectionOffset = GetActorForwardVector().RotateAngleAxis(45.f, GetActorRightVector());
+				const FVector KnockbackForce = KnockbackDirectionOffset * DamageEffectParams.KnockbackForceMagnitude;
+				DamageEffectParams.KnockbackForce = KnockbackForce;
+			}
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UPokemonAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		Destroy();
 	}

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CharacterTypes.h"
+#include "Abilities/GameplayAbility.h"
 #include "GameFramework/GameModeBase.h"
 #include "ProjectMimikyuGameMode.generated.h"
 
@@ -63,6 +64,8 @@ public:
 		{EElementalType::EET_Steel,"Steel" }
 	};
 
+	int32 GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level);
+	int32 GetExperienceNeededToLevelUp(const FGameplayTag& XPType, int32 CurrentLevel);
 };
 
 

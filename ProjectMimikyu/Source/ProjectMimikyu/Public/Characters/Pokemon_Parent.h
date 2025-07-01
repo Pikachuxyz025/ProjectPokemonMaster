@@ -5,6 +5,7 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
+#include "GameplayEffectTypes.h"
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemInterface.h"
@@ -55,7 +56,7 @@ protected:
 
 	void AddPokemonAbilities();
 
-	void SetupMeleeTimeline();
+	//void SetupMeleeTimeline();
 
 	void SetupPokemonUIInfo();
 
@@ -93,29 +94,36 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DependentStatAttributes;
 
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> StaminaRecoveryEffect;
 
-	void InitializeDefaultAttributes() const;
+	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
+
+	void InitializeDefaultAttributes();
+	virtual void ReinitializeDefaultAttributes() override;
 
 	void InitAbilityActorInfo();
+
+	UPROPERTY()
+	 FActiveGameplayEffectHandle CurrentStatHandle;
+	 UPROPERTY()
+	 FActiveGameplayEffectHandle CurrentDependentStatHandle;
 #pragma endregion
 
 	UFUNCTION(BlueprintCallable)
 	virtual	void AttackEnded();
 
-	UFUNCTION(BlueprintCallable)
-	void OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-	UFUNCTION()
-	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-UBoxComponent* CollisionBox;
+//	UFUNCTION(BlueprintCallable)
+//	void OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+//
+//	UFUNCTION()
+//	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+//
+//	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+//UBoxComponent* CollisionBox;
 
 public:
 
-	UFUNCTION()
-	virtual void Faint();
 	void Return();
 	void Dissolve();
 
@@ -135,7 +143,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Elim")
 	TObjectPtr<UMaterialInstance> ReturnMaterialInstance;
 
-	void DisengageFromCombat();
+
 	void Dodge(const FVector NewDodgeDirection);
 
 	UFUNCTION(BlueprintCallable)
@@ -149,8 +157,8 @@ public:
 
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
-	virtual void ChargeIn();
-	virtual void FireAt();
+	//virtual void ChargeIn();
+	//virtual void FireAt();
 
 	UPROPERTY(VisibleAnywhere,Replicated)
 	class AActor* CurrentTrainer;
@@ -163,48 +171,57 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UPokemonMoveDataAsset* ActivePokemonMove = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
 
-#pragma region IDamageInterface
-	virtual float GetCurrentHealth() override;
-	virtual float GetMaxHealth() override;
-
-	virtual void RecieveHealth_Implementation(float AddHealthPercent) override;
-
-	virtual void RecieveDamage(FDamageInfo DamageInfo) override;
-
-	bool IsAttacking_Implementation() override;
-
-	bool HasFainted_Implementation() override;
-#pragma endregion
+//#pragma region IDamageInterface
+//	virtual float GetCurrentHealth() override;
+//	virtual float GetMaxHealth() override;
+//
+//	virtual void RecieveHealth_Implementation(float AddHealthPercent) override;
+//
+//	virtual void RecieveDamage(FDamageInfo DamageInfo) override;
+//
+//	bool IsAttacking_Implementation() override;
+//
+//	bool HasFainted_Implementation() override;
+//#pragma endregion
 
 #pragma region IPokemonCombatInterface
 	virtual int32 GetPokemonLevel() override;
 	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
+	virtual AActor* GetAvatar_Implementation() override;
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
 	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual float GetTypeMatchup(EElementalType ElementalType) override;
 	virtual FPokemonTypeInfo GetPokemonElementalTypes() override;
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
 	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
+	virtual void Fainted(const FVector& DeathImpulse) override;
+	virtual void DisengageFromCombat() override;
+	virtual void AdjustXP(int32 NewXP) override;
+	virtual void AdjustLevel(int32 NewLevel) override;
+	virtual int32 GetXPBaseReward() override;
+	virtual int32 GetExperienceNeededAtLevel(int32 Level) override;
 #pragma endregion
 
-	void DamageTarget(AActor* Target);
+	//void DamageTarget(AActor* Target);
 
 #pragma region Timeline
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UTimelineComponent* MeleeTimeline;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//class UTimelineComponent* MeleeTimeline;
 
-UFUNCTION()
-void AddCollision();
+//UFUNCTION()
+//void AddCollision();
 
-UFUNCTION()
-void RemoveCollision();
+//UFUNCTION()
+//void RemoveCollision();
 
-UFUNCTION(BlueprintCallable)
-void StartBoxTrace(FHitResult& HitResult);
+//UFUNCTION(BlueprintCallable)
+//void StartBoxTrace(FHitResult& HitResult);
 
 #pragma endregion
 
@@ -214,12 +231,12 @@ void StartBoxTrace(FHitResult& HitResult);
 
 	void CombatReady(AActor* Target);
 
-	bool WithinCloseRangeOfTarget();
+	//bool WithinCloseRangeOfTarget();
 
-	UFUNCTION(BlueprintCallable)
-	void Charge();
+	//UFUNCTION(BlueprintCallable)
+	//void Charge();
 
-	virtual void EnactMove();
+	//virtual void EnactMove();
 
 	void SetPokemonStartup(const FPokemonInfo SetupInfo);
 protected:
@@ -307,6 +324,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Stats", meta = (ClampMin = "1", ClampMax = "100"))
 	int32 CurrentLevel = 1;
 
+	UPROPERTY(VisibleAnywhere, Category = "Stats")
+	int32 CurrentXP = 0; 
+
 	UPROPERTY(VisibleAnywhere)
 	bool bIsUsingMove = false;
 
@@ -326,25 +346,33 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SelectRandomMove();
 
-	UFUNCTION(BlueprintCallable)
-	void SetBoxCollision(ECollisionEnabled::Type CollisionEnabled);
+	//UFUNCTION(BlueprintCallable)
+	//void SetBoxCollision(ECollisionEnabled::Type CollisionEnabled);
 
-	void BoxTrace(FHitResult& BoxHit);
+	//void BoxTrace(FHitResult& BoxHit);
 
-	UPROPERTY(EditAnywhere, Category = "Collision Properties")
-	FVector BoxTraceExtent = FVector(5.f);
+	//UPROPERTY(EditAnywhere, Category = "Collision Properties")
+	//FVector BoxTraceExtent = FVector(5.f);
 
-	UPROPERTY(EditAnywhere, Category = "Collision Properties")
-	bool bShowBoxDebug = false;
+	//UPROPERTY(EditAnywhere, Category = "Collision Properties")
+	//bool bShowBoxDebug = false;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	USceneComponent* BoxTraceStart;
+	//UPROPERTY(VisibleAnywhere, Category = "Components")
+	//USceneComponent* BoxTraceStart;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	USceneComponent* BoxTraceEnd;
+	//UPROPERTY(VisibleAnywhere, Category = "Components")
+	//USceneComponent* BoxTraceEnd;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName PokemonSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
+	FName ProjectileSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
+	FName MeleeSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
+	FName TailSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
+	FName LeftHandSocketName;
+	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
+	FName RightHandSocketName;
 
 public:
 	FPokemonInfo GetPokemonInfo();
