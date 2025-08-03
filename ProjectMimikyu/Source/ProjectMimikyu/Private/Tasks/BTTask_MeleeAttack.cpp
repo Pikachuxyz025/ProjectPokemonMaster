@@ -30,16 +30,19 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
 	bMadeIt = false;
-	 PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
-
-	if(Pokemon->OnAttackEnd.IsBound())
+	PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	if (!PokemonMove)
+	{
+		return EBTNodeResult::Failed;
+	}
+	if (Pokemon->OnAttackEnd.IsBound())
 	{
 		Pokemon->OnAttackEnd.Clear();
 	}
-	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_MeleeAttack::AttackComplete);	
+	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_MeleeAttack::AttackComplete);
 	FAIMoveRequest Request;
-		Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, PokemonMove->SpeedMultiplier);
-		Request.SetAcceptanceRadius(PokemonMove->IdealRange);
+	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, PokemonMove->SpeedMultiplier);
+	Request.SetAcceptanceRadius(PokemonMove->IdealRange);
 
 	Request.SetGoalActor(AttackTarget);
 

@@ -25,6 +25,9 @@ public:
 	FGameplayTag Attributes_Stats_Speed;
 	FGameplayTag Attributes_Stats_XP;
 	FGameplayTag Attributes_Stats_Level;
+	FGameplayTag Attributes_Stats_FriendshipLevel;
+
+	FGameplayTag Attributes_Secondary_ExertionChance;
 
 	FGameplayTag Attributes_Meta_IncomingDamage;
 	FGameplayTag Attributes_Meta_IncomingXP;

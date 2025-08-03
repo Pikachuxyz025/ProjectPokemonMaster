@@ -55,6 +55,17 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 		FName("Attributes.Stats.XP"),
 		FString("The amount of experience the pokemon has")
 	);
+
+	GameplayTags.Attributes_Stats_FriendshipLevel = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Stats.FriendshipLevel"),
+		FString("The level of affection the pokemon has for the trainer")
+	);
+
+	GameplayTags.Attributes_Secondary_ExertionChance = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Secondary.ExertionChance"),
+		FString("The chance the pokemon has to add a unique effect to their moves as well as gain exp upon using them") 
+	);
+
 	GameplayTags.Attributes_Stats_Level = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Stats.Level"),
 		FString("THe current level of the Pokemon")

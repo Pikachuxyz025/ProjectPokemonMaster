@@ -16,6 +16,7 @@ class UAttributeSet;
 class UMaterialInstanceDynamic;
 class UPokemonAbilitySystemComponent;
 class UPokemonBaseAttributeSet;
+enum class EMovementSpeed : uint8;
 struct FPokemonUIInfo;
 #ifdef PROJECTMIMIKYU_Pokemon_Parent_generated_h
 #error "Pokemon_Parent.generated.h already included, missing '#pragma once' in Pokemon_Parent.h"
@@ -51,6 +52,7 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
 	DECLARE_FUNCTION(execSetIsDodging); \
 	DECLARE_FUNCTION(execSelectRandomMove); \
 	DECLARE_FUNCTION(execGetReadyForCombat); \
+	DECLARE_FUNCTION(execSetMovementSpeed); \
 	DECLARE_FUNCTION(execEndDodge); \
 	DECLARE_FUNCTION(execAttackEnded);
 

@@ -197,6 +197,13 @@ FPokemonUIInfo APokemon_Parent::GetPokemonUIInfo(bool bNeedsSetup)
 	return PokemonUIInfo;
 }
 
+APokemonAIController* APokemon_Parent::GetPokemonController()
+{
+	if (!PokemonController)
+		PokemonController = Cast<APokemonAIController>(Controller);
+	return PokemonController;
+}
+
 void APokemon_Parent::PossessedBy(AController* NewController)
 {
 	//AActor* NewTrainer = nullptr;
@@ -204,8 +211,7 @@ void APokemon_Parent::PossessedBy(AController* NewController)
 	//NewTrainer = GetOwner();
 
 	Super::PossessedBy(NewController);
-	PokemonController = Cast<APokemonAIController>(GetController());
-	PokemonController->SetTree(AIBehaviorTree, this);
+	GetPokemonController()->SetTree(AIBehaviorTree, this);
 	//if (NewTrainer)
 		//SetPokemonTrainer(NewTrainer);
 }
@@ -277,7 +283,7 @@ void APokemon_Parent::AttackEnded()
 
 	ActivePokemonMove = nullptr;
 	UE_LOG(LogTemp, Display, TEXT("Attack Ended"));
-	PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
+	GetPokemonController()->SetBlackboardCurrentMove(ActivePokemonMove);
 	SetMovementSpeed(EMovementSpeed::EMS_Running, 1.f);
 
 	OnAttackEnd.Broadcast();
@@ -306,11 +312,18 @@ void APokemon_Parent::AttackEnded()
 
 void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 {
+	if (CurrentTrainer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Trainer's Pokemon Is Unable To Battle"));
+		Return();
+		return;
+	}
+
 	SetLifeSpan(5.f);
 	if (PokemonController)
 	{
-		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Fainted")));
 		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
+		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Fainted")));
 	}
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetSimulatePhysics(true);
@@ -441,6 +454,11 @@ float APokemon_Parent::GetNatureMultiplier(const FGameplayTag& StatTagToBeModifi
 AActor* APokemon_Parent::GetAvatar_Implementation()
 {
 	return this;
+}
+
+AActor* APokemon_Parent::GetCombatTarget_Implementation()
+{
+	return GetPokemonController()->GetCombatTarget();
 }
 
 int32 APokemon_Parent::GetELB(int32 BaseStat, const FGameplayTag& StatTag)

@@ -155,6 +155,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UMovesetComponent* MovesetComponent;
 
+	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
 	//virtual void ChargeIn();
@@ -192,6 +193,7 @@ public:
 	virtual int32 GetPokemonLevel() override;
 	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
 	virtual AActor* GetAvatar_Implementation() override;
+	virtual AActor* GetCombatTarget_Implementation() override;
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
 	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
@@ -389,7 +391,7 @@ public:
 	FORCEINLINE FPokemonUIInfo GetPokemonUIInfo(bool bNeedsSetup);
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE APokemonAIController* GetPokemonController() { return PokemonController; }
+	APokemonAIController* GetPokemonController();
 
 	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
 	FORCEINLINE bool GetIsDodging() { return bIsDodging; }

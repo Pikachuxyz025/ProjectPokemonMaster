@@ -35,12 +35,12 @@ EBTNodeResult::Type UBTTask_ChargingAttack::ExecuteTask(UBehaviorTreeComponent& 
 		Pokemon->OnAttackEnd.Clear();
 	}
 	Pokemon->OnAttackEnd.AddDynamic(this, &UBTTask_ChargingAttack::AttackComplete);
-	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, 1.f);
+	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Running);
 	PokemonController->SetFocus(AttackTarget);
 	
 	FAIMoveRequest Request;
 	Request.SetGoalActor(AttackTarget);
-	Request.SetAcceptanceRadius(5);
+	Request.SetAcceptanceRadius(100);
 	MoveRequest = Request;
 	bMadeIt = false;
 	PokemonASC->ActivateAbilityByTag(PokemonMove->InputTag);

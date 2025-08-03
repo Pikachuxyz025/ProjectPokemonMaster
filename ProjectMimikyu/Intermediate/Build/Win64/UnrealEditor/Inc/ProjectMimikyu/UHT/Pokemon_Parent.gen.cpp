@@ -38,6 +38,7 @@ void EmptyLinkFunctionForGeneratedCodePokemon_Parent() {}
 	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EElementalType();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EGenderType();
+	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EMovementSpeed();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ENatureType();
 	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokemonStatus();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnAttackEnd__DelegateSignature();
@@ -205,6 +206,15 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 		P_THIS->GetReadyForCombat(Z_Param_Target);
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(APokemon_Parent::execSetMovementSpeed)
+	{
+		P_GET_ENUM(EMovementSpeed,Z_Param_NewMovementSpeed);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_MoveMultiplier);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->SetMovementSpeed(EMovementSpeed(Z_Param_NewMovementSpeed),Z_Param_MoveMultiplier);
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(APokemon_Parent::execEndDodge)
 	{
 		P_FINISH;
@@ -269,6 +279,7 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 			{ "SelectRandomMove", &APokemon_Parent::execSelectRandomMove },
 			{ "ServerSetTrainer", &APokemon_Parent::execServerSetTrainer },
 			{ "SetIsDodging", &APokemon_Parent::execSetIsDodging },
+			{ "SetMovementSpeed", &APokemon_Parent::execSetMovementSpeed },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
@@ -720,6 +731,48 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics
+	{
+		struct Pokemon_Parent_eventSetMovementSpeed_Parms
+		{
+			EMovementSpeed NewMovementSpeed;
+			float MoveMultiplier;
+		};
+		static const UECodeGen_Private::FBytePropertyParams NewProp_NewMovementSpeed_Underlying;
+		static const UECodeGen_Private::FEnumPropertyParams NewProp_NewMovementSpeed;
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_MoveMultiplier;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_NewMovementSpeed_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_NewMovementSpeed = { "NewMovementSpeed", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(Pokemon_Parent_eventSetMovementSpeed_Parms, NewMovementSpeed), Z_Construct_UEnum_ProjectMimikyu_EMovementSpeed, METADATA_PARAMS(0, nullptr) }; // 3314933686
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_MoveMultiplier = { "MoveMultiplier", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(Pokemon_Parent_eventSetMovementSpeed_Parms, MoveMultiplier), METADATA_PARAMS(0, nullptr) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_NewMovementSpeed_Underlying,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_NewMovementSpeed,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::NewProp_MoveMultiplier,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::Function_MetaDataParams[] = {
+		{ "CPP_Default_MoveMultiplier", "1.000000" },
+		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APokemon_Parent, nullptr, "SetMovementSpeed", nullptr, nullptr, Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::PropPointers), sizeof(Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::Pokemon_Parent_eventSetMovementSpeed_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::Function_MetaDataParams) };
+	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::PropPointers) < 2048);
+	static_assert(sizeof(Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::Pokemon_Parent_eventSetMovementSpeed_Parms) < MAX_uint16);
+	UFunction* Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_APokemon_Parent_StartDissolveTimeline_Statics
 	{
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_DynamicMaterialInstance;
@@ -980,6 +1033,7 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 		{ &Z_Construct_UFunction_APokemon_Parent_SelectRandomMove, "SelectRandomMove" }, // 2109357777
 		{ &Z_Construct_UFunction_APokemon_Parent_ServerSetTrainer, "ServerSetTrainer" }, // 3240261003
 		{ &Z_Construct_UFunction_APokemon_Parent_SetIsDodging, "SetIsDodging" }, // 1874459605
+		{ &Z_Construct_UFunction_APokemon_Parent_SetMovementSpeed, "SetMovementSpeed" }, // 2156865540
 		{ &Z_Construct_UFunction_APokemon_Parent_StartDissolveTimeline, "StartDissolveTimeline" }, // 781955584
 		{ &Z_Construct_UFunction_APokemon_Parent_StartWeaponDissolveTimeline, "StartWeaponDissolveTimeline" }, // 4060990198
 	};
@@ -1355,7 +1409,7 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 		const UECodeGen_Private::FImplementedInterfaceParams Z_Construct_UClass_APokemon_Parent_Statics::InterfaceParams[] = {
 			{ Z_Construct_UClass_UDamageInterface_NoRegister, (int32)VTABLE_OFFSET(APokemon_Parent, IDamageInterface), false },  // 632616990
 			{ Z_Construct_UClass_UAbilitySystemInterface_NoRegister, (int32)VTABLE_OFFSET(APokemon_Parent, IAbilitySystemInterface), false },  // 3195502011
-			{ Z_Construct_UClass_UPokemonCombatInterface_NoRegister, (int32)VTABLE_OFFSET(APokemon_Parent, IPokemonCombatInterface), false },  // 3646233876
+			{ Z_Construct_UClass_UPokemonCombatInterface_NoRegister, (int32)VTABLE_OFFSET(APokemon_Parent, IPokemonCombatInterface), false },  // 3881303510
 		};
 	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_APokemon_Parent_Statics::InterfaceParams) < 64);
 	const FCppClassTypeInfoStatic Z_Construct_UClass_APokemon_Parent_Statics::StaticCppClassTypeInfo = {
@@ -1410,9 +1464,9 @@ void FOnCharging_DelegateWrapper(const FMulticastScriptDelegate& OnCharging)
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 3271007623U) },
+		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 1433817248U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_1185921539(TEXT("/Script/ProjectMimikyu"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_746836507(TEXT("/Script/ProjectMimikyu"),
 		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

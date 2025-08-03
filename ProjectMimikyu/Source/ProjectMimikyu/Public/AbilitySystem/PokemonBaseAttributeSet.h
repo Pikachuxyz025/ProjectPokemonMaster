@@ -116,6 +116,14 @@ public:
 	FGameplayAttributeData XP;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, XP);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FriendshipLevel, Category = "Vital Stat Attributes")
+	FGameplayAttributeData FriendshipLevel;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, FriendshipLevel);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ExertionChance, Category = "Vital Stat Attributes")
+	FGameplayAttributeData ExertionChance;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, ExertionChance);
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentLevel, Category = "Vital Stat Attributes")
 	FGameplayAttributeData CurrentLevel;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, CurrentLevel);
@@ -153,6 +161,12 @@ public:
 
 	UFUNCTION()
 	void OnRep_XP(const FGameplayAttributeData& OldXP) const;
+
+	UFUNCTION()
+	void OnRep_ExertionChance(const FGameplayAttributeData& OldExertionChance) const;
+
+	UFUNCTION()
+	void OnRep_FriendshipLevel(const FGameplayAttributeData& OldFriendshipLevel) const;
 
 	UFUNCTION()
 	void OnRep_CurrentLevel(const FGameplayAttributeData& OldCurrentLevel) const;

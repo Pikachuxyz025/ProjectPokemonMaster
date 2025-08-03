@@ -34,6 +34,8 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FEffectProperti
 	DECLARE_FUNCTION(execOnRep_SpecialAttack); \
 	DECLARE_FUNCTION(execOnRep_SpecialDefense); \
 	DECLARE_FUNCTION(execOnRep_CurrentLevel); \
+	DECLARE_FUNCTION(execOnRep_FriendshipLevel); \
+	DECLARE_FUNCTION(execOnRep_ExertionChance); \
 	DECLARE_FUNCTION(execOnRep_XP); \
 	DECLARE_FUNCTION(execOnRep_Speed); \
 	DECLARE_FUNCTION(execOnRep_MaxPowerPoints); \
@@ -64,6 +66,8 @@ public: \
 		Speed, \
 		DodgeForce, \
 		XP, \
+		FriendshipLevel, \
+		ExertionChance, \
 		CurrentLevel, \
 		NETFIELD_REP_END=CurrentLevel	}; \
 	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override; \

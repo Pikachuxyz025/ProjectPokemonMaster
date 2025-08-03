@@ -43,6 +43,9 @@ void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, CurrentLevel , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, PowerPoints , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, MaxPowerPoints , COND_None, REPNOTIFY_Always);
+
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, ExertionChance , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, FriendshipLevel , COND_None, REPNOTIFY_Always);
 }
 
 void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -167,6 +170,16 @@ void UPokemonBaseAttributeSet::OnRep_CurrentLevel(const FGameplayAttributeData& 
 void UPokemonBaseAttributeSet::OnRep_SpecialAttack(const FGameplayAttributeData& OldSpecialAttack) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, SpecialAttack, OldSpecialAttack);
+}
+
+void UPokemonBaseAttributeSet::OnRep_FriendshipLevel(const FGameplayAttributeData& OldFriendshipLevel) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, FriendshipLevel, OldFriendshipLevel);
+}
+
+void UPokemonBaseAttributeSet::OnRep_ExertionChance(const FGameplayAttributeData & OldExertionChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, ExertionChance, OldExertionChance);
 }
 
 void UPokemonBaseAttributeSet::OnRep_SpecialDefense(const FGameplayAttributeData& OldSpecialDefense) const

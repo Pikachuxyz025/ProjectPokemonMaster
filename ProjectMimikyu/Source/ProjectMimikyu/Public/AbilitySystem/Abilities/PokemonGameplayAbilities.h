@@ -58,7 +58,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float IdealRange = 50.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage")
 	float SpeedMultiplier = 1.f;
 
 	/* Debuffs */

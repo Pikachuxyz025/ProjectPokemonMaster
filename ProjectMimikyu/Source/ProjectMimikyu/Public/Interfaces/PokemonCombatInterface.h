@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	AActor* GetAvatar();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AActor* GetCombatTarget();
+
 	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag);
 	virtual UPokemonMoveDataAsset* GetPokemonActiveMove();
 	virtual FPokemonTypeInfo GetPokemonElementalTypes();

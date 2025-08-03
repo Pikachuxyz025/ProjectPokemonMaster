@@ -48,6 +48,10 @@ void UAT_TargetDataLocation::SendTargetLocationData()
 	FGameplayAbilityTargetData_LocationInfo* Data = new FGameplayAbilityTargetData_LocationInfo();
 	FGameplayAbilityTargetData_SingleTargetHit* DateHitResult = new FGameplayAbilityTargetData_SingleTargetHit();
 	FHitResult HitResult;
+
+	if (!PC->GetCombatTarget())
+		return;
+
 	HitResult.Location = PC->GetCombatTarget()->GetActorLocation();
 	Data->TargetLocation = TargetInfo;
 	DateHitResult->HitResult = HitResult;
