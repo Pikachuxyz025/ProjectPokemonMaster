@@ -5,72 +5,49 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/DataAssets/PokemonInputConfig.h"
+#include "DataAssets/PokemonInputConfig.h"
 #include "GameplayTagContainer.h"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void EmptyLinkFunctionForGeneratedCodePokemonInputConfig() {}
-// Cross Module References
-	ENGINE_API UClass* Z_Construct_UClass_UDataAsset();
-	ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputAction_NoRegister();
-	GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister();
-	PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint();
-	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputAction();
-	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputDodgeAction();
-	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction();
-	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
-// End Cross Module References
-	static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_PokemonInputAction;
+
+// ********** Begin Cross Module References ********************************************************
+ENGINE_API UClass* Z_Construct_UClass_UDataAsset();
+ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputAction_NoRegister();
+GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputAction();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputDodgeAction();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction();
+UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
+// ********** End Cross Module References **********************************************************
+
+// ********** Begin ScriptStruct FPokemonInputAction ***********************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FPokemonInputAction;
 class UScriptStruct* FPokemonInputAction::StaticStruct()
 {
-	if (!Z_Registration_Info_UScriptStruct_PokemonInputAction.OuterSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputAction.OuterSingleton)
 	{
-		Z_Registration_Info_UScriptStruct_PokemonInputAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputAction"));
+		Z_Registration_Info_UScriptStruct_FPokemonInputAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputAction"));
 	}
-	return Z_Registration_Info_UScriptStruct_PokemonInputAction.OuterSingleton;
+	return Z_Registration_Info_UScriptStruct_FPokemonInputAction.OuterSingleton;
 }
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FPokemonInputAction>()
+struct Z_Construct_UScriptStruct_FPokemonInputAction_Statics
 {
-	return FPokemonInputAction::StaticStruct();
-}
-	struct Z_Construct_UScriptStruct_FPokemonInputAction_Statics
-	{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[];
-#endif
-		static void* NewStructOps();
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_Index_MetaData[];
-#endif
-		static const UECodeGen_Private::FIntPropertyParams NewProp_Index;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const UECodeGen_Private::FStructParams ReturnStructParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputAction_Statics::Struct_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	void* Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewStructOps()
-	{
-		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FPokemonInputAction>();
-	}
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[] = {
 		{ "Category", "PokemonInputAction" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 		{ "NativeConst", "" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction_MetaData), Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Index_MetaData[] = {
 		{ "Category", "PokemonInputAction" },
 #if !UE_BUILD_SHIPPING
 		{ "Comment", "//UPROPERTY(EditDefaultsOnly)\n//FGameplayTag InputTag = FGameplayTag();\n" },
@@ -80,324 +57,311 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FPokemonInputAction>()
 		{ "ToolTip", "UPROPERTY(EditDefaultsOnly)\nFGameplayTag InputTag = FGameplayTag();" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index = { "Index", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputAction, Index), METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index_MetaData), Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index_MetaData) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index,
-	};
-	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::ReturnStructParams = {
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-		nullptr,
-		&NewStructOps,
-		"PokemonInputAction",
-		Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers,
-		UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers),
-		sizeof(FPokemonInputAction),
-		alignof(FPokemonInputAction),
-		RF_Public|RF_Transient|RF_MarkAsNative,
-		EStructFlags(0x00000001),
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputAction_Statics::Struct_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers) < 2048);
-	UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputAction()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_Index;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
 	{
-		if (!Z_Registration_Info_UScriptStruct_PokemonInputAction.InnerSingleton)
-		{
-			UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_PokemonInputAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputAction_Statics::ReturnStructParams);
-		}
-		return Z_Registration_Info_UScriptStruct_PokemonInputAction.InnerSingleton;
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FPokemonInputAction>();
 	}
-	static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction;
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputAction_MetaData), NewProp_InputAction_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index = { "Index", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputAction, Index), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Index_MetaData), NewProp_Index_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_InputAction,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewProp_Index,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputAction_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"PokemonInputAction",
+	Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::PropPointers),
+	sizeof(FPokemonInputAction),
+	alignof(FPokemonInputAction),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputAction_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputAction()
+{
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputAction.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FPokemonInputAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputAction_Statics::StructParams);
+	}
+	return Z_Registration_Info_UScriptStruct_FPokemonInputAction.InnerSingleton;
+}
+// ********** End ScriptStruct FPokemonInputAction *************************************************
+
+// ********** Begin ScriptStruct FPokemonInputKeySequenceAction ************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction;
 class UScriptStruct* FPokemonInputKeySequenceAction::StaticStruct()
 {
-	if (!Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.OuterSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.OuterSingleton)
 	{
-		Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputKeySequenceAction"));
+		Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputKeySequenceAction"));
 	}
-	return Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.OuterSingleton;
+	return Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.OuterSingleton;
 }
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FPokemonInputKeySequenceAction>()
+struct Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics
 {
-	return FPokemonInputKeySequenceAction::StaticStruct();
-}
-	struct Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics
-	{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[];
-#endif
-		static void* NewStructOps();
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
-		static const UECodeGen_Private::FBytePropertyParams NewProp_KeyDirection_Underlying;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_KeyDirection_MetaData[];
-#endif
-		static const UECodeGen_Private::FEnumPropertyParams NewProp_KeyDirection;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const UECodeGen_Private::FStructParams ReturnStructParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::Struct_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	void* Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewStructOps()
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[] = {
+		{ "Category", "PokemonInputKeySequenceAction" },
+		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
+		{ "NativeConst", "" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KeyDirection_MetaData[] = {
+		{ "Category", "PokemonInputKeySequenceAction" },
+		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_KeyDirection_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_KeyDirection;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
 	{
 		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FPokemonInputKeySequenceAction>();
 	}
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction_MetaData[] = {
-		{ "Category", "PokemonInputKeySequenceAction" },
-		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
-		{ "NativeConst", "" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputKeySequenceAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction_MetaData), Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction_MetaData) };
-	const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_MetaData[] = {
-		{ "Category", "PokemonInputKeySequenceAction" },
-		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
-	};
-#endif
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection = { "KeyDirection", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputKeySequenceAction, KeyDirection), Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_MetaData), Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_MetaData) }; // 493927155
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_Underlying,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection,
-	};
-	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::ReturnStructParams = {
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-		nullptr,
-		&NewStructOps,
-		"PokemonInputKeySequenceAction",
-		Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers,
-		UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers),
-		sizeof(FPokemonInputKeySequenceAction),
-		alignof(FPokemonInputKeySequenceAction),
-		RF_Public|RF_Transient|RF_MarkAsNative,
-		EStructFlags(0x00000001),
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::Struct_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers) < 2048);
-	UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction()
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputKeySequenceAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputAction_MetaData), NewProp_InputAction_MetaData) };
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection = { "KeyDirection", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputKeySequenceAction, KeyDirection), Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_KeyDirection_MetaData), NewProp_KeyDirection_MetaData) }; // 639292680
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_InputAction,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewProp_KeyDirection,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"PokemonInputKeySequenceAction",
+	Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::PropPointers),
+	sizeof(FPokemonInputKeySequenceAction),
+	alignof(FPokemonInputKeySequenceAction),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction()
+{
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.InnerSingleton)
 	{
-		if (!Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.InnerSingleton)
-		{
-			UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::ReturnStructParams);
-		}
-		return Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction.InnerSingleton;
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::StructParams);
 	}
-	static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction;
+	return Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction.InnerSingleton;
+}
+// ********** End ScriptStruct FPokemonInputKeySequenceAction **************************************
+
+// ********** Begin ScriptStruct FPokemonInputDodgeAction ******************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction;
 class UScriptStruct* FPokemonInputDodgeAction::StaticStruct()
 {
-	if (!Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.OuterSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.OuterSingleton)
 	{
-		Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputDodgeAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputDodgeAction"));
+		Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FPokemonInputDodgeAction, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("PokemonInputDodgeAction"));
 	}
-	return Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.OuterSingleton;
+	return Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.OuterSingleton;
 }
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FPokemonInputDodgeAction>()
+struct Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics
 {
-	return FPokemonInputDodgeAction::StaticStruct();
-}
-	struct Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics
-	{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[];
-#endif
-		static void* NewStructOps();
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_InputTag_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_InputTag;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const UECodeGen_Private::FStructParams ReturnStructParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::Struct_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	void* Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewStructOps()
-	{
-		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FPokemonInputDodgeAction>();
-	}
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InputAction_MetaData[] = {
 		{ "Category", "PokemonInputDodgeAction" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 		{ "NativeConst", "" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputDodgeAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction_MetaData), Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InputTag_MetaData[] = {
 		{ "Category", "PokemonInputDodgeAction" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag = { "InputTag", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputDodgeAction, InputTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag_MetaData), Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag_MetaData) }; // 2083603574
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag,
-	};
-	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::ReturnStructParams = {
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-		nullptr,
-		&NewStructOps,
-		"PokemonInputDodgeAction",
-		Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers,
-		UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers),
-		sizeof(FPokemonInputDodgeAction),
-		alignof(FPokemonInputDodgeAction),
-		RF_Public|RF_Transient|RF_MarkAsNative,
-		EStructFlags(0x00000001),
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::Struct_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers) < 2048);
-	UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputDodgeAction()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_InputAction;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_InputTag;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
 	{
-		if (!Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.InnerSingleton)
-		{
-			UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::ReturnStructParams);
-		}
-		return Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction.InnerSingleton;
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FPokemonInputDodgeAction>();
 	}
-	void UPokemonInputConfig::StaticRegisterNativesUPokemonInputConfig()
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction = { "InputAction", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputDodgeAction, InputAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputAction_MetaData), NewProp_InputAction_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag = { "InputTag", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInputDodgeAction, InputTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputTag_MetaData), NewProp_InputTag_MetaData) }; // 133831994
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputAction,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewProp_InputTag,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"PokemonInputDodgeAction",
+	Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::PropPointers),
+	sizeof(FPokemonInputDodgeAction),
+	alignof(FPokemonInputDodgeAction),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FPokemonInputDodgeAction()
+{
+	if (!Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.InnerSingleton)
 	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.InnerSingleton, Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::StructParams);
 	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UPokemonInputConfig);
-	UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister()
+	return Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction.InnerSingleton;
+}
+// ********** End ScriptStruct FPokemonInputDodgeAction ********************************************
+
+// ********** Begin Class UPokemonInputConfig ******************************************************
+void UPokemonInputConfig::StaticRegisterNativesUPokemonInputConfig()
+{
+}
+FClassRegistrationInfo Z_Registration_Info_UClass_UPokemonInputConfig;
+UClass* UPokemonInputConfig::GetPrivateStaticClass()
+{
+	using TClass = UPokemonInputConfig;
+	if (!Z_Registration_Info_UClass_UPokemonInputConfig.InnerSingleton)
 	{
-		return UPokemonInputConfig::StaticClass();
+		GetPrivateStaticClassBody(
+			StaticPackage(),
+			TEXT("PokemonInputConfig"),
+			Z_Registration_Info_UClass_UPokemonInputConfig.InnerSingleton,
+			StaticRegisterNativesUPokemonInputConfig,
+			sizeof(TClass),
+			alignof(TClass),
+			TClass::StaticClassFlags,
+			TClass::StaticClassCastFlags(),
+			TClass::StaticConfigName(),
+			(UClass::ClassConstructorType)InternalConstructor<TClass>,
+			(UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller<TClass>,
+			UOBJECT_CPPCLASS_STATICFUNCTIONS_FORCLASS(TClass),
+			&TClass::Super::StaticClass,
+			&TClass::WithinClass::StaticClass
+		);
 	}
-	struct Z_Construct_UClass_UPokemonInputConfig_Statics
-	{
-		static UObject* (*const DependentSingletons[])();
+	return Z_Registration_Info_UClass_UPokemonInputConfig.InnerSingleton;
+}
+UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister()
+{
+	return UPokemonInputConfig::GetPrivateStaticClass();
+}
+struct Z_Construct_UClass_UPokemonInputConfig_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_AbilityInputActions_Inner;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_AbilityInputActions_MetaData[];
-#endif
-		static const UECodeGen_Private::FArrayPropertyParams NewProp_AbilityInputActions;
-		static const UECodeGen_Private::FStructPropertyParams NewProp_DodgeInputActions_Inner;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_DodgeInputActions_MetaData[];
-#endif
-		static const UECodeGen_Private::FArrayPropertyParams NewProp_DodgeInputActions;
-		static const UECodeGen_Private::FStructPropertyParams NewProp_KeySequenceInputActions_Inner;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_KeySequenceInputActions_MetaData[];
-#endif
-		static const UECodeGen_Private::FArrayPropertyParams NewProp_KeySequenceInputActions;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
-	};
-	UObject* (*const Z_Construct_UClass_UPokemonInputConfig_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UDataAsset,
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::DependentSingletons) < 16);
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonInputConfig_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "IncludePath", "DataAssets/PokemonInputConfig.h" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_Inner = { "AbilityInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputAction, METADATA_PARAMS(0, nullptr) }; // 1752081493
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AbilityInputActions_MetaData[] = {
 		{ "Category", "PokemonInputConfig" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions = { "AbilityInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, AbilityInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_MetaData), Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_MetaData) }; // 1752081493
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_Inner = { "DodgeInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputDodgeAction, METADATA_PARAMS(0, nullptr) }; // 3172002704
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DodgeInputActions_MetaData[] = {
 		{ "Category", "PokemonInputConfig" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions = { "DodgeInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, DodgeInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_MetaData), Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_MetaData) }; // 3172002704
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_Inner = { "KeySequenceInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction, METADATA_PARAMS(0, nullptr) }; // 683336891
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KeySequenceInputActions_MetaData[] = {
 		{ "Category", "PokemonInputConfig" },
 		{ "ModuleRelativePath", "Public/DataAssets/PokemonInputConfig.h" },
 	};
-#endif
-	const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions = { "KeySequenceInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, KeySequenceInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_MetaData), Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_MetaData) }; // 683336891
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_Inner,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_Inner,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_Inner,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions,
-	};
-	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonInputConfig_Statics::StaticCppClassTypeInfo = {
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_AbilityInputActions_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_AbilityInputActions;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_DodgeInputActions_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_DodgeInputActions;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_KeySequenceInputActions_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_KeySequenceInputActions;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UPokemonInputConfig>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_UPokemonInputConfig_Statics::ClassParams = {
-		&UPokemonInputConfig::StaticClass,
-		nullptr,
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		nullptr,
-		Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		0,
-		UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers),
-		0,
-		0x001000A0u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::Class_MetaDataParams), Z_Construct_UClass_UPokemonInputConfig_Statics::Class_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers) < 2048);
-	UClass* Z_Construct_UClass_UPokemonInputConfig()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_Inner = { "AbilityInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputAction, METADATA_PARAMS(0, nullptr) }; // 4198993184
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions = { "AbilityInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, AbilityInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AbilityInputActions_MetaData), NewProp_AbilityInputActions_MetaData) }; // 4198993184
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_Inner = { "DodgeInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputDodgeAction, METADATA_PARAMS(0, nullptr) }; // 1862885256
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions = { "DodgeInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, DodgeInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DodgeInputActions_MetaData), NewProp_DodgeInputActions_MetaData) }; // 1862885256
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_Inner = { "KeySequenceInputActions", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction, METADATA_PARAMS(0, nullptr) }; // 3461291761
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions = { "KeySequenceInputActions", nullptr, (EPropertyFlags)0x0010000000010015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonInputConfig, KeySequenceInputActions), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_KeySequenceInputActions_MetaData), NewProp_KeySequenceInputActions_MetaData) }; // 3461291761
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_AbilityInputActions,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_DodgeInputActions,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonInputConfig_Statics::NewProp_KeySequenceInputActions,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers) < 2048);
+UObject* (*const Z_Construct_UClass_UPokemonInputConfig_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_UDataAsset,
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_UPokemonInputConfig_Statics::ClassParams = {
+	&UPokemonInputConfig::StaticClass,
+	nullptr,
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	nullptr,
+	Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	0,
+	UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::PropPointers),
+	0,
+	0x001000A0u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonInputConfig_Statics::Class_MetaDataParams), Z_Construct_UClass_UPokemonInputConfig_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_UPokemonInputConfig()
+{
+	if (!Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton, Z_Construct_UClass_UPokemonInputConfig_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton, Z_Construct_UClass_UPokemonInputConfig_Statics::ClassParams);
 	}
-	template<> PROJECTMIMIKYU_API UClass* StaticClass<UPokemonInputConfig>()
-	{
-		return UPokemonInputConfig::StaticClass();
-	}
-	UPokemonInputConfig::UPokemonInputConfig(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(UPokemonInputConfig);
-	UPokemonInputConfig::~UPokemonInputConfig() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics
-	{
-		static const FStructRegisterCompiledInInfo ScriptStructInfo[];
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_UPokemonInputConfig.OuterSingleton;
+}
+UPokemonInputConfig::UPokemonInputConfig(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
+DEFINE_VTABLE_PTR_HELPER_CTOR(UPokemonInputConfig);
+UPokemonInputConfig::~UPokemonInputConfig() {}
+// ********** End Class UPokemonInputConfig ********************************************************
+
+// ********** Begin Registration *******************************************************************
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_Statics
+{
+	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
+		{ FPokemonInputAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewStructOps, TEXT("PokemonInputAction"), &Z_Registration_Info_UScriptStruct_FPokemonInputAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputAction), 4198993184U) },
+		{ FPokemonInputKeySequenceAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewStructOps, TEXT("PokemonInputKeySequenceAction"), &Z_Registration_Info_UScriptStruct_FPokemonInputKeySequenceAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputKeySequenceAction), 3461291761U) },
+		{ FPokemonInputDodgeAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewStructOps, TEXT("PokemonInputDodgeAction"), &Z_Registration_Info_UScriptStruct_FPokemonInputDodgeAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputDodgeAction), 1862885256U) },
 	};
-	const FStructRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ScriptStructInfo[] = {
-		{ FPokemonInputAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputAction_Statics::NewStructOps, TEXT("PokemonInputAction"), &Z_Registration_Info_UScriptStruct_PokemonInputAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputAction), 1752081493U) },
-		{ FPokemonInputKeySequenceAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputKeySequenceAction_Statics::NewStructOps, TEXT("PokemonInputKeySequenceAction"), &Z_Registration_Info_UScriptStruct_PokemonInputKeySequenceAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputKeySequenceAction), 683336891U) },
-		{ FPokemonInputDodgeAction::StaticStruct, Z_Construct_UScriptStruct_FPokemonInputDodgeAction_Statics::NewStructOps, TEXT("PokemonInputDodgeAction"), &Z_Registration_Info_UScriptStruct_PokemonInputDodgeAction, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInputDodgeAction), 3172002704U) },
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_UPokemonInputConfig, UPokemonInputConfig::StaticClass, TEXT("UPokemonInputConfig"), &Z_Registration_Info_UClass_UPokemonInputConfig, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonInputConfig), 983178749U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonInputConfig, UPokemonInputConfig::StaticClass, TEXT("UPokemonInputConfig"), &Z_Registration_Info_UClass_UPokemonInputConfig, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonInputConfig), 3063833419U) },
-	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_2890807633(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ClassInfo),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h_Statics::ScriptStructInfo),
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_3010818519(TEXT("/Script/ProjectMimikyu"),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_Statics::ClassInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_PokemonInputConfig_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	nullptr, 0);
+// ********** End Registration *********************************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -23,6 +23,7 @@ public:
 	FEffectAssetTag EffectAssetTag;
 
 	void AddCharacterAbilities(TArray<UPokemonMoveDataAsset*> CurrentPokemonMoves);
+	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	void AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);
 
 	UFUNCTION(BlueprintCallable)

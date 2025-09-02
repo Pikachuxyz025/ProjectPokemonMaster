@@ -36,7 +36,7 @@ class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInte
 public:
 
 	APokemon_Parent();
-
+	UPROPERTY(BlueprintReadOnly,BlueprintAssignable)
 	FOnAttackEnd OnAttackEnd;
 	UPROPERTY(BlueprintAssignable)
 	FOnCharging OnCharging;
@@ -103,6 +103,9 @@ protected:
 	virtual void ReinitializeDefaultAttributes() override;
 
 	void InitAbilityActorInfo();
+
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 	UPROPERTY()
 	 FActiveGameplayEffectHandle CurrentStatHandle;
@@ -207,6 +210,8 @@ public:
 	virtual void AdjustLevel(int32 NewLevel) override;
 	virtual int32 GetXPBaseReward() override;
 	virtual int32 GetExperienceNeededAtLevel(int32 Level) override;
+	virtual int32 GetExperienceAtLevel(int32 Level) override;
+	virtual void UpdatePokemonInfoInParty_Implementation() override;
 #pragma endregion
 
 	//void DamageTarget(AActor* Target);
@@ -396,6 +401,9 @@ public:
 	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
 	FORCEINLINE bool GetIsDodging() { return bIsDodging; }
 	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
+	
+	UFUNCTION(BlueprintCallable,BlueprintPure)
+	FORCEINLINE bool HasTrainer() { return CurrentTrainer != nullptr; }
 
 	ENatureType GetNature() { return Nature; }
 

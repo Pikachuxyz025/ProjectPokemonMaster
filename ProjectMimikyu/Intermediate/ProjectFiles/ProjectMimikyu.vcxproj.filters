@@ -83,9 +83,15 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonBaseAttributeSet.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonProjectileTagLibrary.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\Abilities">
       <UniqueIdentifier>{77B8736C-E6D9-3313-BADD-4A15307EFA07}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\PokemonDamageGameplayAbilities.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\Abilities</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\Abilities\PokemonGameplayAbilities.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem\Abilities</Filter>
     </ClCompile>
@@ -95,6 +101,9 @@
     <Filter Include="Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks">
       <UniqueIdentifier>{4704043B-9C42-34F8-A9DD-931AF887F1E1}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks\AT_FireProjectiles.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks\AT_TickTask.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem\AbilityTasks</Filter>
     </ClCompile>
@@ -189,6 +198,9 @@
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\TagCategoryDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\DataTables">
@@ -389,9 +401,15 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonProjectileTagLibrary.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\Abilities">
       <UniqueIdentifier>{969B45D6-0DD3-3FAF-8F32-82AE6AC6793C}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonDamageGameplayAbilities.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\Abilities</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\Abilities\PokemonGameplayAbilities.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem\Abilities</Filter>
     </ClInclude>
@@ -401,6 +419,9 @@
     <Filter Include="Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks">
       <UniqueIdentifier>{F994CFF1-1CB3-3B4E-A626-D266A54A4608}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks\AT_FireProjectiles.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks\AT_TickTask.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem\AbilityTasks</Filter>
     </ClInclude>
@@ -498,6 +519,9 @@
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\TagCategoryDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\DataTables">

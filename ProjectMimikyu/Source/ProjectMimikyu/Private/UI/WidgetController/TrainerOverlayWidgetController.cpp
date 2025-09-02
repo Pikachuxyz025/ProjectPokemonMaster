@@ -119,4 +119,12 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 				OnPowerPointsChanged.Broadcast((int32)Data.NewValue);
 			}
 	);
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetCurrentLevelAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnLevelChanged.Broadcast((int32)Data.NewValue);
+			}
+		);
 }

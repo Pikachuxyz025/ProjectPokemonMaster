@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include <AbilitySystemBlueprintLibrary.h>
+#include <AbilitySystem/AbilityTasks/AT_FireProjectiles.h>
 
 void UProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -19,35 +20,57 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 	if (!bIsServer) return;
 	UE_LOG(LogTemp, Display, TEXT("Spawning"));
 
+
+
 	const FVector SocketLocation = IPokemonCombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(SocketLocation);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
+	//FTransform SpawnTransform;
+	//SpawnTransform.SetLocation(SocketLocation);
+	//SpawnTransform.SetRotation(Rotation.Quaternion());
 
-	AProjectileAttack* Projectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
-		ProjectileClass,
-		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	//AProjectileAttack* Projectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
+	//	ProjectileConfig.ProjectileClass,
+	//	SpawnTransform,
+	//	GetOwningActorFromActorInfo(),
+	//	Cast<APawn>(GetOwningActorFromActorInfo()),
+	//	ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	Projectile->GetSphereComponent()->IgnoreActorWhenMoving(GetOwningActorFromActorInfo(), true);
+	//Projectile->GetSphereComponent()->IgnoreActorWhenMoving(GetOwningActorFromActorInfo(), true);
 
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(Projectile);
-	TArray<TWeakObjectPtr<AActor>> Actors;
-	Actors.Add(Projectile);
-	EffectContextHandle.AddActors(Actors);
+	//EffectContextHandle.AddSourceObject(Projectile);
+	//TArray<TWeakObjectPtr<AActor>> Actors;
+	//Actors.Add(Projectile);
+	//EffectContextHandle.AddActors(Actors);
 	FHitResult HitResult;
 	HitResult.Location = ProjectileTargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
+	///const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
-	Projectile->DamageEffectSpecHandle = SpecHandle;
-	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-	Projectile->FinishSpawning(SpawnTransform);
+	UAT_FireProjectiles* FireTask = UAT_FireProjectiles::FireProjectiles
+	(
+this,
+		"FireProjectiles",
+		EProjectileSpreadMode::SingleShot,
+		ProjectileConfig.ProjectileClass,
+		DamageEffectClass,
+		EffectContextHandle,
+		MakeDamageEffectParamsFromClassDefaults(),
+		GetAbilityLevel(),
+		SocketLocation,
+		Rotation,
+		GetAvatarActorFromActorInfo(),
+		1,
+		0.1f,
+		ProjectileConfig.SpreadAngle,
+		0.f
+	);
+
+	FireTask->ReadyForActivation();
+	//Projectile->DamageEffectSpecHandle = ;
+	//Projectile->DamageEffectParams = ;
+	//Projectile->FinishSpawning(SpawnTransform);
 }

@@ -37,6 +37,10 @@ public:
 	virtual int32 GetXPBaseReward();
 	virtual void ReinitializeDefaultAttributes() = 0;
 	virtual int32 GetExperienceNeededAtLevel(int32 Level);
+	virtual int32 GetExperienceAtLevel(int32 Level);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdatePokemonInfoInParty();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FVector GetCombatSocketLocation(const FGameplayTag& MontageTag);

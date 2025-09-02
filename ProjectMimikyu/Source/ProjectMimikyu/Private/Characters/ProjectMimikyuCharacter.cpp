@@ -340,6 +340,14 @@ void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
 	}
 }
 
+void AProjectMimikyuCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)
+{
+	ATrainerPlayerState* PokemonTrainerState = GetPlayerState<ATrainerPlayerState>();
+	check(PokemonTrainerState);
+
+	PokemonTrainerState->UpdatePokemonInfoInParty(AlteredPokemon);
+}
+
 void AProjectMimikyuCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D

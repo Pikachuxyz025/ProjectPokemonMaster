@@ -3,6 +3,8 @@
 
 #include "Player/TrainerPlayerState.h"
 #include "Characters/Pokemon_Parent.h"
+#include "PokemonGameplayTags.h"
+#include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 
 void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
@@ -29,7 +31,18 @@ void ATrainerPlayerState::PokemonIsOut(APokemon_Parent* PokemonOut)
 {
 	CurrentPartyInfo[PartyIndex].PartyMode = EPartyStatus::EPS_Out;
 	ActivePokemon = PokemonOut;
+	ActivePokemonInfo = CurrentPartyInfo[PartyIndex];
 	OnPokemonActiveDelegate.Broadcast(ActivePokemon);
+}
+
+void ATrainerPlayerState::UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon)
+{
+	if (AlteredPokemon == ActivePokemon)
+	{
+		CurrentPartyInfo[PartyIndex].UpdateStoredAttributeValues(ActivePokemon->GetPokemonAS()->GetAttributeTagValues());
+		//CurrentPartyInfo[PartyIndex].StoredAttributeValue = ;
+		//CurrentPartyInfo[PartyIndex].CurrentUiInfo.PokemonLevel = CurrentPartyInfo[PartyIndex].StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
+	}
 }
 
 void ATrainerPlayerState::SetTrainerIsInCombat(AActor* CombatTarget)

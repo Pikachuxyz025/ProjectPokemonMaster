@@ -1,12 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-// TO DO: 
-// Add FGameplaytags for spawn points, this determines how their stats spawn
-// Activate their behavior tree with trainer set
-//
-
-
-
 #include "Characters/Pokemon_Parent.h"
 #include "Components/BoxComponent.h"
 #include "BrainComponent.h"
@@ -18,7 +11,7 @@
 #include "AIControllers/PokemonAIController.h"
 #include "ActorComponents/DamageSystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Interfaces/DamageInterface.h"
+#include "Interfaces/PlayerInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ActorComponents/MovesetComponent.h"
@@ -31,33 +24,16 @@
 #include "Net/UnrealNetwork.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 
-// Sets default values
 APokemon_Parent::APokemon_Parent()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
 	PrimaryActorTick.bCanEverTick = true;
 	if (PokemonDataAsset && PokemonDataAsset->Model)
 	{
 		GetMesh()->SetSkeletalMeshAsset(PokemonDataAsset->Model);
 	}
-	//DamageSystem = CreateDefaultSubobject<UDamageSystemComponent>(TEXT("Damage System"));
+
 	MovesetComponent = CreateDefaultSubobject<UMovesetComponent>(TEXT("Moveset Component"));
-
-	//CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
-	//CollisionBox->SetupAttachment(GetRootComponent());
-
-	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	//CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	//CollisionBox->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
-
-	//BoxTraceStart = CreateDefaultSubobject<USceneComponent>(TEXT("Box Trace Start"));
-	//BoxTraceEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Box Trace End"));
-
-	//BoxTraceStart->SetupAttachment(GetRootComponent());
-	//BoxTraceEnd->SetupAttachment(GetRootComponent());
-
-	//MeleeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("Melee Timeline"));
 
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -65,6 +41,8 @@ APokemon_Parent::APokemon_Parent()
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
 
 	GetMesh()->SetCollisionResponseToChannel(ECC_Melee,ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera,ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
@@ -84,11 +62,6 @@ void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
 void APokemon_Parent::BeginPlay()
 {
 	Super::BeginPlay();
-	//PokemonController = Cast<APokemonAIController>(GetController());
-	//CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APokemon_Parent::OnBoxOverlap);
-
-	//DamageSystem->SetupElementalType(PokemonDataAsset->FirstType, PokemonDataAsset->SecondType);
-
 	if(!SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
 	{
 		MovesetComponent->SpawnWithDataMoveSet(CurrentLevel, PokemonDataAsset);
@@ -97,9 +70,6 @@ void APokemon_Parent::BeginPlay()
 	}
 
 	AddPokemonAbilities();
-
-	//SetupMeleeTimeline();
-
 	InitAbilityActorInfo();	
 	GetPokemonUIInfo(true);
 }
@@ -109,6 +79,11 @@ void APokemon_Parent::AddPokemonAbilities()
 	if (HasAuthority())
 	{
 		GetPokemonASC()->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
+
+		// Passive Event Check Should be active only if the pokemon has a player trainer 
+		// We'll Keep at just trainer for now
+		if(CurrentTrainer)
+		GetPokemonASC()->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 	}
 }
 
@@ -119,25 +94,6 @@ void APokemon_Parent::AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities
 		GetPokemonASC()->AddSingleAbility(NewAbility,AbilityInputTag);
 	}
 }
-
-//void APokemon_Parent::SetupMeleeTimeline()
-//{
-//	//FOnTimelineEvent StartCollisionEvent;
-//	//FOnTimelineEvent EndCollisionEvent;
-//	FOnTimelineEvent StartBoxTraceEvent;
-//	FOnTimelineEvent FinishedCollisionEvent;
-//
-//	//StartCollisionEvent.BindUFunction(this, FName("AddCollision"));
-//	//EndCollisionEvent.BindUFunction(this, FName("RemoveCollision"));
-//	//StartBoxTraceEvent.BindUFunction(this, FName("StartBoxTrace"));
-//	FinishedCollisionEvent.BindUFunction(this, FName("StartBoxTrace"));
-//
-//	//MeleeTimeline->AddEvent(.3f, StartCollisionEvent);
-//	//MeleeTimeline->AddEvent(1.5f, EndCollisionEvent);
-//	//MeleeTimeline->AddEvent(.4f, StartBoxTraceEvent);
-//	MeleeTimeline->SetTimelineFinishedFunc(FinishedCollisionEvent);
-//	MeleeTimeline->SetTimelineLength(.5f);
-//}
 
 void APokemon_Parent::SetupPokemonUIInfo()
 {
@@ -161,7 +117,6 @@ FPokemonInfo APokemon_Parent::GetPokemonInfo()
 
 void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 {
-	//XP = SetupInfo.XP;
 	Gender = SetupInfo.Gender;
 	Nature = SetupInfo.Nature;
 	EffortLevelBaseMap = SetupInfo.StoredEffortLevelBaseMap;
@@ -206,14 +161,8 @@ APokemonAIController* APokemon_Parent::GetPokemonController()
 
 void APokemon_Parent::PossessedBy(AController* NewController)
 {
-	//AActor* NewTrainer = nullptr;
-	//if (SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
-	//NewTrainer = GetOwner();
-
 	Super::PossessedBy(NewController);
 	GetPokemonController()->SetTree(AIBehaviorTree, this);
-	//if (NewTrainer)
-		//SetPokemonTrainer(NewTrainer);
 }
 
 void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -251,7 +200,7 @@ FActiveGameplayEffectHandle APokemon_Parent::ApplyEffectToSelf(TSubclassOf<UGame
 void APokemon_Parent::InitializeDefaultAttributes()
 {
 	CurrentStatHandle = ApplyEffectToSelf(DefaultStatAttributes, 1.f);
-	CurrentDependentStatHandle=ApplyEffectToSelf(DependentStatAttributes, 1.f);
+	CurrentDependentStatHandle = ApplyEffectToSelf(DependentStatAttributes, 1.f);
 }
 
 void APokemon_Parent::ReinitializeDefaultAttributes()
@@ -289,27 +238,6 @@ void APokemon_Parent::AttackEnded()
 	OnAttackEnd.Broadcast();
 }
 
-//void APokemon_Parent::OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-//{
-//	if (Hit.bBlockingHit)
-//	{
-//		FString ActorName = UKismetSystemLibrary::GetDisplayName(Hit.GetActor());
-//		UE_LOG(LogTemp, Display, TEXT("Hit %s"), *ActorName);
-//		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, ChargeTimer);
-//		DamageTarget(Hit.GetActor());
-//
-//		//AttackEnded();
-//	}
-//}
-
-//void APokemon_Parent::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//{
-	//FHitResult HitResult;
-	//BoxTrace(HitResult);
-	//UE_LOG(LogTemp, Display, TEXT("At Least Overlapping"));
-//}
-
-
 void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 {
 	if (CurrentTrainer)
@@ -325,10 +253,11 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
 		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Fainted")));
 	}
-	GetMesh()->SetEnableGravity(true);
-	GetMesh()->SetSimulatePhysics(true);
+
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void APokemon_Parent::Return()
@@ -384,60 +313,6 @@ void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed, float Mo
 	}
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 }
-
-//void APokemon_Parent::ChargeIn()
-//{
-//}
-
-//void APokemon_Parent::FireAt()
-//{
-//}
-
-//float APokemon_Parent::GetCurrentHealth()
-//{
-	//return GetPokemonAS()->GetHealth();
-//}
-
-//float APokemon_Parent::GetMaxHealth()
-//{
-	//return GetPokemonAS()->GetMaxHealth();
-//}
-
-//void APokemon_Parent::RecieveHealth_Implementation(float AddHealthPercent)
-//{
-//}
-
-/*
-//void APokemon_Parent::RecieveDamage(FDamageInfo DamageInfo)
-//{
-		bool bWasDamaged = false;
-	float Random = FMath::RandRange(85.f, 100.f) / 100.f;
-	float Type = DamageSystem->TypeChartDamageMultiplier(DamageInfo.PokemonMove->MoveElementalType);
-	DamageInfo.DamageAmount = ((DamageInfo.DamageAmount / (float)DamageSystem->DefenseCounter(DamageInfo.PokemonMove)) / 5.f) * Random * Type;
-	DamageSystem->RecieveDamage(DamageInfo, bWasDamaged);
-	if (bWasDamaged)
-	{
-		PokemonUIInfo.PokemonHPPercent = DamageSystem->GetHealthPercent();
-		if (PokemonStatus == EPokemonStatus::EPS_PlayerTrainer)
-		{
-			AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer);
-			if (Trainer)
-			{
-				Trainer->UpdateCurrentPokemonHealth();
-			}
-		}
-	}
-//}*/
-
-//bool APokemon_Parent::IsAttacking_Implementation()
-//{
-//	return false;
-//}
-//
-//bool APokemon_Parent::HasFainted_Implementation()
-//{
-//	return bIsDead;
-//}
 
 #pragma region IPokemonCombatInterface
 
@@ -519,110 +394,11 @@ int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
 }
 #pragma endregion
 
-
-
-/*
-//void APokemon_Parent::DamageTarget(AActor* Target)
-//{
-FDamageInfo NewDamageInfo;
-	if (ActivePokemonMove)
-		NewDamageInfo.PokemonMove = ActivePokemonMove;
-	NewDamageInfo.DamageAmount = (float)DamageSystem->SendDamage(ActivePokemonMove, CurrentLevel);
-	NewDamageInfo.DamageInsigator = PokemonController;
-	NewDamageInfo.DamageCauser = this;
-
-	IDamageInterface* DamageInterface = Cast<IDamageInterface>(Target);
-	if (DamageInterface)
-	{
-		DamageInterface->RecieveDamage(NewDamageInfo);
-	}	
-//}*/
-
-//void APokemon_Parent::AddCollision()
-//{
-//	UE_LOG(LogTemp, Display, TEXT("Collision On"));
-//	SetBoxCollision(ECollisionEnabled::QueryAndPhysics);
-//}
-//
-//void APokemon_Parent::RemoveCollision()
-//{
-//	UE_LOG(LogTemp, Display, TEXT("Collision Off"));
-//	SetBoxCollision(ECollisionEnabled::NoCollision);
-//}
-//
-//void APokemon_Parent::StartBoxTrace(FHitResult& HitResult)
-//{
-//	UE_LOG(LogTemp, Display, TEXT("Trace Started"));
-//	;
-//	BoxTrace(HitResult);
-//
-//	if (HitResult.GetActor())
-//	{
-//		FString ActorName = UKismetSystemLibrary::GetDisplayName(HitResult.GetActor());
-//		UE_LOG(LogTemp, Display, TEXT("Hit %s"), *ActorName);
-//		DamageTarget(HitResult.GetActor());
-//	}
-//}
-
-//void APokemon_Parent::EnactMove()
-//{
-//	if (ActivePokemonMove)
-//	{
-//		EMoveAction ActiveMoveAction = EMoveAction::EMA_None;// ActivePokemonMove->MoveAction;
-//		FTimerHandle Timer;
-//
-//		switch (ActiveMoveAction)
-//		{
-//		case EMoveAction::EMA_None:
-//			break;
-//		case EMoveAction::EMA_Melee:
-//			if (MeleeTimeline)
-//				MeleeTimeline->PlayFromStart();
-//			//StartBoxTrace();
-//			break;
-//		case EMoveAction::EMA_Projectile:
-//			GetWorldTimerManager().SetTimer(Timer, this, &APokemon_Parent::AttackEnded, 4.f, false);
-//
-//			break;
-//		case EMoveAction::EMA_Charging:
-//
-//			bIsCharging = true;
-//			if (!GetCapsuleComponent()->OnComponentHit.IsBound())
-//				GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &APokemon_Parent::OnBoxHit);
-//			break;
-//		case EMoveAction::EMA_Environment:
-//
-//			GetWorldTimerManager().SetTimer(Timer, this, &APokemon_Parent::AttackEnded, 4.f, false);
-//			break;
-//		}
-//	}
-//}
-
 void APokemon_Parent::CombatReady(AActor* Target)
 {
 	APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(Target);
 	PokemonController->SetCombatTarget(Target);
 }
-
-//bool APokemon_Parent::WithinCloseRangeOfTarget()
-//{
-//	if (PokemonController && PokemonController->GetCombatTarget())
-//	{
-//		float CurrentDistanceToTarget = (GetActorLocation() - PokemonController->GetCombatTarget()->GetActorLocation()).Size();
-//		if (CurrentDistanceToTarget < 5)
-//			return true;
-//	}
-//	return false;
-//}
-//
-//void APokemon_Parent::Charge()
-//{
-//	FVector ToTarget = UKismetMathLibrary::GetDirectionUnitVector(GetActorLocation(), PokemonController->GetCombatTarget()->GetActorLocation());
-//	LaunchCharacter(ToTarget * 10000.f,false,false);
-//	OnCharging.Broadcast();
-//	UE_LOG(LogTemp, Display, TEXT("Character Launched"));
-//}
-
 
 void APokemon_Parent::GetReadyForCombat(AActor* Target)
 {
@@ -638,7 +414,6 @@ void APokemon_Parent::GetReadyForCombat(AActor* Target)
 void APokemon_Parent::DisengageFromCombat()
 {
 	PokemonController->SetCombatTarget(nullptr);
-	//GetAbilitySystemComponent()->RemoveActiveGameplayEffect(ActiveEffectHandle);
 }
 
 void APokemon_Parent::AdjustXP(int32 NewXP)
@@ -658,7 +433,20 @@ int32 APokemon_Parent::GetXPBaseReward()
 
 int32 APokemon_Parent::GetExperienceNeededAtLevel(int32 Level)
 {
-	return UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(this, Level, PokemonDataAsset->XpStyle);	
+	return UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(this, Level, PokemonDataAsset->XpStyle);	
+}
+
+int32 APokemon_Parent::GetExperienceAtLevel(int32 Level)
+{
+	return UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(this,Level,PokemonDataAsset->XpStyle);
+}
+
+void APokemon_Parent::UpdatePokemonInfoInParty_Implementation()
+{
+	if (CurrentTrainer && CurrentTrainer->Implements<UPlayerInterface>())
+	{
+		IPlayerInterface::Execute_UpdatePokemonInfoInParty(CurrentTrainer, this);
+	}
 }
 
 void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
@@ -679,44 +467,6 @@ void APokemon_Parent::SelectRandomMove()
 	CallCommand(RandonIndex);
 }
 
-//void APokemon_Parent::SetBoxCollision(ECollisionEnabled::Type CollisionEnabled)
-//{
-//	if (CollisionBox)
-//	{
-//		CollisionBox->SetCollisionEnabled(CollisionEnabled);
-//		IgnoreActors.Empty();
-//	}
-//}
-//
-//void APokemon_Parent::BoxTrace(FHitResult& BoxHit)
-//{
-//	const FVector End = BoxTraceStart->GetComponentLocation();
-//	const FVector Start = BoxTraceEnd->GetComponentLocation();
-//	TArray<AActor*>ActorsToIgnore;
-//	ActorsToIgnore.Add(this);
-//	ActorsToIgnore.Add(GetOwner());
-//
-//	for (AActor* Actor : IgnoreActors)
-//	{
-//		ActorsToIgnore.AddUnique(Actor);
-//	}
-//	UKismetSystemLibrary::BoxTraceSingle(
-//		this,
-//		Start,
-//		End,
-//		CollisionBox->GetUnscaledBoxExtent(),
-//		BoxTraceStart->GetComponentRotation(),
-//		ETraceTypeQuery::TraceTypeQuery1,
-//		false,
-//		ActorsToIgnore,
-//		bShowBoxDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None,
-//		BoxHit,
-//		true
-//	);
-//	DrawDebugSphere(GetWorld(), BoxHit.ImpactPoint, 1, 12, FColor::Blue);
-//	IgnoreActors.AddUnique(BoxHit.GetActor());
-//}
-
 UPokemonAbilitySystemComponent* APokemon_Parent::GetPokemonASC()
 {
 	if (!PokemonASC)
@@ -735,15 +485,11 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 {
 	CurrentTrainer = NewTrainer;
 
-	//PokemonController = PokemonController ? PokemonController : Cast<APokemonAIController>(GetController());
-	//PokemonController->SetTrainer(CurrentTrainer);
-
 	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer);
 	if (Trainer)
 	{
 		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
 		PokemonStatus = EPokemonStatus::EPS_PlayerTrainer;
-		//PokemonController->SetPokemonStatus(PokemonStatus);
 	}
 	UE_LOG(LogTemp, Display, TEXT("Call to server test"));
 }

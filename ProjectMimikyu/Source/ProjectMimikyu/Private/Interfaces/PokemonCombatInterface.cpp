@@ -40,6 +40,11 @@ int32 IPokemonCombatInterface::GetExperienceNeededAtLevel(int32 Level)
 	return int32();
 }
 
+int32 IPokemonCombatInterface::GetExperienceAtLevel(int32 Level)
+{
+	return int32();
+}
+
 int32 IPokemonCombatInterface::GetBaseStatFromTag(const FGameplayTag& StatTag)
 {
 	return int32();

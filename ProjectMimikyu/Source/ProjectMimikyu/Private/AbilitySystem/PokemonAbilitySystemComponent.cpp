@@ -35,6 +35,15 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDa
 	}
 }
 
+void UPokemonAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities)
+{
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupPassiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
 void UPokemonAbilitySystemComponent::AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility,FGameplayTag AbilityInputTag)
 {
 	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewAbility, 1);

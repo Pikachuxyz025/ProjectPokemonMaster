@@ -43,6 +43,9 @@ private:
 	TObjectPtr<APokemon_Parent> ActivePokemon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	FPokemonInfo ActivePokemonInfo;
+
+	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
 	TObjectPtr<AActor> EngagedPokemon;
 
 	UPROPERTY()
@@ -53,6 +56,7 @@ public:
 	void SetPartyIndex(int32 NewIndex) { PartyIndex = NewIndex; }
 	FPokemonInfo GetCurrentPokemonInfo();
 	void PokemonIsOut(APokemon_Parent* PokemonOut);
+	void UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon);
 	void SetTrainerIsInCombat(AActor* CombatTarget);
 	bool IsCurrentPartyEmpty() { return CurrentPartyInfo.Num() == 0; }
 };

@@ -5,7 +5,7 @@
 #include "GameplayBehaviorsBlueprintFunctionLibrary.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
-#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
@@ -88,7 +88,7 @@ void APokemonAIController::SetBlackboardCurrentMove(UPokemonMoveDataAsset* MoveD
 		return;
 	}
 
-	UPokemonGameplayAbilities* Ability = NewObject<UPokemonGameplayAbilities>(this, MoveData->Ability);
+	UPokemonDamageGameplayAbilities* Ability = NewObject<UPokemonDamageGameplayAbilities>(this, MoveData->Ability);
 	Ability->InputTag = MoveData->InputTag;
 	GetBlackboardComponent()->SetValueAsObject(PokemonCurrentMoveKeyName, Ability);
 
@@ -142,14 +142,21 @@ void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 
 	if(CombatTarget)
 	{
-		SetPokemonState(EPokemonState::EPS_Combative);
-
 		if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CombatTarget))
 		{
-
+			return;
 		}
+		if (APokemon_Parent* Target = Cast<APokemon_Parent>(CombatTarget))
+		{
+			if (Target == ControlledPokemon)
+				return;
+		}
+		SetPokemonState(EPokemonState::EPS_Combative);
 	}
-
+	else
+	{
+		SetPokemonState(EPokemonState::EPS_Passive);
+	}
 	SetBlackboardAttackTarget();
 }
 

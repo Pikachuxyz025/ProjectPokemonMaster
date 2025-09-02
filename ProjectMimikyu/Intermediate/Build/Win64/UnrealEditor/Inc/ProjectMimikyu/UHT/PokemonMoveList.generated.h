@@ -5,37 +5,37 @@
 ===========================================================================*/
 
 // IWYU pragma: private, include "UI/PokemonMoveList.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ScriptMacros.h"
 
-PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #ifdef PROJECTMIMIKYU_PokemonMoveList_generated_h
 #error "PokemonMoveList.generated.h already included, missing '#pragma once' in PokemonMoveList.h"
 #endif
 #define PROJECTMIMIKYU_PokemonMoveList_generated_h
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_SPARSE_DATA
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_SPARSE_DATA_PROPERTY_ACCESSORS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_RPC_WRAPPERS_NO_PURE_DECLS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_ACCESSORS
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
+// ********** Begin Class UPokemonMoveList *********************************************************
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveList_NoRegister();
+
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUPokemonMoveList(); \
 	friend struct Z_Construct_UClass_UPokemonMoveList_Statics; \
+	static UClass* GetPrivateStaticClass(); \
+	friend PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveList_NoRegister(); \
 public: \
-	DECLARE_CLASS(UPokemonMoveList, UUserWidget, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), NO_API) \
+	DECLARE_CLASS2(UPokemonMoveList, UUserWidget, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), Z_Construct_UClass_UPokemonMoveList_NoRegister) \
 	DECLARE_SERIALIZER(UPokemonMoveList)
 
 
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UPokemonMoveList(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
-private: \
-	/** Private move- and copy-constructors, should never be used */ \
-	NO_API UPokemonMoveList(UPokemonMoveList&&); \
-	NO_API UPokemonMoveList(const UPokemonMoveList&); \
-public: \
+	/** Deleted move- and copy-constructors, should never be used */ \
+	UPokemonMoveList(UPokemonMoveList&&) = delete; \
+	UPokemonMoveList(const UPokemonMoveList&) = delete; \
 	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UPokemonMoveList); \
 	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UPokemonMoveList); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UPokemonMoveList) \
@@ -46,21 +46,17 @@ public: \
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_SPARSE_DATA \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_SPARSE_DATA_PROPERTY_ACCESSORS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_INCLASS_NO_PURE_DECLS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h_16_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-template<> PROJECTMIMIKYU_API UClass* StaticClass<class UPokemonMoveList>();
+class UPokemonMoveList;
+
+// ********** End Class UPokemonMoveList ***********************************************************
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonMoveList_h
-
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

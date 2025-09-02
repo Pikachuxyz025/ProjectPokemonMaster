@@ -5,85 +5,123 @@
 ===========================================================================*/
 
 // IWYU pragma: private, include "Characters/CharacterTypes.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ScriptMacros.h"
 
-PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #ifdef PROJECTMIMIKYU_CharacterTypes_generated_h
 #error "CharacterTypes.generated.h already included, missing '#pragma once' in CharacterTypes.h"
 #endif
 #define PROJECTMIMIKYU_CharacterTypes_generated_h
 
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
+// ********** Begin ScriptStruct FPokemonTypeInfo **************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_226_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonTypeInfo>();
+struct FPokemonTypeInfo;
+// ********** End ScriptStruct FPokemonTypeInfo ****************************************************
 
+// ********** Begin ScriptStruct FPokemonMoveChart *************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_240_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonMoveChart_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonMoveChart>();
+struct FPokemonMoveChart;
+// ********** End ScriptStruct FPokemonMoveChart ***************************************************
 
+// ********** Begin ScriptStruct FTypeChartMatchup *************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_248_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FTypeChartMatchup_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FTypeChartMatchup>();
+struct FTypeChartMatchup;
+// ********** End ScriptStruct FTypeChartMatchup ***************************************************
 
+// ********** Begin ScriptStruct FPokemonUIInfo ****************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_277_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonUIInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonUIInfo>();
+struct FPokemonUIInfo;
+// ********** End ScriptStruct FPokemonUIInfo ******************************************************
 
+// ********** Begin ScriptStruct FPokemonInfo ******************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_298_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonInfo>();
+struct FPokemonInfo;
+// ********** End ScriptStruct FPokemonInfo ********************************************************
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_342_GENERATED_BODY \
+// ********** Begin ScriptStruct FTagCategoryMap ***************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_352_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FTagCategoryMap_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+struct FTagCategoryMap;
+// ********** End ScriptStruct FTagCategoryMap *****************************************************
+
+// ********** Begin ScriptStruct FSequentialShotParams *********************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_370_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FSequentialShotParams_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+struct FSequentialShotParams;
+// ********** End ScriptStruct FSequentialShotParams ***********************************************
+
+// ********** Begin ScriptStruct FPokemonParty *****************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_406_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FPokemonParty_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FPokemonParty>();
+struct FPokemonParty;
+// ********** End ScriptStruct FPokemonParty *******************************************************
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_367_GENERATED_BODY \
+// ********** Begin ScriptStruct FSlotInfo *********************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_431_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FSlotInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FSlotInfo>();
+struct FSlotInfo;
+// ********** End ScriptStruct FSlotInfo ***********************************************************
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_382_GENERATED_BODY \
+// ********** Begin ScriptStruct FDamageInfo *******************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_446_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FDamageInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FDamageInfo>();
+struct FDamageInfo;
+// ********** End ScriptStruct FDamageInfo *********************************************************
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_400_GENERATED_BODY \
+// ********** Begin ScriptStruct FInventoryItemInfo ************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_464_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FInventoryItemInfo>();
+struct FInventoryItemInfo;
+// ********** End ScriptStruct FInventoryItemInfo **************************************************
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h
 
-
+// ********** Begin Enum EGenderType ***************************************************************
 #define FOREACH_ENUM_EGENDERTYPE(op) \
 	op(EGenderType::EGT_None) \
 	op(EGenderType::EGT_Male) \
@@ -92,7 +130,9 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FInventoryItemI
 enum class EGenderType : uint8;
 template<> struct TIsUEnumClass<EGenderType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EGenderType>();
+// ********** End Enum EGenderType *****************************************************************
 
+// ********** Begin Enum EPartyStatus **************************************************************
 #define FOREACH_ENUM_EPARTYSTATUS(op) \
 	op(EPartyStatus::EPS_Empty) \
 	op(EPartyStatus::EPS_Out) \
@@ -102,7 +142,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EGenderType>();
 enum class EPartyStatus : uint8;
 template<> struct TIsUEnumClass<EPartyStatus> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPartyStatus>();
+// ********** End Enum EPartyStatus ****************************************************************
 
+// ********** Begin Enum EMovementSpeed ************************************************************
 #define FOREACH_ENUM_EMOVEMENTSPEED(op) \
 	op(EMovementSpeed::EMS_Idle) \
 	op(EMovementSpeed::EMS_Walking) \
@@ -114,7 +156,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPartyStatus>();
 enum class EMovementSpeed : uint8;
 template<> struct TIsUEnumClass<EMovementSpeed> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMovementSpeed>();
+// ********** End Enum EMovementSpeed **************************************************************
 
+// ********** Begin Enum EElementalType ************************************************************
 #define FOREACH_ENUM_EELEMENTALTYPE(op) \
 	op(EElementalType::EET_None) \
 	op(EElementalType::EET_Fire) \
@@ -139,7 +183,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMovementSpeed>();
 enum class EElementalType : uint8;
 template<> struct TIsUEnumClass<EElementalType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EElementalType>();
+// ********** End Enum EElementalType **************************************************************
 
+// ********** Begin Enum ENatureType ***************************************************************
 #define FOREACH_ENUM_ENATURETYPE(op) \
 	op(ENatureType::ENT_None) \
 	op(ENatureType::ENT_Bashful) \
@@ -171,7 +217,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EElementalType>();
 enum class ENatureType : uint8;
 template<> struct TIsUEnumClass<ENatureType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<ENatureType>();
+// ********** End Enum ENatureType *****************************************************************
 
+// ********** Begin Enum EStatsType ****************************************************************
 #define FOREACH_ENUM_ESTATSTYPE(op) \
 	op(EStatsType::EST_None) \
 	op(EStatsType::EST_Attack) \
@@ -184,7 +232,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<ENatureType>();
 enum class EStatsType : uint8;
 template<> struct TIsUEnumClass<EStatsType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EStatsType>();
+// ********** End Enum EStatsType ******************************************************************
 
+// ********** Begin Enum EStatusType ***************************************************************
 #define FOREACH_ENUM_ESTATUSTYPE(op) \
 	op(EStatusType::EST_None) \
 	op(EStatusType::EST_Frostbit) \
@@ -196,7 +246,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EStatsType>();
 enum class EStatusType : uint8;
 template<> struct TIsUEnumClass<EStatusType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EStatusType>();
+// ********** End Enum EStatusType *****************************************************************
 
+// ********** Begin Enum EPokemonStatus ************************************************************
 #define FOREACH_ENUM_EPOKEMONSTATUS(op) \
 	op(EPokemonStatus::EPS_Wild) \
 	op(EPokemonStatus::EPS_AITrainer) \
@@ -205,7 +257,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EStatusType>();
 enum class EPokemonStatus : uint8;
 template<> struct TIsUEnumClass<EPokemonStatus> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPokemonStatus>();
+// ********** End Enum EPokemonStatus **************************************************************
 
+// ********** Begin Enum EProjectileEffect *********************************************************
 #define FOREACH_ENUM_EPROJECTILEEFFECT(op) \
 	op(EProjectileEffect::EPE_None) \
 	op(EProjectileEffect::EPE_Explosion) \
@@ -215,7 +269,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPokemonStatus>();
 enum class EProjectileEffect : uint8;
 template<> struct TIsUEnumClass<EProjectileEffect> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EProjectileEffect>();
+// ********** End Enum EProjectileEffect ***********************************************************
 
+// ********** Begin Enum EMoveAction ***************************************************************
 #define FOREACH_ENUM_EMOVEACTION(op) \
 	op(EMoveAction::EMA_None) \
 	op(EMoveAction::EMA_Melee) \
@@ -228,7 +284,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EProjectileEffect>();
 enum class EMoveAction : uint8;
 template<> struct TIsUEnumClass<EMoveAction> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMoveAction>();
+// ********** End Enum EMoveAction *****************************************************************
 
+// ********** Begin Enum EDamageResponse ***********************************************************
 #define FOREACH_ENUM_EDAMAGERESPONSE(op) \
 	op(EDamageResponse::EDR_None) \
 	op(EDamageResponse::EDR_HitReaction) \
@@ -240,7 +298,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMoveAction>();
 enum class EDamageResponse : uint8;
 template<> struct TIsUEnumClass<EDamageResponse> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EDamageResponse>();
+// ********** End Enum EDamageResponse *************************************************************
 
+// ********** Begin Enum EDirectionPoint ***********************************************************
 #define FOREACH_ENUM_EDIRECTIONPOINT(op) \
 	op(EDirectionPoint::EDP_Up) \
 	op(EDirectionPoint::EDP_Down) \
@@ -250,7 +310,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EDamageResponse>();
 enum class EDirectionPoint : uint8;
 template<> struct TIsUEnumClass<EDirectionPoint> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EDirectionPoint>();
+// ********** End Enum EDirectionPoint *************************************************************
 
+// ********** Begin Enum EMoveType *****************************************************************
 #define FOREACH_ENUM_EMOVETYPE(op) \
 	op(EMoveType::EMT_None) \
 	op(EMoveType::EMT_Physical) \
@@ -261,7 +323,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EDirectionPoint>();
 enum class EMoveType : uint8;
 template<> struct TIsUEnumClass<EMoveType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMoveType>();
+// ********** End Enum EMoveType *******************************************************************
 
+// ********** Begin Enum EPokeballType *************************************************************
 #define FOREACH_ENUM_EPOKEBALLTYPE(op) \
 	op(EPokeballType::EPT_None) \
 	op(EPokeballType::EPT_Pokeball) \
@@ -277,7 +341,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EMoveType>();
 enum class EPokeballType : uint8;
 template<> struct TIsUEnumClass<EPokeballType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPokeballType>();
+// ********** End Enum EPokeballType ***************************************************************
 
+// ********** Begin Enum ESlotType *****************************************************************
 #define FOREACH_ENUM_ESLOTTYPE(op) \
 	op(ESlotType::EST_None) \
 	op(ESlotType::EST_PokemonParty) \
@@ -286,7 +352,9 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPokeballType>();
 enum class ESlotType : uint8;
 template<> struct TIsUEnumClass<ESlotType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<ESlotType>();
+// ********** End Enum ESlotType *******************************************************************
 
+// ********** Begin Enum EPokemonState *************************************************************
 #define FOREACH_ENUM_EPOKEMONSTATE(op) \
 	op(EPokemonState::EPS_NoState) \
 	op(EPokemonState::EPS_Passive) \
@@ -300,5 +368,6 @@ template<> PROJECTMIMIKYU_API UEnum* StaticEnum<ESlotType>();
 enum class EPokemonState : uint8;
 template<> struct TIsUEnumClass<EPokemonState> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EPokemonState>();
+// ********** End Enum EPokemonState ***************************************************************
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

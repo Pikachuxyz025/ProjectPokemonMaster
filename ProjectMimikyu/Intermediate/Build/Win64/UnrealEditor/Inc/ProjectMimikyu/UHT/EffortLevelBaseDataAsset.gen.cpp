@@ -5,85 +5,110 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/DataAssets/EffortLevelBaseDataAsset.h"
+#include "DataAssets/EffortLevelBaseDataAsset.h"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void EmptyLinkFunctionForGeneratedCodeEffortLevelBaseDataAsset() {}
-// Cross Module References
-	ENGINE_API UClass* Z_Construct_UClass_UPrimaryDataAsset();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset_NoRegister();
-	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
-// End Cross Module References
-	void UEffortLevelBaseDataAsset::StaticRegisterNativesUEffortLevelBaseDataAsset()
+
+// ********** Begin Cross Module References ********************************************************
+ENGINE_API UClass* Z_Construct_UClass_UPrimaryDataAsset();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset_NoRegister();
+UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
+// ********** End Cross Module References **********************************************************
+
+// ********** Begin Class UEffortLevelBaseDataAsset ************************************************
+void UEffortLevelBaseDataAsset::StaticRegisterNativesUEffortLevelBaseDataAsset()
+{
+}
+FClassRegistrationInfo Z_Registration_Info_UClass_UEffortLevelBaseDataAsset;
+UClass* UEffortLevelBaseDataAsset::GetPrivateStaticClass()
+{
+	using TClass = UEffortLevelBaseDataAsset;
+	if (!Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.InnerSingleton)
 	{
+		GetPrivateStaticClassBody(
+			StaticPackage(),
+			TEXT("EffortLevelBaseDataAsset"),
+			Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.InnerSingleton,
+			StaticRegisterNativesUEffortLevelBaseDataAsset,
+			sizeof(TClass),
+			alignof(TClass),
+			TClass::StaticClassFlags,
+			TClass::StaticClassCastFlags(),
+			TClass::StaticConfigName(),
+			(UClass::ClassConstructorType)InternalConstructor<TClass>,
+			(UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller<TClass>,
+			UOBJECT_CPPCLASS_STATICFUNCTIONS_FORCLASS(TClass),
+			&TClass::Super::StaticClass,
+			&TClass::WithinClass::StaticClass
+		);
 	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UEffortLevelBaseDataAsset);
-	UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset_NoRegister()
-	{
-		return UEffortLevelBaseDataAsset::StaticClass();
-	}
-	struct Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics
-	{
-		static UObject* (*const DependentSingletons[])();
+	return Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.InnerSingleton;
+}
+UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset_NoRegister()
+{
+	return UEffortLevelBaseDataAsset::GetPrivateStaticClass();
+}
+struct Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
-	};
-	UObject* (*const Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UPrimaryDataAsset,
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::DependentSingletons) < 16);
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "IncludePath", "DataAssets/EffortLevelBaseDataAsset.h" },
 		{ "ModuleRelativePath", "Public/DataAssets/EffortLevelBaseDataAsset.h" },
 	};
-#endif
-	const FCppClassTypeInfoStatic Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::StaticCppClassTypeInfo = {
+#endif // WITH_METADATA
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UEffortLevelBaseDataAsset>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::ClassParams = {
-		&UEffortLevelBaseDataAsset::StaticClass,
-		nullptr,
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		nullptr,
-		nullptr,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		0,
-		0,
-		0,
-		0x001000A0u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::Class_MetaDataParams), Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::Class_MetaDataParams)
-	};
-	UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+UObject* (*const Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_UPrimaryDataAsset,
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::ClassParams = {
+	&UEffortLevelBaseDataAsset::StaticClass,
+	nullptr,
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	nullptr,
+	nullptr,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	0,
+	0,
+	0,
+	0x001000A0u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::Class_MetaDataParams), Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_UEffortLevelBaseDataAsset()
+{
+	if (!Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton, Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton, Z_Construct_UClass_UEffortLevelBaseDataAsset_Statics::ClassParams);
 	}
-	template<> PROJECTMIMIKYU_API UClass* StaticClass<UEffortLevelBaseDataAsset>()
-	{
-		return UEffortLevelBaseDataAsset::StaticClass();
-	}
-	UEffortLevelBaseDataAsset::UEffortLevelBaseDataAsset(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(UEffortLevelBaseDataAsset);
-	UEffortLevelBaseDataAsset::~UEffortLevelBaseDataAsset() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h_Statics
-	{
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_UEffortLevelBaseDataAsset.OuterSingleton;
+}
+UEffortLevelBaseDataAsset::UEffortLevelBaseDataAsset(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
+DEFINE_VTABLE_PTR_HELPER_CTOR(UEffortLevelBaseDataAsset);
+UEffortLevelBaseDataAsset::~UEffortLevelBaseDataAsset() {}
+// ********** End Class UEffortLevelBaseDataAsset **************************************************
+
+// ********** Begin Registration *******************************************************************
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h__Script_ProjectMimikyu_Statics
+{
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_UEffortLevelBaseDataAsset, UEffortLevelBaseDataAsset::StaticClass, TEXT("UEffortLevelBaseDataAsset"), &Z_Registration_Info_UClass_UEffortLevelBaseDataAsset, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UEffortLevelBaseDataAsset), 3898877268U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UEffortLevelBaseDataAsset, UEffortLevelBaseDataAsset::StaticClass, TEXT("UEffortLevelBaseDataAsset"), &Z_Registration_Info_UClass_UEffortLevelBaseDataAsset, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UEffortLevelBaseDataAsset), 3118287038U) },
-	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h_2986819252(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h_Statics::ClassInfo),
-		nullptr, 0,
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h__Script_ProjectMimikyu_541890471(TEXT("/Script/ProjectMimikyu"),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_EffortLevelBaseDataAsset_h__Script_ProjectMimikyu_Statics::ClassInfo),
+	nullptr, 0,
+	nullptr, 0);
+// ********** End Registration *********************************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

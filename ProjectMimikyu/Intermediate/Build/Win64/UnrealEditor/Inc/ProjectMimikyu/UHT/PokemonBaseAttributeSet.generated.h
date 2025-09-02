@@ -5,29 +5,31 @@
 ===========================================================================*/
 
 // IWYU pragma: private, include "AbilitySystem/PokemonBaseAttributeSet.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ScriptMacros.h"
-#include "Net/Core/PushModel/PushModelMacros.h"
 
-PRAGMA_DISABLE_DEPRECATION_WARNINGS
-struct FGameplayAttributeData;
 #ifdef PROJECTMIMIKYU_PokemonBaseAttributeSet_generated_h
 #error "PokemonBaseAttributeSet.generated.h already included, missing '#pragma once' in PokemonBaseAttributeSet.h"
 #endif
 #define PROJECTMIMIKYU_PokemonBaseAttributeSet_generated_h
 
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+#include "Net/Core/PushModel/PushModelMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
+struct FGameplayAttributeData;
+
+// ********** Begin ScriptStruct FEffectProperties *************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_20_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FEffectProperties_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FEffectProperties>();
+struct FEffectProperties;
+// ********** End ScriptStruct FEffectProperties ***************************************************
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_SPARSE_DATA
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_SPARSE_DATA_PROPERTY_ACCESSORS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+// ********** Begin Class UPokemonBaseAttributeSet *************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_RPC_WRAPPERS_NO_PURE_DECLS \
- \
 	DECLARE_FUNCTION(execOnRep_DodgeForce); \
 	DECLARE_FUNCTION(execOnRep_Defense); \
 	DECLARE_FUNCTION(execOnRep_Attack); \
@@ -44,13 +46,16 @@ template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<struct FEffectProperti
 	DECLARE_FUNCTION(execOnRep_Health);
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_ACCESSORS
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister();
+
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUPokemonBaseAttributeSet(); \
 	friend struct Z_Construct_UClass_UPokemonBaseAttributeSet_Statics; \
+	static UClass* GetPrivateStaticClass(); \
+	friend PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister(); \
 public: \
-	DECLARE_CLASS(UPokemonBaseAttributeSet, UAttributeSet, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), NO_API) \
+	DECLARE_CLASS2(UPokemonBaseAttributeSet, UAttributeSet, COMPILED_IN_FLAGS(0), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister) \
 	DECLARE_SERIALIZER(UPokemonBaseAttributeSet) \
 	enum class ENetFields_Private : uint16 \
 	{ \
@@ -70,18 +75,16 @@ public: \
 		ExertionChance, \
 		CurrentLevel, \
 		NETFIELD_REP_END=CurrentLevel	}; \
-	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override; \
+	DECLARE_VALIDATE_GENERATED_REP_ENUMS(NO_API) \
 private: \
 	REPLICATED_BASE_CLASS(UPokemonBaseAttributeSet) \
 public:
 
 
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_ENHANCED_CONSTRUCTORS \
-private: \
-	/** Private move- and copy-constructors, should never be used */ \
-	NO_API UPokemonBaseAttributeSet(UPokemonBaseAttributeSet&&); \
-	NO_API UPokemonBaseAttributeSet(const UPokemonBaseAttributeSet&); \
-public: \
+	/** Deleted move- and copy-constructors, should never be used */ \
+	UPokemonBaseAttributeSet(UPokemonBaseAttributeSet&&) = delete; \
+	UPokemonBaseAttributeSet(const UPokemonBaseAttributeSet&) = delete; \
 	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UPokemonBaseAttributeSet); \
 	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UPokemonBaseAttributeSet); \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UPokemonBaseAttributeSet) \
@@ -92,21 +95,18 @@ public: \
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_SPARSE_DATA \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_SPARSE_DATA_PROPERTY_ACCESSORS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_INCLASS_NO_PURE_DECLS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h_58_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-template<> PROJECTMIMIKYU_API UClass* StaticClass<class UPokemonBaseAttributeSet>();
+class UPokemonBaseAttributeSet;
+
+// ********** End Class UPokemonBaseAttributeSet ***************************************************
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonBaseAttributeSet_h
-
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

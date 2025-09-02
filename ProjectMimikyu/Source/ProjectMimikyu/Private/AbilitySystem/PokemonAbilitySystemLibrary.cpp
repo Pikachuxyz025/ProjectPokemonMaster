@@ -36,6 +36,7 @@ int32 UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(const UObject* Wor
 	return PokemonGameMode->GetExperienceNeededToLevelUp(PokemonXPTag, PokemonLevel);
 }
 
+
 float UPokemonAbilitySystemLibrary::GetCurrentXPPercentage(const UObject* WorldContextObject, const FPokemonInfo PokemonData, int32& XPRemaining)
 {
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
@@ -76,7 +77,7 @@ UPokemonMenuWidgetController* UPokemonAbilitySystemLibrary::GetPokemonMenuWidget
 		UPokemonMenuWidgetController* WC = TrainerHUD->GetPokemonMenuWidgetController(WidgetControllerParams);
 		return WC;
 	}
-	return nullptr;
+	//return nullptr;
 }
 
 UTrainerOverlayWidgetController* UPokemonAbilitySystemLibrary::GetTrainerOverlayWidgetController(AActor* ObjectActor)

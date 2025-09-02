@@ -3,7 +3,7 @@
 
 #include "Tasks/BTTask_MeleeAttack.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
@@ -30,7 +30,7 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 	AttackTarget = Cast<AActor>(MyBlackboard->GetValueAsObject(AttackTargetKey.SelectedKeyName));
 
 	bMadeIt = false;
-	PokemonMove = Cast<UPokemonGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
+	PokemonMove = Cast<UPokemonDamageGameplayAbilities>(MyBlackboard->GetValueAsObject(PokemonMoveKey.SelectedKeyName));
 	if (!PokemonMove)
 	{
 		return EBTNodeResult::Failed;
@@ -71,6 +71,8 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ProcessRequest(AAIController* Controlle
 	switch (RequestResult)
 	{
 	case EPathFollowingRequestResult::Failed:
+		UE_LOG(LogTemp, Display, TEXT("Movement is failing, why is it failing?"));
+
 		return EBTNodeResult::Failed;
 		break;
 

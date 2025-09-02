@@ -8,6 +8,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "ProjectMimikyuGameMode.generated.h"
 
+class UTagCategoryDataAsset;
+
 UCLASS(minimalapi)
 class AProjectMimikyuGameMode : public AGameModeBase
 {
@@ -18,6 +20,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UDataTable* TypeChartDataTable;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "TagData")
+	UTagCategoryDataAsset* TagCategoryData;
 
 	float TypeChartDamageMultiplier(EElementalType DamageElementType,const FPokemonTypeInfo& PokemonTypes);
 
@@ -66,6 +71,9 @@ public:
 
 	int32 GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level);
 	int32 GetExperienceNeededToLevelUp(const FGameplayTag& XPType, int32 CurrentLevel);
+
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "TagData")
+	UTagCategoryDataAsset* GetTagCategoryData() const { return TagCategoryData; }
 };
 
 

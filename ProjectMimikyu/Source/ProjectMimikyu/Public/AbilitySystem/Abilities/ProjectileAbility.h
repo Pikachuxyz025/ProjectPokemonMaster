@@ -3,25 +3,57 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "ProjectileAbility.generated.h"
 
-/**
- * 
- */
 class AProjectileAttack;
+
+USTRUCT(BlueprintType)
+struct FProjectileSettings
+{
+
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Projectile")
+	bool bHasProjectile = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float Speed = 1200.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float GravityScale = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	bool bIsHoming = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile", meta = (EditCondition = "bIsHoming"))
+	float HomingStrength = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float SpreadAngle = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float LifeTime = 5.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	TSubclassOf<AProjectileAttack> ProjectileClass;
+};
+
+
 UCLASS()
-class PROJECTMIMIKYU_API UProjectileAbility : public UPokemonGameplayAbilities
+class PROJECTMIMIKYU_API UProjectileAbility : public UPokemonDamageGameplayAbilities
 {
 	GENERATED_BODY()
 	
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AProjectileAttack> ProjectileClass;
-
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag);
 
+	UFUNCTION(BlueprintImplementableEvent, Catergory="Task Override")
+	bool OverrideSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams, FRotator& OutRotation);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	FProjectileSettings ProjectileConfig;
 };

@@ -5,39 +5,56 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/DataTables/TypeDataTable.h"
+#include "DataTables/TypeDataTable.h"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void EmptyLinkFunctionForGeneratedCodeTypeDataTable() {}
-// Cross Module References
-	ENGINE_API UClass* Z_Construct_UClass_UDataTable();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTypeDataTable();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTypeDataTable_NoRegister();
-	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
-// End Cross Module References
-	void UTypeDataTable::StaticRegisterNativesUTypeDataTable()
+
+// ********** Begin Cross Module References ********************************************************
+ENGINE_API UClass* Z_Construct_UClass_UDataTable();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTypeDataTable();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTypeDataTable_NoRegister();
+UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
+// ********** End Cross Module References **********************************************************
+
+// ********** Begin Class UTypeDataTable ***********************************************************
+void UTypeDataTable::StaticRegisterNativesUTypeDataTable()
+{
+}
+FClassRegistrationInfo Z_Registration_Info_UClass_UTypeDataTable;
+UClass* UTypeDataTable::GetPrivateStaticClass()
+{
+	using TClass = UTypeDataTable;
+	if (!Z_Registration_Info_UClass_UTypeDataTable.InnerSingleton)
 	{
+		GetPrivateStaticClassBody(
+			StaticPackage(),
+			TEXT("TypeDataTable"),
+			Z_Registration_Info_UClass_UTypeDataTable.InnerSingleton,
+			StaticRegisterNativesUTypeDataTable,
+			sizeof(TClass),
+			alignof(TClass),
+			TClass::StaticClassFlags,
+			TClass::StaticClassCastFlags(),
+			TClass::StaticConfigName(),
+			(UClass::ClassConstructorType)InternalConstructor<TClass>,
+			(UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller<TClass>,
+			UOBJECT_CPPCLASS_STATICFUNCTIONS_FORCLASS(TClass),
+			&TClass::Super::StaticClass,
+			&TClass::WithinClass::StaticClass
+		);
 	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UTypeDataTable);
-	UClass* Z_Construct_UClass_UTypeDataTable_NoRegister()
-	{
-		return UTypeDataTable::StaticClass();
-	}
-	struct Z_Construct_UClass_UTypeDataTable_Statics
-	{
-		static UObject* (*const DependentSingletons[])();
+	return Z_Registration_Info_UClass_UTypeDataTable.InnerSingleton;
+}
+UClass* Z_Construct_UClass_UTypeDataTable_NoRegister()
+{
+	return UTypeDataTable::GetPrivateStaticClass();
+}
+struct Z_Construct_UClass_UTypeDataTable_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
-	};
-	UObject* (*const Z_Construct_UClass_UTypeDataTable_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UDataTable,
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UTypeDataTable_Statics::DependentSingletons) < 16);
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UTypeDataTable_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "AutoExpandCategories", "DataTable,ImportOptions" },
 #if !UE_BUILD_SHIPPING
 		{ "Comment", "/**\n * \n */" },
@@ -45,49 +62,57 @@ void EmptyLinkFunctionForGeneratedCodeTypeDataTable() {}
 		{ "IncludePath", "DataTables/TypeDataTable.h" },
 		{ "ModuleRelativePath", "Public/DataTables/TypeDataTable.h" },
 	};
-#endif
-	const FCppClassTypeInfoStatic Z_Construct_UClass_UTypeDataTable_Statics::StaticCppClassTypeInfo = {
+#endif // WITH_METADATA
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UTypeDataTable>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_UTypeDataTable_Statics::ClassParams = {
-		&UTypeDataTable::StaticClass,
-		nullptr,
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		nullptr,
-		nullptr,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		0,
-		0,
-		0,
-		0x009000A0u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTypeDataTable_Statics::Class_MetaDataParams), Z_Construct_UClass_UTypeDataTable_Statics::Class_MetaDataParams)
-	};
-	UClass* Z_Construct_UClass_UTypeDataTable()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+UObject* (*const Z_Construct_UClass_UTypeDataTable_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_UDataTable,
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UTypeDataTable_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_UTypeDataTable_Statics::ClassParams = {
+	&UTypeDataTable::StaticClass,
+	nullptr,
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	nullptr,
+	nullptr,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	0,
+	0,
+	0,
+	0x009000A0u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UTypeDataTable_Statics::Class_MetaDataParams), Z_Construct_UClass_UTypeDataTable_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_UTypeDataTable()
+{
+	if (!Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton, Z_Construct_UClass_UTypeDataTable_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton, Z_Construct_UClass_UTypeDataTable_Statics::ClassParams);
 	}
-	template<> PROJECTMIMIKYU_API UClass* StaticClass<UTypeDataTable>()
-	{
-		return UTypeDataTable::StaticClass();
-	}
-	UTypeDataTable::UTypeDataTable(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(UTypeDataTable);
-	UTypeDataTable::~UTypeDataTable() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h_Statics
-	{
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_UTypeDataTable.OuterSingleton;
+}
+UTypeDataTable::UTypeDataTable(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
+DEFINE_VTABLE_PTR_HELPER_CTOR(UTypeDataTable);
+UTypeDataTable::~UTypeDataTable() {}
+// ********** End Class UTypeDataTable *************************************************************
+
+// ********** Begin Registration *******************************************************************
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h__Script_ProjectMimikyu_Statics
+{
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_UTypeDataTable, UTypeDataTable::StaticClass, TEXT("UTypeDataTable"), &Z_Registration_Info_UClass_UTypeDataTable, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTypeDataTable), 2296467912U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UTypeDataTable, UTypeDataTable::StaticClass, TEXT("UTypeDataTable"), &Z_Registration_Info_UClass_UTypeDataTable, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTypeDataTable), 737850642U) },
-	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h_134408397(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h_Statics::ClassInfo),
-		nullptr, 0,
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h__Script_ProjectMimikyu_328037911(TEXT("/Script/ProjectMimikyu"),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataTables_TypeDataTable_h__Script_ProjectMimikyu_Statics::ClassInfo),
+	nullptr, 0,
+	nullptr, 0);
+// ********** End Registration *********************************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

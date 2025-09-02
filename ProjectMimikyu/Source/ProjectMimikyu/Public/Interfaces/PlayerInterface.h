@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Characters/CharacterTypes.h"
 #include "PlayerInterface.generated.h"
 
 // This class does not need to be modified.
@@ -22,4 +23,7 @@ class PROJECTMIMIKYU_API IPlayerInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon);
 };

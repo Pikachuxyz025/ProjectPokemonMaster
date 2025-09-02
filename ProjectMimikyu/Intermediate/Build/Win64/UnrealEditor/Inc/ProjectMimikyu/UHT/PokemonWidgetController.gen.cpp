@@ -5,61 +5,63 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/UI/WidgetController/PokemonWidgetController.h"
+#include "UI/WidgetController/PokemonWidgetController.h"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void EmptyLinkFunctionForGeneratedCodePokemonWidgetController() {}
-// Cross Module References
-	COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
-	ENGINE_API UClass* Z_Construct_UClass_APlayerController_NoRegister();
-	ENGINE_API UClass* Z_Construct_UClass_APlayerState_NoRegister();
-	GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAbilitySystemComponent_NoRegister();
-	GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAttributeSet_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerController_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerPlayerState_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonDataAsset_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonWidgetController();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonWidgetController_NoRegister();
-	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature();
-	PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FWidgetControllerParams();
-	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
-// End Cross Module References
-	struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics
+
+// ********** Begin Cross Module References ********************************************************
+COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
+ENGINE_API UClass* Z_Construct_UClass_APlayerController_NoRegister();
+ENGINE_API UClass* Z_Construct_UClass_APlayerState_NoRegister();
+GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAbilitySystemComponent_NoRegister();
+GAMEPLAYABILITIES_API UClass* Z_Construct_UClass_UAttributeSet_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerController_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerPlayerState_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonDataAsset_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonWidgetController();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonWidgetController_NoRegister();
+PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FWidgetControllerParams();
+UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
+// ********** End Cross Module References **********************************************************
+
+// ********** Begin Delegate FOnPokemonStatChangedSignature ****************************************
+struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics
+{
+	struct _Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms
 	{
-		struct _Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms
-		{
-			int32 NewValue;
-		};
-		static const UECodeGen_Private::FIntPropertyParams NewProp_NewValue;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::NewProp_NewValue = { "NewValue", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms, NewValue), METADATA_PARAMS(0, nullptr) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::NewProp_NewValue,
+		int32 NewValue;
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::Function_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::FuncParams = { (UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu, nullptr, "OnPokemonStatChangedSignature__DelegateSignature", nullptr, nullptr, Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers), sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FIntPropertyParams NewProp_NewValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
+};
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::NewProp_NewValue = { "NewValue", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms, NewValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::NewProp_NewValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FDelegateFunctionParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu, nullptr, "OnPokemonStatChangedSignature__DelegateSignature", Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::PropPointers), sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms) < MAX_uint16);
+UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
 	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::FuncParams);
-		}
-		return ReturnFunction;
+		UECodeGen_Private::ConstructUDelegateFunction(&ReturnFunction, Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature_Statics::FuncParams);
 	}
+	return ReturnFunction;
+}
 void FOnPokemonStatChangedSignature_DelegateWrapper(const FMulticastScriptDelegate& OnPokemonStatChangedSignature, int32 NewValue)
 {
 	struct _Script_ProjectMimikyu_eventOnPokemonStatChangedSignature_Parms
@@ -70,462 +72,403 @@ void FOnPokemonStatChangedSignature_DelegateWrapper(const FMulticastScriptDelega
 	Parms.NewValue=NewValue;
 	OnPokemonStatChangedSignature.ProcessMulticastDelegate<UObject>(&Parms);
 }
-	static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_WidgetControllerParams;
+// ********** End Delegate FOnPokemonStatChangedSignature ******************************************
+
+// ********** Begin ScriptStruct FWidgetControllerParams *******************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FWidgetControllerParams;
 class UScriptStruct* FWidgetControllerParams::StaticStruct()
 {
-	if (!Z_Registration_Info_UScriptStruct_WidgetControllerParams.OuterSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FWidgetControllerParams.OuterSingleton)
 	{
-		Z_Registration_Info_UScriptStruct_WidgetControllerParams.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FWidgetControllerParams, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("WidgetControllerParams"));
+		Z_Registration_Info_UScriptStruct_FWidgetControllerParams.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FWidgetControllerParams, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("WidgetControllerParams"));
 	}
-	return Z_Registration_Info_UScriptStruct_WidgetControllerParams.OuterSingleton;
+	return Z_Registration_Info_UScriptStruct_FWidgetControllerParams.OuterSingleton;
 }
-template<> PROJECTMIMIKYU_API UScriptStruct* StaticStruct<FWidgetControllerParams>()
+struct Z_Construct_UScriptStruct_FWidgetControllerParams_Statics
 {
-	return FWidgetControllerParams::StaticStruct();
-}
-	struct Z_Construct_UScriptStruct_FWidgetControllerParams_Statics
-	{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[];
-#endif
-		static void* NewStructOps();
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlayerState_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PlayerState;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlayerController_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PlayerController;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_AbilitySystemComponent_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_AbilitySystemComponent;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttributeSet_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_AttributeSet;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const UECodeGen_Private::FStructParams ReturnStructParams;
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::Struct_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	void* Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewStructOps()
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PlayerState_MetaData[] = {
+		{ "Category", "WidgetControllerParams" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PlayerController_MetaData[] = {
+		{ "Category", "WidgetControllerParams" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AbilitySystemComponent_MetaData[] = {
+		{ "Category", "WidgetControllerParams" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AttributeSet_MetaData[] = {
+		{ "Category", "WidgetControllerParams" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PlayerState;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PlayerController;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_AbilitySystemComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_AttributeSet;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
 	{
 		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FWidgetControllerParams>();
 	}
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState_MetaData[] = {
-		{ "Category", "WidgetControllerParams" },
-		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState = { "PlayerState", nullptr, (EPropertyFlags)0x0014000000000005, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, PlayerState), Z_Construct_UClass_APlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState_MetaData), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController_MetaData[] = {
-		{ "Category", "WidgetControllerParams" },
-		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController = { "PlayerController", nullptr, (EPropertyFlags)0x0014000000000005, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, PlayerController), Z_Construct_UClass_APlayerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController_MetaData), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent_MetaData[] = {
-		{ "Category", "WidgetControllerParams" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent = { "AbilitySystemComponent", nullptr, (EPropertyFlags)0x001400000008000d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, AbilitySystemComponent), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent_MetaData), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet_MetaData[] = {
-		{ "Category", "WidgetControllerParams" },
-		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
-	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet = { "AttributeSet", nullptr, (EPropertyFlags)0x001400000008000d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, AttributeSet), Z_Construct_UClass_UAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet_MetaData), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet_MetaData) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet,
-	};
-	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::ReturnStructParams = {
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-		nullptr,
-		&NewStructOps,
-		"WidgetControllerParams",
-		Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers,
-		UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers),
-		sizeof(FWidgetControllerParams),
-		alignof(FWidgetControllerParams),
-		RF_Public|RF_Transient|RF_MarkAsNative,
-		EStructFlags(0x00000005),
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::Struct_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers) < 2048);
-	UScriptStruct* Z_Construct_UScriptStruct_FWidgetControllerParams()
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState = { "PlayerState", nullptr, (EPropertyFlags)0x0114000000000005, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, PlayerState), Z_Construct_UClass_APlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PlayerState_MetaData), NewProp_PlayerState_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController = { "PlayerController", nullptr, (EPropertyFlags)0x0114000000000005, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, PlayerController), Z_Construct_UClass_APlayerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PlayerController_MetaData), NewProp_PlayerController_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent = { "AbilitySystemComponent", nullptr, (EPropertyFlags)0x011400000008000d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, AbilitySystemComponent), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AbilitySystemComponent_MetaData), NewProp_AbilitySystemComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet = { "AttributeSet", nullptr, (EPropertyFlags)0x011400000008000d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FWidgetControllerParams, AttributeSet), Z_Construct_UClass_UAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AttributeSet_MetaData), NewProp_AttributeSet_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerState,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_PlayerController,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AbilitySystemComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewProp_AttributeSet,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"WidgetControllerParams",
+	Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::PropPointers),
+	sizeof(FWidgetControllerParams),
+	alignof(FWidgetControllerParams),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000005),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FWidgetControllerParams()
+{
+	if (!Z_Registration_Info_UScriptStruct_FWidgetControllerParams.InnerSingleton)
 	{
-		if (!Z_Registration_Info_UScriptStruct_WidgetControllerParams.InnerSingleton)
-		{
-			UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_WidgetControllerParams.InnerSingleton, Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::ReturnStructParams);
-		}
-		return Z_Registration_Info_UScriptStruct_WidgetControllerParams.InnerSingleton;
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FWidgetControllerParams.InnerSingleton, Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::StructParams);
 	}
-	DEFINE_FUNCTION(UPokemonWidgetController::execGetTPS)
+	return Z_Registration_Info_UScriptStruct_FWidgetControllerParams.InnerSingleton;
+}
+// ********** End ScriptStruct FWidgetControllerParams *********************************************
+
+// ********** Begin Class UPokemonWidgetController Function GetTC **********************************
+struct Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics
+{
+	struct PokemonWidgetController_eventGetTC_Parms
 	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		*(ATrainerPlayerState**)Z_Param__Result=P_THIS->GetTPS();
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(UPokemonWidgetController::execGetTC)
-	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		*(ATrainerController**)Z_Param__Result=P_THIS->GetTC();
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(UPokemonWidgetController::execSetWidgetControllerParams)
-	{
-		P_GET_STRUCT_REF(FWidgetControllerParams,Z_Param_Out_WCParams);
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->SetWidgetControllerParams(Z_Param_Out_WCParams);
-		P_NATIVE_END;
-	}
-	void UPokemonWidgetController::StaticRegisterNativesUPokemonWidgetController()
-	{
-		UClass* Class = UPokemonWidgetController::StaticClass();
-		static const FNameNativePtrPair Funcs[] = {
-			{ "GetTC", &UPokemonWidgetController::execGetTC },
-			{ "GetTPS", &UPokemonWidgetController::execGetTPS },
-			{ "SetWidgetControllerParams", &UPokemonWidgetController::execSetWidgetControllerParams },
-		};
-		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
-	}
-	struct Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics
-	{
-		struct PokemonWidgetController_eventGetTC_Parms
-		{
-			ATrainerController* ReturnValue;
-		};
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventGetTC_Parms, ReturnValue), Z_Construct_UClass_ATrainerController_NoRegister, METADATA_PARAMS(0, nullptr) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::NewProp_ReturnValue,
+		ATrainerController* ReturnValue;
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::Function_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "GetTC", nullptr, nullptr, Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PokemonWidgetController_eventGetTC_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PokemonWidgetController_eventGetTC_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UPokemonWidgetController_GetTC()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventGetTC_Parms, ReturnValue), Z_Construct_UClass_ATrainerController_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "GetTC", Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PokemonWidgetController_eventGetTC_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::PokemonWidgetController_eventGetTC_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonWidgetController_GetTC()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
 	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::FuncParams);
-		}
-		return ReturnFunction;
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_GetTC_Statics::FuncParams);
 	}
-	struct Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonWidgetController::execGetTC)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(ATrainerController**)Z_Param__Result=P_THIS->GetTC();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonWidgetController Function GetTC ************************************
+
+// ********** Begin Class UPokemonWidgetController Function GetTPS *********************************
+struct Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics
+{
+	struct PokemonWidgetController_eventGetTPS_Parms
 	{
-		struct PokemonWidgetController_eventGetTPS_Parms
-		{
-			ATrainerPlayerState* ReturnValue;
-		};
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
-	};
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventGetTPS_Parms, ReturnValue), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(0, nullptr) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::NewProp_ReturnValue,
+		ATrainerPlayerState* ReturnValue;
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::Function_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "GetTPS", nullptr, nullptr, Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PokemonWidgetController_eventGetTPS_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PokemonWidgetController_eventGetTPS_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UPokemonWidgetController_GetTPS()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventGetTPS_Parms, ReturnValue), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "GetTPS", Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PokemonWidgetController_eventGetTPS_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::PokemonWidgetController_eventGetTPS_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonWidgetController_GetTPS()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
 	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::FuncParams);
-		}
-		return ReturnFunction;
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_GetTPS_Statics::FuncParams);
 	}
-	struct Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonWidgetController::execGetTPS)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(ATrainerPlayerState**)Z_Param__Result=P_THIS->GetTPS();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonWidgetController Function GetTPS ***********************************
+
+// ********** Begin Class UPokemonWidgetController Function SetWidgetControllerParams **************
+struct Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics
+{
+	struct PokemonWidgetController_eventSetWidgetControllerParams_Parms
 	{
-		struct PokemonWidgetController_eventSetWidgetControllerParams_Parms
-		{
-			FWidgetControllerParams WCParams;
-		};
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_WCParams_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_WCParams;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
+		FWidgetControllerParams WCParams;
 	};
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WCParams_MetaData[] = {
 		{ "NativeConst", "" },
 	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams = { "WCParams", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventSetWidgetControllerParams_Parms, WCParams), Z_Construct_UScriptStruct_FWidgetControllerParams, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams_MetaData), Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams_MetaData) }; // 3611647000
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams,
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::Function_MetaDataParams[] = {
-		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
-	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "SetWidgetControllerParams", nullptr, nullptr, Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PokemonWidgetController_eventSetWidgetControllerParams_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PokemonWidgetController_eventSetWidgetControllerParams_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams()
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_WCParams;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams = { "WCParams", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonWidgetController_eventSetWidgetControllerParams_Parms, WCParams), Z_Construct_UScriptStruct_FWidgetControllerParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WCParams_MetaData), NewProp_WCParams_MetaData) }; // 4239426930
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::NewProp_WCParams,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonWidgetController, nullptr, "SetWidgetControllerParams", Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PokemonWidgetController_eventSetWidgetControllerParams_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::PokemonWidgetController_eventSetWidgetControllerParams_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
 	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::FuncParams);
-		}
-		return ReturnFunction;
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams_Statics::FuncParams);
 	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UPokemonWidgetController);
-	UClass* Z_Construct_UClass_UPokemonWidgetController_NoRegister()
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonWidgetController::execSetWidgetControllerParams)
+{
+	P_GET_STRUCT_REF(FWidgetControllerParams,Z_Param_Out_WCParams);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->SetWidgetControllerParams(Z_Param_Out_WCParams);
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonWidgetController Function SetWidgetControllerParams ****************
+
+// ********** Begin Class UPokemonWidgetController *************************************************
+void UPokemonWidgetController::StaticRegisterNativesUPokemonWidgetController()
+{
+	UClass* Class = UPokemonWidgetController::StaticClass();
+	static const FNameNativePtrPair Funcs[] = {
+		{ "GetTC", &UPokemonWidgetController::execGetTC },
+		{ "GetTPS", &UPokemonWidgetController::execGetTPS },
+		{ "SetWidgetControllerParams", &UPokemonWidgetController::execSetWidgetControllerParams },
+	};
+	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
+}
+FClassRegistrationInfo Z_Registration_Info_UClass_UPokemonWidgetController;
+UClass* UPokemonWidgetController::GetPrivateStaticClass()
+{
+	using TClass = UPokemonWidgetController;
+	if (!Z_Registration_Info_UClass_UPokemonWidgetController.InnerSingleton)
 	{
-		return UPokemonWidgetController::StaticClass();
+		GetPrivateStaticClassBody(
+			StaticPackage(),
+			TEXT("PokemonWidgetController"),
+			Z_Registration_Info_UClass_UPokemonWidgetController.InnerSingleton,
+			StaticRegisterNativesUPokemonWidgetController,
+			sizeof(TClass),
+			alignof(TClass),
+			TClass::StaticClassFlags,
+			TClass::StaticClassCastFlags(),
+			TClass::StaticConfigName(),
+			(UClass::ClassConstructorType)InternalConstructor<TClass>,
+			(UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller<TClass>,
+			UOBJECT_CPPCLASS_STATICFUNCTIONS_FORCLASS(TClass),
+			&TClass::Super::StaticClass,
+			&TClass::WithinClass::StaticClass
+		);
 	}
-	struct Z_Construct_UClass_UPokemonWidgetController_Statics
-	{
-		static UObject* (*const DependentSingletons[])();
-		static const FClassFunctionLinkInfo FuncInfo[];
+	return Z_Registration_Info_UClass_UPokemonWidgetController.InnerSingleton;
+}
+UClass* Z_Construct_UClass_UPokemonWidgetController_NoRegister()
+{
+	return UPokemonWidgetController::GetPrivateStaticClass();
+}
+struct Z_Construct_UClass_UPokemonWidgetController_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_AbilitySystemComponent_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_AbilitySystemComponent;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttributeSet_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_AttributeSet;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlayerState_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PlayerState;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PlayerController_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PlayerController;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAttributeSet_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonAttributeSet;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAbilitySystemComponent_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonAbilitySystemComponent;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_Pokemon_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_Pokemon;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_PokemonData_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_PokemonData;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_TrainerPlayerState_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_TrainerPlayerState;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_TrainerController_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPtrPropertyParams NewProp_TrainerController;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
-	};
-	UObject* (*const Z_Construct_UClass_UPokemonWidgetController_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UObject,
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::DependentSingletons) < 16);
-	const FClassFunctionLinkInfo Z_Construct_UClass_UPokemonWidgetController_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UPokemonWidgetController_GetTC, "GetTC" }, // 3782011467
-		{ &Z_Construct_UFunction_UPokemonWidgetController_GetTPS, "GetTPS" }, // 2474364183
-		{ &Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams, "SetWidgetControllerParams" }, // 609430742
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::FuncInfo) < 2048);
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "IncludePath", "UI/WidgetController/PokemonWidgetController.h" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AbilitySystemComponent_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent = { "AbilitySystemComponent", nullptr, (EPropertyFlags)0x002408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, AbilitySystemComponent), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AttributeSet_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet = { "AttributeSet", nullptr, (EPropertyFlags)0x002408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, AttributeSet), Z_Construct_UClass_UAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PlayerState_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState = { "PlayerState", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PlayerState), Z_Construct_UClass_APlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PlayerController_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController = { "PlayerController", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PlayerController), Z_Construct_UClass_APlayerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAttributeSet_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet = { "PokemonAttributeSet", nullptr, (EPropertyFlags)0x002408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonAttributeSet), Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonAbilitySystemComponent_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent = { "PokemonAbilitySystemComponent", nullptr, (EPropertyFlags)0x002408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonAbilitySystemComponent), Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Pokemon_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon = { "Pokemon", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, Pokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonData_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData = { "PokemonData", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonData), Z_Construct_UClass_UPokemonDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TrainerPlayerState_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState = { "TrainerPlayerState", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, TrainerPlayerState), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TrainerController_MetaData[] = {
 		{ "Category", "WidgetController" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/PokemonWidgetController.h" },
 	};
-#endif
-	const UECodeGen_Private::FObjectPtrPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController = { "TrainerController", nullptr, (EPropertyFlags)0x0024080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, TrainerController), Z_Construct_UClass_ATrainerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController_MetaData), Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController_MetaData) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController,
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_AbilitySystemComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_AttributeSet;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PlayerState;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PlayerController;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonAttributeSet;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonAbilitySystemComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_Pokemon;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_PokemonData;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerPlayerState;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerController;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_UPokemonWidgetController_GetTC, "GetTC" }, // 4133743015
+		{ &Z_Construct_UFunction_UPokemonWidgetController_GetTPS, "GetTPS" }, // 2224452374
+		{ &Z_Construct_UFunction_UPokemonWidgetController_SetWidgetControllerParams, "SetWidgetControllerParams" }, // 483677138
 	};
-	const FCppClassTypeInfoStatic Z_Construct_UClass_UPokemonWidgetController_Statics::StaticCppClassTypeInfo = {
+	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UPokemonWidgetController>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_UPokemonWidgetController_Statics::ClassParams = {
-		&UPokemonWidgetController::StaticClass,
-		nullptr,
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		FuncInfo,
-		Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		UE_ARRAY_COUNT(FuncInfo),
-		UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers),
-		0,
-		0x009000A0u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::Class_MetaDataParams), Z_Construct_UClass_UPokemonWidgetController_Statics::Class_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers) < 2048);
-	UClass* Z_Construct_UClass_UPokemonWidgetController()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent = { "AbilitySystemComponent", nullptr, (EPropertyFlags)0x012408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, AbilitySystemComponent), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AbilitySystemComponent_MetaData), NewProp_AbilitySystemComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet = { "AttributeSet", nullptr, (EPropertyFlags)0x012408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, AttributeSet), Z_Construct_UClass_UAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AttributeSet_MetaData), NewProp_AttributeSet_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState = { "PlayerState", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PlayerState), Z_Construct_UClass_APlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PlayerState_MetaData), NewProp_PlayerState_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController = { "PlayerController", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PlayerController), Z_Construct_UClass_APlayerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PlayerController_MetaData), NewProp_PlayerController_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet = { "PokemonAttributeSet", nullptr, (EPropertyFlags)0x012408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonAttributeSet), Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonAttributeSet_MetaData), NewProp_PokemonAttributeSet_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent = { "PokemonAbilitySystemComponent", nullptr, (EPropertyFlags)0x012408000008001c, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonAbilitySystemComponent), Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonAbilitySystemComponent_MetaData), NewProp_PokemonAbilitySystemComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon = { "Pokemon", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, Pokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Pokemon_MetaData), NewProp_Pokemon_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData = { "PokemonData", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, PokemonData), Z_Construct_UClass_UPokemonDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonData_MetaData), NewProp_PokemonData_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState = { "TrainerPlayerState", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, TrainerPlayerState), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TrainerPlayerState_MetaData), NewProp_TrainerPlayerState_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController = { "TrainerController", nullptr, (EPropertyFlags)0x0124080000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonWidgetController, TrainerController), Z_Construct_UClass_ATrainerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TrainerController_MetaData), NewProp_TrainerController_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AbilitySystemComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_AttributeSet,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerState,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PlayerController,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAttributeSet,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonAbilitySystemComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_Pokemon,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_PokemonData,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerPlayerState,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonWidgetController_Statics::NewProp_TrainerController,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers) < 2048);
+UObject* (*const Z_Construct_UClass_UPokemonWidgetController_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_UObject,
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_UPokemonWidgetController_Statics::ClassParams = {
+	&UPokemonWidgetController::StaticClass,
+	nullptr,
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	FuncInfo,
+	Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	UE_ARRAY_COUNT(FuncInfo),
+	UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::PropPointers),
+	0,
+	0x009000A0u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonWidgetController_Statics::Class_MetaDataParams), Z_Construct_UClass_UPokemonWidgetController_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_UPokemonWidgetController()
+{
+	if (!Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton, Z_Construct_UClass_UPokemonWidgetController_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton, Z_Construct_UClass_UPokemonWidgetController_Statics::ClassParams);
 	}
-	template<> PROJECTMIMIKYU_API UClass* StaticClass<UPokemonWidgetController>()
-	{
-		return UPokemonWidgetController::StaticClass();
-	}
-	UPokemonWidgetController::UPokemonWidgetController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(UPokemonWidgetController);
-	UPokemonWidgetController::~UPokemonWidgetController() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics
-	{
-		static const FStructRegisterCompiledInInfo ScriptStructInfo[];
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_UPokemonWidgetController.OuterSingleton;
+}
+UPokemonWidgetController::UPokemonWidgetController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
+DEFINE_VTABLE_PTR_HELPER_CTOR(UPokemonWidgetController);
+UPokemonWidgetController::~UPokemonWidgetController() {}
+// ********** End Class UPokemonWidgetController ***************************************************
+
+// ********** Begin Registration *******************************************************************
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_Statics
+{
+	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
+		{ FWidgetControllerParams::StaticStruct, Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewStructOps, TEXT("WidgetControllerParams"), &Z_Registration_Info_UScriptStruct_FWidgetControllerParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FWidgetControllerParams), 4239426930U) },
 	};
-	const FStructRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ScriptStructInfo[] = {
-		{ FWidgetControllerParams::StaticStruct, Z_Construct_UScriptStruct_FWidgetControllerParams_Statics::NewStructOps, TEXT("WidgetControllerParams"), &Z_Registration_Info_UScriptStruct_WidgetControllerParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FWidgetControllerParams), 3611647000U) },
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_UPokemonWidgetController, UPokemonWidgetController::StaticClass, TEXT("UPokemonWidgetController"), &Z_Registration_Info_UClass_UPokemonWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonWidgetController), 909655509U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonWidgetController, UPokemonWidgetController::StaticClass, TEXT("UPokemonWidgetController"), &Z_Registration_Info_UClass_UPokemonWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonWidgetController), 766438855U) },
-	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_2358789305(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ClassInfo),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h_Statics::ScriptStructInfo),
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_3329889777(TEXT("/Script/ProjectMimikyu"),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_PokemonWidgetController_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	nullptr, 0);
+// ********** End Registration *********************************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -329,11 +329,75 @@ struct FPokemonInfo
 	UPROPERTY(EditAnywhere)
 	EPartyStatus PartyMode = EPartyStatus::EPS_Empty;
 
+	void UpdateStoredAttributeValues(TMap<FGameplayTag, float> NewSAV)
+	{
+		float CurrentLevel = StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
+		StoredAttributeValue = NewSAV;
+		if (CurrentLevel != StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level])
+		{
+			CurrentUiInfo.PokemonLevel = StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
+		}
+	}
+
 	// Overload the equality operator
 	bool operator == (const FPokemonInfo& Other) const
 	{
 		return CurrentUiInfo.PokemonName.EqualTo(Other.CurrentUiInfo.PokemonName) && StoredPokemonDataAsset == Other.StoredPokemonDataAsset;
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FTagCategoryMap
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FName CategoryName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FGameplayTag> Tags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FGameplayTag, int32> TagPriorities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FGameplayTag, FName> TagToFunctionName; // Optional mapping of tags to function names
+};
+
+USTRUCT(BlueprintType)
+struct FSequentialShotParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector StartLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector TargetLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator BaseRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(BlueprintReadWrite) 
+	int32 ShotIndex = 0;
+
+	UPROPERTY(BlueprintReadWrite) 
+	int32 TotalShots = 1;
+
+	// Scatter sphere (used if Scatter tag present)
+	UPROPERTY(BlueprintReadWrite) 
+	float DistanceToSphere = 150.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float SphereRadius = 40.f;
+
+	// Cone spread (used if Cone/Spread tags present)
+	UPROPERTY(BlueprintReadWrite)
+	float SpreadAngleDeg = 6.f;
+
+	// Homing tweak (used if Homing/Tracking tags present)
+	UPROPERTY(BlueprintReadWrite)
+	bool bHoming = false;
 };
 
 USTRUCT(BlueprintType)

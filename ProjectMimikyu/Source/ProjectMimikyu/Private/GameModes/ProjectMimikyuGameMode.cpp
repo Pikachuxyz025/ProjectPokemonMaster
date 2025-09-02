@@ -47,58 +47,61 @@ float AProjectMimikyuGameMode::NatureModifier(ENatureType CurrentNature, const F
 int32 AProjectMimikyuGameMode::GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level)
 {
 	FPokemonGameplayTags XPTags = FPokemonGameplayTags::Get();
-	int32 ExperiencePoints = 0;
+	double ExperiencePoints = 0;
 	if (XPType.MatchesTagExact(XPTags.XP_Erratic))
 	{
 		if (Level < 50)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * (100 - Level)) / 50);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * (100 - Level)) / 50;
 		}
 		else if (Level >= 50 && Level < 68)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * (150 - Level)) / 100);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * (150 - Level)) / 100;
 		}
 		else if (Level >= 68 && Level < 98)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * ((1911 - (10 * Level)) / 3)) / 500);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * ((1911 - (10 * Level)) / 3)) / 500;
 		}
 		else if (Level >= 98 && Level <= 100)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * (160 - Level)) / 100);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * (160 - Level)) / 100;
 		}
 	}
 	if (XPType.MatchesTagExact(XPTags.XP_Fast))
 	{
-		ExperiencePoints = int32((4 * FMath::Cube(Level)) / 5);
+		ExperiencePoints = (4 * FMath::Pow(Level, 3.0)) / 5;
 	}
 	if (XPType.MatchesTagExact(XPTags.XP_Fluctuating))
 	{
 		if (Level < 15)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * (((Level + 1) / 3) + 24)) / 50);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * (((Level + 1) / 3) + 24)) / 50;
 		}
 		else if (Level >= 15 && Level < 36)
 		{
-			ExperiencePoints = int32((FMath::Cube(Level) * (Level + 14)) / 50);
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * (Level + 14)) / 50;
 		}
 		else if (Level >= 36 && Level <= 100)
 		{
-			ExperiencePoints = int32(((FMath::Cube(Level) * ((Level / 2) + 32)) / 50));
+			ExperiencePoints = (FMath::Pow(Level, 3.0) * ((Level / 2) + 32)) / 50;
 		}
 	}
 	if(XPType.MatchesTagExact(XPTags.XP_MediumFast))
 	{
-		ExperiencePoints = int32(FMath::Cube(Level));
+		ExperiencePoints = FMath::Pow(Level, 3.0);
 	}
 	if (XPType.MatchesTagExact(XPTags.XP_MediumSlow))
 	{
-		ExperiencePoints = int32(((6 / 5) * FMath::Cube(Level)) - (15 * FMath::Square(Level)) + (100 * Level) - 140);
+		ExperiencePoints = ((6 / 5) * FMath::Pow(Level,3.0))
+			- (15 * FMath::Pow(Level,2.0))
+			+ (100 * Level) 
+			- 140;
 	}
 	if (XPType.MatchesTagExact(XPTags.XP_Slow))
 	{
-		ExperiencePoints = int32((5 * FMath::Cube(Level)) / 4);
+		ExperiencePoints = (5 * FMath::Pow((double)Level, 3.0)) / 4;
 	}
-	return ExperiencePoints;
+	return FMath::RoundToInt(ExperiencePoints);
 }
 
 int32 AProjectMimikyuGameMode::GetExperienceNeededToLevelUp(const FGameplayTag& XPType, int32 CurrentLevel)

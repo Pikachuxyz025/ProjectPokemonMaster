@@ -5,180 +5,311 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "ProjectMimikyu/Public/AbilitySystem/Abilities/ProjectileAbility.h"
+#include "AbilitySystem/Abilities/ProjectileAbility.h"
 #include "GameplayTagContainer.h"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void EmptyLinkFunctionForGeneratedCodeProjectileAbility() {}
-// Cross Module References
-	COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
-	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
-	GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectileAttack_NoRegister();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UProjectileAbility();
-	PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UProjectileAbility_NoRegister();
-	UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
-// End Cross Module References
-	DEFINE_FUNCTION(UProjectileAbility::execSpawnProjectile)
+
+// ********** Begin Cross Module References ********************************************************
+COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
+COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
+GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectileAttack_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonDamageGameplayAbilities();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UProjectileAbility();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UProjectileAbility_NoRegister();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FProjectileSettings();
+UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
+// ********** End Cross Module References **********************************************************
+
+// ********** Begin ScriptStruct FProjectileSettings ***********************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FProjectileSettings;
+class UScriptStruct* FProjectileSettings::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FProjectileSettings.OuterSingleton)
 	{
-		P_GET_STRUCT_REF(FVector,Z_Param_Out_ProjectileTargetLocation);
-		P_GET_STRUCT_REF(FGameplayTag,Z_Param_Out_SocketTag);
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		P_THIS->SpawnProjectile(Z_Param_Out_ProjectileTargetLocation,Z_Param_Out_SocketTag);
-		P_NATIVE_END;
+		Z_Registration_Info_UScriptStruct_FProjectileSettings.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FProjectileSettings, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("ProjectileSettings"));
 	}
-	void UProjectileAbility::StaticRegisterNativesUProjectileAbility()
-	{
-		UClass* Class = UProjectileAbility::StaticClass();
-		static const FNameNativePtrPair Funcs[] = {
-			{ "SpawnProjectile", &UProjectileAbility::execSpawnProjectile },
-		};
-		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
-	}
-	struct Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics
-	{
-		struct ProjectileAbility_eventSpawnProjectile_Parms
-		{
-			FVector ProjectileTargetLocation;
-			FGameplayTag SocketTag;
-		};
+	return Z_Registration_Info_UScriptStruct_FProjectileSettings.OuterSingleton;
+}
+struct Z_Construct_UScriptStruct_FProjectileSettings_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileTargetLocation_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_ProjectileTargetLocation;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_SocketTag_MetaData[];
-#endif
-		static const UECodeGen_Private::FStructPropertyParams NewProp_SocketTag;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
-#endif
-		static const UECodeGen_Private::FFunctionParams FuncParams;
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
 	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation_MetaData[] = {
-		{ "NativeConst", "" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation = { "ProjectileTargetLocation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, ProjectileTargetLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation_MetaData), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData[] = {
-		{ "NativeConst", "" },
-	};
-#endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag = { "SocketTag", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, SocketTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag_MetaData) }; // 2083603574
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag,
-	};
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHasProjectile_MetaData[] = {
 		{ "Category", "Projectile" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
 	};
-#endif
-	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UProjectileAbility, nullptr, "SpawnProjectile", nullptr, nullptr, Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers), sizeof(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::ProjectileAbility_eventSpawnProjectile_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C80401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams) };
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers) < 2048);
-	static_assert(sizeof(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::ProjectileAbility_eventSpawnProjectile_Parms) < MAX_uint16);
-	UFunction* Z_Construct_UFunction_UProjectileAbility_SpawnProjectile()
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Speed_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_GravityScale_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bIsHoming_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_HomingStrength_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "EditCondition", "bIsHoming" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SpreadAngle_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LifeTime_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileClass_MetaData[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+#endif // WITH_METADATA
+	static void NewProp_bHasProjectile_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHasProjectile;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_Speed;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_GravityScale;
+	static void NewProp_bIsHoming_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bIsHoming;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_HomingStrength;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_SpreadAngle;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_LifeTime;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_ProjectileClass;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
 	{
-		static UFunction* ReturnFunction = nullptr;
-		if (!ReturnFunction)
-		{
-			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::FuncParams);
-		}
-		return ReturnFunction;
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FProjectileSettings>();
 	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(UProjectileAbility);
-	UClass* Z_Construct_UClass_UProjectileAbility_NoRegister()
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+void Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bHasProjectile_SetBit(void* Obj)
+{
+	((FProjectileSettings*)Obj)->bHasProjectile = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bHasProjectile = { "bHasProjectile", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FProjectileSettings), &Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bHasProjectile_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bHasProjectile_MetaData), NewProp_bHasProjectile_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_Speed = { "Speed", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, Speed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Speed_MetaData), NewProp_Speed_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_GravityScale = { "GravityScale", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, GravityScale), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_GravityScale_MetaData), NewProp_GravityScale_MetaData) };
+void Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bIsHoming_SetBit(void* Obj)
+{
+	((FProjectileSettings*)Obj)->bIsHoming = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bIsHoming = { "bIsHoming", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FProjectileSettings), &Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bIsHoming_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bIsHoming_MetaData), NewProp_bIsHoming_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_HomingStrength = { "HomingStrength", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, HomingStrength), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_HomingStrength_MetaData), NewProp_HomingStrength_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_SpreadAngle = { "SpreadAngle", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, SpreadAngle), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpreadAngle_MetaData), NewProp_SpreadAngle_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_LifeTime = { "LifeTime", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, LifeTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LifeTime_MetaData), NewProp_LifeTime_MetaData) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_ProjectileClass = { "ProjectileClass", nullptr, (EPropertyFlags)0x0014000000000015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileSettings, ProjectileClass), Z_Construct_UClass_UClass, Z_Construct_UClass_AProjectileAttack_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ProjectileClass_MetaData), NewProp_ProjectileClass_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FProjectileSettings_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bHasProjectile,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_Speed,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_GravityScale,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_bIsHoming,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_HomingStrength,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_SpreadAngle,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_LifeTime,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewProp_ProjectileClass,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileSettings_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FProjectileSettings_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"ProjectileSettings",
+	Z_Construct_UScriptStruct_FProjectileSettings_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileSettings_Statics::PropPointers),
+	sizeof(FProjectileSettings),
+	alignof(FProjectileSettings),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileSettings_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FProjectileSettings_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FProjectileSettings()
+{
+	if (!Z_Registration_Info_UScriptStruct_FProjectileSettings.InnerSingleton)
 	{
-		return UProjectileAbility::StaticClass();
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FProjectileSettings.InnerSingleton, Z_Construct_UScriptStruct_FProjectileSettings_Statics::StructParams);
 	}
-	struct Z_Construct_UClass_UProjectileAbility_Statics
+	return Z_Registration_Info_UScriptStruct_FProjectileSettings.InnerSingleton;
+}
+// ********** End ScriptStruct FProjectileSettings *************************************************
+
+// ********** Begin Class UProjectileAbility Function SpawnProjectile ******************************
+struct Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics
+{
+	struct ProjectileAbility_eventSpawnProjectile_Parms
 	{
-		static UObject* (*const DependentSingletons[])();
-		static const FClassFunctionLinkInfo FuncInfo[];
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileClass_MetaData[];
-#endif
-		static const UECodeGen_Private::FClassPropertyParams NewProp_ProjectileClass;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
+		FVector ProjectileTargetLocation;
+		FGameplayTag SocketTag;
 	};
-	UObject* (*const Z_Construct_UClass_UProjectileAbility_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UPokemonGameplayAbilities,
-		(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::DependentSingletons) < 16);
-	const FClassFunctionLinkInfo Z_Construct_UClass_UProjectileAbility_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UProjectileAbility_SpawnProjectile, "SpawnProjectile" }, // 2751801605
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::FuncInfo) < 2048);
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UProjectileAbility_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Projectile" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileTargetLocation_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SocketTag_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_ProjectileTargetLocation;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_SocketTag;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation = { "ProjectileTargetLocation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, ProjectileTargetLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ProjectileTargetLocation_MetaData), NewProp_ProjectileTargetLocation_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag = { "SocketTag", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectileAbility_eventSpawnProjectile_Parms, SocketTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SocketTag_MetaData), NewProp_SocketTag_MetaData) }; // 133831994
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_ProjectileTargetLocation,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::NewProp_SocketTag,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UProjectileAbility, nullptr, "SpawnProjectile", Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::PropPointers), sizeof(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::ProjectileAbility_eventSpawnProjectile_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C80401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams), Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::ProjectileAbility_eventSpawnProjectile_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UProjectileAbility_SpawnProjectile()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UProjectileAbility_SpawnProjectile_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UProjectileAbility::execSpawnProjectile)
+{
+	P_GET_STRUCT_REF(FVector,Z_Param_Out_ProjectileTargetLocation);
+	P_GET_STRUCT_REF(FGameplayTag,Z_Param_Out_SocketTag);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->SpawnProjectile(Z_Param_Out_ProjectileTargetLocation,Z_Param_Out_SocketTag);
+	P_NATIVE_END;
+}
+// ********** End Class UProjectileAbility Function SpawnProjectile ********************************
+
+// ********** Begin Class UProjectileAbility *******************************************************
+void UProjectileAbility::StaticRegisterNativesUProjectileAbility()
+{
+	UClass* Class = UProjectileAbility::StaticClass();
+	static const FNameNativePtrPair Funcs[] = {
+		{ "SpawnProjectile", &UProjectileAbility::execSpawnProjectile },
+	};
+	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
+}
+FClassRegistrationInfo Z_Registration_Info_UClass_UProjectileAbility;
+UClass* UProjectileAbility::GetPrivateStaticClass()
+{
+	using TClass = UProjectileAbility;
+	if (!Z_Registration_Info_UClass_UProjectileAbility.InnerSingleton)
+	{
+		GetPrivateStaticClassBody(
+			StaticPackage(),
+			TEXT("ProjectileAbility"),
+			Z_Registration_Info_UClass_UProjectileAbility.InnerSingleton,
+			StaticRegisterNativesUProjectileAbility,
+			sizeof(TClass),
+			alignof(TClass),
+			TClass::StaticClassFlags,
+			TClass::StaticClassCastFlags(),
+			TClass::StaticConfigName(),
+			(UClass::ClassConstructorType)InternalConstructor<TClass>,
+			(UClass::ClassVTableHelperCtorCallerType)InternalVTableHelperCtorCaller<TClass>,
+			UOBJECT_CPPCLASS_STATICFUNCTIONS_FORCLASS(TClass),
+			&TClass::Super::StaticClass,
+			&TClass::WithinClass::StaticClass
+		);
+	}
+	return Z_Registration_Info_UClass_UProjectileAbility.InnerSingleton;
+}
+UClass* Z_Construct_UClass_UProjectileAbility_NoRegister()
+{
+	return UProjectileAbility::GetPrivateStaticClass();
+}
+struct Z_Construct_UClass_UProjectileAbility_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "IncludePath", "AbilitySystem/Abilities/ProjectileAbility.h" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
 	};
-#endif
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileClass_MetaData[] = {
-		{ "Category", "ProjectileAbility" },
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ProjectileConfig_MetaData[] = {
+		{ "Category", "Projectile" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/Abilities/ProjectileAbility.h" },
 	};
-#endif
-	const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileClass = { "ProjectileClass", nullptr, (EPropertyFlags)0x0024080000000015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UProjectileAbility, ProjectileClass), Z_Construct_UClass_UClass, Z_Construct_UClass_AProjectileAttack_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileClass_MetaData), Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileClass_MetaData) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UProjectileAbility_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileClass,
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_ProjectileConfig;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_UProjectileAbility_SpawnProjectile, "SpawnProjectile" }, // 3177733431
 	};
-	const FCppClassTypeInfoStatic Z_Construct_UClass_UProjectileAbility_Statics::StaticCppClassTypeInfo = {
+	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UProjectileAbility>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_UProjectileAbility_Statics::ClassParams = {
-		&UProjectileAbility::StaticClass,
-		nullptr,
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		FuncInfo,
-		Z_Construct_UClass_UProjectileAbility_Statics::PropPointers,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		UE_ARRAY_COUNT(FuncInfo),
-		UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::PropPointers),
-		0,
-		0x001000A0u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::Class_MetaDataParams), Z_Construct_UClass_UProjectileAbility_Statics::Class_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::PropPointers) < 2048);
-	UClass* Z_Construct_UClass_UProjectileAbility()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileConfig = { "ProjectileConfig", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UProjectileAbility, ProjectileConfig), Z_Construct_UScriptStruct_FProjectileSettings, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ProjectileConfig_MetaData), NewProp_ProjectileConfig_MetaData) }; // 895606980
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UProjectileAbility_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UProjectileAbility_Statics::NewProp_ProjectileConfig,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::PropPointers) < 2048);
+UObject* (*const Z_Construct_UClass_UProjectileAbility_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_UPokemonDamageGameplayAbilities,
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_UProjectileAbility_Statics::ClassParams = {
+	&UProjectileAbility::StaticClass,
+	nullptr,
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	FuncInfo,
+	Z_Construct_UClass_UProjectileAbility_Statics::PropPointers,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	UE_ARRAY_COUNT(FuncInfo),
+	UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::PropPointers),
+	0,
+	0x001000A0u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_UProjectileAbility_Statics::Class_MetaDataParams), Z_Construct_UClass_UProjectileAbility_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_UProjectileAbility()
+{
+	if (!Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton, Z_Construct_UClass_UProjectileAbility_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton, Z_Construct_UClass_UProjectileAbility_Statics::ClassParams);
 	}
-	template<> PROJECTMIMIKYU_API UClass* StaticClass<UProjectileAbility>()
-	{
-		return UProjectileAbility::StaticClass();
-	}
-	UProjectileAbility::UProjectileAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(UProjectileAbility);
-	UProjectileAbility::~UProjectileAbility() {}
-	struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics
-	{
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_UProjectileAbility.OuterSingleton;
+}
+UProjectileAbility::UProjectileAbility(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
+DEFINE_VTABLE_PTR_HELPER_CTOR(UProjectileAbility);
+UProjectileAbility::~UProjectileAbility() {}
+// ********** End Class UProjectileAbility *********************************************************
+
+// ********** Begin Registration *******************************************************************
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_Statics
+{
+	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
+		{ FProjectileSettings::StaticStruct, Z_Construct_UScriptStruct_FProjectileSettings_Statics::NewStructOps, TEXT("ProjectileSettings"), &Z_Registration_Info_UScriptStruct_FProjectileSettings, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileSettings), 895606980U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UProjectileAbility, UProjectileAbility::StaticClass, TEXT("UProjectileAbility"), &Z_Registration_Info_UClass_UProjectileAbility, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UProjectileAbility), 2966763399U) },
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_UProjectileAbility, UProjectileAbility::StaticClass, TEXT("UProjectileAbility"), &Z_Registration_Info_UClass_UProjectileAbility, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UProjectileAbility), 532064842U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_3050760036(TEXT("/Script/ProjectMimikyu"),
-		Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h_Statics::ClassInfo),
-		nullptr, 0,
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_3985369438(TEXT("/Script/ProjectMimikyu"),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_Statics::ClassInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_Abilities_ProjectileAbility_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	nullptr, 0);
+// ********** End Registration *********************************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

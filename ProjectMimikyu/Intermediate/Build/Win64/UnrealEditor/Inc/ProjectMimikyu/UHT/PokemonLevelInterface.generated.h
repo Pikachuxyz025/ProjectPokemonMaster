@@ -5,18 +5,18 @@
 ===========================================================================*/
 
 // IWYU pragma: private, include "Interfaces/PokemonLevelInterface.h"
-#include "UObject/ObjectMacros.h"
-#include "UObject/ScriptMacros.h"
 
-PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #ifdef PROJECTMIMIKYU_PokemonLevelInterface_generated_h
 #error "PokemonLevelInterface.generated.h already included, missing '#pragma once' in PokemonLevelInterface.h"
 #endif
 #define PROJECTMIMIKYU_PokemonLevelInterface_generated_h
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_SPARSE_DATA
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_SPARSE_DATA_PROPERTY_ACCESSORS
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS
+#include "UObject/ObjectMacros.h"
+#include "UObject/ScriptMacros.h"
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
+// ********** Begin Interface UPokemonLevelInterface ***********************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_RPC_WRAPPERS_NO_PURE_DECLS \
 	virtual void LevelUp_Implementation() {}; \
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) {}; \
@@ -29,7 +29,6 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	virtual int32 GetAttributePointsReward_Implementation(int32 Level) const { return 0; }; \
 	virtual int32 GetXP_Implementation() const { return 0; }; \
 	virtual int32 FindLevelForXP_Implementation(int32 InXP) const { return 0; }; \
- \
 	DECLARE_FUNCTION(execLevelUp); \
 	DECLARE_FUNCTION(execAddToSpellPoints); \
 	DECLARE_FUNCTION(execAddToAttributePoints); \
@@ -43,28 +42,29 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	DECLARE_FUNCTION(execFindLevelForXP);
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_ACCESSORS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_CALLBACK_WRAPPERS
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonLevelInterface_NoRegister();
+
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	PROJECTMIMIKYU_API UPokemonLevelInterface(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
-private: \
-	/** Private move- and copy-constructors, should never be used */ \
-	PROJECTMIMIKYU_API UPokemonLevelInterface(UPokemonLevelInterface&&); \
-	PROJECTMIMIKYU_API UPokemonLevelInterface(const UPokemonLevelInterface&); \
-public: \
+	/** Deleted move- and copy-constructors, should never be used */ \
+	UPokemonLevelInterface(UPokemonLevelInterface&&) = delete; \
+	UPokemonLevelInterface(const UPokemonLevelInterface&) = delete; \
 	DECLARE_VTABLE_PTR_HELPER_CTOR(PROJECTMIMIKYU_API, UPokemonLevelInterface); \
 	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UPokemonLevelInterface); \
 	DEFINE_ABSTRACT_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UPokemonLevelInterface) \
-	PROJECTMIMIKYU_API virtual ~UPokemonLevelInterface();
+	virtual ~UPokemonLevelInterface() = default;
 
 
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_GENERATED_UINTERFACE_BODY() \
 private: \
 	static void StaticRegisterNativesUPokemonLevelInterface(); \
 	friend struct Z_Construct_UClass_UPokemonLevelInterface_Statics; \
+	static UClass* GetPrivateStaticClass(); \
+	friend PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonLevelInterface_NoRegister(); \
 public: \
-	DECLARE_CLASS(UPokemonLevelInterface, UInterface, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Interface), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), PROJECTMIMIKYU_API) \
+	DECLARE_CLASS2(UPokemonLevelInterface, UInterface, COMPILED_IN_FLAGS(CLASS_Abstract | CLASS_Interface), CASTCLASS_None, TEXT("/Script/ProjectMimikyu"), Z_Construct_UClass_UPokemonLevelInterface_NoRegister) \
 	DECLARE_SERIALIZER(UPokemonLevelInterface)
 
 
@@ -100,21 +100,18 @@ public: \
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_21_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_SPARSE_DATA \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_SPARSE_DATA_PROPERTY_ACCESSORS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_EDITOR_ONLY_SPARSE_DATA_PROPERTY_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_ACCESSORS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_CALLBACK_WRAPPERS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h_13_INCLASS_IINTERFACE_NO_PURE_DECLS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-template<> PROJECTMIMIKYU_API UClass* StaticClass<class UPokemonLevelInterface>();
+class UPokemonLevelInterface;
+
+// ********** End Interface UPokemonLevelInterface *************************************************
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Interfaces_PokemonLevelInterface_h
-
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

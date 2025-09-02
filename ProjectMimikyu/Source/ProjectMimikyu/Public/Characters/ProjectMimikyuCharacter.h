@@ -5,6 +5,7 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Interfaces/PlayerInterface.h"
 #include "GameplayTagContainer.h"
 #include "CharacterTypes.h"
 #include "ProjectMimikyuCharacter.generated.h"
@@ -28,7 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,AActor*,CombatTa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
 UCLASS(config=Game)
-class AProjectMimikyuCharacter : public ACharacter
+class AProjectMimikyuCharacter : public ACharacter, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -84,6 +85,8 @@ public:
 
 	void CommandDodge(FGameplayTag GameplayTag);
 
+
+	virtual void UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon) override;
 protected:
 
 	/** Called for movement input */
