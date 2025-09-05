@@ -21,6 +21,18 @@ struct FProjectileSettings
 	float Speed = 1200.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float DistanceToSphere = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float SphereRadius = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float BeamTime = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float FireRate = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	float GravityScale = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
@@ -51,9 +63,15 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag);
 
-	UFUNCTION(BlueprintImplementableEvent, Catergory="Task Override")
-	bool OverrideSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams, FRotator& OutRotation);
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FGameplayTagContainer ProjectileCategoryTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	FProjectileSettings ProjectileConfig;
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent, Catergory="Task Override")
+	bool OverrideSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams, FRotator& OutRotation);
+
 };

@@ -50,26 +50,26 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 	EffectContextHandle.AddHitResult(HitResult);
 	///const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
 
-	UAT_FireProjectiles* FireTask = UAT_FireProjectiles::FireProjectiles
-	(
-this,
-		"FireProjectiles",
-		EProjectileSpreadMode::SingleShot,
-		ProjectileConfig.ProjectileClass,
-		DamageEffectClass,
-		EffectContextHandle,
-		MakeDamageEffectParamsFromClassDefaults(),
-		GetAbilityLevel(),
-		SocketLocation,
-		Rotation,
-		GetAvatarActorFromActorInfo(),
-		1,
-		0.1f,
-		ProjectileConfig.SpreadAngle,
-		0.f
-	);
+//	UAT_FireProjectiles* FireTask = UAT_FireProjectiles::FireProjectiles
+//	(
+//this,
+//		"FireProjectiles",
+//		EProjectileSpreadMode::SingleShot,
+//		ProjectileConfig.ProjectileClass,
+//		DamageEffectClass,
+//		EffectContextHandle,
+//		MakeDamageEffectParamsFromClassDefaults(),
+//		GetAbilityLevel(),
+//		SocketLocation,
+//		Rotation,
+//		GetAvatarActorFromActorInfo(),
+//		1,
+//		0.1f,
+//		ProjectileConfig.SpreadAngle,
+//		0.f
+//	);
 
-	FireTask->ReadyForActivation();
+	//FireTask->ReadyForActivation();
 	//Projectile->DamageEffectSpecHandle = ;
 	//Projectile->DamageEffectParams = ;
 	//Projectile->FinishSpawning(SpawnTransform);

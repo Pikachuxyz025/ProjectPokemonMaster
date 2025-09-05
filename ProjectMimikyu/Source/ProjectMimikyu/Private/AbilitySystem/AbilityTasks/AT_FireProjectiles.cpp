@@ -8,17 +8,79 @@
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AbilitySystemComponent.h"
 #include <Kismet/KismetMathLibrary.h>
+#include <AbilitySystem/Abilities/ProjectileAbility.h>
+#include <AbilitySystem/PokemonProjectileTagLibrary.h>
 
 
+UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common)
+{
+	Task->ProjectileClass = Common.ProjectileClass;
+	Task->DamageEffectClass = Common.DamageEffectClass;
+	Task->CategoryTags = Common.CategoryTags;
+	Task->SpawnLocation = Common.SpawnLocation;
+	Task->BaseRotation = Common.BaseRotation;
+	Task->DamageEffectContextHandle = Common.DamageEffectContextHandle;
+	Task->DamageEffectParams = Common.DamageEffectParams;
+	Task->SourceActor = Common.SourceActor;
 
-UAT_FireProjectiles* UAT_FireProjectiles::FireProjectiles(UGameplayAbility* OwningAbility, FName TaskInstanceName, EProjectileSpreadMode SpreadMode, TSubclassOf<AProjectileAttack> ProjectileClass, TSubclassOf<UGameplayEffect> DamageEffectClass, FGameplayEffectContextHandle DamageEffectContextHandle, FDamageEffectParams DamageEffectParams, int32 AbilityLevel, FVector SpawnLocation, FRotator BaseRotation, AActor* SourceActor, int32 NumberOfProjectiles, float TimeBetweenShots, float SpreadAngle, float BeamDuration)
+	return Task;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireSingle(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common)
+{
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+	MyObj->SpreadMode = EProjectileSpreadMode::SingleShot;
+
+	return MyObj;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireSequential(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, int32 NumProjectiles, float TimeBetweenShots, float SpreadAngle, float DistanceToSphere, float SphereRadius)
+{
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+	MyObj->SpreadMode = EProjectileSpreadMode::Sequential;
+	MyObj->NumOfProjectiles = NumProjectiles;
+	MyObj->FireRate = TimeBetweenShots;
+	MyObj->Spread = SpreadAngle;
+	MyObj->DistanceToSphere = DistanceToSphere;
+	MyObj->SphereRadius = SphereRadius;
+
+	return MyObj;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireBurst(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, int32 NumProjectiles, float SpreadAngle, float DistanceToSphere, float SphereRadius)
+{
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+
+	MyObj->SpreadMode = EProjectileSpreadMode::Burst;
+	MyObj->NumOfProjectiles = NumProjectiles;
+	MyObj->Spread = SpreadAngle;
+	MyObj->DistanceToSphere = DistanceToSphere;
+	MyObj->SphereRadius = SphereRadius;
+
+	return MyObj;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireBeam(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, float BeamDuration)
+{
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+	MyObj->SpreadMode = EProjectileSpreadMode::Beam;
+	MyObj->BeamTime = BeamDuration;
+
+	return MyObj;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireProjectiles(UGameplayAbility* OwningAbility, FName TaskInstanceName, EProjectileSpreadMode SpreadMode, TSubclassOf<AProjectileAttack> ProjectileClass, TSubclassOf<UGameplayEffect> DamageEffectClass, FGameplayEffectContextHandle DamageEffectContextHandle, FDamageEffectParams DamageEffectParams, FGameplayTagContainer CategoryTags, FVector SpawnLocation, FRotator BaseRotation, AActor* SourceActor, int32 NumberOfProjectiles, float TimeBetweenShots, float SpreadAngle, float BeamDuration)
 {
 	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
 
 	MyObj->SpreadMode = SpreadMode;
 	MyObj->ProjectileClass = ProjectileClass;
 	MyObj->DamageEffectClass = DamageEffectClass;
-	MyObj->AbilityLevel = AbilityLevel;
+	MyObj->CategoryTags = CategoryTags;
 	MyObj->SpawnLocation = SpawnLocation;
 	MyObj->BaseRotation = BaseRotation;
 	MyObj->NumOfProjectiles = NumberOfProjectiles;
@@ -81,7 +143,7 @@ void UAT_FireProjectiles::FireOneProjectile(const FRotator& NewRotation)
 	Actors.Add(Projectile);
 	DamageEffectContextHandle.AddActors(Actors);
 
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, AbilityLevel, DamageEffectContextHandle);
+	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
 
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 	Projectile->DamageEffectParams = DamageEffectParams;
@@ -90,10 +152,57 @@ void UAT_FireProjectiles::FireOneProjectile(const FRotator& NewRotation)
 
 void UAT_FireProjectiles::FireSequentialShot(int32 ShotIndex)
 {
+	FSequentialShotParams Params;
+	Params.BaseRotation = BaseRotation;
+	Params.StartLocation = SpawnLocation;
+	Params.TargetLocation = TargetLocation;
+	Params.ShotIndex = ShotIndex;
+	Params.TotalShots = NumOfProjectiles;
+	Params.DistanceToSphere = DistanceToSphere;
+	Params.SphereRadius = SphereRadius;
+	Params.SpreadAngleDeg = Spread;
+
+	FRotator FinalRotation;
+	bool bHandled = false;
+
+	if(Ability)
+	{
+		// Need the proper tag container
+		bHandled = CastChecked<UProjectileAbility>(Ability)->OverrideSequentialShotRotation(CategoryTags, Params, FinalRotation);
+	}
+
+	if(!bHandled)
+	{
+		// Need the proper tag container
+		FinalRotation = UPokemonProjectileTagLibrary::ComputeSequentialShotRotation(CategoryTags, Params);
+	}
+
+	FireOneProjectile(FinalRotation);
+
 }
 
 void UAT_FireProjectiles::HandleSequentialTick()
 {
+	if (bCancelled) { EndTask(); return; }
+
+	FireSequentialShot(ProjectilesFired);
+	++ProjectilesFired;
+
+	if (ProjectilesFired < NumOfProjectiles)
+	{
+		GetWorld()->GetTimerManager().SetTimer
+		(
+			SequentialTimerHandle,
+			this,
+			&UAT_FireProjectiles::HandleSequentialTick,
+			FireRate,
+			false
+		);
+	}
+	else
+	{
+		EndTask();
+	}
 }
 
 FRotator UAT_FireProjectiles::GetRandomScatterRotation(const FVector& StartLocation, const FVector& EndLocation, float DistanceToSphere, float SphereRadius)
@@ -105,6 +214,7 @@ FRotator UAT_FireProjectiles::GetRandomScatterRotation(const FVector& StartLocat
 	const FVector EndLoc = SphereCenter + RandPointInSphereVector;
 	return (EndLoc - StartLocation).Rotation();
 }
+
 
 void UAT_FireProjectiles::HandleSingleShotBP_Implementation()
 {
@@ -155,6 +265,22 @@ void UAT_FireProjectiles::HandleSequentialBP_Implementation()
 	// Kick of Timed Loop
 	FireSequentialShot(ProjectilesFired);
 	++ProjectilesFired;
+
+	if(ProjectilesFired<NumOfProjectiles)
+	{
+		GetWorld()->GetTimerManager().SetTimer
+		(
+			SequentialTimerHandle,
+			this,
+			&UAT_FireProjectiles::HandleSequentialTick,
+			FireRate,
+			false
+		);
+	}
+	else
+	{
+		EndTask();
+	}
 
 }
 

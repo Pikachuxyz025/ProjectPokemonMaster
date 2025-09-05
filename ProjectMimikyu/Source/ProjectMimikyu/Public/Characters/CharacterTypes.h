@@ -394,10 +394,6 @@ struct FSequentialShotParams
 	// Cone spread (used if Cone/Spread tags present)
 	UPROPERTY(BlueprintReadWrite)
 	float SpreadAngleDeg = 6.f;
-
-	// Homing tweak (used if Homing/Tracking tags present)
-	UPROPERTY(BlueprintReadWrite)
-	bool bHoming = false;
 };
 
 USTRUCT(BlueprintType)

@@ -8,6 +8,9 @@
 #include "AT_FireProjectiles.generated.h"
 
 
+class AProjectileAttack;
+class UGameplayEffect;
+
 UENUM(BlueprintType)
 enum class EProjectileSpreadMode : uint8
 {
@@ -18,8 +21,38 @@ enum class EProjectileSpreadMode : uint8
 	Beam UMETA(DisplayName = "Beam")
 };
 
-class AProjectileAttack;
-class UGameplayEffect;
+USTRUCT(BlueprintType)
+struct FProjectileBaseParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<AProjectileAttack> ProjectileClass = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	FGameplayEffectContextHandle DamageEffectContextHandle = FGameplayEffectContextHandle();
+
+	UPROPERTY(BlueprintReadWrite)
+	FDamageEffectParams DamageEffectParams = FDamageEffectParams();
+
+	UPROPERTY(BlueprintReadWrite)
+	FGameplayTagContainer CategoryTags;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector SpawnLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector TargetLocation = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator BaseRotation = FRotator::ZeroRotator;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* SourceActor = nullptr;
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFireProjectileFinished);
 
@@ -33,7 +66,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnFireProjectileFinished OnFinished;
 
-	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
 	static UAT_FireProjectiles* FireProjectiles
 	(
 		UGameplayAbility* OwningAbility,
@@ -43,7 +76,7 @@ public:
 		TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr,
 		FGameplayEffectContextHandle DamageEffectContextHandle = FGameplayEffectContextHandle(),
 		FDamageEffectParams DamageEffectParams = FDamageEffectParams(),
-		int32 AbilityLevel = 1,
+		FGameplayTagContainer CategoryTags,
 		FVector SpawnLocation = FVector::ZeroVector,
 		FRotator BaseRotation = FRotator::ZeroRotator,
 		AActor* SourceActor = nullptr,
@@ -52,6 +85,48 @@ public:
 		float SpreadAngle = 0.f,
 		float BeamDuration = 0.f
 	);
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+		static UAT_FireProjectiles* FireSingle
+	(
+		UGameplayAbility * OwningAbility,
+		FName TaskInstanceName,
+		const FProjectileBaseParams& Common
+	);
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+		static UAT_FireProjectiles* FireSequential
+	(
+			UGameplayAbility* OwningAbility,
+		FName TaskInstanceName,
+		const FProjectileBaseParams& Common,
+		int32 NumProjectiles=1,
+		float TimeBetweenShots=.1f,
+		float SpreadAngle = 0.f,
+		float DistanceToSphere = 0.f,
+		float SphereRadius = 0.f
+	);
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+		static UAT_FireProjectiles* FireBurst
+		(
+			UGameplayAbility* OwningAbility,
+			FName TaskInstanceName,
+			const FProjectileBaseParams& Common,
+			int32 NumProjectiles = 1,
+			float SpreadAngle = 0.f,
+			float DistanceToSphere = 0.f,
+			float SphereRadius = 0.f
+		);
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+		static UAT_FireProjectiles* FireBeam
+		(
+			UGameplayAbility* OwningAbility,
+			FName TaskInstanceName,
+			const FProjectileBaseParams & Common,
+float BeamDuration = 0.f
+);  
 
 protected:
 	virtual void Activate() override;
@@ -78,21 +153,39 @@ protected:
 	virtual void HandleBeamBP_Implementation();
 	
 	void FireOneProjectile(const FRotator& NewRotation);
+	void FireSequentialShot(int32 ShotIndex);
+	void HandleSequentialTick();
 	FRotator GetRandomScatterRotation(const FVector& StartLocation,const FVector& EndLocation, float DistanceToSphere,float SphereRadius);
 private:
-	FTimerHandle SequentialTimerHandle;
+
+#pragma region Variables Set Upon Creation
 	EProjectileSpreadMode SpreadMode;
 	TSubclassOf<AProjectileAttack> ProjectileClass;
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 	FVector SpawnLocation;
+	FVector TargetLocation;
 	FRotator BaseRotation;
 	AActor* SourceActor;
 	FGameplayEffectContextHandle DamageEffectContextHandle;
 	FDamageEffectParams DamageEffectParams;
+	FGameplayTagContainer CategoryTags;
 	int32 NumOfProjectiles;
-	int32 AbilityLevel;
 	float FireRate;
 	float Spread;
 	float BeamTime;
+	float DistanceToSphere = 0.f;
+	float SphereRadius = 0.f;
+#pragma endregion
+
+
+	FTimerHandle SequentialTimerHandle;
+
+
+
+	//int32 AbilityLevel;
+
 	int32 ProjectilesFired = 0;
+	bool bCancelled = false;
+
+	static UAT_FireProjectiles* InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common);
 };

@@ -506,6 +506,7 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FString("Rotating pattern (rare, but possible for fan game)")
 	);
 
+	/* Redundant */
 	GameplayTags.PokemonMoves_Spread_Projectile_Homing = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Homing"),
 		FString("Projectile-Based Spreads")
@@ -513,29 +514,29 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 
 	GameplayTags.PokemonMoves_Spread_Projectile_Burst = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Burst"),
-		FString("Fires all projectiles at once")
+		FString("Fires all projectiles at once, shotgun")
 	);
 
 	GameplayTags.PokemonMoves_Spread_Projectile_Sequential = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Sequential"),
-		FString("Fires projectiles one after another (Bullet Seed style)")
+		FString("Fires projectiles one after another")
 	);
-
+	/* Redundant */
 	GameplayTags.PokemonMoves_Spread_Projectile_Scatter = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Scatter"),
 		FString("Multiple projectiles, random spread")
 	);
-
+	/* Redundant */
 	GameplayTags.PokemonMoves_Spread_Projectile_Scatter_Narrow = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Scatter.Narrow"),
 		FString("Multiple projectiles, random spread: Tight cone")
 	);
-
+	/* Redundant */
 	GameplayTags.PokemonMoves_Spread_Projectile_Scatter_Wide = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Scatter.Wide"),
 		FString("Multiple projectiles, random spread: Wide arc")
 	);
-
+	/* Redundant */
 	GameplayTags.PokemonMoves_Spread_Projectile_Scatter_Random = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Projectile.Scatter.Random"),
 		FString("Multiple projectiles, random spread: Randomized direction beyond cone")
@@ -633,7 +634,7 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 
 	GameplayTags.PokemonMoves_Spread_Modifier_MultiHit = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Modifier.MultiHit"),
-		FString("Move hits multiple times (Bullet Seed)")
+		FString("Move hits multiple times upon contact")
 	);
 
 	GameplayTags.PokemonMoves_Spread_Modifier_Charge = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -653,7 +654,7 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 
 	GameplayTags.PokemonMoves_Spread_Modifier_Tracking = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Modifier.Tracking"),
-		FString("Move adjusts trajectory to follow target (Flamethrower)")
+		FString("User move to follow target before or as they're firing. Motion Warping")
 	);
 
 	GameplayTags.PokemonMoves_Spread_Modifier_Reflectable = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -663,7 +664,7 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 
 	GameplayTags.PokemonMoves_Spread_Modifier_Combustable = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("PokemonMoves.Spread.Modifier.Combustable"),
-		FString("Projectile Separates into multiple projectiles")
+		FString("Projectile Separates into multiple projectiles after a certain timer")
 	);
 
 	GameplayTags.InputsToCooldowns.Add(GameplayTags.InputTag_1, GameplayTags.Cooldown_InputTag_1);
