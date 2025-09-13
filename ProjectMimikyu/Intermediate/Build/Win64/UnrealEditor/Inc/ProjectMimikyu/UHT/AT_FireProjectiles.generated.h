@@ -23,29 +23,49 @@ class UGameplayAbility;
 class UGameplayEffect;
 enum class EProjectileSpreadMode : uint8;
 struct FDamageEffectParams;
+struct FEnvironmentDropParams;
 struct FGameplayEffectContextHandle;
+struct FGameplayTagContainer;
+struct FProjectileBaseParams;
+
+// ********** Begin ScriptStruct FProjectileBaseParams *********************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_30_GENERATED_BODY \
+	friend struct Z_Construct_UScriptStruct_FProjectileBaseParams_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+struct FProjectileBaseParams;
+// ********** End ScriptStruct FProjectileBaseParams ***********************************************
 
 // ********** Begin Delegate FOnFireProjectileFinished *********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_24_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_60_DELEGATE \
 PROJECTMIMIKYU_API void FOnFireProjectileFinished_DelegateWrapper(const FMulticastScriptDelegate& OnFireProjectileFinished);
 
 
 // ********** End Delegate FOnFireProjectileFinished ***********************************************
 
 // ********** Begin Class UAT_FireProjectiles ******************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execHandleEnvironmentalEruptBP); \
+	DECLARE_FUNCTION(execHandleEnvironmentalDropBP); \
 	DECLARE_FUNCTION(execHandleBeamBP); \
 	DECLARE_FUNCTION(execHandleSequentialBP); \
 	DECLARE_FUNCTION(execHandleSpreadBP); \
 	DECLARE_FUNCTION(execHandleBurstBP); \
 	DECLARE_FUNCTION(execHandleSingleShotBP); \
+	DECLARE_FUNCTION(execFireBeam); \
+	DECLARE_FUNCTION(execFireEnvironmentErupt); \
+	DECLARE_FUNCTION(execFireEnvironmentDrop); \
+	DECLARE_FUNCTION(execFireBurst); \
+	DECLARE_FUNCTION(execFireSequential); \
+	DECLARE_FUNCTION(execFireSingle); \
 	DECLARE_FUNCTION(execFireProjectiles);
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_CALLBACK_WRAPPERS
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_CALLBACK_WRAPPERS
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UAT_FireProjectiles_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUAT_FireProjectiles(); \
 	friend struct Z_Construct_UClass_UAT_FireProjectiles_Statics; \
@@ -56,7 +76,7 @@ public: \
 	DECLARE_SERIALIZER(UAT_FireProjectiles)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UAT_FireProjectiles(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	/** Deleted move- and copy-constructors, should never be used */ \
@@ -68,14 +88,14 @@ public: \
 	NO_API virtual ~UAT_FireProjectiles();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_26_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_62_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_CALLBACK_WRAPPERS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_29_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_CALLBACK_WRAPPERS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h_65_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -93,6 +113,8 @@ class UAT_FireProjectiles;
 	op(EProjectileSpreadMode::Burst) \
 	op(EProjectileSpreadMode::Spread) \
 	op(EProjectileSpreadMode::Sequential) \
+	op(EProjectileSpreadMode::Drop) \
+	op(EProjectileSpreadMode::Erupt) \
 	op(EProjectileSpreadMode::Beam) 
 
 enum class EProjectileSpreadMode : uint8;

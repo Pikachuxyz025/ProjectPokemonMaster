@@ -17,12 +17,15 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 class UObject;
+struct FEnvironmentDropParams;
 struct FGameplayTag;
 struct FGameplayTagContainer;
 struct FSequentialShotParams;
 
 // ********** Begin Class UPokemonProjectileTagLibrary *********************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execComputeDropSpawn); \
+	DECLARE_FUNCTION(execComputeLandingPoints); \
 	DECLARE_FUNCTION(execGetScatterSphereRotation); \
 	DECLARE_FUNCTION(execComputeSequentialShotRotation); \
 	DECLARE_FUNCTION(execGetFunctionNameForCategory); \

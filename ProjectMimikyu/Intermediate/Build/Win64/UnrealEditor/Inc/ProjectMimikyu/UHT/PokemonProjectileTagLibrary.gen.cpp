@@ -16,15 +16,142 @@ void EmptyLinkFunctionForGeneratedCodePokemonProjectileTagLibrary() {}
 // ********** Begin Cross Module References ********************************************************
 COREUOBJECT_API UClass* Z_Construct_UClass_UObject_NoRegister();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FRotator();
+COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FTransform();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 ENGINE_API UClass* Z_Construct_UClass_UBlueprintFunctionLibrary();
 GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
 GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagContainer();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonProjectileTagLibrary();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonProjectileTagLibrary_NoRegister();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FEnvironmentDropParams();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSequentialShotParams();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
+
+// ********** Begin Class UPokemonProjectileTagLibrary Function ComputeDropSpawn *******************
+struct Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics
+{
+	struct PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms
+	{
+		FEnvironmentDropParams DropParams;
+		FVector LandingPoint;
+		FTransform OutSpawnTM;
+		FVector OutInitialVelocity;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "MoveHelper" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonProjectileTagLibrary.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DropParams_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LandingPoint_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_DropParams;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_LandingPoint;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_OutSpawnTM;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_OutInitialVelocity;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_DropParams = { "DropParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms, DropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DropParams_MetaData), NewProp_DropParams_MetaData) }; // 3080430868
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_LandingPoint = { "LandingPoint", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms, LandingPoint), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LandingPoint_MetaData), NewProp_LandingPoint_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_OutSpawnTM = { "OutSpawnTM", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms, OutSpawnTM), Z_Construct_UScriptStruct_FTransform, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_OutInitialVelocity = { "OutInitialVelocity", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms, OutInitialVelocity), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_DropParams,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_LandingPoint,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_OutSpawnTM,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::NewProp_OutInitialVelocity,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ComputeDropSpawn", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C22401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::PokemonProjectileTagLibrary_eventComputeDropSpawn_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonProjectileTagLibrary::execComputeDropSpawn)
+{
+	P_GET_STRUCT_REF(FEnvironmentDropParams,Z_Param_Out_DropParams);
+	P_GET_STRUCT_REF(FVector,Z_Param_Out_LandingPoint);
+	P_GET_STRUCT_REF(FTransform,Z_Param_Out_OutSpawnTM);
+	P_GET_STRUCT_REF(FVector,Z_Param_Out_OutInitialVelocity);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	UPokemonProjectileTagLibrary::ComputeDropSpawn(Z_Param_Out_DropParams,Z_Param_Out_LandingPoint,Z_Param_Out_OutSpawnTM,Z_Param_Out_OutInitialVelocity);
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonProjectileTagLibrary Function ComputeDropSpawn *********************
+
+// ********** Begin Class UPokemonProjectileTagLibrary Function ComputeLandingPoints ***************
+struct Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics
+{
+	struct PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms
+	{
+		FGameplayTagContainer ResolvedTags;
+		FEnvironmentDropParams DropParams;
+		int32 WaveIndex;
+		int32 OutPointsForThisWave;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "MoveHelper" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonProjectileTagLibrary.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ResolvedTags_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_ResolvedTags;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_DropParams;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_WaveIndex;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_OutPointsForThisWave;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_ResolvedTags = { "ResolvedTags", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms, ResolvedTags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ResolvedTags_MetaData), NewProp_ResolvedTags_MetaData) }; // 2104890724
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_DropParams = { "DropParams", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms, DropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(0, nullptr) }; // 3080430868
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_WaveIndex = { "WaveIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms, WaveIndex), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_OutPointsForThisWave = { "OutPointsForThisWave", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms, OutPointsForThisWave), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_ResolvedTags,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_DropParams,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_WaveIndex,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::NewProp_OutPointsForThisWave,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ComputeLandingPoints", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::PokemonProjectileTagLibrary_eventComputeLandingPoints_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonProjectileTagLibrary::execComputeLandingPoints)
+{
+	P_GET_STRUCT_REF(FGameplayTagContainer,Z_Param_Out_ResolvedTags);
+	P_GET_STRUCT_REF(FEnvironmentDropParams,Z_Param_Out_DropParams);
+	P_GET_PROPERTY(FIntProperty,Z_Param_WaveIndex);
+	P_GET_PROPERTY_REF(FIntProperty,Z_Param_Out_OutPointsForThisWave);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	UPokemonProjectileTagLibrary::ComputeLandingPoints(Z_Param_Out_ResolvedTags,Z_Param_Out_DropParams,Z_Param_WaveIndex,Z_Param_Out_OutPointsForThisWave);
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonProjectileTagLibrary Function ComputeLandingPoints *****************
 
 // ********** Begin Class UPokemonProjectileTagLibrary Function ComputeSequentialShotRotation ******
 struct Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics
@@ -54,7 +181,7 @@ struct Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotR
 	static const UECodeGen_Private::FFunctionParams FuncParams;
 };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_ResolvedTags = { "ResolvedTags", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms, ResolvedTags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ResolvedTags_MetaData), NewProp_ResolvedTags_MetaData) }; // 2104890724
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_SequentialShotParams = { "SequentialShotParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms, SequentialShotParams), Z_Construct_UScriptStruct_FSequentialShotParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SequentialShotParams_MetaData), NewProp_SequentialShotParams_MetaData) }; // 1706502883
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_SequentialShotParams = { "SequentialShotParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms, SequentialShotParams), Z_Construct_UScriptStruct_FSequentialShotParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SequentialShotParams_MetaData), NewProp_SequentialShotParams_MetaData) }; // 286614823
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms, ReturnValue), Z_Construct_UScriptStruct_FRotator, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_ResolvedTags,
@@ -62,7 +189,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokem
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::NewProp_ReturnValue,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ComputeSequentialShotRotation", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C42401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::Function_MetaDataParams)},  };
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ComputeSequentialShotRotation", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C22401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::Function_MetaDataParams)},  };
 static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation_Statics::PokemonProjectileTagLibrary_eventComputeSequentialShotRotation_Parms) < MAX_uint16);
 UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation()
 {
@@ -128,7 +255,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokem
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::NewProp_ReturnValue,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetBestTagForCategory", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PokemonProjectileTagLibrary_eventGetBestTagForCategory_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04442401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::Function_MetaDataParams)},  };
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetBestTagForCategory", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PokemonProjectileTagLibrary_eventGetBestTagForCategory_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::Function_MetaDataParams)},  };
 static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory_Statics::PokemonProjectileTagLibrary_eventGetBestTagForCategory_Parms) < MAX_uint16);
 UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory()
 {
@@ -188,7 +315,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokem
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::NewProp_ReturnValue,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetFunctionNameForCategory", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PokemonProjectileTagLibrary_eventGetFunctionNameForCategory_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04442401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::Function_MetaDataParams)},  };
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetFunctionNameForCategory", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PokemonProjectileTagLibrary_eventGetFunctionNameForCategory_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::Function_MetaDataParams)},  };
 static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory_Statics::PokemonProjectileTagLibrary_eventGetFunctionNameForCategory_Parms) < MAX_uint16);
 UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory()
 {
@@ -254,7 +381,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokem
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::NewProp_ReturnValue,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetScatterSphereRotation", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PokemonProjectileTagLibrary_eventGetScatterSphereRotation_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C42401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::Function_MetaDataParams)},  };
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "GetScatterSphereRotation", Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PokemonProjectileTagLibrary_eventGetScatterSphereRotation_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04C22401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::Function_MetaDataParams)},  };
 static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation_Statics::PokemonProjectileTagLibrary_eventGetScatterSphereRotation_Parms) < MAX_uint16);
 UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation()
 {
@@ -318,7 +445,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokem
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::NewProp_OutTags,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PropPointers) < 2048);
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ResolveTagContainer", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PokemonProjectileTagLibrary_eventResolveTagContainer_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04442401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::Function_MetaDataParams)},  };
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonProjectileTagLibrary, nullptr, "ResolveTagContainer", Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PropPointers), sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PokemonProjectileTagLibrary_eventResolveTagContainer_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::Function_MetaDataParams)},  };
 static_assert(sizeof(Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer_Statics::PokemonProjectileTagLibrary_eventResolveTagContainer_Parms) < MAX_uint16);
 UFunction* Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer()
 {
@@ -346,6 +473,8 @@ void UPokemonProjectileTagLibrary::StaticRegisterNativesUPokemonProjectileTagLib
 {
 	UClass* Class = UPokemonProjectileTagLibrary::StaticClass();
 	static const FNameNativePtrPair Funcs[] = {
+		{ "ComputeDropSpawn", &UPokemonProjectileTagLibrary::execComputeDropSpawn },
+		{ "ComputeLandingPoints", &UPokemonProjectileTagLibrary::execComputeLandingPoints },
 		{ "ComputeSequentialShotRotation", &UPokemonProjectileTagLibrary::execComputeSequentialShotRotation },
 		{ "GetBestTagForCategory", &UPokemonProjectileTagLibrary::execGetBestTagForCategory },
 		{ "GetFunctionNameForCategory", &UPokemonProjectileTagLibrary::execGetFunctionNameForCategory },
@@ -393,11 +522,13 @@ struct Z_Construct_UClass_UPokemonProjectileTagLibrary_Statics
 #endif // WITH_METADATA
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
-		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation, "ComputeSequentialShotRotation" }, // 2434617188
-		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory, "GetBestTagForCategory" }, // 1186970407
-		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory, "GetFunctionNameForCategory" }, // 3313966222
-		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation, "GetScatterSphereRotation" }, // 2180152070
-		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer, "ResolveTagContainer" }, // 3665216991
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeDropSpawn, "ComputeDropSpawn" }, // 460850566
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeLandingPoints, "ComputeLandingPoints" }, // 813762553
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ComputeSequentialShotRotation, "ComputeSequentialShotRotation" }, // 3173882653
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetBestTagForCategory, "GetBestTagForCategory" }, // 3030398606
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetFunctionNameForCategory, "GetFunctionNameForCategory" }, // 2630966844
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_GetScatterSphereRotation, "GetScatterSphereRotation" }, // 3665163603
+		{ &Z_Construct_UFunction_UPokemonProjectileTagLibrary_ResolveTagContainer, "ResolveTagContainer" }, // 2952188157
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -442,10 +573,10 @@ UPokemonProjectileTagLibrary::~UPokemonProjectileTagLibrary() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonProjectileTagLibrary, UPokemonProjectileTagLibrary::StaticClass, TEXT("UPokemonProjectileTagLibrary"), &Z_Registration_Info_UClass_UPokemonProjectileTagLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonProjectileTagLibrary), 598263387U) },
+		{ Z_Construct_UClass_UPokemonProjectileTagLibrary, UPokemonProjectileTagLibrary::StaticClass, TEXT("UPokemonProjectileTagLibrary"), &Z_Registration_Info_UClass_UPokemonProjectileTagLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonProjectileTagLibrary), 2033694376U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h__Script_ProjectMimikyu_805398539(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h__Script_ProjectMimikyu_3015063271(TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonProjectileTagLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);

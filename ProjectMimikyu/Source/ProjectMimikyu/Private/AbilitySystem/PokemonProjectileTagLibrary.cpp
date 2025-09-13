@@ -103,7 +103,7 @@ FName UPokemonProjectileTagLibrary::GetFunctionNameForCategory(const UObject* Wo
 FRotator UPokemonProjectileTagLibrary::ComputeSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams)
 {
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
-	static const FGameplayTag ScatterTag = GameplayTags.PokemonMoves_Spread_Projectile_Scatter;
+	static const FGameplayTag ScatterTag = GameplayTags.PokemonMoves_Spread_Modifier_Scatter;
 	static const FGameplayTag ConeTag = GameplayTags.PokemonMoves_Spread_Projectile_Cone;
 
 	if(ResolvedTags.HasTagExact(ScatterTag))
@@ -134,5 +134,13 @@ FRotator UPokemonProjectileTagLibrary::GetScatterSphereRotation(const FVector& S
 	const FVector RandPointInSphereVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
 	const FVector EndLoc = SphereCenter + RandPointInSphereVector;
 	return (EndLoc - StartLocation).Rotation();
+}
+
+void UPokemonProjectileTagLibrary::ComputeLandingPoints(const FGameplayTagContainer& ResolvedTags, FEnvironmentDropParams& DropParams, int32 WaveIndex, int32& OutPointsForThisWave)
+{
+}
+
+void UPokemonProjectileTagLibrary::ComputeDropSpawn(const FEnvironmentDropParams& DropParams, const FVector& LandingPoint, FTransform& OutSpawnTM, FVector& OutInitialVelocity)
+{
 }
 

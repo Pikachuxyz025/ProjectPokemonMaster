@@ -63,6 +63,16 @@ UAT_FireProjectiles* UAT_FireProjectiles::FireBurst(UGameplayAbility* OwningAbil
 	return MyObj;
 }
 
+UAT_FireProjectiles* UAT_FireProjectiles::FireEnvironmentDrop(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, const FEnvironmentDropParams& EnvDropParams)
+{
+	return nullptr;
+}
+
+UAT_FireProjectiles* UAT_FireProjectiles::FireEnvironmentErupt(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, const FEnvironmentDropParams& EnvDropParams)
+{
+	return nullptr;
+}
+
 UAT_FireProjectiles* UAT_FireProjectiles::FireBeam(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, float BeamDuration)
 {
 	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
@@ -114,6 +124,13 @@ void UAT_FireProjectiles::Activate()
 	case EProjectileSpreadMode::Beam:
 		HandleBeamBP();
 		break;
+	case EProjectileSpreadMode::Drop:
+		HandleEnvironmentalDropBP();
+		break;
+	case EProjectileSpreadMode::Erupt:
+		HandleEnvironmentalEruptBP();
+		break;
+
 	default:
 		break;
 	}
@@ -205,17 +222,6 @@ void UAT_FireProjectiles::HandleSequentialTick()
 	}
 }
 
-FRotator UAT_FireProjectiles::GetRandomScatterRotation(const FVector& StartLocation, const FVector& EndLocation, float DistanceToSphere, float SphereRadius)
-{
-	const FVector ToEndNormalized = (EndLocation - StartLocation).GetSafeNormal();
-	const FVector SphereCenter = StartLocation + ToEndNormalized * DistanceToSphere;
-
-	const FVector RandPointInSphereVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
-	const FVector EndLoc = SphereCenter + RandPointInSphereVector;
-	return (EndLoc - StartLocation).Rotation();
-}
-
-
 void UAT_FireProjectiles::HandleSingleShotBP_Implementation()
 {
 	FireOneProjectile(BaseRotation);
@@ -248,13 +254,13 @@ void UAT_FireProjectiles::HandleSpreadBP_Implementation()
 
 void UAT_FireProjectiles::HandleSequentialBP_Implementation()
 {
+	ProjectilesFired = 0;
 
-	ProjectilesFired=0;
 
 	// If FireRate is 0 or less, fire all projectiles immediately
-	if(FireRate<=0.f)
+	if (FireRate <= 0.f)
 	{
-		for(ProjectilesFired=0;ProjectilesFired<NumOfProjectiles;++ProjectilesFired)
+		for (ProjectilesFired = 0; ProjectilesFired < NumOfProjectiles; ++ProjectilesFired)
 		{
 			FireSequentialShot(ProjectilesFired);
 		}
@@ -297,4 +303,12 @@ void UAT_FireProjectiles::HandleBeamBP_Implementation()
 		BeamTime,
 		false
 	);
+}
+
+void UAT_FireProjectiles::HandleEnvironmentalDropBP_Implementation()
+{
+}
+
+void UAT_FireProjectiles::HandleEnvironmentalEruptBP_Implementation()
+{
 }

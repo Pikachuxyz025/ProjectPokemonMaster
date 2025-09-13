@@ -216,6 +216,36 @@ enum class EPokemonState :uint8
 	EPS_Investigative UMETA(DisplayName="Investigative"),
 	EPS_Fainted UMETA(DisplayName="Fainted")
 };
+
+UENUM(BlueprintType)
+enum class EEnvironmentLandingPattern : uint8
+{
+	EELP_None UMETA(DisplayName = "None"),
+	EELP_RandonInRadius UMETA(DisplayName = "RandomInRadius"),
+	EELP_Grid UMETA(DisplayName = "Grid"),
+	EELP_Line UMETA(DisplayName = "Line"),
+	EELP_Circle UMETA(DisplayName = "Circle"),
+	EELP_TargetedDrop UMETA(DisplayName = "TargetedDrop")
+};
+
+UENUM(BlueprintType)
+enum class EEnvironmentSpawnHeightMode : uint8
+{
+	ESHM_None UMETA(DisplayName = "None"),
+	ESHM_FixedWorldZ UMETA(DisplayName = "FixedWorldZ"),
+	ESHM_CeilingTracePlus UMETA(DisplayName = "CeilingTracePlus"),
+	ESHM_SkyClamp UMETA(DisplayName = "SkyClamp")
+};
+
+UENUM(BlueprintType)
+enum class EEnvironmentFallDirection : uint8
+{
+	EFD_None UMETA(DisplayName = "None"),
+	EFD_WorldDown UMETA(DisplayName = "WorldDown"),
+	EFD_TowardLandingPoint UMETA(DisplayName = "TowardLandingPoint"),
+	EFD_TowardCenter UMETA(DisplayName = "TowardCenter")
+};
+
 #pragma endregion
 
 #pragma region Structs
@@ -240,6 +270,115 @@ struct FPokemonMoveChart :public FTableRowBase
 	GENERATED_BODY()
 
 
+};
+
+USTRUCT(BlueprintType)
+struct FProjectileTagContainer
+{
+	GENERATED_BODY()
+public: 
+	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.Spread"))
+	FGameplayTag CategoryTag;
+
+	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.Spread.Modifier"))
+	TArray<FGameplayTag> ModifierTags;
+
+	UPROPERTY(VisibleAnywhere)
+	FGameplayTag UpgradableTag1;
+
+	UPROPERTY(VisibleAnywhere)
+	FGameplayTag UpgradableTag2;
+private:
+
+	UPROPERTY(VisibleAnywhere)
+	FGameplayTagContainer Tags;
+
+public:
+	FGameplayTagContainer GenerateFullTagContainer()
+	{
+		Tags = FGameplayTagContainer();
+		if (CategoryTag.IsValid())
+		{
+			Tags.AddTag(CategoryTag);
+		}
+
+		if (UpgradableTag1.IsValid())
+		{
+			Tags.AddTag(UpgradableTag1);
+		}
+		if (UpgradableTag2.IsValid())
+		{
+			Tags.AddTag(UpgradableTag2);
+		}
+
+		for (const FGameplayTag& ModTag : ModifierTags)
+		{
+			if (ModTag.IsValid())
+			{
+				Tags.AddTag(ModTag);
+			}
+		}
+		return Tags;
+	}
+};
+USTRUCT(BlueprintType)
+struct FEnvironmentDropParams
+{
+	GENERATED_BODY()
+
+	// Area Selection
+	UPROPERTY(BlueprintReadWrite)
+	FVector AreaCenter = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadWrite)
+	float AreaRadius = 500.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	EEnvironmentLandingPattern LandingPattern = EEnvironmentLandingPattern::EELP_RandonInRadius;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 NumProjectiles = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bClampToNavMesh = true;
+
+	// Waves / Rain
+	UPROPERTY(BlueprintReadWrite)
+	int32 NumWaves = 1;
+
+	UPROPERTY(BlueprintReadWrite)
+	float TimeBetweenWaves = 0.4f;
+
+	// Telegraph
+	UPROPERTY(BlueprintReadWrite)
+	float WarningTime = 1.0f;
+
+	UPROPERTY(BlueprintReadWrite)
+	float ImpactAOERadius = 100.f;
+
+	// Height / Falling
+UPROPERTY(BlueprintReadWrite)
+	EEnvironmentSpawnHeightMode SpawnHeightMode = EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus;
+	UPROPERTY(BlueprintReadWrite)
+	float SpawnHeight = 1000.f;
+	UPROPERTY(BlueprintReadWrite)
+	bool bUseGravity = true;
+	UPROPERTY(BlueprintReadWrite)
+	float InitialSpeed = 2800.f;
+	UPROPERTY(BlueprintReadWrite)
+	bool bRetargetPerWave = false;
+
+	// Targeting
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> ExplicitTargets;
+	UPROPERTY(BlueprintReadWrite)
+	bool bPredictive = true;
+	UPROPERTY(BlueprintReadWrite)
+	float PredictiveLeadTime = 0.5f;
+
+	// OutPuts
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FVector> CachedLandingPoints;
 };
 
 USTRUCT(BlueprintType)

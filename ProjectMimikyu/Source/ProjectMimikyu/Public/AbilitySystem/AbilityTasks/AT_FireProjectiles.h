@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
+#include "Characters/CharacterTypes.h"
 #include <PokemonAbilityTypes.h>
 #include "AT_FireProjectiles.generated.h"
 
@@ -18,6 +19,8 @@ enum class EProjectileSpreadMode : uint8
 	Burst UMETA(DisplayName = "Burst"),
 	Spread UMETA(DisplayName = "Spread"),
 	Sequential UMETA(DisplayName = "Sequential"),
+	Drop UMETA(DisplayName = "Drop"),
+	Erupt UMETA(DisplayName = "Erupt"),
 	Beam UMETA(DisplayName = "Beam")
 };
 
@@ -76,7 +79,7 @@ public:
 		TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr,
 		FGameplayEffectContextHandle DamageEffectContextHandle = FGameplayEffectContextHandle(),
 		FDamageEffectParams DamageEffectParams = FDamageEffectParams(),
-		FGameplayTagContainer CategoryTags,
+		FGameplayTagContainer CategoryTags=FGameplayTagContainer(),
 		FVector SpawnLocation = FVector::ZeroVector,
 		FRotator BaseRotation = FRotator::ZeroRotator,
 		AActor* SourceActor = nullptr,
@@ -87,7 +90,7 @@ public:
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
-		static UAT_FireProjectiles* FireSingle
+	static UAT_FireProjectiles* FireSingle
 	(
 		UGameplayAbility * OwningAbility,
 		FName TaskInstanceName,
@@ -95,7 +98,7 @@ public:
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
-		static UAT_FireProjectiles* FireSequential
+	static UAT_FireProjectiles* FireSequential
 	(
 			UGameplayAbility* OwningAbility,
 		FName TaskInstanceName,
@@ -108,19 +111,38 @@ public:
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
-		static UAT_FireProjectiles* FireBurst
-		(
-			UGameplayAbility* OwningAbility,
-			FName TaskInstanceName,
-			const FProjectileBaseParams& Common,
-			int32 NumProjectiles = 1,
-			float SpreadAngle = 0.f,
-			float DistanceToSphere = 0.f,
-			float SphereRadius = 0.f
-		);
+	static UAT_FireProjectiles* FireBurst
+	(
+		UGameplayAbility* OwningAbility,
+		FName TaskInstanceName,
+		const FProjectileBaseParams& Common,
+		int32 NumProjectiles = 1,
+		float SpreadAngle = 0.f,
+		float DistanceToSphere = 0.f,
+		float SphereRadius = 0.f
+	);
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
-		static UAT_FireProjectiles* FireBeam
+	static UAT_FireProjectiles* FireEnvironmentDrop
+	(
+		UGameplayAbility* OwningAbility,
+		FName TaskInstanceName,
+		const FProjectileBaseParams& Common,
+		const FEnvironmentDropParams& EnvDropParams
+	);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+	static UAT_FireProjectiles* FireEnvironmentErupt
+	(
+		UGameplayAbility* OwningAbility,
+		FName TaskInstanceName,
+		const FProjectileBaseParams& Common,
+		const FEnvironmentDropParams& EnvDropParams
+	);
+
+	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (DisplayName = "Fire Projectiles", HidePin = "OwningAbility", DefaultToSelf = "OwningAbility"))
+	static UAT_FireProjectiles* FireBeam
 		(
 			UGameplayAbility* OwningAbility,
 			FName TaskInstanceName,
@@ -146,16 +168,24 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Projectile Task")
 	void HandleBeamBP();
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Projectile Task")
+	void HandleEnvironmentalDropBP();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Projectile Task")
+	void HandleEnvironmentalEruptBP();
+
 	virtual void HandleSingleShotBP_Implementation();
 	virtual void HandleBurstBP_Implementation();
 	virtual void HandleSpreadBP_Implementation();
 	virtual void HandleSequentialBP_Implementation();
 	virtual void HandleBeamBP_Implementation();
+	virtual void HandleEnvironmentalDropBP_Implementation();
+	virtual void HandleEnvironmentalEruptBP_Implementation();
 	
 	void FireOneProjectile(const FRotator& NewRotation);
 	void FireSequentialShot(int32 ShotIndex);
 	void HandleSequentialTick();
-	FRotator GetRandomScatterRotation(const FVector& StartLocation,const FVector& EndLocation, float DistanceToSphere,float SphereRadius);
+
 private:
 
 #pragma region Variables Set Upon Creation
@@ -169,6 +199,7 @@ private:
 	FGameplayEffectContextHandle DamageEffectContextHandle;
 	FDamageEffectParams DamageEffectParams;
 	FGameplayTagContainer CategoryTags;
+	FEnvironmentDropParams EnvDropParams;
 	int32 NumOfProjectiles;
 	float FireRate;
 	float Spread;
@@ -186,6 +217,6 @@ private:
 
 	int32 ProjectilesFired = 0;
 	bool bCancelled = false;
-
+	bool bIsEruptMode = false;
 	static UAT_FireProjectiles* InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common);
 };

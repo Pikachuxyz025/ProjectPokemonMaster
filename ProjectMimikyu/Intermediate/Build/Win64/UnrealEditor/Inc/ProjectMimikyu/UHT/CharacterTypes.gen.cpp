@@ -21,6 +21,7 @@ ENGINE_API UClass* Z_Construct_UClass_AController_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_UTexture2D_NoRegister();
 ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FTableRowBase();
 GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTag();
+GAMEPLAYTAGS_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagContainer();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectile_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonDataAsset_NoRegister();
@@ -28,6 +29,9 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonMoveDataAsset_NoRegister()
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDamageResponse();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EElementalType();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EGenderType();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EMoveAction();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EMovementSpeed();
@@ -42,12 +46,14 @@ PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ESlotType();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EStatsType();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EStatusType();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FDamageInfo();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FEnvironmentDropParams();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryItemInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonMoveChart();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonParty();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonTypeInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonUIInfo();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FProjectileTagContainer();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSequentialShotParams();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FTagCategoryMap();
@@ -1186,6 +1192,192 @@ UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokemonState()
 }
 // ********** End Enum EPokemonState ***************************************************************
 
+// ********** Begin Enum EEnvironmentLandingPattern ************************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_EEnvironmentLandingPattern;
+static UEnum* EEnvironmentLandingPattern_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentLandingPattern.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_EEnvironmentLandingPattern.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EEnvironmentLandingPattern"));
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentLandingPattern.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EEnvironmentLandingPattern>()
+{
+	return EEnvironmentLandingPattern_StaticEnum();
+}
+struct Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "EELP_Circle.DisplayName", "Circle" },
+		{ "EELP_Circle.Name", "EEnvironmentLandingPattern::EELP_Circle" },
+		{ "EELP_Grid.DisplayName", "Grid" },
+		{ "EELP_Grid.Name", "EEnvironmentLandingPattern::EELP_Grid" },
+		{ "EELP_Line.DisplayName", "Line" },
+		{ "EELP_Line.Name", "EEnvironmentLandingPattern::EELP_Line" },
+		{ "EELP_None.DisplayName", "None" },
+		{ "EELP_None.Name", "EEnvironmentLandingPattern::EELP_None" },
+		{ "EELP_RandonInRadius.DisplayName", "RandomInRadius" },
+		{ "EELP_RandonInRadius.Name", "EEnvironmentLandingPattern::EELP_RandonInRadius" },
+		{ "EELP_TargetedDrop.DisplayName", "TargetedDrop" },
+		{ "EELP_TargetedDrop.Name", "EEnvironmentLandingPattern::EELP_TargetedDrop" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "EEnvironmentLandingPattern::EELP_None", (int64)EEnvironmentLandingPattern::EELP_None },
+		{ "EEnvironmentLandingPattern::EELP_RandonInRadius", (int64)EEnvironmentLandingPattern::EELP_RandonInRadius },
+		{ "EEnvironmentLandingPattern::EELP_Grid", (int64)EEnvironmentLandingPattern::EELP_Grid },
+		{ "EEnvironmentLandingPattern::EELP_Line", (int64)EEnvironmentLandingPattern::EELP_Line },
+		{ "EEnvironmentLandingPattern::EELP_Circle", (int64)EEnvironmentLandingPattern::EELP_Circle },
+		{ "EEnvironmentLandingPattern::EELP_TargetedDrop", (int64)EEnvironmentLandingPattern::EELP_TargetedDrop },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+};
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	"EEnvironmentLandingPattern",
+	"EEnvironmentLandingPattern",
+	Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentLandingPattern.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EEnvironmentLandingPattern.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentLandingPattern.InnerSingleton;
+}
+// ********** End Enum EEnvironmentLandingPattern **************************************************
+
+// ********** Begin Enum EEnvironmentSpawnHeightMode ***********************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode;
+static UEnum* EEnvironmentSpawnHeightMode_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EEnvironmentSpawnHeightMode"));
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EEnvironmentSpawnHeightMode>()
+{
+	return EEnvironmentSpawnHeightMode_StaticEnum();
+}
+struct Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ESHM_CeilingTracePlus.DisplayName", "CeilingTracePlus" },
+		{ "ESHM_CeilingTracePlus.Name", "EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus" },
+		{ "ESHM_FixedWorldZ.DisplayName", "FixedWorldZ" },
+		{ "ESHM_FixedWorldZ.Name", "EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ" },
+		{ "ESHM_None.DisplayName", "None" },
+		{ "ESHM_None.Name", "EEnvironmentSpawnHeightMode::ESHM_None" },
+		{ "ESHM_SkyClamp.DisplayName", "SkyClamp" },
+		{ "ESHM_SkyClamp.Name", "EEnvironmentSpawnHeightMode::ESHM_SkyClamp" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "EEnvironmentSpawnHeightMode::ESHM_None", (int64)EEnvironmentSpawnHeightMode::ESHM_None },
+		{ "EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ", (int64)EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ },
+		{ "EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus", (int64)EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus },
+		{ "EEnvironmentSpawnHeightMode::ESHM_SkyClamp", (int64)EEnvironmentSpawnHeightMode::ESHM_SkyClamp },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+};
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	"EEnvironmentSpawnHeightMode",
+	"EEnvironmentSpawnHeightMode",
+	Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode.InnerSingleton;
+}
+// ********** End Enum EEnvironmentSpawnHeightMode *************************************************
+
+// ********** Begin Enum EEnvironmentFallDirection *************************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_EEnvironmentFallDirection;
+static UEnum* EEnvironmentFallDirection_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentFallDirection.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_EEnvironmentFallDirection.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EEnvironmentFallDirection"));
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentFallDirection.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_API UEnum* StaticEnum<EEnvironmentFallDirection>()
+{
+	return EEnvironmentFallDirection_StaticEnum();
+}
+struct Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "EFD_None.DisplayName", "None" },
+		{ "EFD_None.Name", "EEnvironmentFallDirection::EFD_None" },
+		{ "EFD_TowardCenter.DisplayName", "TowardCenter" },
+		{ "EFD_TowardCenter.Name", "EEnvironmentFallDirection::EFD_TowardCenter" },
+		{ "EFD_TowardLandingPoint.DisplayName", "TowardLandingPoint" },
+		{ "EFD_TowardLandingPoint.Name", "EEnvironmentFallDirection::EFD_TowardLandingPoint" },
+		{ "EFD_WorldDown.DisplayName", "WorldDown" },
+		{ "EFD_WorldDown.Name", "EEnvironmentFallDirection::EFD_WorldDown" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "EEnvironmentFallDirection::EFD_None", (int64)EEnvironmentFallDirection::EFD_None },
+		{ "EEnvironmentFallDirection::EFD_WorldDown", (int64)EEnvironmentFallDirection::EFD_WorldDown },
+		{ "EEnvironmentFallDirection::EFD_TowardLandingPoint", (int64)EEnvironmentFallDirection::EFD_TowardLandingPoint },
+		{ "EEnvironmentFallDirection::EFD_TowardCenter", (int64)EEnvironmentFallDirection::EFD_TowardCenter },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+};
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	"EEnvironmentFallDirection",
+	"EEnvironmentFallDirection",
+	Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection()
+{
+	if (!Z_Registration_Info_UEnum_EEnvironmentFallDirection.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EEnvironmentFallDirection.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EEnvironmentFallDirection_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_EEnvironmentFallDirection.InnerSingleton;
+}
+// ********** End Enum EEnvironmentFallDirection ***************************************************
+
 // ********** Begin ScriptStruct FPokemonTypeInfo **************************************************
 static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FPokemonTypeInfo;
 class UScriptStruct* FPokemonTypeInfo::StaticStruct()
@@ -1304,6 +1496,342 @@ UScriptStruct* Z_Construct_UScriptStruct_FPokemonMoveChart()
 	return Z_Registration_Info_UScriptStruct_FPokemonMoveChart.InnerSingleton;
 }
 // ********** End ScriptStruct FPokemonMoveChart ***************************************************
+
+// ********** Begin ScriptStruct FProjectileTagContainer *******************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FProjectileTagContainer;
+class UScriptStruct* FProjectileTagContainer::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FProjectileTagContainer.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FProjectileTagContainer.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FProjectileTagContainer, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("ProjectileTagContainer"));
+	}
+	return Z_Registration_Info_UScriptStruct_FProjectileTagContainer.OuterSingleton;
+}
+struct Z_Construct_UScriptStruct_FProjectileTagContainer_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CategoryTag_MetaData[] = {
+		{ "Categories", "PokemonMoves.Spread" },
+		{ "Category", "ProjectileTagContainer" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ModifierTags_MetaData[] = {
+		{ "Categories", "PokemonMoves.Spread.Modifier" },
+		{ "Category", "ProjectileTagContainer" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_UpgradableTag1_MetaData[] = {
+		{ "Category", "ProjectileTagContainer" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_UpgradableTag2_MetaData[] = {
+		{ "Category", "ProjectileTagContainer" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Tags_MetaData[] = {
+		{ "Category", "ProjectileTagContainer" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CategoryTag;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_ModifierTags_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_ModifierTags;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_UpgradableTag1;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_UpgradableTag2;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Tags;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FProjectileTagContainer>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_CategoryTag = { "CategoryTag", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileTagContainer, CategoryTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CategoryTag_MetaData), NewProp_CategoryTag_MetaData) }; // 133831994
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_ModifierTags_Inner = { "ModifierTags", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 133831994
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_ModifierTags = { "ModifierTags", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileTagContainer, ModifierTags), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ModifierTags_MetaData), NewProp_ModifierTags_MetaData) }; // 133831994
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_UpgradableTag1 = { "UpgradableTag1", nullptr, (EPropertyFlags)0x0010000000020001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileTagContainer, UpgradableTag1), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_UpgradableTag1_MetaData), NewProp_UpgradableTag1_MetaData) }; // 133831994
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_UpgradableTag2 = { "UpgradableTag2", nullptr, (EPropertyFlags)0x0010000000020001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileTagContainer, UpgradableTag2), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_UpgradableTag2_MetaData), NewProp_UpgradableTag2_MetaData) }; // 133831994
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_Tags = { "Tags", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileTagContainer, Tags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Tags_MetaData), NewProp_Tags_MetaData) }; // 2104890724
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_CategoryTag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_ModifierTags_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_ModifierTags,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_UpgradableTag1,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_UpgradableTag2,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewProp_Tags,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"ProjectileTagContainer",
+	Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::PropPointers),
+	sizeof(FProjectileTagContainer),
+	alignof(FProjectileTagContainer),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FProjectileTagContainer()
+{
+	if (!Z_Registration_Info_UScriptStruct_FProjectileTagContainer.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FProjectileTagContainer.InnerSingleton, Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::StructParams);
+	}
+	return Z_Registration_Info_UScriptStruct_FProjectileTagContainer.InnerSingleton;
+}
+// ********** End ScriptStruct FProjectileTagContainer *********************************************
+
+// ********** Begin ScriptStruct FEnvironmentDropParams ********************************************
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FEnvironmentDropParams;
+class UScriptStruct* FEnvironmentDropParams::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FEnvironmentDropParams, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EnvironmentDropParams"));
+	}
+	return Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.OuterSingleton;
+}
+struct Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AreaCenter_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Area Selection\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Area Selection" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AreaRadius_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LandingPattern_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_NumProjectiles_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bClampToNavMesh_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_NumWaves_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Waves / Rain\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Waves / Rain" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TimeBetweenWaves_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WarningTime_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Telegraph\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Telegraph" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ImpactAOERadius_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SpawnHeightMode_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Height / Falling\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Height / Falling" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SpawnHeight_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bUseGravity_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InitialSpeed_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bRetargetPerWave_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ExplicitTargets_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Targeting\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Targeting" },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bPredictive_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PredictiveLeadTime_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedLandingPoints_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// OutPuts\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "OutPuts" },
+#endif
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FStructPropertyParams NewProp_AreaCenter;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_AreaRadius;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_LandingPattern_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_LandingPattern;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_NumProjectiles;
+	static void NewProp_bClampToNavMesh_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bClampToNavMesh;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_NumWaves;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_TimeBetweenWaves;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_WarningTime;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_ImpactAOERadius;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_SpawnHeightMode_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_SpawnHeightMode;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_SpawnHeight;
+	static void NewProp_bUseGravity_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bUseGravity;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_InitialSpeed;
+	static void NewProp_bRetargetPerWave_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bRetargetPerWave;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ExplicitTargets_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_ExplicitTargets;
+	static void NewProp_bPredictive_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bPredictive;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_PredictiveLeadTime;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CachedLandingPoints_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_CachedLandingPoints;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FEnvironmentDropParams>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+};
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaCenter = { "AreaCenter", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, AreaCenter), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AreaCenter_MetaData), NewProp_AreaCenter_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaRadius = { "AreaRadius", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, AreaRadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AreaRadius_MetaData), NewProp_AreaRadius_MetaData) };
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern = { "LandingPattern", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, LandingPattern), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentLandingPattern, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LandingPattern_MetaData), NewProp_LandingPattern_MetaData) }; // 1485142758
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_NumProjectiles = { "NumProjectiles", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, NumProjectiles), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_NumProjectiles_MetaData), NewProp_NumProjectiles_MetaData) };
+void Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bClampToNavMesh_SetBit(void* Obj)
+{
+	((FEnvironmentDropParams*)Obj)->bClampToNavMesh = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bClampToNavMesh = { "bClampToNavMesh", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FEnvironmentDropParams), &Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bClampToNavMesh_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bClampToNavMesh_MetaData), NewProp_bClampToNavMesh_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_NumWaves = { "NumWaves", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, NumWaves), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_NumWaves_MetaData), NewProp_NumWaves_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_TimeBetweenWaves = { "TimeBetweenWaves", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, TimeBetweenWaves), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TimeBetweenWaves_MetaData), NewProp_TimeBetweenWaves_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_WarningTime = { "WarningTime", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, WarningTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WarningTime_MetaData), NewProp_WarningTime_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ImpactAOERadius = { "ImpactAOERadius", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, ImpactAOERadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ImpactAOERadius_MetaData), NewProp_ImpactAOERadius_MetaData) };
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode = { "SpawnHeightMode", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, SpawnHeightMode), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnHeightMode_MetaData), NewProp_SpawnHeightMode_MetaData) }; // 1985865126
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeight = { "SpawnHeight", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, SpawnHeight), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnHeight_MetaData), NewProp_SpawnHeight_MetaData) };
+void Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bUseGravity_SetBit(void* Obj)
+{
+	((FEnvironmentDropParams*)Obj)->bUseGravity = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bUseGravity = { "bUseGravity", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FEnvironmentDropParams), &Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bUseGravity_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bUseGravity_MetaData), NewProp_bUseGravity_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_InitialSpeed = { "InitialSpeed", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, InitialSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InitialSpeed_MetaData), NewProp_InitialSpeed_MetaData) };
+void Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bRetargetPerWave_SetBit(void* Obj)
+{
+	((FEnvironmentDropParams*)Obj)->bRetargetPerWave = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bRetargetPerWave = { "bRetargetPerWave", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FEnvironmentDropParams), &Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bRetargetPerWave_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bRetargetPerWave_MetaData), NewProp_bRetargetPerWave_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ExplicitTargets_Inner = { "ExplicitTargets", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ExplicitTargets = { "ExplicitTargets", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, ExplicitTargets), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ExplicitTargets_MetaData), NewProp_ExplicitTargets_MetaData) };
+void Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bPredictive_SetBit(void* Obj)
+{
+	((FEnvironmentDropParams*)Obj)->bPredictive = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bPredictive = { "bPredictive", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FEnvironmentDropParams), &Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bPredictive_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bPredictive_MetaData), NewProp_bPredictive_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_PredictiveLeadTime = { "PredictiveLeadTime", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, PredictiveLeadTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PredictiveLeadTime_MetaData), NewProp_PredictiveLeadTime_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints_Inner = { "CachedLandingPoints", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints = { "CachedLandingPoints", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, CachedLandingPoints), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedLandingPoints_MetaData), NewProp_CachedLandingPoints_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaCenter,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaRadius,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_NumProjectiles,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bClampToNavMesh,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_NumWaves,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_TimeBetweenWaves,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_WarningTime,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ImpactAOERadius,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeight,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bUseGravity,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_InitialSpeed,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bRetargetPerWave,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ExplicitTargets_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ExplicitTargets,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bPredictive,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_PredictiveLeadTime,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"EnvironmentDropParams",
+	Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::PropPointers),
+	sizeof(FEnvironmentDropParams),
+	alignof(FEnvironmentDropParams),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FEnvironmentDropParams()
+{
+	if (!Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.InnerSingleton, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::StructParams);
+	}
+	return Z_Registration_Info_UScriptStruct_FEnvironmentDropParams.InnerSingleton;
+}
+// ********** End ScriptStruct FEnvironmentDropParams **********************************************
 
 // ********** Begin ScriptStruct FTypeChartMatchup *************************************************
 static_assert(std::is_polymorphic<FTypeChartMatchup>() == std::is_polymorphic<FTableRowBase>(), "USTRUCT FTypeChartMatchup cannot be polymorphic unless super FTableRowBase is polymorphic");
@@ -1747,16 +2275,6 @@ struct Z_Construct_UScriptStruct_FSequentialShotParams_Statics
 		{ "ToolTip", "Cone spread (used if Cone/Spread tags present)" },
 #endif
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHoming_MetaData[] = {
-		{ "Category", "SequentialShotParams" },
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "// Homing tweak (used if Homing/Tracking tags present)\n" },
-#endif
-		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
-#if !UE_BUILD_SHIPPING
-		{ "ToolTip", "Homing tweak (used if Homing/Tracking tags present)" },
-#endif
-	};
 #endif // WITH_METADATA
 	static const UECodeGen_Private::FStructPropertyParams NewProp_StartLocation;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_TargetLocation;
@@ -1766,8 +2284,6 @@ struct Z_Construct_UScriptStruct_FSequentialShotParams_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_DistanceToSphere;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_SphereRadius;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_SpreadAngleDeg;
-	static void NewProp_bHoming_SetBit(void* Obj);
-	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHoming;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static void* NewStructOps()
 	{
@@ -1783,11 +2299,6 @@ const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FSequentia
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_DistanceToSphere = { "DistanceToSphere", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FSequentialShotParams, DistanceToSphere), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DistanceToSphere_MetaData), NewProp_DistanceToSphere_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_SphereRadius = { "SphereRadius", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FSequentialShotParams, SphereRadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SphereRadius_MetaData), NewProp_SphereRadius_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_SpreadAngleDeg = { "SpreadAngleDeg", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FSequentialShotParams, SpreadAngleDeg), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpreadAngleDeg_MetaData), NewProp_SpreadAngleDeg_MetaData) };
-void Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_bHoming_SetBit(void* Obj)
-{
-	((FSequentialShotParams*)Obj)->bHoming = 1;
-}
-const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_bHoming = { "bHoming", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FSequentialShotParams), &Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_bHoming_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bHoming_MetaData), NewProp_bHoming_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FSequentialShotParams_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_StartLocation,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_TargetLocation,
@@ -1797,7 +2308,6 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FS
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_DistanceToSphere,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_SphereRadius,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_SpreadAngleDeg,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewProp_bHoming,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FSequentialShotParams_Statics::PropPointers) < 2048);
 const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FSequentialShotParams_Statics::StructParams = {
@@ -2199,22 +2709,27 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ EPokeballType_StaticEnum, TEXT("EPokeballType"), &Z_Registration_Info_UEnum_EPokeballType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 650909231U) },
 		{ ESlotType_StaticEnum, TEXT("ESlotType"), &Z_Registration_Info_UEnum_ESlotType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2085859743U) },
 		{ EPokemonState_StaticEnum, TEXT("EPokemonState"), &Z_Registration_Info_UEnum_EPokemonState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3493861700U) },
+		{ EEnvironmentLandingPattern_StaticEnum, TEXT("EEnvironmentLandingPattern"), &Z_Registration_Info_UEnum_EEnvironmentLandingPattern, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1485142758U) },
+		{ EEnvironmentSpawnHeightMode_StaticEnum, TEXT("EEnvironmentSpawnHeightMode"), &Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1985865126U) },
+		{ EEnvironmentFallDirection_StaticEnum, TEXT("EEnvironmentFallDirection"), &Z_Registration_Info_UEnum_EEnvironmentFallDirection, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 942945988U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FPokemonTypeInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics::NewStructOps, TEXT("PokemonTypeInfo"), &Z_Registration_Info_UScriptStruct_FPokemonTypeInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonTypeInfo), 2060910304U) },
 		{ FPokemonMoveChart::StaticStruct, Z_Construct_UScriptStruct_FPokemonMoveChart_Statics::NewStructOps, TEXT("PokemonMoveChart"), &Z_Registration_Info_UScriptStruct_FPokemonMoveChart, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonMoveChart), 629707317U) },
+		{ FProjectileTagContainer::StaticStruct, Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewStructOps, TEXT("ProjectileTagContainer"), &Z_Registration_Info_UScriptStruct_FProjectileTagContainer, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileTagContainer), 2774933828U) },
+		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"), &Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 3080430868U) },
 		{ FTypeChartMatchup::StaticStruct, Z_Construct_UScriptStruct_FTypeChartMatchup_Statics::NewStructOps, TEXT("TypeChartMatchup"), &Z_Registration_Info_UScriptStruct_FTypeChartMatchup, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTypeChartMatchup), 1633721586U) },
 		{ FPokemonUIInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonUIInfo_Statics::NewStructOps, TEXT("PokemonUIInfo"), &Z_Registration_Info_UScriptStruct_FPokemonUIInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonUIInfo), 595581161U) },
 		{ FPokemonInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewStructOps, TEXT("PokemonInfo"), &Z_Registration_Info_UScriptStruct_FPokemonInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInfo), 376880542U) },
 		{ FTagCategoryMap::StaticStruct, Z_Construct_UScriptStruct_FTagCategoryMap_Statics::NewStructOps, TEXT("TagCategoryMap"), &Z_Registration_Info_UScriptStruct_FTagCategoryMap, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTagCategoryMap), 621124044U) },
-		{ FSequentialShotParams::StaticStruct, Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewStructOps, TEXT("SequentialShotParams"), &Z_Registration_Info_UScriptStruct_FSequentialShotParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSequentialShotParams), 1706502883U) },
+		{ FSequentialShotParams::StaticStruct, Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewStructOps, TEXT("SequentialShotParams"), &Z_Registration_Info_UScriptStruct_FSequentialShotParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSequentialShotParams), 286614823U) },
 		{ FPokemonParty::StaticStruct, Z_Construct_UScriptStruct_FPokemonParty_Statics::NewStructOps, TEXT("PokemonParty"), &Z_Registration_Info_UScriptStruct_FPokemonParty, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonParty), 2534834303U) },
 		{ FSlotInfo::StaticStruct, Z_Construct_UScriptStruct_FSlotInfo_Statics::NewStructOps, TEXT("SlotInfo"), &Z_Registration_Info_UScriptStruct_FSlotInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSlotInfo), 3780344497U) },
 		{ FDamageInfo::StaticStruct, Z_Construct_UScriptStruct_FDamageInfo_Statics::NewStructOps, TEXT("DamageInfo"), &Z_Registration_Info_UScriptStruct_FDamageInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FDamageInfo), 1675790321U) },
 		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"), &Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 999394668U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_683819611(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_2563131973(TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo));

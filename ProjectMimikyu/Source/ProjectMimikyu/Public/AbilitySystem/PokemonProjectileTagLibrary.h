@@ -15,6 +15,8 @@ class PROJECTMIMIKYU_API UPokemonProjectileTagLibrary : public UBlueprintFunctio
 {
 	GENERATED_BODY()
 	
+public:
+
 	UFUNCTION(BlueprintCallable, Category = "TagCategory", meta = (DefaultToSelf = "WorldContextObject"))
 	static void ResolveTagContainer(const UObject* WorldContextObject, const FGameplayTagContainer& TagContainer, TArray<FGameplayTag>& OutTags);
 
@@ -29,4 +31,10 @@ class PROJECTMIMIKYU_API UPokemonProjectileTagLibrary : public UBlueprintFunctio
 
 	UFUNCTION(BlueprintCallable, Category = "MoveHelper")
 	static FRotator GetScatterSphereRotation(const FVector& StartLocation, const FVector& TargetLocation, float DistanceToSphere, float SphereRadius);
+
+	UFUNCTION(BlueprintCallable, Category = "MoveHelper")
+	static void ComputeLandingPoints(const FGameplayTagContainer& ResolvedTags, FEnvironmentDropParams& DropParams, int32 WaveIndex, int32& OutPointsForThisWave);
+
+	UFUNCTION(BlueprintCallable, Category = "MoveHelper")
+	static void ComputeDropSpawn(const FEnvironmentDropParams& DropParams, const FVector& LandingPoint, FTransform& OutSpawnTM, FVector& OutInitialVelocity);
 };

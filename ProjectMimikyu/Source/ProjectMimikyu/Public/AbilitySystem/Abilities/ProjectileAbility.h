@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
+#include "Characters/CharacterTypes.h"
 #include "ProjectileAbility.generated.h"
 
 class AProjectileAttack;
@@ -64,14 +65,16 @@ protected:
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag);
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	FGameplayTagContainer ProjectileCategoryTags;
+	FProjectileTagContainer ProjectileCategoryTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	FProjectileSettings ProjectileConfig;
 
 public:
 
-	UFUNCTION(BlueprintImplementableEvent, Catergory="Task Override")
+	UFUNCTION(BlueprintImplementableEvent, Category="Task Override")
 	bool OverrideSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams, FRotator& OutRotation);
+
+
 
 };

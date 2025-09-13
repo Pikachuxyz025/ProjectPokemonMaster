@@ -67,6 +67,8 @@ public:
 	FGameplayTag PokemonMoves_Spread_Modifier_Tracking;
 	FGameplayTag PokemonMoves_Spread_Modifier_Reflectable;
 	FGameplayTag PokemonMoves_Spread_Modifier_Combustable;
+	FGameplayTag PokemonMoves_Spread_Modifier_Homing;
+	FGameplayTag PokemonMoves_Spread_Modifier_Scatter;
 	FGameplayTag PokemonMoves_Spread_Formation;
 	FGameplayTag PokemonMoves_Spread_Formation_Clone;
 	FGameplayTag PokemonMoves_Spread_Formation_Circle;
@@ -86,15 +88,10 @@ public:
 	FGameplayTag PokemonMoves_Spread_Beam_Piercing;
 	FGameplayTag PokemonMoves_Spread_Projectile;
 	FGameplayTag PokemonMoves_Spread_Projectile_Single;
-	FGameplayTag PokemonMoves_Spread_Projectile_Homing;
 	FGameplayTag PokemonMoves_Spread_Projectile_Cone;
 	FGameplayTag PokemonMoves_Spread_Projectile_Spiral;
 	FGameplayTag PokemonMoves_Spread_Projectile_Burst;
 	FGameplayTag PokemonMoves_Spread_Projectile_Sequential;
-	FGameplayTag PokemonMoves_Spread_Projectile_Scatter;
-	FGameplayTag PokemonMoves_Spread_Projectile_Scatter_Narrow;
-	FGameplayTag PokemonMoves_Spread_Projectile_Scatter_Wide;
-	FGameplayTag PokemonMoves_Spread_Projectile_Scatter_Random;
 
 	FGameplayTag Abilities_Status_Locked;
 	FGameplayTag Abilities_Status_Unlocked;
