@@ -158,6 +158,10 @@ struct Z_Construct_UScriptStruct_FProjectileBaseParams_Statics
 		{ "Category", "ProjectileBaseParams" },
 		{ "ModuleRelativePath", "Public/AbilitySystem/AbilityTasks/AT_FireProjectiles.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ActivationId_MetaData[] = {
+		{ "Category", "ProjectileBaseParams" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/AbilityTasks/AT_FireProjectiles.h" },
+	};
 #endif // WITH_METADATA
 	static const UECodeGen_Private::FClassPropertyParams NewProp_ProjectileClass;
 	static const UECodeGen_Private::FClassPropertyParams NewProp_DamageEffectClass;
@@ -168,6 +172,7 @@ struct Z_Construct_UScriptStruct_FProjectileBaseParams_Statics
 	static const UECodeGen_Private::FStructPropertyParams NewProp_TargetLocation;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_BaseRotation;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_SourceActor;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_ActivationId;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static void* NewStructOps()
 	{
@@ -184,6 +189,7 @@ const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjec
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_TargetLocation = { "TargetLocation", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileBaseParams, TargetLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetLocation_MetaData), NewProp_TargetLocation_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_BaseRotation = { "BaseRotation", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileBaseParams, BaseRotation), Z_Construct_UScriptStruct_FRotator, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BaseRotation_MetaData), NewProp_BaseRotation_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_SourceActor = { "SourceActor", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileBaseParams, SourceActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SourceActor_MetaData), NewProp_SourceActor_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_ActivationId = { "ActivationId", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FProjectileBaseParams, ActivationId), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActivationId_MetaData), NewProp_ActivationId_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_ProjectileClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_DamageEffectClass,
@@ -194,6 +200,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FP
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_TargetLocation,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_BaseRotation,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_SourceActor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewProp_ActivationId,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::PropPointers) < 2048);
 const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::StructParams = {
@@ -279,7 +286,7 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_BeamDuration = { "BeamDuration", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, BeamDuration), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBeam_Parms, ReturnValue), Z_Construct_UClass_UAT_FireProjectiles_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAT_FireProjectiles_FireBeam_Statics::PropPointers[] = {
@@ -357,7 +364,7 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_NumProjectiles = { "NumProjectiles", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, NumProjectiles), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_SpreadAngle = { "SpreadAngle", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, SpreadAngle), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireBurst_Statics::NewProp_DistanceToSphere = { "DistanceToSphere", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireBurst_Parms, DistanceToSphere), METADATA_PARAMS(0, nullptr) };
@@ -437,8 +444,8 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_EnvDropParams = { "EnvDropParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, EnvDropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EnvDropParams_MetaData), NewProp_EnvDropParams_MetaData) }; // 3080430868
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_EnvDropParams = { "EnvDropParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, EnvDropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EnvDropParams_MetaData), NewProp_EnvDropParams_MetaData) }; // 2241419204
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentDrop_Parms, ReturnValue), Z_Construct_UClass_UAT_FireProjectiles_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop_Statics::NewProp_OwningAbility,
@@ -508,8 +515,8 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_EnvDropParams = { "EnvDropParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, EnvDropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EnvDropParams_MetaData), NewProp_EnvDropParams_MetaData) }; // 3080430868
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_EnvDropParams = { "EnvDropParams", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, EnvDropParams), Z_Construct_UScriptStruct_FEnvironmentDropParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EnvDropParams_MetaData), NewProp_EnvDropParams_MetaData) }; // 2241419204
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireEnvironmentErupt_Parms, ReturnValue), Z_Construct_UClass_UAT_FireProjectiles_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt_Statics::NewProp_OwningAbility,
@@ -725,7 +732,7 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_NumProjectiles = { "NumProjectiles", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, NumProjectiles), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_TimeBetweenShots = { "TimeBetweenShots", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, TimeBetweenShots), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSequential_Statics::NewProp_SpreadAngle = { "SpreadAngle", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSequential_Parms, SpreadAngle), METADATA_PARAMS(0, nullptr) };
@@ -803,7 +810,7 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics
 };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSingle_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSingle_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSingle_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 1149100307
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_Common = { "Common", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSingle_Parms, Common), Z_Construct_UScriptStruct_FProjectileBaseParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Common_MetaData), NewProp_Common_MetaData) }; // 3543477808
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireSingle_Parms, ReturnValue), Z_Construct_UClass_UAT_FireProjectiles_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAT_FireProjectiles_FireSingle_Statics::NewProp_OwningAbility,
@@ -834,6 +841,48 @@ DEFINE_FUNCTION(UAT_FireProjectiles::execFireSingle)
 	P_NATIVE_END;
 }
 // ********** End Class UAT_FireProjectiles Function FireSingle ************************************
+
+// ********** Begin Class UAT_FireProjectiles Function GetActivationId *****************************
+struct Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics
+{
+	struct AT_FireProjectiles_eventGetActivationId_Parms
+	{
+		int32 ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Ability|Tasks" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/AbilityTasks/AT_FireProjectiles.h" },
+	};
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventGetActivationId_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::PropPointers) < 2048);
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UAT_FireProjectiles, nullptr, "GetActivationId", Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::PropPointers), sizeof(Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::AT_FireProjectiles_eventGetActivationId_Parms), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::Function_MetaDataParams), Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::AT_FireProjectiles_eventGetActivationId_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UAT_FireProjectiles::execGetActivationId)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(int32*)Z_Param__Result=P_THIS->GetActivationId();
+	P_NATIVE_END;
+}
+// ********** End Class UAT_FireProjectiles Function GetActivationId *******************************
 
 // ********** Begin Class UAT_FireProjectiles Function HandleBeamBP ********************************
 static FName NAME_UAT_FireProjectiles_HandleBeamBP = FName(TEXT("HandleBeamBP"));
@@ -1148,6 +1197,7 @@ void UAT_FireProjectiles::StaticRegisterNativesUAT_FireProjectiles()
 		{ "FireProjectiles", &UAT_FireProjectiles::execFireProjectiles },
 		{ "FireSequential", &UAT_FireProjectiles::execFireSequential },
 		{ "FireSingle", &UAT_FireProjectiles::execFireSingle },
+		{ "GetActivationId", &UAT_FireProjectiles::execGetActivationId },
 		{ "HandleBeamBP", &UAT_FireProjectiles::execHandleBeamBP },
 		{ "HandleBurstBP", &UAT_FireProjectiles::execHandleBurstBP },
 		{ "HandleEnvironmentalDropBP", &UAT_FireProjectiles::execHandleEnvironmentalDropBP },
@@ -1202,13 +1252,14 @@ struct Z_Construct_UClass_UAT_FireProjectiles_Statics
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireBeam, "FireBeam" }, // 1433730079
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireBurst, "FireBurst" }, // 2847933034
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop, "FireEnvironmentDrop" }, // 1471694699
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt, "FireEnvironmentErupt" }, // 84299470
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireBeam, "FireBeam" }, // 2049147538
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireBurst, "FireBurst" }, // 498608174
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop, "FireEnvironmentDrop" }, // 813942730
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt, "FireEnvironmentErupt" }, // 3257412658
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles, "FireProjectiles" }, // 4061797710
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSequential, "FireSequential" }, // 150912993
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSingle, "FireSingle" }, // 976064319
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSequential, "FireSequential" }, // 2366334326
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSingle, "FireSingle" }, // 2027144418
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId, "GetActivationId" }, // 723447120
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_HandleBeamBP, "HandleBeamBP" }, // 2620423820
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_HandleBurstBP, "HandleBurstBP" }, // 2328951653
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_HandleEnvironmentalDropBP, "HandleEnvironmentalDropBP" }, // 2530604063
@@ -1268,13 +1319,13 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ EProjectileSpreadMode_StaticEnum, TEXT("EProjectileSpreadMode"), &Z_Registration_Info_UEnum_EProjectileSpreadMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3904578267U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FProjectileBaseParams::StaticStruct, Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewStructOps, TEXT("ProjectileBaseParams"), &Z_Registration_Info_UScriptStruct_FProjectileBaseParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileBaseParams), 1149100307U) },
+		{ FProjectileBaseParams::StaticStruct, Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewStructOps, TEXT("ProjectileBaseParams"), &Z_Registration_Info_UScriptStruct_FProjectileBaseParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileBaseParams), 3543477808U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UAT_FireProjectiles, UAT_FireProjectiles::StaticClass, TEXT("UAT_FireProjectiles"), &Z_Registration_Info_UClass_UAT_FireProjectiles, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAT_FireProjectiles), 3987423015U) },
+		{ Z_Construct_UClass_UAT_FireProjectiles, UAT_FireProjectiles::StaticClass, TEXT("UAT_FireProjectiles"), &Z_Registration_Info_UClass_UAT_FireProjectiles, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAT_FireProjectiles), 1840472494U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_548622847(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_3506973689(TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::EnumInfo));

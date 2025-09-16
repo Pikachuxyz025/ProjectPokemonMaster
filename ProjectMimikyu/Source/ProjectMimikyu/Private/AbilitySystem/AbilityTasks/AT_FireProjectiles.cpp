@@ -8,8 +8,10 @@
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AbilitySystemComponent.h"
 #include <Kismet/KismetMathLibrary.h>
+#include "EQS/Subsystems/ThreatFieldSubsystem.h"
 #include <AbilitySystem/Abilities/ProjectileAbility.h>
 #include <AbilitySystem/PokemonProjectileTagLibrary.h>
+#include <EnvironmentQuery/EnvQueryManager.h>
 
 
 UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common)
@@ -22,6 +24,8 @@ UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Ta
 	Task->DamageEffectContextHandle = Common.DamageEffectContextHandle;
 	Task->DamageEffectParams = Common.DamageEffectParams;
 	Task->SourceActor = Common.SourceActor;
+	Task->TargetLocation = Common.TargetLocation;
+	Task->ActivationId = Common.ActivationId;
 
 	return Task;
 }
@@ -65,12 +69,23 @@ UAT_FireProjectiles* UAT_FireProjectiles::FireBurst(UGameplayAbility* OwningAbil
 
 UAT_FireProjectiles* UAT_FireProjectiles::FireEnvironmentDrop(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, const FEnvironmentDropParams& EnvDropParams)
 {
-	return nullptr;
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+
+	MyObj->SpreadMode = EProjectileSpreadMode::Drop;
+	MyObj->EnvDropParams = EnvDropParams;
+	return MyObj;
 }
 
 UAT_FireProjectiles* UAT_FireProjectiles::FireEnvironmentErupt(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, const FEnvironmentDropParams& EnvDropParams)
 {
-	return nullptr;
+	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
+	InitializeTask(MyObj, Common);
+	MyObj->bIsEruptMode = true;
+	MyObj->SpreadMode = EProjectileSpreadMode::Erupt;
+	MyObj->EnvDropParams = EnvDropParams;
+
+	return MyObj;
 }
 
 UAT_FireProjectiles* UAT_FireProjectiles::FireBeam(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common, float BeamDuration)
@@ -307,7 +322,29 @@ void UAT_FireProjectiles::HandleBeamBP_Implementation()
 
 void UAT_FireProjectiles::HandleEnvironmentalDropBP_Implementation()
 {
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
+	if (!SourceASC) return;
+	UThreatFieldSubsystem* ThreatSubsystem = SourceASC->GetWorld()->GetSubsystem<UThreatFieldSubsystem>();
+	if (!ThreatSubsystem) return;
+	TArray<FVector> DropLocations;
+
+	ThreatSubsystem->RegisterAreaCenter(SourceASC, ActivationId, TargetLocation, EnvDropParams.AreaRadius);
+
+	UEnvQueryInstanceBlueprintWrapper* Wrapper = UEnvQueryManager::RunEQSQuery(
+		GetWorld(),
+		EnvDropParams.DropPatternQuery,
+		SourceActor,
+		EEnvQueryRunMode::AllMatching,
+		UEnvQueryInstanceBlueprintWrapper::StaticClass());
+
+	if(Wrapper)
+	{
+		Wrapper->SetNamedParam("ActivationId", (float)ActivationId);
+	}
+
+	EndTask();
 }
+
 
 void UAT_FireProjectiles::HandleEnvironmentalEruptBP_Implementation()
 {

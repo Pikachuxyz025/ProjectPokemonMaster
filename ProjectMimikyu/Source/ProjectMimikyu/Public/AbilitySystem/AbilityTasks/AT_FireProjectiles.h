@@ -55,6 +55,9 @@ struct FProjectileBaseParams
 
 	UPROPERTY(BlueprintReadWrite)
 	AActor* SourceActor = nullptr;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 ActivationId = -1;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFireProjectileFinished);
@@ -206,6 +209,7 @@ private:
 	float BeamTime;
 	float DistanceToSphere = 0.f;
 	float SphereRadius = 0.f;
+	int32 ActivationId = -1;
 #pragma endregion
 
 
@@ -219,4 +223,8 @@ private:
 	bool bCancelled = false;
 	bool bIsEruptMode = false;
 	static UAT_FireProjectiles* InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common);
+	
+public:
+	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Ability|Tasks")
+	int32 GetActivationId() const { return ActivationId; }
 };

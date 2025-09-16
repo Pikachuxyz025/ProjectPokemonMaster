@@ -13,6 +13,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeCharacterTypes() {}
 
 // ********** Begin Cross Module References ********************************************************
+AIMODULE_API UClass* Z_Construct_UClass_UEnvQuery_NoRegister();
 COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FRotator();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
@@ -1605,6 +1606,10 @@ struct Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DropPatternQuery_MetaData[] = {
+		{ "Category", "EnvironmentDropParams" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AreaCenter_MetaData[] = {
 		{ "Category", "EnvironmentDropParams" },
 #if !UE_BUILD_SHIPPING
@@ -1714,6 +1719,7 @@ struct Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics
 #endif
 	};
 #endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_DropPatternQuery;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_AreaCenter;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_AreaRadius;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_LandingPattern_Underlying;
@@ -1747,6 +1753,7 @@ struct Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics
 	}
 	static const UECodeGen_Private::FStructParams StructParams;
 };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_DropPatternQuery = { "DropPatternQuery", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, DropPatternQuery), Z_Construct_UClass_UEnvQuery_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DropPatternQuery_MetaData), NewProp_DropPatternQuery_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaCenter = { "AreaCenter", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, AreaCenter), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AreaCenter_MetaData), NewProp_AreaCenter_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaRadius = { "AreaRadius", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, AreaRadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AreaRadius_MetaData), NewProp_AreaRadius_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
@@ -1786,6 +1793,7 @@ const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnviron
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints_Inner = { "CachedLandingPoints", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_CachedLandingPoints = { "CachedLandingPoints", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, CachedLandingPoints), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedLandingPoints_MetaData), NewProp_CachedLandingPoints_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_DropPatternQuery,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaCenter,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_AreaRadius,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_LandingPattern_Underlying,
@@ -2717,7 +2725,7 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FPokemonTypeInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics::NewStructOps, TEXT("PokemonTypeInfo"), &Z_Registration_Info_UScriptStruct_FPokemonTypeInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonTypeInfo), 2060910304U) },
 		{ FPokemonMoveChart::StaticStruct, Z_Construct_UScriptStruct_FPokemonMoveChart_Statics::NewStructOps, TEXT("PokemonMoveChart"), &Z_Registration_Info_UScriptStruct_FPokemonMoveChart, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonMoveChart), 629707317U) },
 		{ FProjectileTagContainer::StaticStruct, Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewStructOps, TEXT("ProjectileTagContainer"), &Z_Registration_Info_UScriptStruct_FProjectileTagContainer, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileTagContainer), 2774933828U) },
-		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"), &Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 3080430868U) },
+		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"), &Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 2241419204U) },
 		{ FTypeChartMatchup::StaticStruct, Z_Construct_UScriptStruct_FTypeChartMatchup_Statics::NewStructOps, TEXT("TypeChartMatchup"), &Z_Registration_Info_UScriptStruct_FTypeChartMatchup, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTypeChartMatchup), 1633721586U) },
 		{ FPokemonUIInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonUIInfo_Statics::NewStructOps, TEXT("PokemonUIInfo"), &Z_Registration_Info_UScriptStruct_FPokemonUIInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonUIInfo), 595581161U) },
 		{ FPokemonInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewStructOps, TEXT("PokemonInfo"), &Z_Registration_Info_UScriptStruct_FPokemonInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInfo), 376880542U) },
@@ -2729,7 +2737,7 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"), &Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 999394668U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_2563131973(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_1952234861(TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo));

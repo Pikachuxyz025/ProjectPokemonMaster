@@ -387,6 +387,18 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Context\EnvQueryContext_AreaCenter.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Context\EnvQueryContext_ThreatImpacts.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Generators\EnvQueryGenerator_ImpactPattern.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Subsystems\ThreatFieldSubsystem.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -563,6 +575,10 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\TagCategoryDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_AreaCenter.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_ThreatImpacts.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Generators\EnvQueryGenerator_ImpactPattern.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Subsystems\ThreatFieldSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\MyInputTriggerComboAction.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\PokemonInputComponent.h"/>

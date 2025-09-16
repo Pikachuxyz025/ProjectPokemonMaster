@@ -209,6 +209,30 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataTables</Filter>
     </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\EQS">
+      <UniqueIdentifier>{64BE5B82-71AB-3CFE-8FC8-157FBFD990C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ProjectMimikyu\Private\EQS\Context">
+      <UniqueIdentifier>{49AA3CB4-4764-364B-80C1-1D552D370599}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Context\EnvQueryContext_AreaCenter.cpp">
+      <Filter>Source\ProjectMimikyu\Private\EQS\Context</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Context\EnvQueryContext_ThreatImpacts.cpp">
+      <Filter>Source\ProjectMimikyu\Private\EQS\Context</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\EQS\Generators">
+      <UniqueIdentifier>{081B6D50-AB8B-3978-A720-4CE752B3730F}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Generators\EnvQueryGenerator_ImpactPattern.cpp">
+      <Filter>Source\ProjectMimikyu\Private\EQS\Generators</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\EQS\Subsystems">
+      <UniqueIdentifier>{96B165B7-2916-3786-987C-511D4A6EFFCB}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Subsystems\ThreatFieldSubsystem.cpp">
+      <Filter>Source\ProjectMimikyu\Private\EQS\Subsystems</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\GameModes">
       <UniqueIdentifier>{05188F29-74AD-362B-BADC-0642682747C8}</UniqueIdentifier>
     </Filter>
@@ -529,6 +553,30 @@
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h">
       <Filter>Source\ProjectMimikyu\Public\DataTables</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\EQS">
+      <UniqueIdentifier>{558D9E79-558A-35AC-825F-E9353CC03E1D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ProjectMimikyu\Public\EQS\Context">
+      <UniqueIdentifier>{135D30AA-54FB-3E0A-8538-CA923CB59997}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_AreaCenter.h">
+      <Filter>Source\ProjectMimikyu\Public\EQS\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_ThreatImpacts.h">
+      <Filter>Source\ProjectMimikyu\Public\EQS\Context</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\EQS\Generators">
+      <UniqueIdentifier>{590EBA99-CB99-367C-9E35-2DFB1F3D7755}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Generators\EnvQueryGenerator_ImpactPattern.h">
+      <Filter>Source\ProjectMimikyu\Public\EQS\Generators</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\EQS\Subsystems">
+      <UniqueIdentifier>{5B7BD8C1-365D-34EE-8A6A-5857164748F8}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Subsystems\ThreatFieldSubsystem.h">
+      <Filter>Source\ProjectMimikyu\Public\EQS\Subsystems</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\GameModes">
       <UniqueIdentifier>{D3EB2469-F7A7-3AE1-947A-22FE6EEF75D9}</UniqueIdentifier>

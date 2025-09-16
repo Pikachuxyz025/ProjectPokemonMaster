@@ -9,6 +9,8 @@ using namespace UP;
 class UPokemonMoveDataAsset;
 class UPokemonDataAsset;
 class APokemon_Parent;
+class UEnvQuery;
+
 #pragma region Enums
 UENUM(BlueprintType)
 enum class EGenderType :uint8
@@ -325,6 +327,10 @@ USTRUCT(BlueprintType)
 struct FEnvironmentDropParams
 {
 	GENERATED_BODY()
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UEnvQuery* DropPatternQuery = nullptr;
 
 	// Area Selection
 	UPROPERTY(BlueprintReadWrite)
