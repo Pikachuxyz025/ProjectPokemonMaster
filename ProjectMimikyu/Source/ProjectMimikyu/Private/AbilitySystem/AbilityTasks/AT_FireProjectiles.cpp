@@ -30,6 +30,67 @@ UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Ta
 	return Task;
 }
 
+void UAT_FireProjectiles::SetParam(UEnvQueryInstanceBlueprintWrapper* Wrapper, const TCHAR* Name, float Value)
+{
+	if (Wrapper)
+	{
+		Wrapper->SetNamedParam(Name, Value);
+	}
+}
+
+void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapper, EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success) { EndTask(); return; }
+
+	// 1) Pull + cache all landing points
+	TArray<FVector> AllPoints;
+	Wrapper->GetQueryResultsAsLocations(AllPoints);
+	if (AllPoints.Num() == 0) { EndTask(); return; }
+
+	// Respect NumProjectiles
+	if (EnvDropParams.NumProjectiles > 0 && AllPoints.Num() > EnvDropParams.NumProjectiles)
+	{
+		AllPoints.SetNum(EnvDropParams.NumProjectiles,/*bAllowShrinking*/false);
+	}
+	EnvDropParams.CachedLandingPoints = AllPoints;
+
+
+	// 2) For Each Wave, ask the Tag Library how many to take and fire them
+	// Slice into waves
+	const int32 Waves = FMath::Max(1, EnvDropParams.NumWaves);
+	const float WaveIntervals = FMath::Max(0.f, EnvDropParams.TimeBetweenWaves);
+
+	// Schedule waves like your sequential tick (wave 0 now, others via timer)
+	auto FireWave = [this](int32 WaveIndex)
+		{
+
+		};
+
+	FireWave(0);
+
+	for (int32 i = 1; i < Waves; ++i)
+	{
+		FTimerHandle WaveTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(
+			WaveTimerHandle,
+			FTimerDelegate::CreateWeakLambda(this, [this, FireWave, i]()
+				{
+					if ((!this || bCancelled)) return;
+					FireWave(i);
+					if (i == (FMath::Max(1, EnvDropParams.NumWaves) - 1))
+					{
+						EndTask();
+					}}),
+			WaveIntervals * i,
+			false);
+	}
+
+	if (Waves == 1)
+	{
+		EndTask();
+	}
+}
+
 UAT_FireProjectiles* UAT_FireProjectiles::FireSingle(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common)
 {
 	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
@@ -213,6 +274,56 @@ void UAT_FireProjectiles::FireSequentialShot(int32 ShotIndex)
 
 }
 
+void UAT_FireProjectiles::ScheduleWave(int32 WaveIndex)
+{
+}
+
+void UAT_FireProjectiles::FireWave(int32 WaveIndex)
+{
+	int32 PointsThisWave = 0;
+	UPokemonProjectileTagLibrary::ComputeLandingPoints(CategoryTags, EnvDropParams, WaveIndex, PointsThisWave);
+
+	// Basic round-robin slice from the cached points
+	// Example: index stride = Waves; start at Waveindex, step by Waves
+	int32 Emitted = 0;
+	for (int32 i = WaveIndex; i < EnvDropParams.CachedLandingPoints.Num() && Emitted < PointsThisWave; i += FMath::Max(1, EnvDropParams.NumWaves))
+	{
+		const FVector& LandingPoint = EnvDropParams.CachedLandingPoints[i];
+
+		// 3) Ask the Tag Library for spawn transform + initial velocity
+		FTransform SpawnTransform;
+		FVector InitialVelocity = FVector::ZeroVector;
+		UPokemonProjectileTagLibrary::ComputeDropSpawn(EnvDropParams, LandingPoint, SpawnTransform, InitialVelocity);
+
+		// 4) Spawn projectile with your exisiting GE wiring
+		if (!ProjectileClass || !SourceActor) continue;
+		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
+		if (!SourceASC) continue;
+
+		AProjectileAttack* NewProjectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
+			ProjectileClass,
+			SpawnTransform,
+			SourceActor,
+			Cast<APawn>(SourceActor),
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+
+		if (!NewProjectile) continue;
+
+		NewProjectile->GetSphereComponent()->IgnoreActorWhenMoving(SourceActor, true);
+		DamageEffectContextHandle.AddSourceObject(NewProjectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(NewProjectile);
+		DamageEffectContextHandle.AddActors(Actors);
+
+		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
+
+		NewProjectile->DamageEffectSpecHandle = SpecHandle;
+		NewProjectile->DamageEffectParams = DamageEffectParams;
+		NewProjectile->FinishSpawning(SpawnTransform);
+		++Emitted;
+	}
+}
+
 void UAT_FireProjectiles::HandleSequentialTick()
 {
 	if (bCancelled) { EndTask(); return; }
@@ -324,9 +435,8 @@ void UAT_FireProjectiles::HandleEnvironmentalDropBP_Implementation()
 {
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
 	if (!SourceASC) return;
-	UThreatFieldSubsystem* ThreatSubsystem = SourceASC->GetWorld()->GetSubsystem<UThreatFieldSubsystem>();
+	ThreatSubsystem = SourceASC->GetWorld()->GetSubsystem<UThreatFieldSubsystem>();
 	if (!ThreatSubsystem) return;
-	TArray<FVector> DropLocations;
 
 	ThreatSubsystem->RegisterAreaCenter(SourceASC, ActivationId, TargetLocation, EnvDropParams.AreaRadius);
 
@@ -339,7 +449,24 @@ void UAT_FireProjectiles::HandleEnvironmentalDropBP_Implementation()
 
 	if(Wrapper)
 	{
-		Wrapper->SetNamedParam("ActivationId", (float)ActivationId);
+		// Core
+		SetParam(Wrapper, TEXT("ActivationId"), float(ActivationId));
+		SetParam(Wrapper, TEXT("AreaRadius"), EnvDropParams.AreaRadius);
+		SetParam(Wrapper, TEXT("LandingPattern"), float(int32(EnvDropParams.LandingPattern)));
+
+		// Pattern knobs driven from your struct (use if your generator reads them)
+		SetParam(Wrapper, TEXT("RingPointCount"), float(EnvDropParams.NumProjectiles));
+		SetParam(Wrapper, TEXT("ScatterCount"), float(EnvDropParams.NumProjectiles));
+		// Optional, if you later add: PatternYawDeg / MinSeparation / GridX / GridY / CellSize
+
+		// Behavior (the task will read from EnvDropParams, these are here in case you drive generator/tests)
+		SetParam(Wrapper, TEXT("Waves"), float(EnvDropParams.NumWaves));
+		SetParam(Wrapper, TEXT("WaveInterval"), EnvDropParams.TimeBetweenWaves);
+		SetParam(Wrapper, TEXT("WarnTime"), EnvDropParams.WarningTime);
+
+		// Finish -> our handler
+		Wrapper->GetOnQueryFinishedEvent().AddDynamic(this, &UAT_FireProjectiles::OnEQSFinished);
+		return; // wait for callback
 	}
 
 	EndTask();

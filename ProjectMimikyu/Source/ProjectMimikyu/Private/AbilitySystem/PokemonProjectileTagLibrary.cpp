@@ -138,9 +138,59 @@ FRotator UPokemonProjectileTagLibrary::GetScatterSphereRotation(const FVector& S
 
 void UPokemonProjectileTagLibrary::ComputeLandingPoints(const FGameplayTagContainer& ResolvedTags, FEnvironmentDropParams& DropParams, int32 WaveIndex, int32& OutPointsForThisWave)
 {
+	OutPointsForThisWave = 0;
+	const int32 Total = DropParams.CachedLandingPoints.Num();
+	if (Total <= 0) return;
+
+	const int32 Waves = FMath::Max(1, DropParams.NumWaves);
+
+	// Base: event distribution (ceil so early waves don't starve)
+	const int32 BasePerWave = FMath::CeilToInt((float)FMath::Max(1,DropParams.NumProjectiles) / (float)Waves);
+
+	// Example: allow tags/patterns to override counts if you want
+	// (e.g., cones fire fewer but wider points per wave, scatter fires more)
+	// FPokemonGameplayTags G = FPokemonGameplayTags::Get();
+	// if (ResolvedTags.HasTagExact(G.PokemonMoves_Spread_Projectile_Cone)) { ... }
+
+	OutPointsForThisWave = FMath::Clamp(BasePerWave, 1,Total);
 }
 
 void UPokemonProjectileTagLibrary::ComputeDropSpawn(const FEnvironmentDropParams& DropParams, const FVector& LandingPoint, FTransform& OutSpawnTM, FVector& OutInitialVelocity)
 {
+	const  FVector Impact = LandingPoint;
+
+	auto ComputeSpawnAbove = [&]() -> float
+		{
+			switch (DropParams.SpawnHeightMode)
+			{
+			case EEnvironmentSpawnHeightMode::ESHM_None:
+				// Interpret As Spawn above impact by SpawnHeight value
+				return Impact.Z + DropParams.SpawnHeight;
+
+				// If you add Absolute / Relative variants later, fill them here:
+			   // case EEnvironmentSpawnHeightMode::ESHM_AbsoluteWorldZ: return DropParams.SpawnHeight;
+			   // case EEnvironmentSpawnHeightMode::ESHM_RelativeToCenter: return DropParams.AreaCenter.Z
+
+			default:
+				return Impact.Z + DropParams.SpawnHeight;
+			}
+
+		};
+	
+	const FVector SpawnLoc(Impact.X, Impact.Y, ComputeSpawnAbove());
+
+	// Face The Impact Point
+	const FRotator SpawnRotation = (Impact - SpawnLoc).Rotation();
+	OutSpawnTM = FTransform(SpawnRotation, SpawnLoc);
+
+	// Striaght-line Veocity towards impact using InitialSpeed (task can ignore if projectile handles it's own motion)
+	OutInitialVelocity = FVector::ZeroVector;
+	if(DropParams.InitialSpeed > 0.f)
+	{
+		const FVector Dir = (Impact - SpawnLoc).GetSafeNormal();
+		OutInitialVelocity = Dir * DropParams.InitialSpeed;
+	}
+
+	// If you later want real ballistic arcs: compute launch vector from height, gravity and initial speed here
 }
 

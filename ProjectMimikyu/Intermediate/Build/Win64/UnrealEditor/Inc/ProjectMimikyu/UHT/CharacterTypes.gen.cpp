@@ -1278,22 +1278,36 @@ struct Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "ESHM_CeilingTracePlus.DisplayName", "CeilingTracePlus" },
-		{ "ESHM_CeilingTracePlus.Name", "EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus" },
-		{ "ESHM_FixedWorldZ.DisplayName", "FixedWorldZ" },
-		{ "ESHM_FixedWorldZ.Name", "EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ" },
+		{ "ESHM_AbsoluteWorldZ.DisplayName", "AbsoluteWorldZ" },
+		{ "ESHM_AbsoluteWorldZ.Name", "EEnvironmentSpawnHeightMode::ESHM_AbsoluteWorldZ" },
+		{ "ESHM_MatchImpactZ.Comment", "// Find ground Z by trace; Spawn at ground+SpawnHeightValue\n" },
+		{ "ESHM_MatchImpactZ.DisplayName", "MatchImpactZ" },
+		{ "ESHM_MatchImpactZ.Name", "EEnvironmentSpawnHeightMode::ESHM_MatchImpactZ" },
+		{ "ESHM_MatchImpactZ.ToolTip", "Find ground Z by trace; Spawn at ground+SpawnHeightValue" },
 		{ "ESHM_None.DisplayName", "None" },
 		{ "ESHM_None.Name", "EEnvironmentSpawnHeightMode::ESHM_None" },
-		{ "ESHM_SkyClamp.DisplayName", "SkyClamp" },
-		{ "ESHM_SkyClamp.Name", "EEnvironmentSpawnHeightMode::ESHM_SkyClamp" },
+		{ "ESHM_RelativeToCenter.Comment", "// Spawn at Z = SpawnHeightValue\n" },
+		{ "ESHM_RelativeToCenter.DisplayName", "RelativeToCenter" },
+		{ "ESHM_RelativeToCenter.Name", "EEnvironmentSpawnHeightMode::ESHM_RelativeToCenter" },
+		{ "ESHM_RelativeToCenter.ToolTip", "Spawn at Z = SpawnHeightValue" },
+		{ "ESHM_RelativeToQuerier.Comment", "// Spawn at Center.Z + SpawnHeightValue\n" },
+		{ "ESHM_RelativeToQuerier.DisplayName", "RelativeToQuerier" },
+		{ "ESHM_RelativeToQuerier.Name", "EEnvironmentSpawnHeightMode::ESHM_RelativeToQuerier" },
+		{ "ESHM_RelativeToQuerier.ToolTip", "Spawn at Center.Z + SpawnHeightValue" },
+		{ "ESHM_TraceFromSky.Comment", "// Spawn at Querier.Z + SpawnHeightValue\n" },
+		{ "ESHM_TraceFromSky.DisplayName", "TraceFromSky" },
+		{ "ESHM_TraceFromSky.Name", "EEnvironmentSpawnHeightMode::ESHM_TraceFromSky" },
+		{ "ESHM_TraceFromSky.ToolTip", "Spawn at Querier.Z + SpawnHeightValue" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
 #endif // WITH_METADATA
 	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
 		{ "EEnvironmentSpawnHeightMode::ESHM_None", (int64)EEnvironmentSpawnHeightMode::ESHM_None },
-		{ "EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ", (int64)EEnvironmentSpawnHeightMode::ESHM_FixedWorldZ },
-		{ "EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus", (int64)EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus },
-		{ "EEnvironmentSpawnHeightMode::ESHM_SkyClamp", (int64)EEnvironmentSpawnHeightMode::ESHM_SkyClamp },
+		{ "EEnvironmentSpawnHeightMode::ESHM_AbsoluteWorldZ", (int64)EEnvironmentSpawnHeightMode::ESHM_AbsoluteWorldZ },
+		{ "EEnvironmentSpawnHeightMode::ESHM_RelativeToCenter", (int64)EEnvironmentSpawnHeightMode::ESHM_RelativeToCenter },
+		{ "EEnvironmentSpawnHeightMode::ESHM_RelativeToQuerier", (int64)EEnvironmentSpawnHeightMode::ESHM_RelativeToQuerier },
+		{ "EEnvironmentSpawnHeightMode::ESHM_TraceFromSky", (int64)EEnvironmentSpawnHeightMode::ESHM_TraceFromSky },
+		{ "EEnvironmentSpawnHeightMode::ESHM_MatchImpactZ", (int64)EEnvironmentSpawnHeightMode::ESHM_MatchImpactZ },
 	};
 	static const UECodeGen_Private::FEnumParams EnumParams;
 };
@@ -1769,7 +1783,7 @@ const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnviron
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_WarningTime = { "WarningTime", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, WarningTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WarningTime_MetaData), NewProp_WarningTime_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_ImpactAOERadius = { "ImpactAOERadius", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, ImpactAOERadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ImpactAOERadius_MetaData), NewProp_ImpactAOERadius_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode = { "SpawnHeightMode", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, SpawnHeightMode), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnHeightMode_MetaData), NewProp_SpawnHeightMode_MetaData) }; // 1985865126
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeightMode = { "SpawnHeightMode", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, SpawnHeightMode), Z_Construct_UEnum_ProjectMimikyu_EEnvironmentSpawnHeightMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnHeightMode_MetaData), NewProp_SpawnHeightMode_MetaData) }; // 3466321289
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_SpawnHeight = { "SpawnHeight", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FEnvironmentDropParams, SpawnHeight), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnHeight_MetaData), NewProp_SpawnHeight_MetaData) };
 void Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewProp_bUseGravity_SetBit(void* Obj)
 {
@@ -2718,14 +2732,14 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ ESlotType_StaticEnum, TEXT("ESlotType"), &Z_Registration_Info_UEnum_ESlotType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2085859743U) },
 		{ EPokemonState_StaticEnum, TEXT("EPokemonState"), &Z_Registration_Info_UEnum_EPokemonState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3493861700U) },
 		{ EEnvironmentLandingPattern_StaticEnum, TEXT("EEnvironmentLandingPattern"), &Z_Registration_Info_UEnum_EEnvironmentLandingPattern, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1485142758U) },
-		{ EEnvironmentSpawnHeightMode_StaticEnum, TEXT("EEnvironmentSpawnHeightMode"), &Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1985865126U) },
+		{ EEnvironmentSpawnHeightMode_StaticEnum, TEXT("EEnvironmentSpawnHeightMode"), &Z_Registration_Info_UEnum_EEnvironmentSpawnHeightMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3466321289U) },
 		{ EEnvironmentFallDirection_StaticEnum, TEXT("EEnvironmentFallDirection"), &Z_Registration_Info_UEnum_EEnvironmentFallDirection, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 942945988U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FPokemonTypeInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics::NewStructOps, TEXT("PokemonTypeInfo"), &Z_Registration_Info_UScriptStruct_FPokemonTypeInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonTypeInfo), 2060910304U) },
 		{ FPokemonMoveChart::StaticStruct, Z_Construct_UScriptStruct_FPokemonMoveChart_Statics::NewStructOps, TEXT("PokemonMoveChart"), &Z_Registration_Info_UScriptStruct_FPokemonMoveChart, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonMoveChart), 629707317U) },
 		{ FProjectileTagContainer::StaticStruct, Z_Construct_UScriptStruct_FProjectileTagContainer_Statics::NewStructOps, TEXT("ProjectileTagContainer"), &Z_Registration_Info_UScriptStruct_FProjectileTagContainer, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileTagContainer), 2774933828U) },
-		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"), &Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 2241419204U) },
+		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"), &Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 55909144U) },
 		{ FTypeChartMatchup::StaticStruct, Z_Construct_UScriptStruct_FTypeChartMatchup_Statics::NewStructOps, TEXT("TypeChartMatchup"), &Z_Registration_Info_UScriptStruct_FTypeChartMatchup, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTypeChartMatchup), 1633721586U) },
 		{ FPokemonUIInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonUIInfo_Statics::NewStructOps, TEXT("PokemonUIInfo"), &Z_Registration_Info_UScriptStruct_FPokemonUIInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonUIInfo), 595581161U) },
 		{ FPokemonInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewStructOps, TEXT("PokemonInfo"), &Z_Registration_Info_UScriptStruct_FPokemonInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInfo), 376880542U) },
@@ -2737,7 +2751,7 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"), &Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 999394668U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_1952234861(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_3163538670(TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::EnumInfo));

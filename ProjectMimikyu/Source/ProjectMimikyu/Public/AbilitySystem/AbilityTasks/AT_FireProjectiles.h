@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "Characters/CharacterTypes.h"
+#include "EnvironmentQuery/EnvQueryTypes.h"
 #include <PokemonAbilityTypes.h>
 #include "AT_FireProjectiles.generated.h"
 
 
 class AProjectileAttack;
 class UGameplayEffect;
+class UEnvQueryInstanceBlueprintWrapper;
+class UThreatFieldSubsystem;
 
 UENUM(BlueprintType)
 enum class EProjectileSpreadMode : uint8
@@ -187,6 +190,8 @@ protected:
 	
 	void FireOneProjectile(const FRotator& NewRotation);
 	void FireSequentialShot(int32 ShotIndex);
+	void LaunchWave(int32 WaveIndex);
+	void FireWave(int32 WaveIndex);
 	void HandleSequentialTick();
 
 private:
@@ -198,6 +203,7 @@ private:
 	FVector SpawnLocation;
 	FVector TargetLocation;
 	FRotator BaseRotation;
+	TArray<TArray<FVector>> WavePoints;
 	AActor* SourceActor;
 	FGameplayEffectContextHandle DamageEffectContextHandle;
 	FDamageEffectParams DamageEffectParams;
@@ -210,14 +216,15 @@ private:
 	float DistanceToSphere = 0.f;
 	float SphereRadius = 0.f;
 	int32 ActivationId = -1;
+	int32 CurrentWaveIndex = 0;
 #pragma endregion
 
 
 	FTimerHandle SequentialTimerHandle;
+	FTimerHandle WaveTimerHandle;
 
-
-
-	//int32 AbilityLevel;
+	UPROPERTY()
+	TObjectPtr<UThreatFieldSubsystem> ThreatSubsystem = nullptr;
 
 	int32 ProjectilesFired = 0;
 	bool bCancelled = false;
@@ -227,4 +234,9 @@ private:
 public:
 	UFUNCTION(BlueprintCallable,BlueprintPure, Category = "Ability|Tasks")
 	int32 GetActivationId() const { return ActivationId; }
+
+private:
+	static void SetParam(UEnvQueryInstanceBlueprintWrapper* Wrapper, const TCHAR* Name, float Value);
+
+    void OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapper, EEnvQueryStatus::Type QueryStatus);
 };

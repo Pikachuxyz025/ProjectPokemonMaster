@@ -222,21 +222,23 @@ enum class EPokemonState :uint8
 UENUM(BlueprintType)
 enum class EEnvironmentLandingPattern : uint8
 {
-	EELP_None UMETA(DisplayName = "None"),
-	EELP_RandonInRadius UMETA(DisplayName = "RandomInRadius"),
-	EELP_Grid UMETA(DisplayName = "Grid"),
-	EELP_Line UMETA(DisplayName = "Line"),
-	EELP_Circle UMETA(DisplayName = "Circle"),
-	EELP_TargetedDrop UMETA(DisplayName = "TargetedDrop")
+	EELP_None = 0 UMETA(DisplayName = "None"),
+	EELP_RandonInRadius = 1 UMETA(DisplayName = "RandomInRadius"),
+	EELP_Grid = 2 UMETA(DisplayName = "Grid"),
+	EELP_Line = 3 UMETA(DisplayName = "Line"),
+	EELP_Circle = 4 UMETA(DisplayName = "Circle"),
+	EELP_TargetedDrop = 5 UMETA(DisplayName = "TargetedDrop")
 };
 
 UENUM(BlueprintType)
 enum class EEnvironmentSpawnHeightMode : uint8
 {
-	ESHM_None UMETA(DisplayName = "None"),
-	ESHM_FixedWorldZ UMETA(DisplayName = "FixedWorldZ"),
-	ESHM_CeilingTracePlus UMETA(DisplayName = "CeilingTracePlus"),
-	ESHM_SkyClamp UMETA(DisplayName = "SkyClamp")
+	ESHM_None = 0 UMETA(DisplayName = "None"),
+	ESHM_AbsoluteWorldZ = 1 UMETA(DisplayName = "AbsoluteWorldZ"),     // Spawn at Z = SpawnHeightValue
+	ESHM_RelativeToCenter = 2 UMETA(DisplayName = "RelativeToCenter"),   // Spawn at Center.Z + SpawnHeightValue
+	ESHM_RelativeToQuerier = 3 UMETA(DisplayName = "RelativeToQuerier"),  // Spawn at Querier.Z + SpawnHeightValue
+	ESHM_TraceFromSky = 4 UMETA(DisplayName = "TraceFromSky"),       // Find ground Z by trace; Spawn at ground+SpawnHeightValue
+	ESHM_MatchImpactZ = 5 UMETA(DisplayName = "MatchImpactZ")        // Spawn exactly at impact Z (no ballistic arc)
 };
 
 UENUM(BlueprintType)
@@ -364,7 +366,7 @@ struct FEnvironmentDropParams
 
 	// Height / Falling
 UPROPERTY(BlueprintReadWrite)
-	EEnvironmentSpawnHeightMode SpawnHeightMode = EEnvironmentSpawnHeightMode::ESHM_CeilingTracePlus;
+	EEnvironmentSpawnHeightMode SpawnHeightMode = EEnvironmentSpawnHeightMode::ESHM_None;
 	UPROPERTY(BlueprintReadWrite)
 	float SpawnHeight = 1000.f;
 	UPROPERTY(BlueprintReadWrite)
