@@ -7,13 +7,15 @@
 #include "Characters/CharacterTypes.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include <PokemonAbilityTypes.h>
+#include <EQS/Subsystems/ThreatFieldSubsystem.h>
 #include "AT_FireProjectiles.generated.h"
+
 
 
 class AProjectileAttack;
 class UGameplayEffect;
 class UEnvQueryInstanceBlueprintWrapper;
-class UThreatFieldSubsystem;
+//class UThreatFieldSubsystem;
 
 UENUM(BlueprintType)
 enum class EProjectileSpreadMode : uint8
@@ -190,8 +192,8 @@ protected:
 	
 	void FireOneProjectile(const FRotator& NewRotation);
 	void FireSequentialShot(int32 ShotIndex);
-	void LaunchWave(int32 WaveIndex);
-	void FireWave(int32 WaveIndex);
+	void ScheduleWave(int32 WaveIndex);
+	void ReleaseSingleDropImpact(const FThreatEntry& ThreatEntry);
 	void HandleSequentialTick();
 
 private:
@@ -223,8 +225,12 @@ private:
 	FTimerHandle SequentialTimerHandle;
 	FTimerHandle WaveTimerHandle;
 
+	TArray<TArray<FThreatEntry>>ScheduledWaves;
+
 	UPROPERTY()
 	TObjectPtr<UThreatFieldSubsystem> ThreatSubsystem = nullptr;
+
+	TWeakObjectPtr<UAbilitySystemComponent> OwnerASC = nullptr;
 
 	int32 ProjectilesFired = 0;
 	bool bCancelled = false;
@@ -239,4 +245,9 @@ private:
 	static void SetParam(UEnvQueryInstanceBlueprintWrapper* Wrapper, const TCHAR* Name, float Value);
 
     void OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapper, EEnvQueryStatus::Type QueryStatus);
+
+	float TraceToGroundZ(const FVector& XY, float FallBackZ) const;
+
+	FVector ProjectToNavMesh(const FVector& InLocation) const;
+	void SpawnTelegraph(const FVector& Location, float Radius);
 };

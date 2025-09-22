@@ -60,6 +60,9 @@ struct Z_Construct_UEnum_ProjectMimikyu_EProjectileSpreadMode_Statics
 		{ "BlueprintType", "true" },
 		{ "Burst.DisplayName", "Burst" },
 		{ "Burst.Name", "EProjectileSpreadMode::Burst" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//class UThreatFieldSubsystem;\n" },
+#endif
 		{ "Drop.DisplayName", "Drop" },
 		{ "Drop.Name", "EProjectileSpreadMode::Drop" },
 		{ "Erupt.DisplayName", "Erupt" },
@@ -71,6 +74,9 @@ struct Z_Construct_UEnum_ProjectMimikyu_EProjectileSpreadMode_Statics
 		{ "SingleShot.Name", "EProjectileSpreadMode::SingleShot" },
 		{ "Spread.DisplayName", "Spread" },
 		{ "Spread.Name", "EProjectileSpreadMode::Spread" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "class UThreatFieldSubsystem;" },
+#endif
 	};
 #endif // WITH_METADATA
 	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
@@ -618,7 +624,7 @@ struct Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_OwningAbility = { "OwningAbility", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, OwningAbility), Z_Construct_UClass_UGameplayAbility_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_TaskInstanceName = { "TaskInstanceName", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, TaskInstanceName), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_SpreadMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_SpreadMode = { "SpreadMode", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, SpreadMode), Z_Construct_UEnum_ProjectMimikyu_EProjectileSpreadMode, METADATA_PARAMS(0, nullptr) }; // 3904578267
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_SpreadMode = { "SpreadMode", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, SpreadMode), Z_Construct_UEnum_ProjectMimikyu_EProjectileSpreadMode, METADATA_PARAMS(0, nullptr) }; // 924665453
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_ProjectileClass = { "ProjectileClass", nullptr, (EPropertyFlags)0x0014000000000080, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, ProjectileClass), Z_Construct_UClass_UClass, Z_Construct_UClass_AProjectileAttack_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_DamageEffectClass = { "DamageEffectClass", nullptr, (EPropertyFlags)0x0014000000000080, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, DamageEffectClass), Z_Construct_UClass_UClass, Z_Construct_UClass_UGameplayEffect_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles_Statics::NewProp_DamageEffectContextHandle = { "DamageEffectContextHandle", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AT_FireProjectiles_eventFireProjectiles_Parms, DamageEffectContextHandle), Z_Construct_UScriptStruct_FGameplayEffectContextHandle, METADATA_PARAMS(0, nullptr) }; // 3810495857
@@ -1261,7 +1267,7 @@ struct Z_Construct_UClass_UAT_FireProjectiles_Statics
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireBurst, "FireBurst" }, // 498608174
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentDrop, "FireEnvironmentDrop" }, // 742087319
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireEnvironmentErupt, "FireEnvironmentErupt" }, // 3709252491
-		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles, "FireProjectiles" }, // 4061797710
+		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireProjectiles, "FireProjectiles" }, // 1820403907
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSequential, "FireSequential" }, // 2366334326
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_FireSingle, "FireSingle" }, // 2027144418
 		{ &Z_Construct_UFunction_UAT_FireProjectiles_GetActivationId, "GetActivationId" }, // 723447120
@@ -1323,16 +1329,16 @@ UAT_FireProjectiles::~UAT_FireProjectiles() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
-		{ EProjectileSpreadMode_StaticEnum, TEXT("EProjectileSpreadMode"), &Z_Registration_Info_UEnum_EProjectileSpreadMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3904578267U) },
+		{ EProjectileSpreadMode_StaticEnum, TEXT("EProjectileSpreadMode"), &Z_Registration_Info_UEnum_EProjectileSpreadMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 924665453U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FProjectileBaseParams::StaticStruct, Z_Construct_UScriptStruct_FProjectileBaseParams_Statics::NewStructOps, TEXT("ProjectileBaseParams"), &Z_Registration_Info_UScriptStruct_FProjectileBaseParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FProjectileBaseParams), 3543477808U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UAT_FireProjectiles, UAT_FireProjectiles::StaticClass, TEXT("UAT_FireProjectiles"), &Z_Registration_Info_UClass_UAT_FireProjectiles, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAT_FireProjectiles), 3827018788U) },
+		{ Z_Construct_UClass_UAT_FireProjectiles, UAT_FireProjectiles::StaticClass, TEXT("UAT_FireProjectiles"), &Z_Registration_Info_UClass_UAT_FireProjectiles, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UAT_FireProjectiles), 2524704754U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_2508757907(TEXT("/Script/ProjectMimikyu"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_3938186815(TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_AbilityTasks_AT_FireProjectiles_h__Script_ProjectMimikyu_Statics::EnumInfo));

@@ -12,6 +12,7 @@
 #include <AbilitySystem/Abilities/ProjectileAbility.h>
 #include <AbilitySystem/PokemonProjectileTagLibrary.h>
 #include <EnvironmentQuery/EnvQueryManager.h>
+#include <NavigationSystem.h>
 
 
 UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common)
@@ -38,6 +39,18 @@ void UAT_FireProjectiles::SetParam(UEnvQueryInstanceBlueprintWrapper* Wrapper, c
 	}
 }
 
+void UAT_FireProjectiles::SpawnTelegraph(const FVector& Location, float Radius)
+{
+	// Example: Spawn a warning ring decal at the given location and radius.
+	// You can replace this with your own VFX logic.
+#if WITH_EDITOR
+							// Editor-only: Draw debug sphere for visualization
+	DrawDebugSphere(GetWorld(), Location, Radius, 32, FColor::Yellow, false, 2.0f);
+#else
+							// TODO: Implement actual telegraph VFX spawning here (e.g., Niagara, Decal, etc.)
+#endif
+}
+
 void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapper, EEnvQueryStatus::Type QueryStatus)
 {
 	if (QueryStatus != EEnvQueryStatus::Success) { EndTask(); return; }
@@ -56,30 +69,92 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 
 
 	// 2) For Each Wave, ask the Tag Library how many to take and fire them
-	// Slice into waves
+	// Slice into waves (round Robin)
 	const int32 Waves = FMath::Max(1, EnvDropParams.NumWaves);
+	WavePoints.SetNum(Waves);
 	const float WaveIntervals = FMath::Max(0.f, EnvDropParams.TimeBetweenWaves);
 
-	// Schedule waves like your sequential tick (wave 0 now, others via timer)
-	auto FireWave = [this](int32 WaveIndex)
+	for (int32 i = 0; i < AllPoints.Num(); ++i)
+	{
+		WavePoints[i % Waves].Add(AllPoints[i]);
+	}
+
+	ScheduledWaves.SetNum(Waves);
+
+	const double Now = GetWorld()->GetTimeSeconds();
+	for (int32 w = 0; w < Waves; ++w)
+	{
+		ScheduledWaves[w].Reserve(WavePoints[w].Num());
+
+		for (const FVector& RawImpact : WavePoints[w])
 		{
+			FVector Impact = RawImpact;
 
-		};
+			// Optional Clamp to NavMesh
+			if (EnvDropParams.bClampToNavMesh)
+			{
+				Impact = ProjectToNavMesh(Impact);
+			}
+			else
+			{
+				Impact.Z = TraceToGroundZ(Impact, Impact.Z);
+			}
 
-	FireWave(0);
+			// Spawn location & (Optional) initial velocity via your tag library
+			FTransform SpawnTransform;
+			FVector InitialVelocity = FVector::ZeroVector;
+			UPokemonProjectileTagLibrary::ComputeDropSpawn(EnvDropParams, Impact, SpawnTransform, InitialVelocity);
+
+			// Travel time (constant-speed drop for now)
+			double TravelTime = 0.0f;
+			if (EnvDropParams.InitialSpeed > 0.f)
+			{
+				const float Dist = FVector::Dist(Impact, SpawnTransform.GetLocation());
+				TravelTime = Dist / FMath::Max(1.f, EnvDropParams.InitialSpeed);
+			}
+		
+			// 3a) Create FThreatEntry for scheduling and AI Visibility
+			const double TelegraphAt = Now;
+			const double ETA = TelegraphAt + TravelTime + EnvDropParams.WarningTime;
+			const double ExpiresAt = ETA; // linger a bit after impact
+
+			FThreatEntry NewEntry;
+			NewEntry.OwnerASC = OwnerASC;
+			NewEntry.Location = Impact;
+			NewEntry.Instigator = SourceActor;
+			NewEntry.ActivationId = ActivationId;
+			NewEntry.ImpactRadius = EnvDropParams.ImpactAOERadius;
+			NewEntry.TelegraphAt = TelegraphAt;
+			NewEntry.ETA = ETA;
+			NewEntry.ExpiresAt = ExpiresAt;
+
+			ScheduledWaves[w].Add(NewEntry);
+
+			// 3b) Publish to the subsystem so AI can query it
+			// UThreatFieldSubsystem::RegisterThreat(ASC, Id, Loc, Radius, TelegraphAt, ETA, EndAt, Instigator)
+			ThreatSubsystem->RegisterThreat(OwnerASC.Get(), ActivationId,
+				NewEntry.Location, NewEntry.ImpactRadius, NewEntry.TelegraphAt,
+				NewEntry.ETA, NewEntry.ExpiresAt, SourceActor); // publishes into its TMultiMap<ActivationId,FThreatEntry> bucket
+            // (The subsystem will automatically prune expired entries in Tick.) :contentReference[oaicite:5]{index=5}
+		}
+	}
+
+	// 4) Schedule Waves Start
+	ScheduleWave(0);
 
 	for (int32 i = 1; i < Waves; ++i)
 	{
 		FTimerHandle WaveTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(
 			WaveTimerHandle,
-			FTimerDelegate::CreateWeakLambda(this, [this, FireWave, i]()
+			FTimerDelegate::CreateWeakLambda(this, [this, i]()
 				{
 					if ((!this || bCancelled)) return;
-					FireWave(i);
-					if (i == (FMath::Max(1, EnvDropParams.NumWaves) - 1))
+					ScheduleWave(i);
+					if (i==ScheduledWaves.Num()-1)
 					{
-						EndTask();
+						// We’ll EndTask() after the last impact timer fires; or do it here if you prefer.
+						//EndTask();
 					}}),
 			WaveIntervals * i,
 			false);
@@ -87,8 +162,37 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 
 	if (Waves == 1)
 	{
-		EndTask();
+		// Single wave started; we’ll EndTask() after its last impact executes.
+		//EndTask();
 	}
+}
+
+float UAT_FireProjectiles::TraceToGroundZ(const FVector& XY, float FallBackZ) const
+{
+	const float StartZ = XY.Z + 5000.f;
+	const float EndZ = XY.Z - 5000.f;
+
+	FHitResult Hit;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceToGroundZ), false, SourceActor);
+
+	if(GetWorld()->LineTraceSingleByChannel(Hit, FVector(XY.X, XY.Y, StartZ), FVector(XY.X, XY.Y, EndZ), ECC_Visibility, Params))
+	{
+		return Hit.ImpactPoint.Z;
+	}
+	return FallBackZ;
+}
+
+FVector UAT_FireProjectiles::ProjectToNavMesh(const FVector& InLocation) const
+{
+	const UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	if (!NavSys) return InLocation;
+
+	FNavLocation OutLocation;
+	if (NavSys->ProjectPointToNavigation(InLocation, OutLocation, FVector(200.f, 200.f, 1000.f)))
+	{
+		return OutLocation.Location;
+	}
+	return InLocation;
 }
 
 UAT_FireProjectiles* UAT_FireProjectiles::FireSingle(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FProjectileBaseParams& Common)
@@ -276,52 +380,80 @@ void UAT_FireProjectiles::FireSequentialShot(int32 ShotIndex)
 
 void UAT_FireProjectiles::ScheduleWave(int32 WaveIndex)
 {
+	if (!ScheduledWaves.IsValidIndex(WaveIndex) || !OwnerASC.IsValid() || !ThreatSubsystem) return;
+
+	// Decide how many to emit from this wave (allow tags to modify)
+	int32 PointsThisWave = ScheduledWaves[WaveIndex].Num();
+	{
+		// Allow TagLibrary to modify count if you want
+		FEnvironmentDropParams TempParams = EnvDropParams;
+		TempParams.CachedLandingPoints.Reset(PointsThisWave);
+		for(const FThreatEntry& Entry: ScheduledWaves[WaveIndex])
+		{
+			TempParams.CachedLandingPoints.Add(Entry.Location);
+		}
+		UPokemonProjectileTagLibrary::ComputeLandingPoints(CategoryTags, TempParams, WaveIndex, PointsThisWave);
+		PointsThisWave = FMath::Clamp(PointsThisWave, 0, ScheduledWaves[WaveIndex].Num());
+	}
+
+	const double Now = GetWorld()->GetTimeSeconds();
+
+	for (int32 i = 0; i < PointsThisWave; ++i)
+	{
+		const FThreatEntry& ThreatEntry = ScheduledWaves[WaveIndex][i];
+
+		//Telegraph VFX (client-side warnign ring, etc) can be spawned here using ThreatEntry.Location and ThreatEntry.ImpactRadius
+		SpawnTelegraph(ThreatEntry.Location, ThreatEntry.ImpactRadius);
+
+		// Timer to execute the impact at ETA
+		const float Delay = FMath::Max(0.f, float(ThreatEntry.ETA - Now));
+		FTimerHandle ImpactTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer
+		(
+			ImpactTimerHandle,
+			FTimerDelegate::CreateWeakLambda(this, [this, WaveIndex, i]()
+				{
+					if ((!this || bCancelled)) return;
+					ReleaseSingleDropImpact(ScheduledWaves[WaveIndex][i]);
+				}),
+			Delay,
+			false
+		);
+	}
 }
 
-void UAT_FireProjectiles::FireWave(int32 WaveIndex)
+void UAT_FireProjectiles::ReleaseSingleDropImpact(const FThreatEntry& ThreatEntry)
 {
-	int32 PointsThisWave = 0;
-	UPokemonProjectileTagLibrary::ComputeLandingPoints(CategoryTags, EnvDropParams, WaveIndex, PointsThisWave);
+	if (!ProjectileClass || !SourceActor) return;
+	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
+	if (!SourceASC) return;
 
-	// Basic round-robin slice from the cached points
-	// Example: index stride = Waves; start at Waveindex, step by Waves
-	int32 Emitted = 0;
-	for (int32 i = WaveIndex; i < EnvDropParams.CachedLandingPoints.Num() && Emitted < PointsThisWave; i += FMath::Max(1, EnvDropParams.NumWaves))
-	{
-		const FVector& LandingPoint = EnvDropParams.CachedLandingPoints[i];
+	// Recompute spawn transform for robustness (or cache alongside the threat entry if you prefer)
+	FTransform SpawnTransform;
+	FVector InitialVelocity = FVector::ZeroVector;
+	UPokemonProjectileTagLibrary::ComputeDropSpawn(EnvDropParams, ThreatEntry.Location, SpawnTransform, InitialVelocity);
 
-		// 3) Ask the Tag Library for spawn transform + initial velocity
-		FTransform SpawnTransform;
-		FVector InitialVelocity = FVector::ZeroVector;
-		UPokemonProjectileTagLibrary::ComputeDropSpawn(EnvDropParams, LandingPoint, SpawnTransform, InitialVelocity);
+	AProjectileAttack* NewProjectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
+		ProjectileClass,
+		SpawnTransform,
+		SourceActor,
+		Cast<APawn>(SourceActor),
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
-		// 4) Spawn projectile with your exisiting GE wiring
-		if (!ProjectileClass || !SourceActor) continue;
-		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
-		if (!SourceASC) continue;
 
-		AProjectileAttack* NewProjectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
-			ProjectileClass,
-			SpawnTransform,
-			SourceActor,
-			Cast<APawn>(SourceActor),
-			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	if (!NewProjectile) return;
 
-		if (!NewProjectile) continue;
+	NewProjectile->GetSphereComponent()->IgnoreActorWhenMoving(SourceActor, true);
+	DamageEffectContextHandle.AddSourceObject(NewProjectile);
+	TArray<TWeakObjectPtr<AActor>> Actors;
+	Actors.Add(NewProjectile);
+	DamageEffectContextHandle.AddActors(Actors);
 
-		NewProjectile->GetSphereComponent()->IgnoreActorWhenMoving(SourceActor, true);
-		DamageEffectContextHandle.AddSourceObject(NewProjectile);
-		TArray<TWeakObjectPtr<AActor>> Actors;
-		Actors.Add(NewProjectile);
-		DamageEffectContextHandle.AddActors(Actors);
+	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
 
-		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
-
-		NewProjectile->DamageEffectSpecHandle = SpecHandle;
-		NewProjectile->DamageEffectParams = DamageEffectParams;
-		NewProjectile->FinishSpawning(SpawnTransform);
-		++Emitted;
-	}
+	NewProjectile->DamageEffectSpecHandle = SpecHandle;
+	NewProjectile->DamageEffectParams = DamageEffectParams;
+	NewProjectile->FinishSpawning(SpawnTransform);
 }
 
 void UAT_FireProjectiles::HandleSequentialTick()
