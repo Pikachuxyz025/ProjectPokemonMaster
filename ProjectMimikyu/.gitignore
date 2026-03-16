@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Unreal project-specific
+ProjectMimikyu/Binaries/
+ProjectMimikyu/DerivedDataCache/
+ProjectMimikyu/Intermediate/
+ProjectMimikyu/Saved/

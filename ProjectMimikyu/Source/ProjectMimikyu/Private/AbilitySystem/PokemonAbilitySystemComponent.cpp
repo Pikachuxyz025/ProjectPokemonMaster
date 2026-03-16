@@ -20,8 +20,8 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDa
 		//	PokemonAbility->CooldownTag = Move->CooldownTag;
 
 		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1);
-			AbilitySpec.DynamicAbilityTags.AddTag(Move->InputTag);
-			AbilitySpec.DynamicAbilityTags.AddTag(Move->CooldownTag);
+			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->InputTag);
+			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->CooldownTag);
 			GiveAbility(AbilitySpec);
 //		}
 		
@@ -49,7 +49,7 @@ void UPokemonAbilitySystemComponent::AddSingleAbility(TSubclassOf<UPokemonGamepl
 	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewAbility, 1);
 	if (const UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
 	{
-		AbilitySpec.DynamicAbilityTags.AddTag(AbilityInputTag);
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityInputTag);
 		GiveAbility(AbilitySpec);
 	}
 }
@@ -60,7 +60,7 @@ void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& In
 
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
+		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
 		{
 			//AbilitySpecInputPressed(AbilitySpec);
 			if (!AbilitySpec.IsActive())

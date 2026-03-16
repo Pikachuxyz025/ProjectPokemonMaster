@@ -57,7 +57,7 @@ void UMovesetComponent::SpawnWithAbilitySet(int32 CurrentPokemonLevel)
 	for (auto Ability : CurrentAbilities)
 	{
 		int32 AbilityIndex = CurrentAbilities.IndexOfByKey(Ability) + 1;
-		FString InputName = FString::Printf(TEXT("InputTag.%s"), AbilityIndex);
+		FString InputName = FString::Printf(TEXT("InputTag.%d"), AbilityIndex);
 		FGameplayTag CurrentInput = FGameplayTag::RequestGameplayTag(FName(*InputName));
 		if (CurrentInput.IsValid() && CurrentPokemonAbilities.Contains(CurrentInput))
 		{

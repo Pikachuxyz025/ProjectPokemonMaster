@@ -3,6 +3,7 @@
 
 #include "Items/Projectile.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 
 AProjectile::AProjectile()

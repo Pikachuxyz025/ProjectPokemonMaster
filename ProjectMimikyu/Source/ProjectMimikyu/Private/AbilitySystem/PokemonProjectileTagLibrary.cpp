@@ -103,26 +103,26 @@ FName UPokemonProjectileTagLibrary::GetFunctionNameForCategory(const UObject* Wo
 FRotator UPokemonProjectileTagLibrary::ComputeSequentialShotRotation(const FGameplayTagContainer& ResolvedTags, const FSequentialShotParams& SequentialShotParams)
 {
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
-	static const FGameplayTag ScatterTag = GameplayTags.PokemonMoves_Spread_Modifier_Scatter;
-	static const FGameplayTag ConeTag = GameplayTags.PokemonMoves_Spread_Projectile_Cone;
+	static const FGameplayTag ScatterTag = GameplayTags.Projectiles_Modifier_Scatter;
+	//static const FGameplayTag SpreadTag = GameplayTags.Projectiles_Modifier_Spread;
 
 	if(ResolvedTags.HasTagExact(ScatterTag))
 	{
 		return GetScatterSphereRotation(SequentialShotParams.StartLocation, SequentialShotParams.TargetLocation, SequentialShotParams.DistanceToSphere, SequentialShotParams.SphereRadius);
 	}
 
-	 if(ResolvedTags.HasTagExact(ConeTag))
-	{
-		// Calculate spread angle based on total shots
-		// Calculation may need adjusting, please note
-		float SpreadAngleDeg = SequentialShotParams.TotalShots > 1 ?  SequentialShotParams.SpreadAngleDeg * (SequentialShotParams.TotalShots - 1) : 0.f;
-		float AngleStep = SequentialShotParams.TotalShots > 1 ? SpreadAngleDeg / (SequentialShotParams.TotalShots - 1) : 0.f;
-		float StartAngle = -SpreadAngleDeg / 2.f;
-		float CurrentAngle = StartAngle + AngleStep * SequentialShotParams.ShotIndex;
-		FRotator SpreadRotation = SequentialShotParams.BaseRotation;
-		SpreadRotation.Yaw += CurrentAngle;
-		return SpreadRotation;
-	}
+	// if(ResolvedTags.HasTagExact(SpreadTag))
+	//{
+	//	// Calculate spread angle based on total shots
+	//	// Calculation may need adjusting, please note
+	//	float SpreadAngleDeg = SequentialShotParams.TotalShots > 1 ?  SequentialShotParams.SpreadAngleDeg * (SequentialShotParams.TotalShots - 1) : 0.f;
+	//	float AngleStep = SequentialShotParams.TotalShots > 1 ? SpreadAngleDeg / (SequentialShotParams.TotalShots - 1) : 0.f;
+	//	float StartAngle = -SpreadAngleDeg / 2.f;
+	//	float CurrentAngle = StartAngle + AngleStep * SequentialShotParams.ShotIndex;
+	//	FRotator SpreadRotation = SequentialShotParams.BaseRotation;
+	//	SpreadRotation.Yaw += CurrentAngle;
+	//	return SpreadRotation;
+	//}
 	return SequentialShotParams.BaseRotation;
 }
 

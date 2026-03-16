@@ -285,6 +285,11 @@ GameplayTags.Abilities_IronDefense = UGameplayTagsManager::Get().AddNativeGamepl
 		FString("Iron Defense Ability Tag")
 	);
 
+GameplayTags.Abilities_RockSlide = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("Abilities.RockSlide"),
+	FString("Rock Slide Ability Tag")
+);
+
 	GameplayTags.Abilities_MachPunch = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.MachPunch"),
 		FString("Mach Punch Ability Tag")
@@ -481,174 +486,174 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 	);
 #pragma endregion
 
-	GameplayTags.PokemonMoves_Spread = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread"),
-		FString("Root tag for Pokemon Spread types")
+	GameplayTags.Projectiles_Categories = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories"),
+		FString("Root tag for Projectile Categories")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Projectile = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile"),
-		FString("Projectile-Based Spreads")
+	GameplayTags.Projectiles_Categories_FireShot = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.FireShot"),
+		FString("Projectile Fired")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Projectile_Single = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile.Single"),
-		FString("Tracks target (e.g., Aura Sphere)")
+	GameplayTags.Projectiles_Categories_FireShot_Single = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.FireShot.Single"),
+		FString("Single Mesh Projectile (e.g., Aura Sphere, Shadow Ball)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Projectile_Cone = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile.Cone"),
+	GameplayTags.Projectiles_Categories_FireShot_Spread = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.FireShot.Spread"),
 		FString("Fixed angular spread (e.g., Swift)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Projectile_Spiral = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile.Spiral"),
-		FString("Rotating pattern (rare, but possible for fan game)")
-	);
-
-	GameplayTags.PokemonMoves_Spread_Projectile_Burst = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile.Burst"),
+	GameplayTags.Projectiles_Categories_FireShot_Burst = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.FireShot.Burst"),
 		FString("Fires all projectiles at once, shotgun")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Projectile_Sequential = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Projectile.Sequential"),
+	GameplayTags.Projectiles_Categories_FireShot_Sequential = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.FireShot.Sequential"),
 		FString("Fires projectiles one after another")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Beam = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Beam"),
+	GameplayTags.Projectiles_Categories_Beam = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Beam"),
 		FString("Beam & Linear Attacks")
 	);
 	
-	GameplayTags.PokemonMoves_Spread_Beam_Linear = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Beam.Linear"),
+	GameplayTags.Projectiles_Categories_Beam_Linear = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Beam.Linear"),
 		FString("Straight line beam (Hyper Beam)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Beam_Sweep = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Beam.Sweep"),
+	GameplayTags.Projectiles_Categories_Beam_Sweep = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Beam.Sweep"),
 		FString("Beam sweeps horizontally or vertically (Flamethrower)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Beam_Piercing = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Beam.Piercing"),
+	GameplayTags.Projectiles_Categories_Beam_Piercing = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Beam.Piercing"),
 		FString("Beam passes through targets")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Area = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Area"),
+	GameplayTags.Projectiles_Categories_AOE = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.AOE"),
 		FString("Area-Of-Effect (AOE)")
 	);
 	
-	GameplayTags.PokemonMoves_Spread_Area_Radial = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Area.Radial"),
+	GameplayTags.Projectiles_Categories_AOE_Radial = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.AOE.Radial"),
 		FString("Circular area around user (Dazzling Gleam)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Area_Ring = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Area.Ring"),
+	GameplayTags.Projectiles_Categories_AOE_Ring = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.AOE.Ring"),
 		FString("Expanding ring wave (Water Pulse)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Area_Cone = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Area.Cone"),
+	GameplayTags.Projectiles_Categories_AOE_Cone = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.AOE.Cone"),
 		FString("AOE cone forward (Hyper Voice)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Area_Linger = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Area.Linger"),
+	GameplayTags.Projectiles_Categories_AOE_Linger = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.AOE.Linger"),
 		FString("Zone persists after activation (Lava Plume)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Environment = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Environment"),
+	GameplayTags.Projectiles_Categories_Environment = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Environment"),
 		FString("Environment or Drop-Type Moves")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Environment_Drop = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Environment.Drop"),
+	GameplayTags.Projectiles_Categories_Environment_Drop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Environment.Drop"),
 		FString("Objects fall from above (Rock Slide, Thunder)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Environment_Rain = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Environment.Rain"),
+	GameplayTags.Projectiles_Categories_Environment_Erupt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Environment.Erupt"),
+		FString("Generate beams from a grounded source")
+	);
+
+	GameplayTags.Projectiles_Categories_Environment_Rain = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Categories.Environment.Rain"),
 		FString("Continuous drop over time")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Environment_TargetedDrop = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Environment.TargetedDrop"),
-		FString("Drop targets specific enemy positions")
-	);
+	//GameplayTags.PokemonMoves_Spread_Formation = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	//	FName("PokemonMoves.Spread.Formation"),
+	//	FString("Formation/Summon-Based Moves")
+	//);
 
-	GameplayTags.PokemonMoves_Spread_Formation = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Formation"),
-		FString("Formation/Summon-Based Moves")
-	);
+	//GameplayTags.PokemonMoves_Spread_Formation_Clone = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	//	FName("PokemonMoves.Spread.Formation.Clone"),
+	//	FString("Double Team, Illusion-like effects")
+	//);
 
-	GameplayTags.PokemonMoves_Spread_Formation_Clone = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Formation.Clone"),
-		FString("Double Team, Illusion-like effects")
-	);
+	//GameplayTags.PokemonMoves_Spread_Formation_Circle = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	//	FName("PokemonMoves.Spread.Formation.Circle"),
+	//	FString("Summons in a circle around user")
+	//);
 
-	GameplayTags.PokemonMoves_Spread_Formation_Circle = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Formation.Circle"),
-		FString("Summons in a circle around user")
-	);
+	//GameplayTags.PokemonMoves_Spread_Formation_Line = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	//	FName("PokemonMoves.Spread.Formation.Line"),
+	//	FString("Summons in a line formation")
+	//);
 
-	GameplayTags.PokemonMoves_Spread_Formation_Line = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Formation.Line"),
-		FString("Summons in a line formation")
-	);
-
-	GameplayTags.PokemonMoves_Spread_Modifier = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier"),
+	GameplayTags.Projectiles_Modifier = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier"),
 		FString("Hyprid Control Tags. Modifiers that change how a move behaves")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_MultiHit = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.MultiHit"),
+	GameplayTags.Projectiles_Modifier_MultiHit = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.MultiHit"),
 		FString("Move hits multiple times upon contact")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Charge = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Charge"),
+	GameplayTags.Projectiles_Modifier_Charge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Charge"),
 		FString("Move requires charging before execution (Solar Beam)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Continuous = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Continuous"),
+	GameplayTags.Projectiles_Modifier_Continuous = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Continuous"),
 		FString("Move continues as long as input is held (Surf)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Bounce = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Bounce"),
+	GameplayTags.Projectiles_Modifier_Bounce = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Bounce"),
 		FString("Move bounces between multiple targets (Thunder)")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Tracking = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Tracking"),
+	GameplayTags.Projectiles_Modifier_Tracking = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Tracking"),
 		FString("User move to follow target before or as they're firing. Motion Warping")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Reflectable = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Reflectable"),
+	GameplayTags.Projectiles_Modifier_Reflectable = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Reflectable"),
 		FString("Move can be reflected by abilities like Magic Coat")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Combustable = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Combustable"),
+	GameplayTags.Projectiles_Modifier_Combustable = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Combustable"),
 		FString("Projectile Separates into multiple projectiles after a certain timer")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Homing = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Homing"),
+	GameplayTags.Projectiles_Modifier_Homing = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Homing"),
 		FString("Projectile homes in on target after being fired")
 	);
 
-	GameplayTags.PokemonMoves_Spread_Modifier_Scatter = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("PokemonMoves.Spread.Modifier.Scatter"),
+	GameplayTags.Projectiles_Modifier_Scatter = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Scatter"),
 		FString("Projectile fires in a scattered direction")
+	);
+
+	GameplayTags.Projectiles_Modifier_Latch = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Projectiles.Modifier.Latch"),
+		FString("Modifies the projectile to spawn a latching effect upon the target (leech seed, string shot)")
 	);
 
 	GameplayTags.InputsToCooldowns.Add(GameplayTags.InputTag_1, GameplayTags.Cooldown_InputTag_1);

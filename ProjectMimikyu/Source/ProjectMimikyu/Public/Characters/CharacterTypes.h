@@ -281,10 +281,10 @@ struct FProjectileTagContainer
 {
 	GENERATED_BODY()
 public: 
-	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.Spread"))
+	UPROPERTY(EditAnywhere, meta = (Categories = "Projectiles.Categories"))
 	FGameplayTag CategoryTag;
 
-	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.Spread.Modifier"))
+	UPROPERTY(EditAnywhere, meta = (Categories = "Projectiles.Modifier"))
 	TArray<FGameplayTag> ModifierTags;
 
 	UPROPERTY(VisibleAnywhere)
@@ -330,7 +330,6 @@ struct FEnvironmentDropParams
 {
 	GENERATED_BODY()
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UEnvQuery* DropPatternQuery = nullptr;
 
@@ -338,23 +337,23 @@ struct FEnvironmentDropParams
 	UPROPERTY(BlueprintReadWrite)
 	FVector AreaCenter = FVector::ZeroVector;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AreaRadius = 500.f;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnvironmentLandingPattern LandingPattern = EEnvironmentLandingPattern::EELP_RandonInRadius;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NumProjectiles = 1;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bClampToNavMesh = true;
 
 	// Waves / Rain
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NumWaves = 1;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TimeBetweenWaves = 0.4f;
 
 	// Telegraph
@@ -365,24 +364,22 @@ struct FEnvironmentDropParams
 	float ImpactAOERadius = 100.f;
 
 	// Height / Falling
-UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnvironmentSpawnHeightMode SpawnHeightMode = EEnvironmentSpawnHeightMode::ESHM_None;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SpawnHeight = 1000.f;
-	UPROPERTY(BlueprintReadWrite)
-	bool bUseGravity = true;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float InitialSpeed = 2800.f;
 	UPROPERTY(BlueprintReadWrite)
 	bool bRetargetPerWave = false;
 
 	// Targeting
-	UPROPERTY(BlueprintReadWrite)
-	TArray<AActor*> ExplicitTargets;
-	UPROPERTY(BlueprintReadWrite)
-	bool bPredictive = true;
-	UPROPERTY(BlueprintReadWrite)
-	float PredictiveLeadTime = 0.5f;
+	//UPROPERTY(BlueprintReadWrite)
+	//TArray<AActor*> ExplicitTargets;
+	//UPROPERTY(BlueprintReadWrite)
+	//bool bPredictive = true;
+	//UPROPERTY(BlueprintReadWrite)
+	//float PredictiveLeadTime = 0.5f;
 
 	// OutPuts
 	UPROPERTY(BlueprintReadWrite)

@@ -58,40 +58,45 @@ public:
 	FGameplayTag PokemonMoves_MoveType_Special;
 	FGameplayTag PokemonMoves_MoveType_Status;
 
-	FGameplayTag PokemonMoves_Spread;
-	FGameplayTag PokemonMoves_Spread_Modifier;
-	FGameplayTag PokemonMoves_Spread_Modifier_MultiHit;
-	FGameplayTag PokemonMoves_Spread_Modifier_Charge;
-	FGameplayTag PokemonMoves_Spread_Modifier_Continuous;
-	FGameplayTag PokemonMoves_Spread_Modifier_Bounce;
-	FGameplayTag PokemonMoves_Spread_Modifier_Tracking;
-	FGameplayTag PokemonMoves_Spread_Modifier_Reflectable;
-	FGameplayTag PokemonMoves_Spread_Modifier_Combustable;
-	FGameplayTag PokemonMoves_Spread_Modifier_Homing;
-	FGameplayTag PokemonMoves_Spread_Modifier_Scatter;
-	FGameplayTag PokemonMoves_Spread_Formation;
-	FGameplayTag PokemonMoves_Spread_Formation_Clone;
-	FGameplayTag PokemonMoves_Spread_Formation_Circle;
-	FGameplayTag PokemonMoves_Spread_Formation_Line;
-	FGameplayTag PokemonMoves_Spread_Environment;
-	FGameplayTag PokemonMoves_Spread_Environment_Drop;
-	FGameplayTag PokemonMoves_Spread_Environment_Rain;
-	FGameplayTag PokemonMoves_Spread_Environment_TargetedDrop;
-	FGameplayTag PokemonMoves_Spread_Area;
-	FGameplayTag PokemonMoves_Spread_Area_Radial;
-	FGameplayTag PokemonMoves_Spread_Area_Ring;
-	FGameplayTag PokemonMoves_Spread_Area_Cone;
-	FGameplayTag PokemonMoves_Spread_Area_Linger;
-	FGameplayTag PokemonMoves_Spread_Beam;
-	FGameplayTag PokemonMoves_Spread_Beam_Linear;
-	FGameplayTag PokemonMoves_Spread_Beam_Sweep;
-	FGameplayTag PokemonMoves_Spread_Beam_Piercing;
-	FGameplayTag PokemonMoves_Spread_Projectile;
-	FGameplayTag PokemonMoves_Spread_Projectile_Single;
-	FGameplayTag PokemonMoves_Spread_Projectile_Cone;
-	FGameplayTag PokemonMoves_Spread_Projectile_Spiral;
-	FGameplayTag PokemonMoves_Spread_Projectile_Burst;
-	FGameplayTag PokemonMoves_Spread_Projectile_Sequential;
+	FGameplayTag Projectiles_Categories;
+	
+	FGameplayTag Projectiles_Categories_Environment;
+	FGameplayTag Projectiles_Categories_Environment_Drop;
+	FGameplayTag Projectiles_Categories_Environment_Erupt;
+	FGameplayTag Projectiles_Categories_Environment_Spiral;
+	FGameplayTag Projectiles_Categories_Environment_Rain;
+
+	FGameplayTag Projectiles_Categories_Beam;
+	FGameplayTag Projectiles_Categories_Beam_Linear;
+	FGameplayTag Projectiles_Categories_Beam_Sweep;
+	FGameplayTag Projectiles_Categories_Beam_Piercing;
+
+	FGameplayTag Projectiles_Categories_AOE;
+	FGameplayTag Projectiles_Categories_AOE_Radial;
+	FGameplayTag Projectiles_Categories_AOE_Ring;
+	FGameplayTag Projectiles_Categories_AOE_Cone;
+	FGameplayTag Projectiles_Categories_AOE_Linger;
+
+	FGameplayTag Projectiles_Categories_FireShot;
+	FGameplayTag Projectiles_Categories_FireShot_Single;
+	FGameplayTag Projectiles_Categories_FireShot_Burst;
+	FGameplayTag Projectiles_Categories_FireShot_Spread;
+	FGameplayTag Projectiles_Categories_FireShot_Sequential;
+
+	FGameplayTag Projectiles_Modifier;
+	FGameplayTag Projectiles_Modifier_MultiHit;
+	FGameplayTag Projectiles_Modifier_Charge;
+	FGameplayTag Projectiles_Modifier_Continuous;
+	FGameplayTag Projectiles_Modifier_Bounce;
+	FGameplayTag Projectiles_Modifier_Tracking;
+	FGameplayTag Projectiles_Modifier_Reflectable;
+	FGameplayTag Projectiles_Modifier_Combustable;
+	FGameplayTag Projectiles_Modifier_Homing;
+	FGameplayTag Projectiles_Modifier_Scatter;
+	FGameplayTag Projectiles_Modifier_Latch;
+
+
+
 
 	FGameplayTag Abilities_Status_Locked;
 	FGameplayTag Abilities_Status_Unlocked;
@@ -115,6 +120,7 @@ public:
 	FGameplayTag Abilities_IronTail;
 	FGameplayTag Abilities_BulletSeed;
 	FGameplayTag Abilities_AirCutter;
+	FGameplayTag Abilities_RockSlide;
 
 	FGameplayTag InputTag_1;
 	FGameplayTag InputTag_2;

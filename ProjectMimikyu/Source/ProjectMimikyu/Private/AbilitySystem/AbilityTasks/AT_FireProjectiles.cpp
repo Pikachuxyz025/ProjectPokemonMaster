@@ -5,6 +5,7 @@
 #include "Items/ProjectileAttack.h"
 #include "Components/SphereComponent.h"
 #include "Interfaces/PokemonCombatInterface.h"
+#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AbilitySystemComponent.h"
 #include <Kismet/KismetMathLibrary.h>
@@ -17,17 +18,20 @@
 
 UAT_FireProjectiles* UAT_FireProjectiles::InitializeTask(UAT_FireProjectiles* Task, const FProjectileBaseParams& Common)
 {
-	Task->ProjectileClass = Common.ProjectileClass;
-	Task->DamageEffectClass = Common.DamageEffectClass;
-	Task->CategoryTags = Common.CategoryTags;
-	Task->SpawnLocation = Common.SpawnLocation;
-	Task->BaseRotation = Common.BaseRotation;
-	Task->DamageEffectContextHandle = Common.DamageEffectContextHandle;
-	Task->DamageEffectParams = Common.DamageEffectParams;
-	Task->SourceActor = Common.SourceActor;
-	Task->TargetLocation = Common.TargetLocation;
-	Task->ActivationId = Common.ActivationId;
-
+	//Task->ProjectileClass = Common.ProjectileClass;
+	//Task->DamageEffectClass = Common.DamageEffectClass;
+	//Task->CategoryTags = Common.CategoryTags;
+	//Task->SpawnLocation = Common.SpawnLocation;
+	//Task->BaseRotation = Common.BaseRotation;
+	//Task->DamageEffectContextHandle = Common.DamageEffectContextHandle;
+	//Task->DamageEffectParams = Common.DamageEffectParams;
+	//Task->SourceActor = Common.SourceActor;
+	//Task->TargetLocation = Common.TargetLocation;
+	//Task->ActivationId = Common.ActivationId;
+	//Task->Modifiers = Common.Modifiers;
+	//Task->TargetActor = Common.TargetActor;
+	//Task->InitialSpeed = Common.InitialSpeed;
+	Task->CommonParams = Common;
 	return Task;
 }
 
@@ -121,8 +125,8 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 			FThreatEntry NewEntry;
 			NewEntry.OwnerASC = OwnerASC;
 			NewEntry.Location = Impact;
-			NewEntry.Instigator = SourceActor;
-			NewEntry.ActivationId = ActivationId;
+			NewEntry.Instigator = CommonParams.SourceActor;
+			NewEntry.ActivationId = CommonParams.ActivationId;
 			NewEntry.ImpactRadius = EnvDropParams.ImpactAOERadius;
 			NewEntry.TelegraphAt = TelegraphAt;
 			NewEntry.ETA = ETA;
@@ -132,9 +136,9 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 
 			// 3b) Publish to the subsystem so AI can query it
 			// UThreatFieldSubsystem::RegisterThreat(ASC, Id, Loc, Radius, TelegraphAt, ETA, EndAt, Instigator)
-			ThreatSubsystem->RegisterThreat(OwnerASC.Get(), ActivationId,
+			ThreatSubsystem->RegisterThreat(OwnerASC.Get(), CommonParams.ActivationId,
 				NewEntry.Location, NewEntry.ImpactRadius, NewEntry.TelegraphAt,
-				NewEntry.ETA, NewEntry.ExpiresAt, SourceActor); // publishes into its TMultiMap<ActivationId,FThreatEntry> bucket
+				NewEntry.ETA, NewEntry.ExpiresAt, CommonParams.SourceActor); // publishes into its TMultiMap<ActivationId,FThreatEntry> bucket
             // (The subsystem will automatically prune expired entries in Tick.) :contentReference[oaicite:5]{index=5}
 		}
 	}
@@ -144,7 +148,6 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 
 	for (int32 i = 1; i < Waves; ++i)
 	{
-		FTimerHandle WaveTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(
 			WaveTimerHandle,
 			FTimerDelegate::CreateWeakLambda(this, [this, i]()
@@ -173,7 +176,7 @@ float UAT_FireProjectiles::TraceToGroundZ(const FVector& XY, float FallBackZ) co
 	const float EndZ = XY.Z - 5000.f;
 
 	FHitResult Hit;
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceToGroundZ), false, SourceActor);
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceToGroundZ), false, CommonParams.SourceActor);
 
 	if(GetWorld()->LineTraceSingleByChannel(Hit, FVector(XY.X, XY.Y, StartZ), FVector(XY.X, XY.Y, EndZ), ECC_Visibility, Params))
 	{
@@ -263,26 +266,6 @@ UAT_FireProjectiles* UAT_FireProjectiles::FireBeam(UGameplayAbility* OwningAbili
 	return MyObj;
 }
 
-UAT_FireProjectiles* UAT_FireProjectiles::FireProjectiles(UGameplayAbility* OwningAbility, FName TaskInstanceName, EProjectileSpreadMode SpreadMode, TSubclassOf<AProjectileAttack> ProjectileClass, TSubclassOf<UGameplayEffect> DamageEffectClass, FGameplayEffectContextHandle DamageEffectContextHandle, FDamageEffectParams DamageEffectParams, FGameplayTagContainer CategoryTags, FVector SpawnLocation, FRotator BaseRotation, AActor* SourceActor, int32 NumberOfProjectiles, float TimeBetweenShots, float SpreadAngle, float BeamDuration)
-{
-	UAT_FireProjectiles* MyObj = NewAbilityTask<UAT_FireProjectiles>(OwningAbility, TaskInstanceName);
-
-	MyObj->SpreadMode = SpreadMode;
-	MyObj->ProjectileClass = ProjectileClass;
-	MyObj->DamageEffectClass = DamageEffectClass;
-	MyObj->CategoryTags = CategoryTags;
-	MyObj->SpawnLocation = SpawnLocation;
-	MyObj->BaseRotation = BaseRotation;
-	MyObj->NumOfProjectiles = NumberOfProjectiles;
-	MyObj->FireRate = TimeBetweenShots;
-	MyObj->Spread = SpreadAngle;
-	MyObj->BeamTime = BeamDuration;
-	MyObj->DamageEffectContextHandle = DamageEffectContextHandle;
-	MyObj->DamageEffectParams = DamageEffectParams;
-	MyObj->SourceActor = SourceActor;
-	return MyObj;
-}
-
 void UAT_FireProjectiles::Activate()
 {
 	Super::Activate();
@@ -319,12 +302,15 @@ void UAT_FireProjectiles::Activate()
 
 void UAT_FireProjectiles::FireOneProjectile(const FRotator& NewRotation)
 {
+	auto ProjectileClass = CommonParams.ProjectileClass;
+	auto SourceActor = CommonParams.SourceActor;
+
 	if (!ProjectileClass||!SourceActor) return;
 
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
 
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(SpawnLocation);
+	SpawnTransform.SetLocation(CommonParams.SpawnLocation);
 	SpawnTransform.SetRotation(NewRotation.Quaternion());
 
 	AProjectileAttack* Projectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
@@ -334,25 +320,49 @@ void UAT_FireProjectiles::FireOneProjectile(const FRotator& NewRotation)
 		Cast<APawn>(SourceActor),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	Projectile->GetSphereComponent()->IgnoreActorWhenMoving(SourceActor, true);
+	SpawnProjectile(Projectile, SourceASC, SpawnTransform);
+}
+
+void UAT_FireProjectiles::SpawnProjectile(AProjectileAttack* Projectile, const UAbilitySystemComponent* SourceASC, FTransform& SpawnTransform)
+{
+	Projectile->GetSphereComponent()->IgnoreActorWhenMoving(CommonParams.SourceActor, true);
+	auto DamageEffectContextHandle = CommonParams.DamageEffectContextHandle;
+
 	DamageEffectContextHandle.AddSourceObject(Projectile);
 	TArray<TWeakObjectPtr<AActor>> Actors;
 	Actors.Add(Projectile);
 	DamageEffectContextHandle.AddActors(Actors);
 
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
+	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(CommonParams.DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
+	
+	Projectile->SetInitialSpeed(CommonParams.InitialSpeed);
+	Projectile->SetProjectileGravity(CommonParams.ProjectileGravityScale);
+
+	// Modifiers that effect the settings of the projectile directly
+	auto Modifiers = CommonParams.Modifiers;
+	if (Modifiers.bHasHoming) 
+	{
+		Projectile->EnableHoming(CommonParams.TargetActor, Modifiers.HomingParams);
+	}
+	if (Modifiers.bHasBounce) 
+	{
+		Projectile->EnableBounce(Modifiers.BounceParams);
+	}
+	if(Modifiers.bHasReflectable){}
+	if(Modifiers.bHasMultiHit){}
+	if(Modifiers.bHasCombustable){}
 
 	Projectile->DamageEffectSpecHandle = SpecHandle;
-	Projectile->DamageEffectParams = DamageEffectParams;
+	Projectile->DamageEffectParams = CommonParams.DamageEffectParams;
 	Projectile->FinishSpawning(SpawnTransform);
 }
 
 void UAT_FireProjectiles::FireSequentialShot(int32 ShotIndex)
 {
 	FSequentialShotParams Params;
-	Params.BaseRotation = BaseRotation;
-	Params.StartLocation = SpawnLocation;
-	Params.TargetLocation = TargetLocation;
+	Params.BaseRotation = CommonParams.BaseRotation;
+	Params.StartLocation = CommonParams.SpawnLocation;
+	Params.TargetLocation = CommonParams.TargetLocation;
 	Params.ShotIndex = ShotIndex;
 	Params.TotalShots = NumOfProjectiles;
 	Params.DistanceToSphere = DistanceToSphere;
@@ -365,13 +375,13 @@ void UAT_FireProjectiles::FireSequentialShot(int32 ShotIndex)
 	if(Ability)
 	{
 		// Need the proper tag container
-		bHandled = CastChecked<UProjectileAbility>(Ability)->OverrideSequentialShotRotation(CategoryTags, Params, FinalRotation);
+		bHandled = CastChecked<UProjectileAbility>(Ability)->OverrideSequentialShotRotation(CommonParams.CategoryTags, Params, FinalRotation);
 	}
 
 	if(!bHandled)
 	{
 		// Need the proper tag container
-		FinalRotation = UPokemonProjectileTagLibrary::ComputeSequentialShotRotation(CategoryTags, Params);
+		FinalRotation = UPokemonProjectileTagLibrary::ComputeSequentialShotRotation(CommonParams.CategoryTags, Params);
 	}
 
 	FireOneProjectile(FinalRotation);
@@ -392,7 +402,7 @@ void UAT_FireProjectiles::ScheduleWave(int32 WaveIndex)
 		{
 			TempParams.CachedLandingPoints.Add(Entry.Location);
 		}
-		UPokemonProjectileTagLibrary::ComputeLandingPoints(CategoryTags, TempParams, WaveIndex, PointsThisWave);
+		UPokemonProjectileTagLibrary::ComputeLandingPoints(CommonParams.CategoryTags, TempParams, WaveIndex, PointsThisWave);
 		PointsThisWave = FMath::Clamp(PointsThisWave, 0, ScheduledWaves[WaveIndex].Num());
 	}
 
@@ -424,7 +434,10 @@ void UAT_FireProjectiles::ScheduleWave(int32 WaveIndex)
 
 void UAT_FireProjectiles::ReleaseSingleDropImpact(const FThreatEntry& ThreatEntry)
 {
+	auto ProjectileClass = CommonParams.ProjectileClass;
+	auto SourceActor = CommonParams.SourceActor;
 	if (!ProjectileClass || !SourceActor) return;
+
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
 	if (!SourceASC) return;
 
@@ -443,17 +456,7 @@ void UAT_FireProjectiles::ReleaseSingleDropImpact(const FThreatEntry& ThreatEntr
 
 	if (!NewProjectile) return;
 
-	NewProjectile->GetSphereComponent()->IgnoreActorWhenMoving(SourceActor, true);
-	DamageEffectContextHandle.AddSourceObject(NewProjectile);
-	TArray<TWeakObjectPtr<AActor>> Actors;
-	Actors.Add(NewProjectile);
-	DamageEffectContextHandle.AddActors(Actors);
-
-	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, Ability->GetAbilityLevel(), DamageEffectContextHandle);
-
-	NewProjectile->DamageEffectSpecHandle = SpecHandle;
-	NewProjectile->DamageEffectParams = DamageEffectParams;
-	NewProjectile->FinishSpawning(SpawnTransform);
+	SpawnProjectile(NewProjectile, SourceASC, SpawnTransform);
 }
 
 void UAT_FireProjectiles::HandleSequentialTick()
@@ -482,7 +485,7 @@ void UAT_FireProjectiles::HandleSequentialTick()
 
 void UAT_FireProjectiles::HandleSingleShotBP_Implementation()
 {
-	FireOneProjectile(BaseRotation);
+	FireOneProjectile(CommonParams.BaseRotation);
 	EndTask();
 }
 
@@ -491,7 +494,7 @@ void UAT_FireProjectiles::HandleBurstBP_Implementation()
 	for (int32 i = 0; i < NumOfProjectiles; i++)
 	{
 		float AngleOffset = (i - NumOfProjectiles / 2) * Spread;
-		FRotator NewRotation = BaseRotation;
+		FRotator NewRotation = CommonParams.BaseRotation;
 		NewRotation.Yaw += AngleOffset;
 		FireOneProjectile(NewRotation);
 	}
@@ -503,7 +506,7 @@ void UAT_FireProjectiles::HandleSpreadBP_Implementation()
 	for (int32 i = 0; i < NumOfProjectiles; i++)
 	{
 		float AngleOffset = (i - NumOfProjectiles / 2) * Spread;
-		FRotator NewRotation = BaseRotation;
+		FRotator NewRotation = CommonParams.BaseRotation;
 		NewRotation.Yaw += AngleOffset;
 		FireOneProjectile(NewRotation);
 	}
@@ -551,26 +554,83 @@ void UAT_FireProjectiles::HandleSequentialBP_Implementation()
 void UAT_FireProjectiles::HandleBeamBP_Implementation()
 {
 	FTimerHandle BeamTimerHandle;
+	auto SourceActor = CommonParams.SourceActor;
+
+	if (!SourceActor || !CommonParams.DamageEffectClass) { EndTask(); return; }
+
+	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
+	if(!SourceActor) { EndTask(); return; }
+
+	const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(CommonParams.DamageEffectClass, Ability->GetAbilityLevel(), CommonParams.DamageEffectContextHandle);
+
+	const float BeamRange = 2500.f;
+	const float TickRate = .03f;
+	const bool bPiercing = true;
+
+	const double BeamEndTime = GetWorld()->GetTimeSeconds() + FMath::Max(0.f, BeamTime);
+
 	GetWorld()->GetTimerManager().SetTimer
 	(
 		BeamTimerHandle,
-		[this]()
-		{
-			EndTask();
-		},
-		BeamTime,
-		false
+		FTimerDelegate::CreateWeakLambda(this, [this, SpecHandle, BeamRange, bPiercing, BeamEndTime]()
+			{
+				if (!this || bCancelled) { EndTask(); return; }
+				if (GetWorld()->GetTimeSeconds() >= BeamEndTime) { EndTask(); return; }
+
+				const FVector Start = CommonParams.SpawnLocation;
+				const FVector Dir = CommonParams.BaseRotation.Vector();
+				const FVector End = Start + Dir * BeamRange;
+
+				// (Optional) Debug / VFX
+
+				// Trace + apply Damage
+				FCollisionQueryParams Params;
+				Params.AddIgnoredActor(CommonParams.SourceActor);
+				TArray<FHitResult> Hits;
+
+				if (bPiercing)
+				{
+					GetWorld()->LineTraceMultiByChannel(Hits, Start, End, ECC_Visibility, Params);
+				}
+				else
+				{
+					FHitResult Hit;
+					if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
+					{
+						Hits.Add(Hit);
+					}
+				}
+
+				for (const FHitResult& Hit : Hits)
+				{
+					if (AActor* Other = Hit.GetActor())
+					{
+						if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Other))
+						{
+							FDamageEffectParams DamageParams = CommonParams.DamageEffectParams;
+							DamageParams.TargetAbilitySystemComponent = TargetASC;
+							UPokemonAbilitySystemLibrary::ApplyDamageEffect(DamageParams);
+						}
+					}
+				}
+			}),
+		TickRate,
+		true
 	);
 }
 
 void UAT_FireProjectiles::HandleEnvironmentalDropBP_Implementation()
 {
+	auto SourceActor = CommonParams.SourceActor;
+	auto ActivationId = CommonParams.ActivationId;
+
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor);
 	if (!SourceASC) return;
+	OwnerASC = SourceASC;
 	ThreatSubsystem = SourceASC->GetWorld()->GetSubsystem<UThreatFieldSubsystem>();
 	if (!ThreatSubsystem) return;
 
-	ThreatSubsystem->RegisterAreaCenter(SourceASC, ActivationId, TargetLocation, EnvDropParams.AreaRadius);
+	ThreatSubsystem->RegisterAreaCenter(SourceASC, ActivationId, CommonParams.TargetLocation, EnvDropParams.AreaRadius);
 
 	UEnvQueryInstanceBlueprintWrapper* Wrapper = UEnvQueryManager::RunEQSQuery(
 		GetWorld(),

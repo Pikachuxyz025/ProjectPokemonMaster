@@ -10,8 +10,15 @@
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "PokemonGameplayTags.h"
+#include "DataAssets/PokemonAICombatBrainConfig.h"
+#include "ActorComponents/PokemonBrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
+
+APokemonAIController::APokemonAIController()
+{
+	PokemonBrainComponent = CreateDefaultSubobject<UPokemonBrainComponent>(TEXT("PokemonBrainComponent"));
+}
 
 void APokemonAIController::BeginPlay()
 {
@@ -77,6 +84,22 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 	{
 		SetTrainer(ControlledPokemon->CurrentTrainer);
 		SetPokemonStatus(ControlledPokemon->PokemonStatus);
+	}
+
+	if (PokemonBrainComponent)
+	{
+		PokemonBrainComponent->SetBrainConfig(CombatBrainConfig);
+		PokemonBrainComponent->InitializeBrain(this);
+		PokemonBrainComponent->StartLogic();
+	}
+}
+
+void APokemonAIController::OnUnPossess()
+{
+	Super::OnUnPossess();
+	if (PokemonBrainComponent)
+	{
+		PokemonBrainComponent->StopLogic(TEXT("UnPossess"));
 	}
 }
 

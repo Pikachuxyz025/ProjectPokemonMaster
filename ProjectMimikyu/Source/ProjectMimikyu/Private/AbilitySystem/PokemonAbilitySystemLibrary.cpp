@@ -13,6 +13,7 @@
 #include "PokemonAbilityTypes.h"
 #include "UI/TrainerHUD.h"
 #include <AbilitySystemBlueprintLibrary.h>
+#include "Engine/OverlapResult.h"
 
 void UPokemonAbilitySystemLibrary::ActivateAbilityByTag(const UObject* WorldContextObject, UPokemonAbilitySystemComponent* ASC, FGameplayTag AbilityTag)
 {

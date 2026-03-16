@@ -11,12 +11,18 @@ using namespace UP;
 class UPokemonAbilitySystemComponent;
 class APokemon_Parent;
 class UAIPerceptionComponent;
+class UPokemonBrainComponent;
+class UPokemonAICombatBrainConfig;
 class UBehaviorTree;
+
 UCLASS()
 class PROJECTMIMIKYU_API APokemonAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	APokemonAIController();
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -29,6 +35,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UAIPerceptionComponent* AIPerception;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Brain")
+	TObjectPtr<UPokemonBrainComponent> PokemonBrainComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Brain")
+	TObjectPtr<UPokemonAICombatBrainConfig> CombatBrainConfig;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UAISenseConfig_Sight> SightSense = nullptr;
@@ -78,6 +90,7 @@ protected:
 	void SetBlackboardASC();
 	void SetBlackboardAttackTarget();
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 	void HandleSenseDamage(AActor* Actor);
 public:
 	void SetTrainer(AActor* NewTrainer);

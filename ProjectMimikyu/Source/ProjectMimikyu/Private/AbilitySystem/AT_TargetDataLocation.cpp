@@ -41,22 +41,28 @@ void UAT_TargetDataLocation::SendTargetLocationData()
 
 
 	FGameplayAbilityTargetingLocationInfo TargetInfo;
+
 	TargetInfo.SourceActor = PC->GetCombatTarget();
 	TargetInfo.LocationType = EGameplayAbilityTargetingLocationType::ActorTransform;
 
 	FGameplayAbilityTargetDataHandle DataHandle;
-	FGameplayAbilityTargetData_LocationInfo* Data = new FGameplayAbilityTargetData_LocationInfo();
+	FGameplayAbilityTargetData_LocationInfo* LocationData = new FGameplayAbilityTargetData_LocationInfo();
 	FGameplayAbilityTargetData_SingleTargetHit* DateHitResult = new FGameplayAbilityTargetData_SingleTargetHit();
+	FGameplayAbilityTargetData_ActorArray* ActorTargets = new FGameplayAbilityTargetData_ActorArray();
 	FHitResult HitResult;
 
 	if (!PC->GetCombatTarget())
 		return;
 
 	HitResult.Location = PC->GetCombatTarget()->GetActorLocation();
-	Data->TargetLocation = TargetInfo;
+	LocationData->TargetLocation = TargetInfo;
 	DateHitResult->HitResult = HitResult;
-	DataHandle.Add(Data);
+	ActorTargets->TargetActorArray.Add(TargetInfo.SourceActor);
+	DataHandle.Add(ActorTargets);
+	DataHandle.Add(LocationData);
 	DataHandle.Add(DateHitResult);
+
+
 
 	AbilitySystemComponent->ServerSetReplicatedTargetData(
 		GetAbilitySpecHandle(),

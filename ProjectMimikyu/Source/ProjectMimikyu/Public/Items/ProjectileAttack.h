@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PokemonAbilityTypes.h"
 #include "Items/Projectile.h"
+#include "AbilitySystem/Abilities/ProjectileAbility.h"
 #include <GameplayEffectTypes.h>
 #include "ProjectileAttack.generated.h"
 
@@ -35,7 +36,7 @@ public:
 protected:
 
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
-
+	void OnProjectileBounce(const FHitResult& ImpactResult, const FVector& ImpactVelocity);
 	virtual void OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 
 	UPROPERTY(EditAnywhere)
@@ -50,20 +51,31 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystemComponent* TrailComponent;
 
-	UPROPERTY(EditAnywhere)
-	AActor* Target;
+
 
 private:
-	UPROPERTY(EditAnywhere)
-	float InitialSpeed = 550.f;
 
-	UPROPERTY(EditAnywhere)
-	bool bIsHoming = false;
+	UPROPERTY(VisibleAnywhere, Category = "Homing")
+	AActor* HomingTarget;
 
-	UPROPERTY(EditAnywhere)
-	float ProjectileGravity = 0;
+	UPROPERTY(VisibleAnywhere, Category = "Homing")
+	float RetargetInterval = 0.1f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Homing")
+	float HomingLockRange = 2000.f;
+
+	FTimerHandle RetargetTimerHandle;
+
+	void RetargetTick();
+	void TryApplyDamage(AActor* OtherActor, const FHitResult& Hit);
 public:
-	FORCEINLINE	 void SetInitialSpeed(float NewSpeed) { InitialSpeed = NewSpeed; }
-	FORCEINLINE void SetTarget(AActor* NewTarget) { Target = NewTarget; }
+	//FORCEINLINE void SetTarget(AActor* NewTarget) { Target = NewTarget; }
+
+	void SetInitialVelocity(const FVector& NewVelocity);
+	void SetInitialSpeed(const float InitialSpeed);
+	void SetProjectileGravity(float GravityScale);
+
+	void EnableHoming(AActor* TargetActor, FProjectileHomingParams HomingParams);
+	void EnableReflect(FProjectileReflectParams ReflectParams);
+	void EnableBounce(FProjectileBounceParams BounceParams);
 };

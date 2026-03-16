@@ -51,10 +51,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
 	TScriptInterface<IPokemonCombatInterface> SourceCombatInterface = SourceAvatar;
-	TScriptInterface<IPokemonCombatInterface> TargetCombatInterface = TargetAvatar;
-
-	UPokemonMoveDataAsset* SourceMove = SourceCombatInterface->GetPokemonActiveMove();
-	UPokemonMoveDataAsset* TargetMove = TargetCombatInterface->GetPokemonActiveMove();
+	//TScriptInterface<IPokemonCombatInterface> TargetCombatInterface = TargetAvatar;
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();

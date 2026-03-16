@@ -164,3 +164,4 @@ void UMyInputTriggerComboAction::PostLoad()
 #endif // WITH_EDITORONLY_DATA
 }
 #endif
+#undef LOCTEXT_NAMESPACE

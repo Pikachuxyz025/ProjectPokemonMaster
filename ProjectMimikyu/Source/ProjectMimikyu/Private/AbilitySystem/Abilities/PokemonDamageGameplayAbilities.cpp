@@ -99,7 +99,7 @@ void UPokemonDamageGameplayAbilities::ApplyCooldown(const FGameplayAbilitySpecHa
 
 	if (const FGameplayAbilitySpec* Spec = GetCurrentAbilitySpec())
 	{
-		for (const FGameplayTag& Tag : Spec->DynamicAbilityTags)
+		for (const FGameplayTag& Tag : Spec->GetDynamicSpecSourceTags())
 		{
 			if (Tag.MatchesTag(CooldownRootTag))
 			{
@@ -159,7 +159,7 @@ FGameplayTag UPokemonDamageGameplayAbilities::GetCooldownTag()
 	FGameplayTag CurrentCooldownGameplayTag;
 	if (const FGameplayAbilitySpec* Spec = GetCurrentAbilitySpec())
 	{
-		for (const FGameplayTag& Tag : Spec->DynamicAbilityTags)
+		for (const FGameplayTag& Tag : Spec->GetDynamicSpecSourceTags())
 		{
 			if (Tag.MatchesTag(CooldownRootTag))
 			{

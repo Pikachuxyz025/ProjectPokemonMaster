@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 public class ProjectMimikyuEditorTarget : TargetRules
 {
-	public ProjectMimikyuEditorTarget(TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V4;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
-		ExtraModuleNames.Add("ProjectMimikyu");
-	}
+    public ProjectMimikyuEditorTarget(TargetInfo Target) : base(Target)
+    {
+        Type = TargetType.Editor;
+
+        DefaultBuildSettings = BuildSettingsVersion.V6;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+
+        ExtraModuleNames.Add("ProjectMimikyu");
+    }
 }
