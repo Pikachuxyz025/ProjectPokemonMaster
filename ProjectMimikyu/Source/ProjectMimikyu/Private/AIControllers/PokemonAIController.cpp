@@ -38,6 +38,13 @@ void APokemonAIController::BeginPlay()
 void APokemonAIController::SetPokemonState(EPokemonState NewPokemonState)
 {
 	GetBlackboardComponent()->SetValueAsEnum(PokemonStateKeyName, (uint8)NewPokemonState);
+
+	if(NewPokemonState==EPokemonState::EPS_Fainted)
+	{
+		SetBlackboardAttackTarget();
+		SetBlackboardCurrentMove(nullptr);
+		SetBlackboardActionState(EMoveAction::EMA_None);
+	}
 }
 
 void APokemonAIController::SetPokemonStatus(EPokemonStatus NewPokemonStatus)
@@ -105,20 +112,54 @@ void APokemonAIController::OnUnPossess()
 
 void APokemonAIController::SetBlackboardCurrentMove(UPokemonMoveDataAsset* MoveData)
 {
-	if (!MoveData|| !MoveData->Ability)
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	if (!BB)
 	{
-		GetBlackboardComponent()->SetValueAsObject(PokemonCurrentMoveKeyName, nullptr);
+		UE_LOG(LogTemp, Error, TEXT("SetBlackboardCurrentMove failed: BlackboardComponent is null."));
 		return;
 	}
 
-	UPokemonDamageGameplayAbilities* Ability = NewObject<UPokemonDamageGameplayAbilities>(this, MoveData->Ability);
-	Ability->InputTag = MoveData->InputTag;
-	GetBlackboardComponent()->SetValueAsObject(PokemonCurrentMoveKeyName, Ability);
+	if (!MoveData|| !MoveData->Ability)
+	{
+		BB->SetValueAsObject(PokemonCurrentMoveKeyName, nullptr);
+
+		FGameplayTagContainer EmptyTagContainer;
+		UGameplayBehaviorsBlueprintFunctionLibrary::SetValueAsGameplayTagForBlackboardComp(
+			BB, 
+			PokemonActionStateKeyName, 
+			EmptyTagContainer
+		);
+		return;
+	}
+
+	const UPokemonDamageGameplayAbilities* AbilityCDO = Cast<UPokemonDamageGameplayAbilities>(MoveData->Ability->GetDefaultObject());
+	if(!AbilityCDO)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetBlackboardCurrentMove failed: Could not get ability CDO."));
+		BB->SetValueAsObject(PokemonCurrentMoveKeyName, nullptr);
+
+		FGameplayTagContainer EmptyTagContainer;
+		UGameplayBehaviorsBlueprintFunctionLibrary::SetValueAsGameplayTagForBlackboardComp(
+			BB,
+			PokemonActionStateKeyName,
+			EmptyTagContainer
+		);
+		return;
+	}
+
+	BB->SetValueAsObject(PokemonCurrentMoveKeyName, MoveData);
 
 	FGameplayTagContainer TagContainer;
-	TagContainer.AddTag(Ability->MoveActionTag);
+	if (AbilityCDO->MoveActionTag.IsValid())
+	{
+		TagContainer.AddTag(AbilityCDO->MoveActionTag);
+	}
 
-	UGameplayBehaviorsBlueprintFunctionLibrary::SetValueAsGameplayTagForBlackboardComp(GetBlackboardComponent(), PokemonActionStateKeyName, TagContainer);
+	UGameplayBehaviorsBlueprintFunctionLibrary::SetValueAsGameplayTagForBlackboardComp(
+		BB, 
+		PokemonActionStateKeyName,
+		TagContainer
+	);
 }
 
 void APokemonAIController::ActivateAbilityByTag(FGameplayTag InputTag)
@@ -139,6 +180,18 @@ UPokemonAbilitySystemComponent* APokemonAIController::GetASC()
 void APokemonAIController::SetBlackboardActionState(EMoveAction DamageAction)
 {
 	GetBlackboardComponent()->SetValueAsEnum(PokemonActionStateKeyName, (uint8)DamageAction);
+}
+
+void APokemonAIController::SetBlackboardDesiredCombatMode(FGameplayTag NewCombatModeTag)
+{
+	FGameplayTagContainer TagContainer;
+	TagContainer.AddTag(NewCombatModeTag);
+
+	UGameplayBehaviorsBlueprintFunctionLibrary::SetValueAsGameplayTagForBlackboardComp(
+		GetBlackboardComponent(),
+		DesiredCombatModeKeyName,
+		TagContainer
+	);
 }
 
 void APokemonAIController::HandleSenseDamage(AActor* Actor)

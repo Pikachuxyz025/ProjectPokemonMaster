@@ -233,9 +233,90 @@ void APokemon_Parent::AttackEnded()
 	ActivePokemonMove = nullptr;
 	UE_LOG(LogTemp, Display, TEXT("Attack Ended"));
 	GetPokemonController()->SetBlackboardCurrentMove(ActivePokemonMove);
-	SetMovementSpeed(EMovementSpeed::EMS_Running, 1.f);
+	SetMovementSpeed(EMovementSpeed::EMS_Running);
 
 	OnAttackEnd.Broadcast();
+}
+
+void APokemon_Parent::PrepareForFieldRemoval()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	// Stop AI/Brain first
+	if (PokemonController)
+	{
+		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
+		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned to ball / caught")));
+		PokemonController->StopMovement();
+	}
+
+	// Stop movement
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		GetCharacterMovement()->DisableMovement();
+	}
+
+	// Disable gameplay interaction
+	SetActorEnableCollision(false);
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	if (USkeletalMeshComponent* MeshComp = GetMesh())
+	{
+		MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	// Stop Combat State
+	ActivePokemonMove = nullptr;
+	ClearTrainerBindings();
+}
+
+void APokemon_Parent::EnterFaintedState()
+{
+	if (bIsDead)
+	{
+		return;
+	}
+
+	bIsDead = true;
+
+	// Stop Combat Logic
+	ActivePokemonMove = nullptr;
+
+	// Stop movement
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->StopMovementImmediately();
+		GetCharacterMovement()->DisableMovement();
+	}
+	if (PokemonController)
+	{
+		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
+		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned to ball / caught")));
+		PokemonController->StopMovement();
+	}
+
+
+}
+
+void APokemon_Parent::MulticastPlayReturnEffects_Implementation()
+{
+	Dissolve();
+}
+
+void APokemon_Parent::ClearTrainerBindings()
+{
+	if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer))
+	{
+		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
+}
 }
 
 void APokemon_Parent::Fainted(const FVector& DeathImpulse)
@@ -243,7 +324,7 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	if (CurrentTrainer)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Trainer's Pokemon Is Unable To Battle"));
-		Return();
+		PrepareForFieldRemoval();
 		return;
 	}
 
@@ -262,13 +343,15 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 
 void APokemon_Parent::Return()
 {
-	if (PokemonController)
-	{	
-		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
-		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned")));
-
-		Dissolve();
+	if (!HasAuthority())
+	{
+		return;
 	}
+
+	MulticastPlayReturnEffects();
+
+	// Delay the actual return to allow effects to play out
+	SetLifeSpan(1.f);
 }
 
 void APokemon_Parent::Dissolve()
@@ -485,13 +568,14 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 {
 	CurrentTrainer = NewTrainer;
 
-	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer);
-	if (Trainer)
+	
+	if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer))
 	{
+		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
 		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
-		PokemonStatus = EPokemonStatus::EPS_PlayerTrainer;
 	}
-	UE_LOG(LogTemp, Display, TEXT("Call to server test"));
+
+	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
 }
 
 void APokemon_Parent::ServerSetTrainer_Implementation(AActor* NewTrainer)
@@ -508,20 +592,53 @@ void APokemon_Parent::ServerSetTrainer_Implementation(AActor* NewTrainer)
 	}
 }
 
-void APokemon_Parent::CallCommand(int32 Direction)
+void APokemon_Parent::CallCommand(int32 MoveIndex)
 {
-	ActivePokemonMove = MovesetComponent->CurrentPokemonMoves[Direction];
-
-	// Can we use this move?
-	FGameplayTag MoveCooldowntag = ActivePokemonMove->CooldownTag;
-	if (GetPokemonASC()->HasMatchingGameplayTag(MoveCooldowntag))
+	if (GetIsCommandActive())
 	{
-		UE_LOG(LogTemp, Display, TEXT("Move is in cooldown"));
-		ActivePokemonMove = nullptr;
+		UE_LOG(LogTemp, Verbose, TEXT("CallCommand ignored: command already active."));
+		return;
+	}
+	if (!MovesetComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CallCommand failed: MovesetComponent is null."));
+		return;
+	}
+	if (!MovesetComponent->CurrentPokemonMoves.IsValidIndex(MoveIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CallCommand failed: Invalid move index %d."), MoveIndex);
 		return;
 	}
 
-	PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
+	UPokemonMoveDataAsset* SelectedMove = MovesetComponent->CurrentPokemonMoves[MoveIndex];
+	if (!SelectedMove)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CallCommand failed: Move at index %d is null."), MoveIndex);
+		return;
+	}
+	UPokemonAbilitySystemComponent* PASC = GetPokemonASC();
+	if (!PASC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CallCommand failed: PokemonASC is null."));
+		return;
+	}
+
+	const FGameplayTag MoveCooldownTag = SelectedMove->CooldownTag;
+	if (PASC->HasMatchingGameplayTag(MoveCooldownTag))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Move '%s' is in cooldown."), *SelectedMove->MoveName.ToString());
+		return;
+	}
+	ActivePokemonMove = SelectedMove;
+
+	if (PokemonController)
+	{
+		PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CallCommand warning: PokemonController is null."));
+	}
 }
 
 #pragma region Damage Component

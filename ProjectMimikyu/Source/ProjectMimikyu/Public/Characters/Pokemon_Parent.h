@@ -116,16 +116,21 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual	void AttackEnded();
 
-//	UFUNCTION(BlueprintCallable)
-//	void OnBoxHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-//
-//	UFUNCTION()
-//	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-//
-//	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
-//UBoxComponent* CollisionBox;
+
 
 public:
+#pragma region Server-Authoritative Gameplay
+	UFUNCTION()
+	void PrepareForFieldRemoval();
+
+	UFUNCTION()
+	void EnterFaintedState();
+
+	UFUNCTION(NetMulticast,Reliable)
+	void MulticastPlayReturnEffects();
+
+	void ClearTrainerBindings();
+	#pragma endregion
 
 	void Return();
 	void Dissolve();
@@ -424,5 +429,5 @@ public:
 	void SetPokemonTrainer(AActor* NewTrainer);
 	UFUNCTION(Server,Reliable)
 	void ServerSetTrainer(AActor* NewTrainer);
-	void CallCommand(int32 Direction);
+	void CallCommand(int32 MoveIndex);
 };

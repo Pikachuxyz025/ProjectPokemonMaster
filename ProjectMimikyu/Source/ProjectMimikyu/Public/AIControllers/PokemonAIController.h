@@ -69,6 +69,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Key Names")
 	FName PokemonStatusKeyName = FName("PokemonStatus");
 
+	UPROPERTY(EditAnywhere,Category = "Key Names")
+	FName DesiredCombatModeKeyName = FName("DesiredCombatMode");
+
 	UPROPERTY(EditAnywhere, Category = "Key Names")
 	FName PokemonASCKeyName = FName("PokemonASC");
 
@@ -104,6 +107,7 @@ public:
 	void SetBlackboardCurrentMove(class UPokemonMoveDataAsset* MoveData);
 	void ActivateAbilityByTag(FGameplayTag InputTag);
 	void SetBlackboardActionState(EMoveAction DamageAction);
+	void SetBlackboardDesiredCombatMode(FGameplayTag NewCombatModeTag);
 private:
 
 	UPROPERTY()

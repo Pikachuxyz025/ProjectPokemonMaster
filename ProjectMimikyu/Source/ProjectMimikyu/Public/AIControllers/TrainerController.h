@@ -42,6 +42,9 @@ private:
 protected:
 
 	virtual void BeginPlay() override;
+	virtual void BeginPlayingState() override;
+	virtual void OnRep_PlayerState() override;
+	virtual void AcknowledgePossession(APawn* P) override;
 	virtual void SetupInputComponent() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -77,6 +80,7 @@ public:
 	
 	FOnKeyCalled KeyCalledDelegate;
 
+	void TryInitializeHUD();
 	void HandleGameHasStarted();
 	void SwapUIMode();
 	void ShiftLeft();

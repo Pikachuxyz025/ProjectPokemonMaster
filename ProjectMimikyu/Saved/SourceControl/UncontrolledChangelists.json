@@ -1,0 +1,22 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/AI/BlackBoards/BB_PokemonAI.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/AI/Controller/BT_PokemonAI.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/AI/Tasks/BTTask_UseAbility.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/GA_Base.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/Cooldowns/GE_Cooldown_Standard.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/GA_Melee_Base.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/GA_Ramming_Base.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/PokemonMoves/GA_Bite.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/PokemonMoves/GA_BulletPunch.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/GAS/PokemonMoves/GA_MachPunch.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Characters/Pokemon/DataAsset/Lucario.uasset"
+			]
+		}
+	]
+}

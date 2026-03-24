@@ -22,12 +22,12 @@ public:
 	void AbilityActorInfoSet();
 	FEffectAssetTag EffectAssetTag;
 
-	void AddCharacterAbilities(TArray<UPokemonMoveDataAsset*> CurrentPokemonMoves);
+	void AddCharacterAbilities(const TArray<UPokemonMoveDataAsset*>& CurrentPokemonMoves);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 	void AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateAbilityByTag(const FGameplayTag& InputTag);
+	bool ActivateAbilityByTag(const FGameplayTag& InputTag);
 	//int32 GetPokemonLevel() const;
 	//int32 GetXP() const;
 

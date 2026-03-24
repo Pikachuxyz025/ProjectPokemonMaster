@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
+#include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
@@ -69,27 +70,29 @@ TArray<EDirectionPoint> UPokemonDamageGameplayAbilities::GetKeySequenceFromTag(c
 
 void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("ApplyCost CALLED on %s"), *GetName());
 	//Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
-	//if (!CostGameplayEffectClass)
-	//{
-		//UE_LOG(LogTemp, Error, TEXT("CostGameplayEffectClass is null! Cannot apply cost."));
-		//return;
-	//}
+	if (!CostGameplayEffectClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: CostGameplayEffectClass is null for [%s]."), *GetNameSafe(this));
+		return;
+	}
 	FGameplayTag CostTag = FPokemonGameplayTags::Get().Data_PowerPointCost;
+
+	UE_LOG(LogTemp, Warning, TEXT("ApplyCost START on %s"), *GetNameSafe(this));
 	FGameplayEffectSpecHandle CostSpecHandle = MakeOutgoingGameplayEffectSpec(CostGameplayEffectClass, GetAbilityLevel());
+
+	UE_LOG(LogTemp, Warning, TEXT("ApplyCost AFTER MakeOutgoingGameplayEffectSpec on %s"), *GetNameSafe(this));
+	if (!CostSpecHandle.IsValid() || !CostSpecHandle.Data.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: Invalid cost spec for [%s]."), *GetNameSafe(this));
+		return;
+	}
+
+
 	CostSpecHandle.Data->SetSetByCallerMagnitude(CostTag, -PowerPointCost);
-	float* FoundMagnitude = CostSpecHandle.Data->SetByCallerTagMagnitudes.Find(CostTag);
-
-
-	if (CostSpecHandle.IsValid() && FoundMagnitude)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Found the Magnitude! Applying cost. Is this before or after the error?"));
-		ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, CostSpecHandle);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("Found Magnitude is null! Cannot apply cost."));
-	}
+	UE_LOG(LogTemp, Warning, TEXT("ApplyCost AFTER SetSetByCallerMagnitude on %s"), *GetNameSafe(this));
+	ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, CostSpecHandle);
 }
 
 void UPokemonDamageGameplayAbilities::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
@@ -153,7 +156,54 @@ bool UPokemonDamageGameplayAbilities::CanActivateAbility(const FGameplayAbilityS
 	return true;
 }
 
-FGameplayTag UPokemonDamageGameplayAbilities::GetCooldownTag()
+bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: ASC is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	const FGameplayAbilityActorInfo* ActorInfo = CurrentActorInfo;
+	if (!ActorInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: ActorInfo is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	// 1) Cooldown Check
+	const FGameplayTag CurrentCooldownTag = GetCooldownTag();
+	if (CurrentCooldownTag.IsValid() && ASC->HasMatchingGameplayTag(CurrentCooldownTag))
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommitPokemonMove blocked: [%s] is on cooldown with tag [%s]."), *CurrentCooldownTag.ToString(), *GetNameSafe(this));
+		return false;
+	}
+
+	// 2) PP check
+	const UPokemonBaseAttributeSet* PAS = ASC->GetSet<UPokemonBaseAttributeSet>();
+	if (!PAS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: PAS is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	const float CurrentPowerPoints = PAS->GetPowerPoints();
+	if (CurrentPowerPoints < PowerPointCost)
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommitPokemonMove blocked: Not enough PP (%.1f/%.1f) for [%s]."), CurrentPowerPoints, PowerPointCost, *GetNameSafe(this));
+		return false;
+	}
+
+	// 3) Apply cost + cooldown manually
+	ApplyCost(CurrentSpecHandle, ActorInfo, CurrentActivationInfo);
+	ApplyCooldown(CurrentSpecHandle, ActorInfo, CurrentActivationInfo);
+
+	UE_LOG(LogTemp, Display, TEXT("CommitPokemonMove success: [%s]"), *GetNameSafe(this));
+	return true;
+}
+
+FGameplayTag UPokemonDamageGameplayAbilities::GetCooldownTag() const
 {
 	static const FGameplayTag CooldownRootTag = FPokemonGameplayTags::Get().Cooldown_InputTag;
 	FGameplayTag CurrentCooldownGameplayTag;

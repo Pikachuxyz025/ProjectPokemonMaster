@@ -32,7 +32,25 @@ UCLASS(config=Game)
 class AProjectMimikyuCharacter : public ACharacter, public IPlayerInterface
 {
 	GENERATED_BODY()
+public:
+	AProjectMimikyuCharacter();
+	
+	void SetOverlappingItem(AItem* NewItem);
+	virtual void PostInitializeComponents()override;
 
+	FOnPartyUpdated OnPartyUpdated;
+	FOnTargetRegistered OnTargetRegistered;
+	FOnPokemonSentOut OnPokemonSentOut;
+	//FOnPokemonHealthUpdated OnPokemonHealthUpdated;
+
+	void CommandDodge(FGameplayTag GameplayTag);
+
+
+	virtual void UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon) override;
+protected:
+#pragma region Local-Only
+	// Input Mapping
+#pragma region Input Mapping
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -40,7 +58,7 @@ class AProjectMimikyuCharacter : public ACharacter, public IPlayerInterface
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -71,23 +89,54 @@ class AProjectMimikyuCharacter : public ACharacter, public IPlayerInterface
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Command;
+#pragma endregion
 
-public:
-	AProjectMimikyuCharacter();
-	
-	void SetOverlappingItem(AItem* NewItem);
-	virtual void PostInitializeComponents()override;
+	// HUD / moveset display
+	// Camera Usage
+#pragma endregion
 
-	FOnPartyUpdated OnPartyUpdated;
-	FOnTargetRegistered OnTargetRegistered;
-	FOnPokemonSentOut OnPokemonSentOut;
-	//FOnPokemonHealthUpdated OnPokemonHealthUpdated;
+#pragma region Server-Authoritative Gameplay
+	// Catching/Returning Pokemon
+	UFUNCTION(Server,Reliable)
+	void ServerRequetCatchPokemon(FVector TraceStart,FVector TraceEnd);
 
-	void CommandDodge(FGameplayTag GameplayTag);
+	UFUNCTION(Server,Reliable)
+	void ServerRequestReturnCurrentPokemon();
+
+	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
+	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon);
+	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
+
+	void CatchPokemon();
+	void EnterFaintedState();
+	// Sending Pokemon out 
+
+	void ComeOnOut();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSendOutPokemon(FVector TraceStart,FVector TraceEnd);
+
+	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd,FTransform& OutSpawnTransform) const;
+
+	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
+
+	// selecting a move 
+	void SelectMove(int32 Index);
+
+	UFUNCTION(Server, Reliable)
+	void ServerCallCommand(int32 Index);
+
+	// engaging a target 
+	// updating party state
 
 
-	virtual void UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon) override;
-protected:
+#pragma endregion
+
+#pragma region Replication/Cached References
+	// CurrentPokemon
+	// Cached Controller/player state refernces
+	// future replicated command/aim states
+#pragma endregion
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -97,9 +146,7 @@ protected:
 			
 	void Pickup();
 	void TargetAndEngage();
-	void CatchPokemon();
 	void AddToParty(APokemon_Parent* NewPokemon);
-	void ComeOnOut();
 
 	FPokemonInfo GetCurrentPokemonInfo();
 
@@ -107,7 +154,7 @@ protected:
 	void ServerAddToCurrentParty(AActor* AddedActor);
 	void ShowPokemonMoveset();
 	void RemovePokemonMoveset();
-	void BasicLineTrace(FHitResult& OutHit, FVector Start, FVector End);
+	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -117,8 +164,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
 	bool bHasPokemon = false;
 
-	UPROPERTY(VisibleAnywhere,Replicated,Category = "Pokemon Party")
-	APokemon_Parent* CurrentPokemon = nullptr;
+	UPROPERTY(VisibleAnywhere,ReplicatedUsing=OnRep_CurrentPokemon,Category = "Pokemon Party")
+	TObjectPtr<APokemon_Parent>CurrentPokemon = nullptr;
+
+	UFUNCTION()
+	void OnRep_CurrentPokemon();
 
 	UPROPERTY(VisibleAnywhere,Category = "Pokemon Party")
 	TArray<APokemon_Parent*> CurrentParty;
@@ -172,10 +222,8 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void SelectMove(int32 Index);
 
-	UFUNCTION(Server, Reliable)
-	void ServerCallCommand(const int32& i);
+
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FKey>DirectionKeyBind;

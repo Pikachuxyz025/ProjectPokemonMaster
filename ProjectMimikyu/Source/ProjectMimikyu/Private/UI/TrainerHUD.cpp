@@ -15,18 +15,51 @@
 void ATrainerHUD::AddTrainerOverlay()
 {
 	APlayerController* PC = GetOwningPlayerController();
-	ATrainerPlayerState* PS = PC->GetPlayerState<ATrainerPlayerState>();
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: No Player Controller found for HUD"));
+		return;
+	}
 
-	check(TrainerOverlayClass);
-	check(TrainerOverlayWidgetControllerClass);
+	ATrainerPlayerState* PS = PC->GetPlayerState<ATrainerPlayerState>();
+	if (!PS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: Player Controller does not have a valid TrainerPlayerState"));
+		return;
+	}
+
+	if (TrainerOverlay)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: TrainerOverlay already exists"));
+		return;
+	}
+
+	if(!TrainerOverlayClass||!TrainerOverlayWidgetControllerClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: TrainerOverlayClass or TrainerOverlayWidgetControllerClass is not set in the HUD"));
+		return;
+	}
 
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), TrainerOverlayClass);
 	TrainerOverlay = Cast<UPokemonUserWidget>(Widget);
 
-	FWidgetControllerParams Params = FWidgetControllerParams(PS, PC);
-	TrainerOverlay->SetWidgetController(GetTrainerOverlayWidgetController(Params));
+	if(!TrainerOverlay)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: Created widget is not of type UPokemonUserWidget"));
+		return;
+	}
 
-	Widget->AddToViewport();
+	FWidgetControllerParams Params = FWidgetControllerParams(PS, PC);
+	UTrainerOverlayWidgetController* WC = GetTrainerOverlayWidgetController(Params);
+	if (!WC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddTrainerOverlay failed: WidgetController creation failed."));
+		TrainerOverlay = nullptr;
+		return;
+	}
+	TrainerOverlay->SetWidgetController(WC);
+
+	TrainerOverlay->AddToViewport();
 }
 
 /*void ATrainerHUD::AddInventoryOverlay()
@@ -43,20 +76,33 @@ void ATrainerHUD::AddTrainerOverlay()
 void ATrainerHUD::AddPlayerInventoryMenuOverlay()
 {
 	APlayerController* PlayerController = GetOwningPlayerController();
-	check(PlayerController);
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddPlayerInventoryMenuOverlay failed: No Player Controller found for HUD"));
+		return;
+	}
+
 	if (!InventoryOverlay)
 	{
 		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), InventoryOverlayClass);
 		InventoryOverlay = Cast<UPlayerInventoryMenuOverlay>(Widget);
 	}
 
-	if (TrainerOverlay->IsInViewport())
+	if (!InventoryOverlay)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddPlayerInventoryMenuOverlay failed: Created widget is not of type UPlayerInventoryMenuOverlay"));
+		return;
+	}
+
+	if (TrainerOverlay && TrainerOverlay->IsInViewport())
 	{
 		SwitchOverlays(TrainerOverlay, InventoryOverlay);
 		InventoryOverlay->SetReturnToWidegt(TrainerOverlay);
 	}
-	else	
-		InventoryOverlay->AddToViewport();	
+	else
+	{
+		InventoryOverlay->AddToViewport();
+	}
 }
 
 void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWidget)//, bool bRemoveMouse)
@@ -76,28 +122,36 @@ void ATrainerHUD::SwitchOverlays(UUserWidget* CurrentWidget, UUserWidget* NewWid
 
 UPokemonMenuWidgetController* ATrainerHUD::GetPokemonMenuWidgetController(const FWidgetControllerParams& WCParams)
 {
-	//if (PokemonMenuWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor()!=PokemonMenuWidgetController->GetWidgetAvatarActor())
-		PokemonMenuWidgetController = nullptr;
+	if (!WCParams.PlayerState || !WCParams.PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetTrainerOverlayWidgetController failed: invalid widget controller params."));
+		return nullptr;
+	}
 
 	if (!PokemonMenuWidgetController)
 	{
 		PokemonMenuWidgetController = NewObject<UPokemonMenuWidgetController>(this, PokemonMenuWidgetControllerClass);
-		PokemonMenuWidgetController->SetWidgetControllerParams(WCParams);
-		PokemonMenuWidgetController->BindCallbacksToDependencies();
 	}
+
+	PokemonMenuWidgetController->SetWidgetControllerParams(WCParams);
+	PokemonMenuWidgetController->BindCallbacksToDependencies();
 	return PokemonMenuWidgetController;
 }
 
 UTrainerOverlayWidgetController* ATrainerHUD::GetTrainerOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
-	//if (TrainerOverlayWidgetController && WCParams.AbilitySystemComponent->GetAvatarActor() != TrainerOverlayWidgetController->GetWidgetAvatarActor())
-		TrainerOverlayWidgetController = nullptr;
+	if (!WCParams.PlayerState || !WCParams.PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetTrainerOverlayWidgetController failed: invalid widget controller params."));
+		return nullptr;
+	}
 
 	if (!TrainerOverlayWidgetController)
 	{
 		TrainerOverlayWidgetController = NewObject<UTrainerOverlayWidgetController>(this, TrainerOverlayWidgetControllerClass);
-		TrainerOverlayWidgetController->SetWidgetControllerParams(WCParams);
-		TrainerOverlayWidgetController->BindCallbacksToDependencies();
 	}
+
+	TrainerOverlayWidgetController->SetWidgetControllerParams(WCParams);
+	TrainerOverlayWidgetController->BindCallbacksToDependencies();
 	return TrainerOverlayWidgetController;
 }

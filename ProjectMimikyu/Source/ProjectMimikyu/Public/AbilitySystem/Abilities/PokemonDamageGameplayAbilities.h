@@ -19,6 +19,7 @@ class PROJECTMIMIKYU_API UPokemonDamageGameplayAbilities : public UPokemonGamepl
 	
 public:
 
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
@@ -83,6 +84,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<EDirectionPoint> GetKeySequenceFromTag(const FGameplayTag& AbilityTag, bool bLogNotFound = false) const;
 
+	UFUNCTION(BlueprintCallable)
+	bool CommitPokemonMove();
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -92,7 +96,8 @@ protected:
 	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)const override;
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 
+
 private:
 
-	FGameplayTag GetCooldownTag();
+	FGameplayTag GetCooldownTag() const;
 };

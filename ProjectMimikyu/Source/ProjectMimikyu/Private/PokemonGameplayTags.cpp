@@ -423,6 +423,12 @@ GameplayTags.Debuff_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 #pragma endregion
 
 #pragma region Cooldowns
+
+	GameplayTags.Cooldown = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown"),
+		FString("Standard Cooldown Tag")
+	);
+
 GameplayTags.Cooldown_InputTag = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.InputTag"),
 		FString("Standard Input Cooldown Tag")
@@ -431,6 +437,11 @@ GameplayTags.Cooldown_InputTag = UGameplayTagsManager::Get().AddNativeGameplayTa
 	GameplayTags.Data_PowerPointCost = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Data.PowerPointCost"),
 		FString("Power Point	 Cost Tag")
+	);
+
+	GameplayTags.Data_CooldownDuration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Data.CooldownDuration"),
+		FString("Cooldown Duration Tag")
 	);
 
 	GameplayTags.Cooldown_InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -484,6 +495,35 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("XP.Erratic"),
 		FString("XP Gain Erratic Tag")
 	);
+#pragma endregion
+
+#pragma region AI Decisions
+
+	GameplayTags.AI_Decision_Combat = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AI.Decision.Combat"),
+		FString("Root combat decision tag")
+	);
+
+	GameplayTags.AI_Decision_Combat_Idle = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AI.Decision.Combat.Idle"),
+		FString("AI chooses to remain idle during combat")
+	);
+
+	GameplayTags.AI_Decision_Combat_Engage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AI.Decision.Combat.Engage"),
+		FString("AI chooses to engage the enemy")
+	);
+
+	GameplayTags.AI_Decision_Combat_Defensive = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AI.Decision.Combat.Defensive"),
+		FString("AI chooses a defensive combat posture")
+	);
+
+	GameplayTags.AI_Decision_Combat_Flee = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("AI.Decision.Combat.Flee"),
+		FString("AI decides to flee from combat")
+	);
+
 #pragma endregion
 
 	GameplayTags.Projectiles_Categories = UGameplayTagsManager::Get().AddNativeGameplayTag(

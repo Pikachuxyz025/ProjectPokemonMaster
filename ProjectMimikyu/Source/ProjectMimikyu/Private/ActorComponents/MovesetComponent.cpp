@@ -6,16 +6,13 @@
 #include "DataAssets/PokemonDataAsset.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 
-// Sets default values for this component's properties
 UMovesetComponent::UMovesetComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
+/*
+ //////////////////////---Depricated Not Used---//////////////////////
 void UMovesetComponent::SpawnWithMoveSet(int32 CurrentPokemonLevel)
 {
 	if (PokemonLevelUpMoveset.Num() == 0)
@@ -66,10 +63,28 @@ void UMovesetComponent::SpawnWithAbilitySet(int32 CurrentPokemonLevel)
 	}
 }
 
-void UMovesetComponent::SetupMoveset(TArray<UPokemonMoveDataAsset*> NewMoveset)
+TArray<TSubclassOf<UPokemonGameplayAbilities>> UMovesetComponent::GetGameplayAbilities(const int32& CurrentPokemonLevel)
 {
-	CurrentPokemonMoves = NewMoveset;
+	TArray<int32> PokemonLevels;
+	PokemonLevelUpAbilities.GetKeys(PokemonLevels);
+	TArray<TSubclassOf <UPokemonGameplayAbilities>> CurrentAbilities;
+	for (int32 i = PokemonLevels.Num() - 1; i < PokemonLevels.Num(); i--)
+	{
+		if (CurrentPokemonLevel < PokemonLevels[i])
+			continue;
+		if (!CurrentAbilities.Contains(PokemonLevelUpAbilities[PokemonLevels[i]]))
+		{
+			CurrentAbilities.AddUnique(PokemonLevelUpAbilities[PokemonLevels[i]]);
+			if (CurrentAbilities.Num() == 4)
+				break;
+			continue;
+		}
+		continue;
+	}
+	return CurrentAbilities;
 }
+*/
+
 
 void UMovesetComponent::SpawnWithDataMoveSet(int32 CurrentPokemonLevel, UPokemonDataAsset* PokemonMoveList)
 {
@@ -99,24 +114,8 @@ void UMovesetComponent::SpawnWithDataMoveSet(int32 CurrentPokemonLevel, UPokemon
 	}
 }
 
-TArray<TSubclassOf<UPokemonGameplayAbilities>> UMovesetComponent::GetGameplayAbilities(const int32& CurrentPokemonLevel)
+void UMovesetComponent::SetupMoveset(TArray<UPokemonMoveDataAsset*> NewMoveset)
 {
-	TArray<int32> PokemonLevels;
-	PokemonLevelUpAbilities.GetKeys(PokemonLevels);
-	TArray<TSubclassOf <UPokemonGameplayAbilities>> CurrentAbilities;
-	for (int32 i = PokemonLevels.Num() - 1; i < PokemonLevels.Num(); i--)
-	{
-		if (CurrentPokemonLevel < PokemonLevels[i])
-			continue;
-		if (!CurrentAbilities.Contains(PokemonLevelUpAbilities[PokemonLevels[i]]))
-		{
-			CurrentAbilities.AddUnique(PokemonLevelUpAbilities[PokemonLevels[i]]);
-			if (CurrentAbilities.Num() == 4)
-				break;
-			continue;
-		}
-		continue;
-	}
-	return CurrentAbilities;
+	CurrentPokemonMoves = NewMoveset;
 }
 

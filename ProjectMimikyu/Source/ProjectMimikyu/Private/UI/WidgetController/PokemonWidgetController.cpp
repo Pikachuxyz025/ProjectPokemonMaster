@@ -33,28 +33,28 @@ void UPokemonWidgetController::BindCallbacksToDependencies()
 APokemon_Parent* UPokemonWidgetController::GetPokemon()
 {
 	if (!Pokemon)
-		Pokemon = CastChecked<APokemon_Parent>(GetPASC()->GetAvatarActor());
+		Pokemon = Cast<APokemon_Parent>(GetPASC()->GetAvatarActor());
 	return Pokemon;
 }
 
 ATrainerPlayerState* UPokemonWidgetController::GetTPS()
 {
 	if (!TrainerPlayerState)
-		TrainerPlayerState = CastChecked<ATrainerPlayerState>(PlayerState);
+		TrainerPlayerState = Cast<ATrainerPlayerState>(PlayerState);
 	return TrainerPlayerState;
 }
 
 UPokemonAbilitySystemComponent* UPokemonWidgetController::GetPASC()
 {
 	if (!PokemonAbilitySystemComponent)
-		PokemonAbilitySystemComponent = CastChecked<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
+		PokemonAbilitySystemComponent = Cast<UPokemonAbilitySystemComponent>(AbilitySystemComponent);
 	return PokemonAbilitySystemComponent;
 }
 
 UPokemonBaseAttributeSet* UPokemonWidgetController::GetPAS()
 {
 	if (!PokemonAttributeSet)
-		PokemonAttributeSet = CastChecked<UPokemonBaseAttributeSet>(AttributeSet);
+		PokemonAttributeSet = Cast<UPokemonBaseAttributeSet>(AttributeSet);
 	return PokemonAttributeSet;
 }
 
@@ -68,7 +68,7 @@ UPokemonDataAsset* UPokemonWidgetController::GetPokemonData()
 ATrainerController* UPokemonWidgetController::GetTC()
 {
 	if (!TrainerController)
-		TrainerController = CastChecked<ATrainerController>(PlayerController);
+		TrainerController = Cast<ATrainerController>(PlayerController);
 	return TrainerController;
 }
 

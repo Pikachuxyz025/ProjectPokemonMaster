@@ -11,27 +11,25 @@ void UPokemonAbilitySystemComponent::AbilityActorInfoSet()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UPokemonAbilitySystemComponent::EffectApplied);
 }
 
-void UPokemonAbilitySystemComponent::AddCharacterAbilities(TArray<UPokemonMoveDataAsset*> CurrentPokemonMoves)
+void UPokemonAbilitySystemComponent::AddCharacterAbilities(const TArray<UPokemonMoveDataAsset*>& CurrentPokemonMoves)
 { 
-	for (auto Move: CurrentPokemonMoves)
+	for (auto Move : CurrentPokemonMoves)
 	{	
-		//if (UPokemonGameplayAbilities* PokemonAbility = Move->Ability->GetDefaultObject<UPokemonGameplayAbilities>())//NewObject<UPokemonGameplayAbilities>(this, Move->Ability))
-		//{
-		//	PokemonAbility->CooldownTag = Move->CooldownTag;
-
+		if(!Move||!Move->Ability)
+		{
+			continue;
+		}
 		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1);
+
+		if(Move->InputTag.IsValid())
+		{
 			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->InputTag);
+		}
+		if(Move->CooldownTag.IsValid())
+		{
 			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->CooldownTag);
+		}
 			GiveAbility(AbilitySpec);
-//		}
-		
-		//FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Move->Ability, 1);
-		//if (UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
-		//{
-		//	AbilitySpec.DynamicAbilityTags.AddTag(Move->InputTag);
-		//	PokemonAbility->CooldownTag=Move->CooldownTag;
-		//	GiveAbility(AbilitySpec);
-		//}
 	}
 }
 
@@ -44,19 +42,28 @@ void UPokemonAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<T
 	}
 }
 
-void UPokemonAbilitySystemComponent::AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility,FGameplayTag AbilityInputTag)
+void UPokemonAbilitySystemComponent::AddSingleAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag)
 {
+	if (!NewAbility)
+	{
+		return;
+	}
 	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(NewAbility, 1);
-	if (const UPokemonGameplayAbilities* PokemonAbility = Cast<UPokemonGameplayAbilities>(AbilitySpec.Ability))
+
+	if (AbilityInputTag.IsValid())
 	{
 		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityInputTag);
-		GiveAbility(AbilitySpec);
 	}
+
+	GiveAbility(AbilitySpec);
 }
 
-void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& InputTag)
+bool UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid()) return;
+	if (!InputTag.IsValid()) 
+	{
+		return false;
+	}
 
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
@@ -65,10 +72,13 @@ void UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& In
 			//AbilitySpecInputPressed(AbilitySpec);
 			if (!AbilitySpec.IsActive())
 			{
-				TryActivateAbility(AbilitySpec.Handle);
+				return TryActivateAbility(AbilitySpec.Handle);
 			}
+			return false;
 		}
 	}
+
+	return false;
 }
 
 void UPokemonAbilitySystemComponent::RestoreStatAttributes(const TMap<FGameplayAttribute, float>& AttributeValueInfo)
@@ -97,7 +107,15 @@ void UPokemonAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* Abil
 
 UPokemonBaseAttributeSet* UPokemonAbilitySystemComponent::GetPAS()
 {
-	if(!PokemonAttributeSet)
-		CastChecked<UPokemonBaseAttributeSet>(GetAttributeSet(UAttributeSet::StaticClass()));
-	return PokemonAttributeSet;
+	if (!PokemonAttributeSet)
+	{
+		const UPokemonBaseAttributeSet* FoundSet =
+			CastChecked<const UPokemonBaseAttributeSet>(
+				GetAttributeSet(UPokemonBaseAttributeSet::StaticClass())
+			);
+
+		PokemonAttributeSet = const_cast<UPokemonBaseAttributeSet*>(FoundSet);
+	}
+
+	return PokemonAttributeSet.Get();
 }

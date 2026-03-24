@@ -80,6 +80,10 @@ void AProjectMimikyuCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(AProjectMimikyuCharacter, CurrentPokemon);
 }
 
+void AProjectMimikyuCharacter::OnRep_CurrentPokemon()
+{
+}
+
 void AProjectMimikyuCharacter::SetOverlappingItem(AItem* NewItem)
 {
 	OverlappingItem = NewItem;
@@ -96,59 +100,25 @@ void AProjectMimikyuCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetTC()->GetLocalPlayer());
-	if (Subsystem)
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-
-	TrainerController->HandleGameHasStarted();
+	if (IsLocallyControlled())
+	{
+		if (ATrainerController* TC = GetTC())
+		{
+			if (ULocalPlayer* LP = TC->GetLocalPlayer())
+			{
+				Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LP);
+				if (Subsystem && DefaultMappingContext)
+					Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
+			TrainerController->HandleGameHasStarted();
+		}
+	}
 }
 
 void AProjectMimikyuCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	// SelectMove();
-}
-
-void AProjectMimikyuCharacter::ComeOnOut()
-{
-	if (GetTPS() && !GetTPS()->IsCurrentPartyEmpty() && !CurrentPokemon)
-	{
-		FPokemonInfo PokemonOut = GetTPS()->GetCurrentPokemonInfo();
-
-		FHitResult OutHit;
-		FVector Start = GetActorLocation();
-		FVector End = FollowCamera->GetComponentLocation() + (FollowCamera->GetForwardVector() * CatchingDistance);
-		BasicLineTrace(OutHit, Start, End);
-
-		if (OutHit.bBlockingHit && PokemonOut.PartyMode == EPartyStatus::EPS_Ready)
-		{
-			FTransform SpawnTransform;
-			SpawnTransform.SetLocation(OutHit.ImpactPoint + FVector(0, 0, 90.f));
-
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = GetInstigator();
-
-			SpawnTransform.SetRotation((UKismetMathLibrary::FindLookAtRotation(OutHit.ImpactPoint + FVector(0, 0, 90.f), GetActorLocation())).Quaternion());
-			APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
-				(
-					PokemonOut.StoredPokemonDataAsset->StoredPokemonClass,
-					SpawnTransform,
-					this,
-					this,
-					ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-				);
-			IChooseYou->SetPokemonStartup(PokemonOut);
-			IChooseYou->SetPokemonTrainer(this);
-			IChooseYou->FinishSpawning(SpawnTransform);
-			CurrentPokemon = IChooseYou;
-			GetTPS()->PokemonIsOut(IChooseYou);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
-	}
 }
 
 FPokemonInfo AProjectMimikyuCharacter::GetCurrentPokemonInfo()
@@ -167,11 +137,6 @@ void AProjectMimikyuCharacter::ServerSetPokemon_Implementation(APokemon_Parent* 
 	CurrentPokemon = LeadPokemon;
 }
 
-void AProjectMimikyuCharacter::ServerCallCommand_Implementation(const int32& i)
-{
-	CurrentPokemon->CallCommand(i);
-}
-
 void AProjectMimikyuCharacter::ServerBroadcastTarget_Implementation(AActor* Target)
 {
 	OnTargetRegistered.Broadcast(Target);
@@ -186,31 +151,133 @@ void AProjectMimikyuCharacter::ServerAddToCurrentParty_Implementation(AActor* Ad
 
 }
 
+void AProjectMimikyuCharacter::ServerRequetCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd)
+{
+	APokemon_Parent* TargetPokemon = nullptr;
+	if (!TryGetCatchTarget(TraceStart, TraceEnd, TargetPokemon))
+	{
+		UE_LOG(LogTemp, Display, TEXT("No catch target found"));
+		return;
+	}
+	HandleCatchPokemon(TargetPokemon);
+}
+
+void AProjectMimikyuCharacter::ServerRequestReturnCurrentPokemon_Implementation()
+{
+	if(!HasAuthority())
+		{
+		return;
+	}
+
+	if (!IsValid(CurrentPokemon))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerRequestReturnCurrentPokemon failed: No current Pokemon to return."));
+		CurrentPokemon = nullptr;
+		return;
+	}
+
+	if (CurrentPokemon->CurrentTrainer != this)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerRequestReturnCurrentPokemon failed: Current Pokemon does not belong to this trainer."));
+		return;
+	}
+
+
+	ATrainerPlayerState* TPS = GetTPS();
+	if (TPS)
+	{
+		TPS->PokemonReturned(CurrentPokemon);
+	}
+
+	APokemon_Parent* PokemonToReturn = CurrentPokemon;
+	CurrentPokemon = nullptr;
+
+	PokemonToReturn->Return();
+}
+
+bool AProjectMimikyuCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
+{
+	OutPokemon = nullptr;
+
+	FHitResult OutHit;
+	BasicLineTrace(OutHit, TraceStart, TraceEnd);
+
+	if (!OutHit.bBlockingHit)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Line Trace did not hit anything"));
+		return false;
+	}
+
+	APokemon_Parent* HitPokemon = Cast<APokemon_Parent>(OutHit.GetActor());
+	if (!IsValid(HitPokemon))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Line Trace hit something that is not a Pokemon"));
+		return false;
+	}
+
+	if (HitPokemon->bIsCaught)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Line Trace hit a Pokemon that is already caught"));
+		return false;
+	}
+
+	OutPokemon = HitPokemon;
+	return true;
+}
+
+void AProjectMimikyuCharacter::HandleCatchPokemon(APokemon_Parent* CaughtPokemon)
+{
+	if (!HasAuthority() || !IsValid(CaughtPokemon))
+	{
+		return;
+	}
+	
+	ATrainerPlayerState* TPS = GetTPS();
+	if(!TPS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HandleCatchPokemon failed: Could not get TrainerPlayerState."));
+		return;
+	}
+
+	// Save into party/state first
+	TPS->AddToParty(CaughtPokemon);
+
+	CaughtPokemon->bIsCaught = true;	
+	CaughtPokemon->SetPokemonTrainer(this);
+
+	// If this was somehow the field pokemon , make sure to clear it out and update the HUD
+	if (CurrentPokemon == CaughtPokemon)
+	{
+		CurrentPokemon = nullptr;
+	}
+	HandleReturnedPokemon(CaughtPokemon);
+}
+
+void AProjectMimikyuCharacter::HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon)
+{
+	if (!HasAuthority() || !IsValid(ReturnedPokemon))
+	{
+		return;
+	}
+
+	ReturnedPokemon->PrepareForFieldRemoval();
+	ReturnedPokemon->Return();
+}
+
 void AProjectMimikyuCharacter::CatchPokemon()
 {
-	FHitResult OutHit;
-	FVector Start = GetActorLocation();
-	FVector End = FollowCamera->GetComponentLocation() + (FollowCamera->GetForwardVector() * CatchingDistance);
-	BasicLineTrace(OutHit, Start, End);
-
-	if (OutHit.bBlockingHit)
+	if (!IsLocallyControlled())
 	{
-		APokemon_Parent* CaughtPokemon = Cast<APokemon_Parent>(OutHit.GetActor());
-		if (CaughtPokemon && !CaughtPokemon->bIsCaught)
-		{
-			AddToParty(CaughtPokemon);
-			CaughtPokemon->Return();
-			//if (CurrentParty.Num() < 6)
-			//{
-				//CurrentParty.Add(CaughtPokemon);
-				
-				//CaughtPokemon->AddNewPokemonAbility(DodgeAbility,FPokemonGameplayTags::Get().InputTag_Dodge);
-				//ServerAddToCurrentParty(OutHit.GetActor());
-				// TODO:: Remove Pokemon from world. Save data to an FStruct for saving/loading
-				//OnPartyUpdated.Broadcast(CurrentParty);
-			//}
-		}
+		return;
 	}
+
+	const FVector TraceStart = FollowCamera->GetComponentLocation();
+	const FVector TraceEnd = TraceStart + (FollowCamera->GetForwardVector() * CatchingDistance);
+	ServerRequetCatchPokemon(TraceStart, TraceEnd);
+}
+
+void AProjectMimikyuCharacter::EnterFaintedState()
+{
 }
 
 void AProjectMimikyuCharacter::AddToParty(APokemon_Parent* NewPokemon)
@@ -230,7 +297,7 @@ void AProjectMimikyuCharacter::RemovePokemonMoveset()
 	TrainerController->RemoveCurrentPokemonMoveset();
 }
 
-void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, FVector Start, FVector End)
+void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const
 {
 	UWorld* World = GetWorld();
 	if (!World) return;
@@ -260,7 +327,7 @@ void AProjectMimikyuCharacter::BasicLineTrace(FHitResult& OutHit, FVector Start,
 ATrainerController* AProjectMimikyuCharacter::GetTC()
 {
 	if (!TrainerController)
-		TrainerController = CastChecked<ATrainerController>(Controller);
+		TrainerController = Cast<ATrainerController>(Controller);
 	return TrainerController;
 }
 
@@ -317,18 +384,45 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 void AProjectMimikyuCharacter::SelectMove(int32 Index)
 {
-	// Pokemon Does move
-		// call a bool that prevents you from calling a move while pokemon is attacking
-		// pokemon's move recharges maybe we give them stamina we'll see...
-	if (TrainerController && bAreMovesSelectable)
+	if (!IsLocallyControlled()) return;
+
+	if (!bAreMovesSelectable)
 	{
-		if (Index == INDEX_NONE || Index < 0) return;
-		if (/*TrainerController->IsMoveValid(Index) && */!CurrentPokemon->GetIsCommandActive())
-		{
-			UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
-			ServerCallCommand(Index);
-		}
+		UE_LOG(LogTemp, Display, TEXT("Moves Not Selectable"));
+		return;
 	}
+
+	if (Index == INDEX_NONE || Index < 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Move Index"));
+		return;
+	}
+
+	if (!CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("SelectMove failed: No current Pokemon."));
+		return;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
+	ServerCallCommand(Index);
+}
+
+void AProjectMimikyuCharacter::ServerCallCommand_Implementation(int32 Index)
+{
+	if(!CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("ServerCallCommand failed: No current Pokemon."));
+		return;
+	
+	}
+
+	if (Index == INDEX_NONE || Index < 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCallCommand failed: Invalid move index."));
+		return;
+	}
+	CurrentPokemon->CallCommand(Index);
 }
 
 void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)
@@ -347,6 +441,108 @@ void AProjectMimikyuCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_
 
 	PokemonTrainerState->UpdatePokemonInfoInParty(AlteredPokemon);
 }
+
+
+
+#pragma region Come On Out
+void AProjectMimikyuCharacter::ComeOnOut()
+{
+	if (!IsLocallyControlled())
+		return;
+	FVector Start = FollowCamera->GetComponentLocation();
+	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
+	ServerRequestSendOutPokemon(Start, End);
+}
+
+void AProjectMimikyuCharacter::ServerRequestSendOutPokemon_Implementation(FVector TraceStart, FVector TraceEnd)
+{
+	HandleSendOutPokemon(TraceStart, TraceEnd);
+}
+
+bool AProjectMimikyuCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const
+{
+	FHitResult OutHit;
+	BasicLineTrace(OutHit, TraceStart, TraceEnd);
+
+	if (!OutHit.bBlockingHit)
+	{
+		return false;
+	}
+	const FVector SpawnLocation = OutHit.ImpactPoint + FVector(0, 0, 90.f);
+	const FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, GetActorLocation());
+
+	OutSpawnTransform.SetLocation(SpawnLocation);
+	OutSpawnTransform.SetRotation(SpawnRotation.Quaternion());
+
+	return true;
+}
+
+void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd)
+{
+	// Server checks if player has a Pokemon, if the Pokemon is ready, and if the spawn location is valid before spawning the Pokemon and setting it as the current active Pokemon
+	
+	if(!HasAuthority())
+	{
+		return;
+	}
+
+	if(!IsValid(CurrentPokemon))
+	{
+		CurrentPokemon = nullptr;
+	}
+	
+	ATrainerPlayerState* TPS = GetTPS();
+	if (!TPS || TPS->IsCurrentPartyEmpty() || CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
+		return;
+	}
+
+	FPokemonInfo PokemonOut = TPS->GetCurrentPokemonInfo();
+
+	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Pokemon Not Ready"));
+		return;
+	}
+
+	FTransform SpawnTransform;
+	if (!TryBuildPokemonSpawnTransform(TraceStart, TraceEnd, SpawnTransform))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Spawn Location"));
+		return;
+	}
+
+	if (!PokemonOut.StoredPokemonDataAsset || !PokemonOut.StoredPokemonDataAsset->StoredPokemonClass)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Pokemon Data Asset"));
+		return;
+	}
+
+	APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
+		(
+			PokemonOut.StoredPokemonDataAsset->StoredPokemonClass,
+			SpawnTransform,
+			this,
+			Cast<APawn>(this),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+
+	if (!IChooseYou)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Failed to spawn Pokemon"));
+		return;
+	}
+	IChooseYou->SetPokemonStartup(PokemonOut);
+	IChooseYou->SetPokemonTrainer(this);
+	IChooseYou->FinishSpawning(SpawnTransform);
+
+	CurrentPokemon = IChooseYou;
+	TPS->PokemonIsOut(IChooseYou);
+}
+
+#pragma endregion
+
 
 void AProjectMimikyuCharacter::Move(const FInputActionValue& Value)
 {

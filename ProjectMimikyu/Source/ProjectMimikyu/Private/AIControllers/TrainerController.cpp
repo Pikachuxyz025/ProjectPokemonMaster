@@ -2,6 +2,7 @@
 
 
 #include "AIControllers/TrainerController.h"
+#include "Player/TrainerPlayerState.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "UI/TrainerOverlay.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
@@ -14,7 +15,7 @@
 
 ATrainerController::ATrainerController()
 {
-	//bReplicates = true;
+	bReplicates = true;
 }
 
 void ATrainerController::AddMouseCursor(UUserWidget* CurrentWidget, bool bSetUpMode)
@@ -48,6 +49,24 @@ void ATrainerController::BeginPlay()
 	
 }
 
+void ATrainerController::BeginPlayingState()
+{
+	Super::BeginPlayingState();
+	TryInitializeHUD();
+}
+
+void ATrainerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	TryInitializeHUD();
+}
+
+void ATrainerController::AcknowledgePossession(APawn* P)
+{
+	Super::AcknowledgePossession(P);
+	TryInitializeHUD();
+}
+
 void ATrainerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -64,17 +83,49 @@ void ATrainerController::SetupInputComponent()
 
 void ATrainerController::DisplayPlayerMenu()
 {
-	UE_LOG(LogTemp, Display, TEXT("Menu Added"));
+	if (!TrainerHUD)
+	{
+		TrainerHUD = Cast<ATrainerHUD>(GetHUD());
+	}
+
+	if (!TrainerHUD)
+	{
+		return;
+	}
+
 	TrainerHUD->AddPlayerInventoryMenuOverlay();
+	UE_LOG(LogTemp, Display, TEXT("Menu Added"));
+}
+
+void ATrainerController::TryInitializeHUD()
+{
+	if (!IsLocalController())
+	{
+		return;
+	}
+
+	TrainerHUD = Cast<ATrainerHUD>(GetHUD());
+	if (!TrainerHUD)
+	{
+		return;
+	}
+
+	ATrainerPlayerState* PS = GetPlayerState<ATrainerPlayerState>();
+	APawn* P = GetPawn();
+	if (!PS || !P)
+	{
+		return;
+	}
+
+	if (!TrainerHUD->TrainerOverlay)
+	{
+		TrainerHUD->AddTrainerOverlay();
+	}
 }
 
 void ATrainerController::HandleGameHasStarted()
 {
-	TrainerHUD = Cast<ATrainerHUD>(GetHUD());
-	if (TrainerHUD && !TrainerHUD->TrainerOverlay)
-	{
-		TrainerHUD->AddTrainerOverlay();
-	}
+	TryInitializeHUD();
 }
 
 void ATrainerController::SwapUIMode()
@@ -149,5 +200,4 @@ bool ATrainerController::IsMoveValid(int32 DirectionIndex)
 	//UPokemonMoveDataAsset* SelectedPokemonMove = TrainerHUD->TrainerOverlay->GetMove(SelectedDirection); 
 	bool IsValid = false;// SelectedPokemonMove ? true : false;
 	return IsValid;
-;
 }

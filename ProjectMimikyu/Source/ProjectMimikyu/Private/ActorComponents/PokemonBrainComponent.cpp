@@ -3,8 +3,42 @@
 
 #include "ActorComponents/PokemonBrainComponent.h"
 #include "Characters/Pokemon_Parent.h"
+#include "PokemonGameplayTags.h"
 #include "DataAssets/PokemonAICombatBrainConfig.h"
 #include "AIControllers/PokemonAIController.h"
+
+static FString PokemonStateToString(EPokemonState State)
+{
+	switch (State)
+	{
+	case EPokemonState::EPS_NoState:
+		return TEXT("NoState");
+
+	case EPokemonState::EPS_Passive:
+		return TEXT("Passive");
+
+	case EPokemonState::EPS_Training:
+		return TEXT("Training");
+
+	case EPokemonState::EPS_Resting:
+		return TEXT("Resting");
+
+	case EPokemonState::EPS_Docile:
+		return TEXT("Docile");
+
+	case EPokemonState::EPS_Combative:
+		return TEXT("Combative");
+
+	case EPokemonState::EPS_Investigative:
+		return TEXT("Investigative");
+
+	case EPokemonState::EPS_Fainted:
+		return TEXT("Fainted");
+
+	default:
+		return TEXT("Unknown");
+	}
+}
 
 UPokemonBrainComponent::UPokemonBrainComponent()
 {
@@ -45,7 +79,7 @@ void UPokemonBrainComponent::StartLogic()
 	NextThinkTime = Now + GetRandomThinkInterval();
 	CommitUntilTime = Now;
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] StartLogic | Controller=%s | Pawn=%s | Config=%s | NextThinkTime=%.2f"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *GetNameSafe(BrainConfig), NextThinkTime);
+	//UE_LOG(LogTemp, Warning, TEXT("[Brain] StartLogic | Controller=%s | Pawn=%s | Config=%s | NextThinkTime=%.2f"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *GetNameSafe(BrainConfig), NextThinkTime);
 }
 
 void UPokemonBrainComponent::StopLogic(const FString& Reason)
@@ -54,14 +88,14 @@ void UPokemonBrainComponent::StopLogic(const FString& Reason)
 
 	bBrainActive = false;
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] StopLogic | Controller=%s | Pawn=%s | Reason=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *Reason);
+	//UE_LOG(LogTemp, Warning, TEXT("[Brain] StopLogic | Controller=%s | Pawn=%s | Reason=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *Reason);
 }
 
 void UPokemonBrainComponent::RestartLogic()
 {
 	Super::RestartLogic();
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] RestartLogic | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+	//UE_LOG(LogTemp, Warning, TEXT("[Brain] RestartLogic | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
 	StopLogic("RestartLogic called");
 	StartLogic();
 }
@@ -153,40 +187,46 @@ void UPokemonBrainComponent::RunThink()
 {
 	if (!OwningPokemonController || !ControlledPokemon || !BrainConfig)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | Missing references for Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink aborted: missing refs"));
 		return;
 	}
-	// Example decision logic based on HP and combat target
-	const float HPPercent = GetHPPercent();
-	const bool bHasTarget = HasCombatTarget();
 	const float Now = GetCurrentWorldTime();
 
 	float DeltaSinceLast = 0.f;
-
 	if (LastDecisionTime > 0.f)
 	{
 		DeltaSinceLast = Now - LastDecisionTime;
+	}
 
-		UE_LOG(LogTemp, Warning,
-			TEXT("[Brain] Think | Time=%.2f | DeltaSinceLast=%.2f | NextThink=%.2f | CommitUntil=%.2f"),
-			Now,
-			DeltaSinceLast,
-			NextThinkTime,
-			CommitUntilTime);
-	}
-	if (bHasTarget && HPPercent > 0.5f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | Decision: Attack | Controller=%s | Pawn=%s | HP=%.2f%%"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), HPPercent * 100.f);
-	}
-	else if (bHasTarget && HPPercent <= 0.5f)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | Decision: Defend | Controller=%s | Pawn=%s | HP=%.2f%%"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), HPPercent * 100.f);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | Decision: Idle | Controller=%s | Pawn=%s | HP=%.2f%%"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), HPPercent * 100.f);
-	}
-	LastDecisionTime = GetCurrentWorldTime();
+	const float HPPercent = GetHPPercent();
+	const bool bHasTarget = HasCombatTarget();
+
+	const FGameplayTag NewDesiredCombatMode = DetermineDesiredCombatMode(HPPercent, bHasTarget);
+	SetDesiredCombatMode(NewDesiredCombatMode);
+
+	const EPokemonState CurrentState = OwningPokemonController->GetPokemonState();
+	const FString PokemonStateString = PokemonStateToString(CurrentState);
+
+	const AActor* CurrentTarget = OwningPokemonController->GetCombatTarget();
+
+
+	LastDecisionTime = Now;
+	CommitUntilTime = Now + GetRandomCommitTime();
+	NextThinkTime = Now + GetRandomThinkInterval();
+	ClearUrgentInterrupt();
+
+	//UE_LOG(LogTemp, Warning,
+	//	TEXT("[Brain] RunThink | Time=%.2f | DeltaSinceLast=%.2f | NextThink=%.2f | CommitUntil=%.2f | State=%s | Mode=%s | Target=%s | Controller=%s | Pawn=%s | HP=%.2f%%"),
+	//	Now,
+	//	DeltaSinceLast,
+	//	NextThinkTime,
+	//	CommitUntilTime,
+	//	*PokemonStateString,
+	//	*DesiredCombatMode.ToString(),
+	//	*GetNameSafe(CurrentTarget),
+	//	*GetNameSafe(OwningPokemonController),
+	//	*GetNameSafe(ControlledPokemon),
+	//	HPPercent * 100.f);
 }
 
 void UPokemonBrainComponent::DebugLogState() const
@@ -226,4 +266,34 @@ float UPokemonBrainComponent::GetHPPercent() const
 bool UPokemonBrainComponent::HasCombatTarget() const
 {
 	return OwningPokemonController && OwningPokemonController->GetCombatTarget() != nullptr;
+}
+
+FGameplayTag UPokemonBrainComponent::DetermineDesiredCombatMode(float HPPercent, bool bHasTarget) const
+{
+	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
+
+	if (!bHasTarget)
+		return Tags.AI_Decision_Combat_Idle;
+
+	if (HPPercent < .25f && BrainConfig && BrainConfig->RiskToTolerance < .4f)
+		return Tags.AI_Decision_Combat_Flee;
+
+	// Defensive can be added later with richer conditions
+	return Tags.AI_Decision_Combat_Engage;
+}
+
+void UPokemonBrainComponent::SetDesiredCombatMode(FGameplayTag NewCombatMode)
+{
+	DesiredCombatMode = NewCombatMode;
+
+	if (OwningPokemonController)
+	{
+		OwningPokemonController->SetBlackboardDesiredCombatMode(NewCombatMode);
+	}
+
+	/*UE_LOG(LogTemp, Warning,
+		TEXT("[Brain] DesiredCombatMode set to %s | Controller=%s | Pawn=%s"),
+		*DesiredCombatMode.ToString(),
+		*GetNameSafe(OwningPokemonController),
+		*GetNameSafe(ControlledPokemon));*/
 }

@@ -143,6 +143,7 @@ public:
 	FGameplayTag Buff_Duration;
 	FGameplayTag Buff_Frequency;
 
+	FGameplayTag Cooldown;
 	FGameplayTag Cooldown_InputTag;
 	FGameplayTag Cooldown_InputTag_1;
 	FGameplayTag Cooldown_InputTag_2;
@@ -162,7 +163,17 @@ public:
 	FGameplayTag XP_Fast;
 	FGameplayTag XP_Erratic;
 
+#pragma region AI Decisions
+	FGameplayTag AI_Decision_Combat;
+		FGameplayTag AI_Decision_Combat_Idle;
+		FGameplayTag AI_Decision_Combat_Engage;
+		FGameplayTag AI_Decision_Combat_Defensive;
+		FGameplayTag AI_Decision_Combat_Flee;
+#pragma endregion
+
+
 	FGameplayTag Data_PowerPointCost;
+	FGameplayTag Data_CooldownDuration;
 	TMap<FGameplayTag, FGameplayTag> InputsToCooldowns;
 	TMap<FGameplayTag, FGameplayTag> CooldownsToInputs;
 private:

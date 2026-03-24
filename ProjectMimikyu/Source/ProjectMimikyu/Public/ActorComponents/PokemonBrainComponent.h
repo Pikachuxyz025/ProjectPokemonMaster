@@ -5,6 +5,8 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "BrainComponent.h"
+#include "Characters/CharacterTypes.h"
+#include "GameplayTagContainer.h"
 #include "PokemonBrainComponent.generated.h"
 
 //UENUM(BlueprintType)
@@ -74,6 +76,9 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Brain|Runtime")
 	bool bUrgentInterruptedRequested = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Brain|Runtime", meta = (Categories = "AI.Decision"))
+	FGameplayTag DesiredCombatMode;
+
 protected:
 
 	bool CanThink() const;
@@ -90,4 +95,12 @@ protected:
 	float GetRandomCommitTime() const;
 	float GetHPPercent() const;
 	bool HasCombatTarget() const;
+
+	FGameplayTag DetermineDesiredCombatMode(float HPPercent,bool bHasTarget) const;
+
+public: // Getters and Setters
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Brain")
+	FGameplayTag GetDesiredCombatMode() const { return DesiredCombatMode; }
+
+	void SetDesiredCombatMode(FGameplayTag NewCombatMode);
 };
