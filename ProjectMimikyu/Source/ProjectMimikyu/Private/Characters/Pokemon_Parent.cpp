@@ -1,27 +1,22 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Characters/Pokemon_Parent.h"
-#include "Components/BoxComponent.h"
 #include "BrainComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "AIControllers/PokemonAIController.h"
-#include "ActorComponents/DamageSystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/PlayerInterface.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "ActorComponents/MovesetComponent.h"
-#include "Components/TimelineComponent.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Net/UnrealNetwork.h"
+#include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 
 APokemon_Parent::APokemon_Parent()
@@ -34,7 +29,7 @@ APokemon_Parent::APokemon_Parent()
 	}
 
 	MovesetComponent = CreateDefaultSubobject<UMovesetComponent>(TEXT("Moveset Component"));
-
+	IncapacitationComponent = CreateDefaultSubobject<UPokemonIncapacitationComponent>(TEXT("Incapacitation Component"));
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -278,7 +273,7 @@ void APokemon_Parent::PrepareForFieldRemoval()
 	ClearTrainerBindings();
 }
 
-void APokemon_Parent::EnterFaintedState()
+void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
 {
 	if (bIsDead)
 	{
@@ -319,26 +314,61 @@ void APokemon_Parent::ClearTrainerBindings()
 }
 }
 
+void APokemon_Parent::ApplyPokemonKnockback(const FVector& KnockbackVelocity, bool bCanCauseFaint, bool bForceRagdoll)
+{
+	if (IncapacitationComponent)
+	{
+		IncapacitationComponent->ApplyKnockback(KnockbackVelocity, bCanCauseFaint, bForceRagdoll);
+	}
+}
+
+void APokemon_Parent::EnterCollapsedFaint()
+{
+	if (IncapacitationComponent)
+	{
+		IncapacitationComponent->EnterCollapsedFaint();
+	}
+}
+
+void APokemon_Parent::BeginManualReturnAfterFaint()
+{
+	if(IncapacitationComponent)
+	{
+		IncapacitationComponent->BeginManualReturn();
+	}
+}
+
+bool APokemon_Parent::IsPokemonProne() const
+{
+	return IncapacitationComponent && IncapacitationComponent->IsProne();
+}
+
+bool APokemon_Parent::IsPokemonFaintedProne() const
+{
+	return IncapacitationComponent&&IncapacitationComponent->IsFaintedProne();
+}
+
 void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 {
-	if (CurrentTrainer)
+	if (bIsDead)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Trainer's Pokemon Is Unable To Battle"));
-		PrepareForFieldRemoval();
 		return;
 	}
-
-	SetLifeSpan(5.f);
-	if (PokemonController)
+	OnAttackEnd.Broadcast();
+// Heavy KO -> Knockback/ragdoll path
+	if (!DeathImpulse.IsNearlyZero())
 	{
-		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
-		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Fainted")));
+		ApplyPokemonKnockback(DeathImpulse, true, true);
+		return;
 	}
-
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->SetEnableGravity(true);
-	GetMesh()->SetSimulatePhysics(true);
+	else
+	{
+		// Regular faint -> Collapsed animation path
+		EnterCollapsedFaint();
+		return;
+	}
+	EnterFaintedState(false);
+	UE_LOG(LogTemp, Warning, TEXT("%s has fainted."), *GetNameSafe(this));
 }
 
 void APokemon_Parent::Return()
@@ -576,22 +606,9 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 	}
 
 	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
-}
-
-void APokemon_Parent::ServerSetTrainer_Implementation(AActor* NewTrainer)
-{
 	PokemonController = PokemonController ? PokemonController : Cast<APokemonAIController>(GetController());
 	PokemonController->SetTrainer(CurrentTrainer);
-
-	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer);
-	if (Trainer)
-	{
-		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
-		PokemonStatus = EPokemonStatus::EPS_PlayerTrainer;
-		PokemonController->SetPokemonStatus(PokemonStatus);
-	}
 }
-
 void APokemon_Parent::CallCommand(int32 MoveIndex)
 {
 	if (GetIsCommandActive())

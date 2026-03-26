@@ -108,7 +108,6 @@ protected:
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
 	void CatchPokemon();
-	void EnterFaintedState();
 	// Sending Pokemon out 
 
 	void ComeOnOut();

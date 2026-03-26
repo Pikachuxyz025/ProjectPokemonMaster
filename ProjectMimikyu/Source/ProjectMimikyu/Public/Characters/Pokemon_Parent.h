@@ -13,6 +13,7 @@ using namespace UP;
 #include "GameplayTagContainer.h"
 #include "Pokemon_Parent.generated.h"
 
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeEnd);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharging);
@@ -21,6 +22,7 @@ class UGameplayEffect;
 class UPokemonGameplayAbilities;
 class UPokemonStatInfoDataAsset;
 class UAbilitySystemComponent;
+class UPokemonIncapacitationComponent;
 class UAttributeSet;
 class UDataTable;
 class UPokemonDataAsset;
@@ -55,11 +57,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void AddPokemonAbilities();
-
-	//void SetupMeleeTimeline();
-
 	void SetupPokemonUIInfo();
-
 	void UpdatePokemonUIInfo();
 
 	UPROPERTY(VisibleAnywhere)
@@ -116,21 +114,38 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	virtual	void AttackEnded();
 
-
-
 public:
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()
 	void PrepareForFieldRemoval();
-
-	UFUNCTION()
-	void EnterFaintedState();
 
 	UFUNCTION(NetMulticast,Reliable)
 	void MulticastPlayReturnEffects();
 
 	void ClearTrainerBindings();
 	#pragma endregion
+
+#pragma region Fainted Chain Entry Points
+
+	UFUNCTION()
+	void EnterFaintedState(bool bFromKnockback);
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyPokemonKnockback(const FVector& KnockbackVelocity, bool bCanCauseFaint, bool bForceRagdoll =false);
+
+	UFUNCTION(BlueprintCallable)
+	void EnterCollapsedFaint();
+
+	UFUNCTION(BlueprintCallable)
+	void BeginManualReturnAfterFaint();
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPokemonProne() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsPokemonFaintedProne() const;
+#pragma endregion
+
 
 	void Return();
 	void Dissolve();
@@ -166,14 +181,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
-	//virtual void ChargeIn();
-	//virtual void FireAt();
-
 	UPROPERTY(VisibleAnywhere,Replicated)
 	class AActor* CurrentTrainer;
-
-	//UFUNCTION()
-	//void OnRep_CurrentTrainer();
 
 	UPROPERTY(VisibleAnywhere,Replicated)
 	EPokemonStatus PokemonStatus = EPokemonStatus::EPS_Wild;
@@ -184,18 +193,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
 
-//#pragma region IDamageInterface
-//	virtual float GetCurrentHealth() override;
-//	virtual float GetMaxHealth() override;
-//
-//	virtual void RecieveHealth_Implementation(float AddHealthPercent) override;
-//
-//	virtual void RecieveDamage(FDamageInfo DamageInfo) override;
-//
-//	bool IsAttacking_Implementation() override;
-//
-//	bool HasFainted_Implementation() override;
-//#pragma endregion
+
+
 
 #pragma region IPokemonCombatInterface
 	virtual int32 GetPokemonLevel() override;
@@ -219,36 +218,11 @@ public:
 	virtual void UpdatePokemonInfoInParty_Implementation() override;
 #pragma endregion
 
-	//void DamageTarget(AActor* Target);
-
-#pragma region Timeline
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//class UTimelineComponent* MeleeTimeline;
-
-//UFUNCTION()
-//void AddCollision();
-
-//UFUNCTION()
-//void RemoveCollision();
-
-//UFUNCTION(BlueprintCallable)
-//void StartBoxTrace(FHitResult& HitResult);
-
-#pragma endregion
-
 	bool bIsCharging = false;
 
 	bool bIsDodging = false;
 
 	void CombatReady(AActor* Target);
-
-	//bool WithinCloseRangeOfTarget();
-
-	//UFUNCTION(BlueprintCallable)
-	//void Charge();
-
-	//virtual void EnactMove();
 
 	void SetPokemonStartup(const FPokemonInfo SetupInfo);
 protected:
@@ -345,6 +319,9 @@ protected:
 	FTimerHandle ChargeTimer;
 #pragma endregion
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonIncapacitationComponent> IncapacitationComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -357,23 +334,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectRandomMove();
-
-	//UFUNCTION(BlueprintCallable)
-	//void SetBoxCollision(ECollisionEnabled::Type CollisionEnabled);
-
-	//void BoxTrace(FHitResult& BoxHit);
-
-	//UPROPERTY(EditAnywhere, Category = "Collision Properties")
-	//FVector BoxTraceExtent = FVector(5.f);
-
-	//UPROPERTY(EditAnywhere, Category = "Collision Properties")
-	//bool bShowBoxDebug = false;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Components")
-	//USceneComponent* BoxTraceStart;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Components")
-	//USceneComponent* BoxTraceEnd;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
 	FName ProjectileSocketName;
@@ -427,7 +387,5 @@ public:
 	FVector GetDodgeDirection() { return DodgeDirection; }
 
 	void SetPokemonTrainer(AActor* NewTrainer);
-	UFUNCTION(Server,Reliable)
-	void ServerSetTrainer(AActor* NewTrainer);
 	void CallCommand(int32 MoveIndex);
 };

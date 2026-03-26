@@ -186,7 +186,7 @@ void AProjectMimikyuCharacter::ServerRequestReturnCurrentPokemon_Implementation(
 	ATrainerPlayerState* TPS = GetTPS();
 	if (TPS)
 	{
-		TPS->PokemonReturned(CurrentPokemon);
+		//TPS->PokemonReturned(CurrentPokemon);
 	}
 
 	APokemon_Parent* PokemonToReturn = CurrentPokemon;
@@ -274,10 +274,6 @@ void AProjectMimikyuCharacter::CatchPokemon()
 	const FVector TraceStart = FollowCamera->GetComponentLocation();
 	const FVector TraceEnd = TraceStart + (FollowCamera->GetForwardVector() * CatchingDistance);
 	ServerRequetCatchPokemon(TraceStart, TraceEnd);
-}
-
-void AProjectMimikyuCharacter::EnterFaintedState()
-{
 }
 
 void AProjectMimikyuCharacter::AddToParty(APokemon_Parent* NewPokemon)

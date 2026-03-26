@@ -17,6 +17,7 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnEventActivatedSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnFireProjectileFinished__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature();
+	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnIncapacitationEvent__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryUpdated__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnMaxHealthChangedSignature__DelegateSignature();
@@ -49,6 +50,7 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnEventActivatedSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnFireProjectileFinished__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature,
+			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnIncapacitationEvent__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryUpdated__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnMaxHealthChangedSignature__DelegateSignature,
@@ -71,13 +73,13 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 			SingletonFuncArray,
 			UE_ARRAY_COUNT(SingletonFuncArray),
 			PKG_CompiledIn | 0x00000000,
-			0xBDF8AAD9,
-			0x40B81AE4,
+			0x2C99A62B,
+			0xFBEF7EB5,
 			METADATA_PARAMS(0, nullptr)
 		};
 		UECodeGen_Private::ConstructUPackage(Z_Registration_Info_UPackage__Script_ProjectMimikyu.OuterSingleton, PackageParams);
 	}
 	return Z_Registration_Info_UPackage__Script_ProjectMimikyu.OuterSingleton;
 }
-static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_ProjectMimikyu(Z_Construct_UPackage__Script_ProjectMimikyu, TEXT("/Script/ProjectMimikyu"), Z_Registration_Info_UPackage__Script_ProjectMimikyu, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0xBDF8AAD9, 0x40B81AE4));
+static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_ProjectMimikyu(Z_Construct_UPackage__Script_ProjectMimikyu, TEXT("/Script/ProjectMimikyu"), Z_Registration_Info_UPackage__Script_ProjectMimikyu, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0x2C99A62B, 0xFBEF7EB5));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
