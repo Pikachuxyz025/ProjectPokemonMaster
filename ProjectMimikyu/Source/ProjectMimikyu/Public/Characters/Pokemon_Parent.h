@@ -157,6 +157,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Debug|Faint")
 	void Debug_ResetDeadFlag();
+
+	UFUNCTION(BlueprintCallable)
+	void InteractWithFaintedPokemon(AActor* InteractingActor);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanInteractWhileFainted() const;
 #pragma endregion
 
 
