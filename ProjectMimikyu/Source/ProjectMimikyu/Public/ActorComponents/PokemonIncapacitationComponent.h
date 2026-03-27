@@ -13,6 +13,9 @@
 
 
 class APokemon_Parent;
+class UCharacterMovementComponent;
+class UCapsuleComponent;
+class USkeletalMeshComponent;
 
 UENUM(BlueprintType)
 enum class EPokemonIncapacitationState : uint8
@@ -52,7 +55,7 @@ struct FKnockbackTuning
 	float SettleLinearSpeedThreshold = 25.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Knockback")
-	float SettleAngularSpeedThreshold = 10., f;
+	float SettleAngularSpeedThreshold = 10.f;
 };
 
 
@@ -94,6 +97,9 @@ public:
 	// Sets default values for this component's properties
 	UPokemonIncapacitationComponent();
 
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	void InitializePokemonOwner(APokemon_Parent* InOwnerPokemon);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Incapacitation")
@@ -118,7 +124,7 @@ public:
 	bool IsFaintedProne() const { return bIsFaintedProne; }
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
-	bool IsInControlledRagdoll() const { return IncapacitationState == EPokemonIncapacitationState::ControlledRagdoll; }
+	bool IsInControlledRagdoll() const { return IncapacitationState == EPokemonIncapacitationState::EIS_ControlledRagdoll; }
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
 	bool CanBeReturned() const { return bCanBeReturned; }
@@ -136,9 +142,6 @@ public:
 	FOnIncapacitationEvent OnManualReturnStarted;
 
 protected:
-
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 void StopCombatAndMovement();
 void EnterControlledRagdoll(const FVector& InitialVelocity);

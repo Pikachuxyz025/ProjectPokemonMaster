@@ -354,21 +354,19 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	{
 		return;
 	}
+
+	bIsDead = true;
 	OnAttackEnd.Broadcast();
-// Heavy KO -> Knockback/ragdoll path
+
+	UE_LOG(LogTemp, Warning, TEXT("%s has fainted."), *GetNameSafe(this));
+
 	if (!DeathImpulse.IsNearlyZero())
 	{
 		ApplyPokemonKnockback(DeathImpulse, true, true);
 		return;
 	}
-	else
-	{
-		// Regular faint -> Collapsed animation path
-		EnterCollapsedFaint();
-		return;
-	}
-	EnterFaintedState(false);
-	UE_LOG(LogTemp, Warning, TEXT("%s has fainted."), *GetNameSafe(this));
+
+	EnterCollapsedFaint();
 }
 
 void APokemon_Parent::Return()
