@@ -297,8 +297,6 @@ void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
 		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned to ball / caught")));
 		PokemonController->StopMovement();
 	}
-
-
 }
 
 void APokemon_Parent::MulticastPlayReturnEffects_Implementation()
@@ -356,7 +354,7 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	}
 
 	bIsDead = true;
-	OnAttackEnd.Broadcast();
+	AttackEnded();
 
 	UE_LOG(LogTemp, Warning, TEXT("%s has fainted."), *GetNameSafe(this));
 
@@ -367,6 +365,11 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	}
 
 	EnterCollapsedFaint();
+}
+
+void APokemon_Parent::Debug_ResetDeadFlag()
+{
+	bIsDead = false;
 }
 
 void APokemon_Parent::Return()

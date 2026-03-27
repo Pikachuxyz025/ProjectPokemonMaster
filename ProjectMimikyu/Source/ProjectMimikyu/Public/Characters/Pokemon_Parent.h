@@ -144,6 +144,19 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsPokemonFaintedProne() const;
+
+	// Debug functions to test the different stages of the fainted chain
+	UFUNCTION(BlueprintCallable, Category = "Debug|Faint")
+	void Debug_TestCollapseFaint();
+
+	UFUNCTION(BlueprintCallable, Category = "Debug|Faint")
+	void Debug_TestHeavyFaint();
+
+	UFUNCTION(BlueprintCallable, Category = "Debug|Faint")
+	void Debug_TestManualReturn();
+
+	UFUNCTION(BlueprintCallable, Category = "Debug|Faint")
+	void Debug_ResetDeadFlag();
 #pragma endregion
 
 
