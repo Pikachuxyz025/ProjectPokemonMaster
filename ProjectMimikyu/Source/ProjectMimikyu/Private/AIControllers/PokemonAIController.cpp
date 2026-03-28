@@ -37,9 +37,18 @@ void APokemonAIController::BeginPlay()
 
 void APokemonAIController::SetPokemonState(EPokemonState NewPokemonState)
 {
-	GetBlackboardComponent()->SetValueAsEnum(PokemonStateKeyName, (uint8)NewPokemonState);
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	if (!BB)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("SetPokemonState skipped: BlackboardComponent is null. State=%d"),
+			static_cast<int32>(NewPokemonState));
+		return;
+	}
 
-	if(NewPokemonState==EPokemonState::EPS_Fainted)
+	BB->SetValueAsEnum(PokemonStateKeyName, static_cast<uint8>(NewPokemonState));
+
+	if (NewPokemonState == EPokemonState::EPS_Fainted)
 	{
 		SetBlackboardAttackTarget();
 		SetBlackboardCurrentMove(nullptr);
@@ -82,23 +91,18 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	RunBehaviorTree(AIBehaviorTree);
-	SetPokemonState(EPokemonState::EPS_Passive);
-	GetBlackboardComponent()->SetValueAsVector(SpawnLocationKeyName, ControlledPokemon->GetActorLocation());
-	SetBlackboardASC();
+	UE_LOG(LogTemp, Warning, TEXT("APokemonAIController::OnPossess called for %s"), *GetNameSafe(InPawn));
 
-	if (ControlledPokemon->SpawnPointTag.MatchesTagExact(FPokemonGameplayTags::Get().SpawnPoint_ComeOnOut))
+	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
+	if (!ControlledPokemon)
 	{
-		SetTrainer(ControlledPokemon->CurrentTrainer);
-		SetPokemonStatus(ControlledPokemon->PokemonStatus);
+		UE_LOG(LogTemp, Error, TEXT("OnPossess failed: InPawn is not APokemon_Parent."));
+		return;
 	}
 
-	if (PokemonBrainComponent)
-	{
-		PokemonBrainComponent->SetBrainConfig(CombatBrainConfig);
-		PokemonBrainComponent->InitializeBrain(this);
-		PokemonBrainComponent->StartLogic();
-	}
+	UE_LOG(LogTemp, Warning, TEXT("OnPossess: ControlledPokemon=%s"), *GetNameSafe(ControlledPokemon));
+
+	// TEMP: do not initialize BT, blackboard, trainer, status, or brain here.
 }
 
 void APokemonAIController::OnUnPossess()

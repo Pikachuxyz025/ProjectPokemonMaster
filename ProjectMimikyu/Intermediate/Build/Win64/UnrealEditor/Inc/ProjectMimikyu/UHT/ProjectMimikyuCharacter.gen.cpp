@@ -208,6 +208,56 @@ void FOnPokemonSentOut_DelegateWrapper(const FMulticastScriptDelegate& OnPokemon
 }
 // ********** End Delegate FOnPokemonSentOut *******************************************************
 
+// ********** Begin Class AProjectMimikyuCharacter Function GetCurrentPokemon **********************
+struct Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics
+{
+	struct ProjectMimikyuCharacter_eventGetCurrentPokemon_Parms
+	{
+		APokemon_Parent* ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function GetCurrentPokemon constinit property declarations *********************
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function GetCurrentPokemon constinit property declarations ***********************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function GetCurrentPokemon Property Definitions ********************************
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventGetCurrentPokemon_Parms, ReturnValue), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::PropPointers) < 2048);
+// ********** End Function GetCurrentPokemon Property Definitions **********************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "GetCurrentPokemon", 	Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::ProjectMimikyuCharacter_eventGetCurrentPokemon_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::ProjectMimikyuCharacter_eventGetCurrentPokemon_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(AProjectMimikyuCharacter::execGetCurrentPokemon)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(APokemon_Parent**)Z_Param__Result=P_THIS->GetCurrentPokemon();
+	P_NATIVE_END;
+}
+// ********** End Class AProjectMimikyuCharacter Function GetCurrentPokemon ************************
+
 // ********** Begin Class AProjectMimikyuCharacter Function OnRep_CurrentPokemon *******************
 struct Z_Construct_UFunction_AProjectMimikyuCharacter_OnRep_CurrentPokemon_Statics
 {
@@ -894,6 +944,7 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class AProjectMimikyuCharacter constinit property declarations *******************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
+		{ .NameUTF8 = UTF8TEXT("GetCurrentPokemon"), .Pointer = &AProjectMimikyuCharacter::execGetCurrentPokemon },
 		{ .NameUTF8 = UTF8TEXT("OnRep_CurrentPokemon"), .Pointer = &AProjectMimikyuCharacter::execOnRep_CurrentPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerAddToCurrentParty"), .Pointer = &AProjectMimikyuCharacter::execServerAddToCurrentParty },
 		{ .NameUTF8 = UTF8TEXT("ServerBroadcastTarget"), .Pointer = &AProjectMimikyuCharacter::execServerBroadcastTarget },
@@ -905,6 +956,7 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon, "GetCurrentPokemon" }, // 2204959484
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_OnRep_CurrentPokemon, "OnRep_CurrentPokemon" }, // 2993332916
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerAddToCurrentParty, "ServerAddToCurrentParty" }, // 3774299443
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 964369296
@@ -1050,10 +1102,10 @@ AProjectMimikyuCharacter::~AProjectMimikyuCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 842626835U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 1445701050U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_3593110539{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_1911167015{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

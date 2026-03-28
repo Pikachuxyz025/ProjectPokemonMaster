@@ -196,8 +196,8 @@ void UPokemonIncapacitationComponent::EnterControlledRagdoll(const FVector& Init
 	MeshComp->SetAllPhysicsLinearVelocity(FVector::ZeroVector);
 	MeshComp->SetAllPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
 
-	MeshComp->AddImpulse(InitialVelocity, NAME_None, true);
-
+	//MeshComp->AddImpulse(InitialVelocity, NAME_None, true);
+	MeshComp->SetPhysicsLinearVelocity(InitialVelocity, false, NAME_None);
 	StartRagdollSafetyTimer();
 	OnControlledRagdollStarted.Broadcast();
 }

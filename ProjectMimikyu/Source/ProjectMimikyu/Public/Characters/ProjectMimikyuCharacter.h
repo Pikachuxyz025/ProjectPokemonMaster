@@ -248,6 +248,7 @@ public:
 
 	FORCEINLINE UInventorySystemComponent* GetInventorySystem() { return InventorySystem; }
 	FORCEINLINE TArray<APokemon_Parent*> GetCurrentParty() { return CurrentParty; }
+	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FORCEINLINE APokemon_Parent* GetCurrentPokemon() { return CurrentPokemon; }
 
 };
