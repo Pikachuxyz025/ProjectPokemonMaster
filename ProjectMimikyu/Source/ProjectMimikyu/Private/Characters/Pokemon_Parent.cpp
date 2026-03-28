@@ -367,9 +367,71 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	EnterCollapsedFaint();
 }
 
+void APokemon_Parent::Debug_TestCollapseFaint()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG][%s] Debug_TestCollapseFaint called"), *GetNameSafe(this));
+
+	Debug_ResetDeadFlag();
+	Fainted(FVector::ZeroVector);
+}
+
+void APokemon_Parent::Debug_TestHeavyFaint()
+{
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG][%s] Debug_TestHeavyFaint called"), *GetNameSafe(this));
+
+	Debug_ResetDeadFlag();
+
+	const FVector DebugImpulse =
+		(GetActorForwardVector() * 1500.f) +
+		(FVector::UpVector * 250.f);
+
+	Fainted(DebugImpulse);
+}
+
+void APokemon_Parent::Debug_TestManualReturn()
+{
+	const bool bCanReturn = IncapacitationComponent && IncapacitationComponent->CanBeReturned();
+
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG][%s] Debug_TestManualReturn called | CanReturn=%s | IsProne=%s | IsFaintedProne=%s"),
+		*GetNameSafe(this),
+		bCanReturn ? TEXT("true") : TEXT("false"),
+		IsPokemonProne() ? TEXT("true") : TEXT("false"),
+		IsPokemonFaintedProne() ? TEXT("true") : TEXT("false"));
+
+	BeginManualReturnAfterFaint();
+}
+
 void APokemon_Parent::Debug_ResetDeadFlag()
 {
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG][%s] Debug_ResetDeadFlag called | Old bIsDead=%s"),
+		*GetNameSafe(this),
+		bIsDead ? TEXT("true") : TEXT("false"));
+
 	bIsDead = false;
+}
+
+void APokemon_Parent::InteractWithFaintedPokemon(AActor* InteractingActor)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[DEBUG][%s] InteractWithFaintedPokemon called by %s | CanInteract=%s | IsFaintedProne=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(InteractingActor),
+		CanInteractWhileFainted() ? TEXT("true") : TEXT("false"),
+		IsPokemonFaintedProne() ? TEXT("true") : TEXT("false"));
+
+	if (!CanInteractWhileFainted())
+	{
+		return;
+	}
+
+	// Placeholder for future interaction logic:
+	// - Trainer-owned care / recovery item
+	// - Wild gratitude
+	// - Friendship / notoriety hooks
+}
+
+bool APokemon_Parent::CanInteractWhileFainted() const
+{
+	return IsPokemonFaintedProne();
 }
 
 void APokemon_Parent::Return()
