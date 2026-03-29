@@ -67,13 +67,13 @@ public:
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Debug", meta = (WorldContext = "WorldContextObject"))
-	static void SetObserverActor(
+	static void SetObservedActor(
 		const UObject* WorldContextObject,
 		const AActor* Actor
 	);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Debug", meta = (WorldContext = "WorldContextObject"))
-	static void ClearObserverdActor(
+	static void ClearObservedActor(
 		const UObject* WorldContextObject
 	);
 

@@ -88,7 +88,7 @@ bool UPokemonDebugLibrary::IsCategoryEnabled(const UObject* WorldContextObject, 
 	return false;
 }
 
-void UPokemonDebugLibrary::SetObserverActor(const UObject* WorldContextObject, const AActor* Actor)
+void UPokemonDebugLibrary::SetObservedActor(const UObject* WorldContextObject, const AActor* Actor)
 {
 	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
 	{
@@ -96,7 +96,7 @@ void UPokemonDebugLibrary::SetObserverActor(const UObject* WorldContextObject, c
 	}
 }
 
-void UPokemonDebugLibrary::ClearObserverdActor(const UObject* WorldContextObject)
+void UPokemonDebugLibrary::ClearObservedActor(const UObject* WorldContextObject)
 {
 	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
 	{
