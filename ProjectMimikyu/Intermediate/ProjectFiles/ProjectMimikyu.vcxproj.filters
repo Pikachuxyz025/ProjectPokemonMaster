@@ -203,6 +203,18 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataTables</Filter>
     </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Debugging">
+      <UniqueIdentifier>{44934803-7A4B-3135-B8C5-D15363E1E343}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugLibrary.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugLog.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugWorldSubsystem.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Debugging</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\EQS">
       <UniqueIdentifier>{64BE5B82-71AB-3CFE-8FC8-157FBFD990C4}</UniqueIdentifier>
     </Filter>
@@ -294,6 +306,9 @@
       <Filter>Source\ProjectMimikyu\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
+      <Filter>Source\ProjectMimikyu\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonDebugTags.cpp">
       <Filter>Source\ProjectMimikyu\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
@@ -569,6 +584,18 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h">
       <Filter>Source\ProjectMimikyu\Public\DataTables</Filter>
     </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Debugging">
+      <UniqueIdentifier>{67688902-AA04-30F7-BA4F-8E1BAAFE63C4}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLibrary.h">
+      <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLog.h">
+      <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugWorldSubsystem.h">
+      <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
+    </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\EQS">
       <UniqueIdentifier>{558D9E79-558A-35AC-825F-E9353CC03E1D}</UniqueIdentifier>
     </Filter>
@@ -660,6 +687,12 @@
       <Filter>Source\ProjectMimikyu\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h">
+      <Filter>Source\ProjectMimikyu\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTags.h">
+      <Filter>Source\ProjectMimikyu\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h">

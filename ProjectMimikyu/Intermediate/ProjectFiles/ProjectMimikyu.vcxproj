@@ -385,6 +385,15 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataTables\TypeDataTable.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugLibrary.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugLog.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Debugging\PokemonDebugWorldSubsystem.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\EQS\Context\EnvQueryContext_AreaCenter.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -449,6 +458,9 @@
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonDebugTags.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
@@ -588,6 +600,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\TagCategoryDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLibrary.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLog.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugWorldSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_AreaCenter.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_ThreatImpacts.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Generators\EnvQueryGenerator_ImpactPattern.h"/>
@@ -610,6 +625,8 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAbilityTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h"/>
