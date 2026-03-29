@@ -91,18 +91,58 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	UE_LOG(LogTemp, Warning, TEXT("APokemonAIController::OnPossess called for %s"), *GetNameSafe(InPawn));
-
 	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
+	if(AIBehaviorTree)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[%s] APokemonAIController::OnPossess | Running Behavior Tree: %s"),
+			*GetNameSafe(this),
+			*GetNameSafe(AIBehaviorTree));
+		RunBehaviorTree(AIBehaviorTree);
+	}
+	UE_LOG(LogTemp, Warning,
+		TEXT("[%s] APokemonAIController::OnPossess | InPawn=%s | ControlledPokemon=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(InPawn),
+		*GetNameSafe(ControlledPokemon));
+
 	if (!ControlledPokemon)
 	{
 		UE_LOG(LogTemp, Error, TEXT("OnPossess failed: InPawn is not APokemon_Parent."));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnPossess: ControlledPokemon=%s"), *GetNameSafe(ControlledPokemon));
+	UE_LOG(LogTemp, Warning,
+		TEXT("[%s] OnPossess details | Trainer=%s | Status=%d | SpawnPointTag=%s | BT=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(ControlledPokemon->CurrentTrainer),
+		static_cast<int32>(ControlledPokemon->PokemonStatus),
+		*ControlledPokemon->SpawnPointTag.ToString(),
+		*GetNameSafe(ControlledPokemon->GetBehaviorTree()));
 
-	// TEMP: do not initialize BT, blackboard, trainer, status, or brain here.
+	UBlackboardComponent* BB = GetBlackboardComponent();
+	if (!BB)
+	{
+		UE_LOG(LogTemp, Error, TEXT("APokemonAIController::OnPossess failed: BlackboardComponent is null."));
+		return;
+	}
+
+	SetPokemonState(EPokemonState::EPS_Passive);
+	BB->SetValueAsVector(SpawnLocationKeyName, ControlledPokemon->GetActorLocation());
+	SetBlackboardASC();
+
+	if (ControlledPokemon->SpawnPointTag.MatchesTagExact(FPokemonGameplayTags::Get().SpawnPoint_ComeOnOut))
+	{
+		SetTrainer(ControlledPokemon->CurrentTrainer);
+		SetPokemonStatus(ControlledPokemon->PokemonStatus);
+	}
+
+	if (PokemonBrainComponent)
+	{
+		PokemonBrainComponent->SetBrainConfig(CombatBrainConfig);
+		PokemonBrainComponent->InitializeBrain(this);
+		PokemonBrainComponent->StartLogic();
+	}
 }
 
 void APokemonAIController::OnUnPossess()

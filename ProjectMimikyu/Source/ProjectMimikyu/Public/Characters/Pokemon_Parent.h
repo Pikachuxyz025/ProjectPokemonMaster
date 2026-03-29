@@ -29,6 +29,8 @@ class UPokemonDataAsset;
 class UBoxComponent;
 class UPokemonMoveDataAsset;
 struct FPokemonTypeInfo;
+class UBehaviorTree;
+class APokemonAIController;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
@@ -38,12 +40,15 @@ class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInte
 public:
 
 	APokemon_Parent();
-	UPROPERTY(BlueprintReadOnly,BlueprintAssignable)
+
+#pragma region Event Calls
+	UPROPERTY(BlueprintReadOnly, BlueprintAssignable)
 	FOnAttackEnd OnAttackEnd;
 	UPROPERTY(BlueprintAssignable)
 	FOnCharging OnCharging;
 	UPROPERTY(BlueprintAssignable)
 	FOnDodgeEnd OnDodgeEnd;
+#pragma endregion
 
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
 
@@ -54,21 +59,49 @@ public:
 	void AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);
 protected:
 
-	virtual void BeginPlay() override;
+#pragma region Virtual Overrides
+virtual void BeginPlay() override;
+virtual void PossessedBy(AController* NewController) override;
+virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+virtual void ReinitializeDefaultAttributes() override;
+#pragma endregion
+
+#pragma region IPokemonCombatInterface
+virtual int32 GetPokemonLevel() override;
+virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
+virtual AActor* GetAvatar_Implementation() override;
+virtual AActor* GetCombatTarget_Implementation() override;
+virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
+virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
+virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+virtual float GetTypeMatchup(EElementalType ElementalType) override;
+virtual FPokemonTypeInfo GetPokemonElementalTypes() override;
+virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
+virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
+virtual void Fainted(const FVector& DeathImpulse) override;
+virtual void DisengageFromCombat() override;
+virtual void AdjustXP(int32 NewXP) override;
+virtual void AdjustLevel(int32 NewLevel) override;
+virtual int32 GetXPBaseReward() override;
+virtual int32 GetExperienceNeededAtLevel(int32 Level) override;
+virtual int32 GetExperienceAtLevel(int32 Level) override;
+virtual void UpdatePokemonInfoInParty_Implementation() override;
+#pragma endregion
+
+UFUNCTION(BlueprintCallable)
+virtual	void AttackEnded();
 
 	void AddPokemonAbilities();
 	void SetupPokemonUIInfo();
 	void UpdatePokemonUIInfo();
+	void InitializeDefaultAttributes();
+	void InitAbilityActorInfo();
 
 	UPROPERTY(VisibleAnywhere)
-	class APokemonAIController* PokemonController;
-
-	virtual void PossessedBy(AController* NewController) override;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	TObjectPtr<APokemonAIController> PokemonController;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UBehaviorTree* AIBehaviorTree;
+	TObjectPtr<UBehaviorTree> AIBehaviorTree;
 
 	FPokemonUIInfo PokemonUIInfo;
 	FPokemonInfo PokemonInfo;
@@ -97,11 +130,6 @@ protected:
 
 	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
 
-	void InitializeDefaultAttributes();
-	virtual void ReinitializeDefaultAttributes() override;
-
-	void InitAbilityActorInfo();
-
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
@@ -110,9 +138,6 @@ protected:
 	 UPROPERTY()
 	 FActiveGameplayEffectHandle CurrentDependentStatHandle;
 #pragma endregion
-
-	UFUNCTION(BlueprintCallable)
-	virtual	void AttackEnded();
 
 public:
 #pragma region Server-Authoritative Gameplay
@@ -212,30 +237,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
 
-
-
-
-#pragma region IPokemonCombatInterface
-	virtual int32 GetPokemonLevel() override;
-	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified) override;
-	virtual AActor* GetAvatar_Implementation() override;
-	virtual AActor* GetCombatTarget_Implementation() override;
-	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
-	virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
-	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
-	virtual float GetTypeMatchup(EElementalType ElementalType) override;
-	virtual FPokemonTypeInfo GetPokemonElementalTypes() override;
-	virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
-	virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
-	virtual void Fainted(const FVector& DeathImpulse) override;
-	virtual void DisengageFromCombat() override;
-	virtual void AdjustXP(int32 NewXP) override;
-	virtual void AdjustLevel(int32 NewLevel) override;
-	virtual int32 GetXPBaseReward() override;
-	virtual int32 GetExperienceNeededAtLevel(int32 Level) override;
-	virtual int32 GetExperienceAtLevel(int32 Level) override;
-	virtual void UpdatePokemonInfoInParty_Implementation() override;
-#pragma endregion
 
 	bool bIsCharging = false;
 

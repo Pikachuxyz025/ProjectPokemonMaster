@@ -158,19 +158,15 @@ void APokemon_Parent::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	PokemonController = Cast<APokemonAIController>(NewController);
-
-	if (!PokemonController)
+	if (PokemonController)
 	{
-		UE_LOG(LogTemp, Error,
-			TEXT("[%s] PossessedBy: NewController is not APokemonAIController"),
-			*GetNameSafe(this));
-		return;
+		PokemonController->SetTree(AIBehaviorTree, this);
 	}
-
-	PokemonController->SetTree(AIBehaviorTree, this);
-
-	UE_LOG(LogTemp, Warning, TEXT("[%s] SetPokemonTrainer: Trainer=%s Status=%d"),
+	UE_LOG(LogTemp, Warning,
+		TEXT("[%s] APokemon_Parent::PossessedBy | NewController=%s | PokemonController=%s | CurrentTrainer=%s | Status=%d"),
 		*GetNameSafe(this),
+		*GetNameSafe(NewController),
+		*GetNameSafe(PokemonController),
 		*GetNameSafe(CurrentTrainer),
 		static_cast<int32>(PokemonStatus));
 }
@@ -684,15 +680,12 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 	}
 
 	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
-	PokemonController = Cast<APokemonAIController>(GetController());
-
-	if (!PokemonController)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[%s] SetPokemonTrainer: PokemonController is null. Trainer assignment deferred."),
-			*GetNameSafe(this));
-		return;
-	}
+	UE_LOG(LogTemp, Warning,
+		TEXT("[%s] SetPokemonTrainer | Trainer=%s | Status=%d | Controller=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(CurrentTrainer),
+		static_cast<int32>(PokemonStatus),
+		*GetNameSafe(GetController()));
 }
 void APokemon_Parent::CallCommand(int32 MoveIndex)
 {

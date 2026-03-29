@@ -25,7 +25,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 	UBehaviorTree* AIBehaviorTree;
 
 	virtual void BeginPlay() override;
