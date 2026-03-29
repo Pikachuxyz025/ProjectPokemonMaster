@@ -224,7 +224,7 @@ bool UPokemonDebugWorldSubsystem::PassesObservedActorFilter(const UObject* Sourc
 	if (!SourceActor)
 	{
 		// What is GetTypedOuter?
-		SourceActor = SourceActor->GetTypedOuter<AActor>();
+		SourceActor = SourceObject->GetTypedOuter<AActor>();
 	}
 	return SourceActor == ObservedActor.Get();
 }

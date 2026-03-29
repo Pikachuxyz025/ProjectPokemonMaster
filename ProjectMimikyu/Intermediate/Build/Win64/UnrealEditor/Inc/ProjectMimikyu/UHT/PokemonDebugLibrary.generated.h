@@ -25,8 +25,8 @@ struct FLinearColor;
 // ********** Begin Class UPokemonDebugLibrary *****************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugLibrary_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execSetMaxVerbosity); \
-	DECLARE_FUNCTION(execClearObserverdActor); \
-	DECLARE_FUNCTION(execSetObserverActor); \
+	DECLARE_FUNCTION(execClearObservedActor); \
+	DECLARE_FUNCTION(execSetObservedActor); \
 	DECLARE_FUNCTION(execIsCategoryEnabled); \
 	DECLARE_FUNCTION(execSetCategoryEnabled); \
 	DECLARE_FUNCTION(execDrawLine); \
