@@ -42,6 +42,13 @@ void UPokemonDebugWorldSubsystem::SetCategoryEnabled(const FGameplayTag& Categor
 	}
 }
 
+bool UPokemonDebugWorldSubsystem::ToggleCategory(const FGameplayTag& CategoryTag)
+{
+	const bool bWasEnabled = IsCategoryEnabled(CategoryTag);
+	SetCategoryEnabled(CategoryTag, !bWasEnabled);
+	return !bWasEnabled;
+}
+
 bool UPokemonDebugWorldSubsystem::IsCategoryEnabled(const FGameplayTag& CategoryTag) const
 {
 	if (!bGlobalDebugEnabled||!CategoryTag.IsValid())
@@ -69,6 +76,7 @@ bool UPokemonDebugWorldSubsystem::ShouldEmitMessage(const UObject* SourceObject,
 {
 	if (!IsCategoryEnabled(CategoryTag))
 	{
+		UE_LOG(LogPokemonDebug, Verbose, TEXT("Category %s is not enabled for debugging."), *CategoryTag.ToString());
 		return false;
 	}
 
@@ -101,7 +109,7 @@ void UPokemonDebugWorldSubsystem::SetMaxVerbosity(EPokemonDebugVerbosity InVerbo
 
 void UPokemonDebugWorldSubsystem::AddMessage(const UObject* SourceObject, const FGameplayTag& CategoryTag, const FString& Message, EPokemonDebugOutputMode OutputMode, FColor Color, float ScreenDuration, EPokemonDebugVerbosity Verbosity)
 {
-	if(!ShouldEmitMessage(SourceObject,CategoryTag,Verbosity))
+	if (!ShouldEmitMessage(SourceObject, CategoryTag, Verbosity))
 	{
 		return;
 	}

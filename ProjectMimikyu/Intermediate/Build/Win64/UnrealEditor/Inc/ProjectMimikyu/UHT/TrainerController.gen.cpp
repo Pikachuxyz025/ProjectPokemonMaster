@@ -176,6 +176,111 @@ DEFINE_FUNCTION(ATrainerController::execRemoveMouseCursor)
 }
 // ********** End Class ATrainerController Function RemoveMouseCursor ******************************
 
+// ********** Begin Class ATrainerController Function ToggleAIDebug ********************************
+struct Z_Construct_UFunction_ATrainerController_ToggleAIDebug_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/AIControllers/TrainerController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function ToggleAIDebug constinit property declarations *************************
+// ********** End Function ToggleAIDebug constinit property declarations ***************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ATrainerController_ToggleAIDebug_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_ATrainerController, nullptr, "ToggleAIDebug", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020601, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerController_ToggleAIDebug_Statics::Function_MetaDataParams), Z_Construct_UFunction_ATrainerController_ToggleAIDebug_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_ATrainerController_ToggleAIDebug()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ATrainerController_ToggleAIDebug_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ATrainerController::execToggleAIDebug)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->ToggleAIDebug();
+	P_NATIVE_END;
+}
+// ********** End Class ATrainerController Function ToggleAIDebug **********************************
+
+// ********** Begin Class ATrainerController Function ToggleCombatDebug ****************************
+struct Z_Construct_UFunction_ATrainerController_ToggleCombatDebug_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/AIControllers/TrainerController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function ToggleCombatDebug constinit property declarations *********************
+// ********** End Function ToggleCombatDebug constinit property declarations ***********************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ATrainerController_ToggleCombatDebug_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_ATrainerController, nullptr, "ToggleCombatDebug", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020601, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerController_ToggleCombatDebug_Statics::Function_MetaDataParams), Z_Construct_UFunction_ATrainerController_ToggleCombatDebug_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_ATrainerController_ToggleCombatDebug()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ATrainerController_ToggleCombatDebug_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ATrainerController::execToggleCombatDebug)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->ToggleCombatDebug();
+	P_NATIVE_END;
+}
+// ********** End Class ATrainerController Function ToggleCombatDebug ******************************
+
+// ********** Begin Class ATrainerController Function TogglePokemonDebugAll ************************
+struct Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/AIControllers/TrainerController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function TogglePokemonDebugAll constinit property declarations *****************
+// ********** End Function TogglePokemonDebugAll constinit property declarations *******************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_ATrainerController, nullptr, "TogglePokemonDebugAll", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020601, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll_Statics::Function_MetaDataParams), Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ATrainerController::execTogglePokemonDebugAll)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->TogglePokemonDebugAll();
+	P_NATIVE_END;
+}
+// ********** End Class ATrainerController Function TogglePokemonDebugAll **************************
+
 // ********** Begin Class ATrainerController *******************************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_ATrainerController;
 UClass* ATrainerController::GetPrivateStaticClass()
@@ -268,12 +373,18 @@ struct Z_Construct_UClass_ATrainerController_Statics
 		{ .NameUTF8 = UTF8TEXT("AddMouseCursor"), .Pointer = &ATrainerController::execAddMouseCursor },
 		{ .NameUTF8 = UTF8TEXT("FocusNewWidget"), .Pointer = &ATrainerController::execFocusNewWidget },
 		{ .NameUTF8 = UTF8TEXT("RemoveMouseCursor"), .Pointer = &ATrainerController::execRemoveMouseCursor },
+		{ .NameUTF8 = UTF8TEXT("ToggleAIDebug"), .Pointer = &ATrainerController::execToggleAIDebug },
+		{ .NameUTF8 = UTF8TEXT("ToggleCombatDebug"), .Pointer = &ATrainerController::execToggleCombatDebug },
+		{ .NameUTF8 = UTF8TEXT("TogglePokemonDebugAll"), .Pointer = &ATrainerController::execTogglePokemonDebugAll },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_ATrainerController_AddMouseCursor, "AddMouseCursor" }, // 363452550
 		{ &Z_Construct_UFunction_ATrainerController_FocusNewWidget, "FocusNewWidget" }, // 4253518576
 		{ &Z_Construct_UFunction_ATrainerController_RemoveMouseCursor, "RemoveMouseCursor" }, // 381502404
+		{ &Z_Construct_UFunction_ATrainerController_ToggleAIDebug, "ToggleAIDebug" }, // 207579004
+		{ &Z_Construct_UFunction_ATrainerController_ToggleCombatDebug, "ToggleCombatDebug" }, // 2856773331
+		{ &Z_Construct_UFunction_ATrainerController_TogglePokemonDebugAll, "TogglePokemonDebugAll" }, // 1798159846
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -344,10 +455,10 @@ ATrainerController::~ATrainerController() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerController, ATrainerController::StaticClass, TEXT("ATrainerController"), &Z_Registration_Info_UClass_ATrainerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerController), 2229186557U) },
+		{ Z_Construct_UClass_ATrainerController, ATrainerController::StaticClass, TEXT("ATrainerController"), &Z_Registration_Info_UClass_ATrainerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerController), 924774410U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_1661102672{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_1430219312{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

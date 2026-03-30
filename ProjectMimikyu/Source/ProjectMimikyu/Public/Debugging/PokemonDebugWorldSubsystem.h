@@ -22,6 +22,7 @@ public:
 	void EnableCategory(const FGameplayTag& CategoryTag);
 	void DisableCategory(const FGameplayTag& CategoryTag);
 	void SetCategoryEnabled(const FGameplayTag& CategoryTag, bool bEnabled);
+	bool ToggleCategory(const FGameplayTag& CategoryTag);
 
 	bool IsCategoryEnabled(const FGameplayTag& CategoryTag) const;
 	bool ShouldEmitMessage(const UObject* SourceObject, const FGameplayTag& CategoryTag, EPokemonDebugVerbosity Verbosity) const;
@@ -73,7 +74,7 @@ protected:
 	bool bGlobalDebugEnabled = true;
 
 	UPROPERTY(EditAnywhere, Category = "Debug")
-	bool bDefaultEnableAllCategories = true;
+	bool bDefaultEnableAllCategories = false;
 
 	UPROPERTY(EditAnywhere, Category = "Debug")
 	int32 MaxStoredMessages = 200;

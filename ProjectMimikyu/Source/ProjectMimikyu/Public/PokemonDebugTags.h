@@ -18,6 +18,7 @@ namespace PokemonDebugTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Combat_Faint);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Addition);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Activation);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Cooldown);
 
@@ -33,4 +34,6 @@ namespace PokemonDebugTags
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Transition);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Log);
 }

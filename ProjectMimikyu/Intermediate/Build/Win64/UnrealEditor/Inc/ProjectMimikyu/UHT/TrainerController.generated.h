@@ -19,6 +19,9 @@ class UUserWidget;
 
 // ********** Begin Class ATrainerController *******************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_TrainerController_h_22_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execTogglePokemonDebugAll); \
+	DECLARE_FUNCTION(execToggleCombatDebug); \
+	DECLARE_FUNCTION(execToggleAIDebug); \
 	DECLARE_FUNCTION(execFocusNewWidget); \
 	DECLARE_FUNCTION(execRemoveMouseCursor); \
 	DECLARE_FUNCTION(execAddMouseCursor);

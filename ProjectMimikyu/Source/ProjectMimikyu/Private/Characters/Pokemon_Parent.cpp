@@ -16,6 +16,8 @@
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Net/UnrealNetwork.h"
+#include "Debugging/PokemonDebugLibrary.h"
+#include "PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 
@@ -78,7 +80,10 @@ void APokemon_Parent::AddPokemonAbilities()
 		// Passive Event Check Should be active only if the pokemon has a player trainer 
 		// We'll Keep at just trainer for now
 		if(CurrentTrainer)
-		GetPokemonASC()->AddCharacterPassiveAbilities(StartupPassiveAbilities);
+		{
+			GetPokemonASC()->AddCharacterPassiveAbilities(StartupPassiveAbilities);
+		}
+		UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::Ability, true);
 	}
 }
 
@@ -162,13 +167,6 @@ void APokemon_Parent::PossessedBy(AController* NewController)
 	{
 		PokemonController->SetTree(AIBehaviorTree, this);
 	}
-	UE_LOG(LogTemp, Warning,
-		TEXT("[%s] APokemon_Parent::PossessedBy | NewController=%s | PokemonController=%s | CurrentTrainer=%s | Status=%d"),
-		*GetNameSafe(this),
-		*GetNameSafe(NewController),
-		*GetNameSafe(PokemonController),
-		*GetNameSafe(CurrentTrainer),
-		static_cast<int32>(PokemonStatus));
 }
 
 void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -680,12 +678,6 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 	}
 
 	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
-	UE_LOG(LogTemp, Warning,
-		TEXT("[%s] SetPokemonTrainer | Trainer=%s | Status=%d | Controller=%s"),
-		*GetNameSafe(this),
-		*GetNameSafe(CurrentTrainer),
-		static_cast<int32>(PokemonStatus),
-		*GetNameSafe(GetController()));
 }
 void APokemon_Parent::CallCommand(int32 MoveIndex)
 {

@@ -26,6 +26,8 @@
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
 #include "PokemonGameplayTags.h"
+#include "Debugging/PokemonDebugLibrary.h"
+#include "PokemonDebugTags.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -99,6 +101,13 @@ void AProjectMimikyuCharacter::PostInitializeComponents()
 void AProjectMimikyuCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::Log, true);
+	UPokemonDebugLibrary::PrintMessage(
+		this,
+		PokemonDebugTags::Log,
+		TEXT("Debug system is alive."),
+		EPokemonDebugOutputMode::LogAndScreen
+	);
 
 	if (IsLocallyControlled())
 	{
@@ -534,6 +543,8 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
+	UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
+	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
 	TPS->PokemonIsOut(IChooseYou);
 }
 

@@ -17,6 +17,7 @@ namespace PokemonDebugTags
 	UE_DEFINE_GAMEPLAY_TAG(Combat_Faint, "Debug.Combat.Faint");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability, "Debug.Ability");
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Addition, "Debug.Ability.Addition");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Activation, "Debug.Ability.Activation");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Cooldown, "Debug.Ability.Cooldown");
 
@@ -32,4 +33,6 @@ namespace PokemonDebugTags
 
 	UE_DEFINE_GAMEPLAY_TAG(State, "Debug.State");
 	UE_DEFINE_GAMEPLAY_TAG(State_Transition, "Debug.State.Transition");
+
+	UE_DEFINE_GAMEPLAY_TAG(Log, "Debug.Log");
 }

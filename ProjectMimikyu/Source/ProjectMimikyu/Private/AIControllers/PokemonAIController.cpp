@@ -11,6 +11,8 @@
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "PokemonGameplayTags.h"
 #include "DataAssets/PokemonAICombatBrainConfig.h"
+#include "Debugging/PokemonDebugLibrary.h"
+#include "PokemonDebugTags.h"
 #include "ActorComponents/PokemonBrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -18,21 +20,6 @@
 APokemonAIController::APokemonAIController()
 {
 	PokemonBrainComponent = CreateDefaultSubobject<UPokemonBrainComponent>(TEXT("PokemonBrainComponent"));
-}
-
-void APokemonAIController::BeginPlay()
-{
-	Super::BeginPlay();
-	//ControlledPokemon = Cast<APokemon_Parent>(GetPawn());
-	//AIBehaviorTree = ControlledPokemon->GetBehaviorTree();
-
-/*	if (ControlledPokemon && AIBehaviorTree && !ControlledPokemon->SpawnPointTag.MatchesTagExact(FPokemonGameplayTags::Get().SpawnPoint_ComeOnOut))
-	{
-		RunBehaviorTree(AIBehaviorTree);
-		SetPokemonState(EPokemonState::EPS_Passive);
-		GetBlackboardComponent()->SetValueAsVector(SpawnLocationKeyName, ControlledPokemon->GetActorLocation());
-		SetBlackboardASC();
-	}*/
 }
 
 void APokemonAIController::SetPokemonState(EPokemonState NewPokemonState)
@@ -94,31 +81,14 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
 	if(AIBehaviorTree)
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[%s] APokemonAIController::OnPossess | Running Behavior Tree: %s"),
-			*GetNameSafe(this),
-			*GetNameSafe(AIBehaviorTree));
 		RunBehaviorTree(AIBehaviorTree);
 	}
-	UE_LOG(LogTemp, Warning,
-		TEXT("[%s] APokemonAIController::OnPossess | InPawn=%s | ControlledPokemon=%s"),
-		*GetNameSafe(this),
-		*GetNameSafe(InPawn),
-		*GetNameSafe(ControlledPokemon));
 
 	if (!ControlledPokemon)
 	{
 		UE_LOG(LogTemp, Error, TEXT("OnPossess failed: InPawn is not APokemon_Parent."));
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning,
-		TEXT("[%s] OnPossess details | Trainer=%s | Status=%d | SpawnPointTag=%s | BT=%s"),
-		*GetNameSafe(this),
-		*GetNameSafe(ControlledPokemon->CurrentTrainer),
-		static_cast<int32>(ControlledPokemon->PokemonStatus),
-		*ControlledPokemon->SpawnPointTag.ToString(),
-		*GetNameSafe(ControlledPokemon->GetBehaviorTree()));
 
 	UBlackboardComponent* BB = GetBlackboardComponent();
 	if (!BB)

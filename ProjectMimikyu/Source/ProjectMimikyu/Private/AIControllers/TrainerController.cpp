@@ -3,13 +3,13 @@
 
 #include "AIControllers/TrainerController.h"
 #include "Player/TrainerPlayerState.h"
-#include "DataAssets/PokemonMoveDataAsset.h"
 #include "UI/TrainerOverlay.h"
-#include "UI/PlayerInventoryMenuOverlay.h"
 #include "UI/TrainerHUD.h"
 #include "Input/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
+#include "Debugging/PokemonDebugWorldSubsystem.h"
+#include "PokemonDebugTags.h"
+#include "Debugging/PokemonDebugLog.h"
 
 
 
@@ -38,6 +38,42 @@ void ATrainerController::RemoveMouseCursor()
 void ATrainerController::FocusNewWidget(UUserWidget* NewWidget)
 {
 	NewWidget->SetFocus();
+}
+
+void ATrainerController::ToggleAIDebug()
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
+		{
+			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::AI);
+			UE_LOG(LogPokemonDebug, Log, TEXT("AI Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+		}
+	}
+}
+
+void ATrainerController::ToggleCombatDebug()
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
+		{
+			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::Combat);
+			UE_LOG(LogPokemonDebug, Log, TEXT("Combat Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+		}
+	}
+}
+
+void ATrainerController::TogglePokemonDebugAll()
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
+		{
+			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::Debug);
+			UE_LOG(LogPokemonDebug, Log, TEXT("Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+		}
+	}
 }
 
 void ATrainerController::BeginPlay()

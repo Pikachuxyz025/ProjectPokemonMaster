@@ -28,8 +28,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UBehaviorTree* AIBehaviorTree;
 
-	virtual void BeginPlay() override;
-
 	UPROPERTY(VisibleAnywhere)
 	APokemon_Parent* ControlledPokemon;
 

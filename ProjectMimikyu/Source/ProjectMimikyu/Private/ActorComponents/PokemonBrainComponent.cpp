@@ -4,6 +4,8 @@
 #include "ActorComponents/PokemonBrainComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "PokemonGameplayTags.h"
+#include "Debugging/PokemonDebugLibrary.h"
+#include "PokemonDebugTags.h"
 #include "DataAssets/PokemonAICombatBrainConfig.h"
 #include "AIControllers/PokemonAIController.h"
 
@@ -215,6 +217,7 @@ void UPokemonBrainComponent::RunThink()
 	NextThinkTime = Now + GetRandomThinkInterval();
 	ClearUrgentInterrupt();
 
+	UPokemonDebugLibrary::PrintMessage(ControlledPokemon, PokemonDebugTags::AI, TEXT("AI thinking. This should only be seen it there is no observer object or if this is the observer object"),EPokemonDebugOutputMode::LogAndScreen);
 	//UE_LOG(LogTemp, Warning,
 	//	TEXT("[Brain] RunThink | Time=%.2f | DeltaSinceLast=%.2f | NextThink=%.2f | CommitUntil=%.2f | State=%s | Mode=%s | Target=%s | Controller=%s | Pawn=%s | HP=%.2f%%"),
 	//	Now,

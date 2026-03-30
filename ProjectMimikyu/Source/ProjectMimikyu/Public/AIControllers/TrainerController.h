@@ -26,10 +26,21 @@ public:
 
 UFUNCTION(BlueprintCallable)
 	void AddMouseCursor(UUserWidget* CurrentWidget, bool bSetUpMode);
+
 UFUNCTION(BlueprintCallable)
 	void RemoveMouseCursor();
+
 	UFUNCTION(BlueprintCallable)
 	void FocusNewWidget(UUserWidget* NewWidget);
+
+	UFUNCTION(Exec)
+	void ToggleAIDebug();
+
+	UFUNCTION(Exec)
+	void ToggleCombatDebug();
+
+	UFUNCTION(Exec)
+	void TogglePokemonDebugAll();
 private:
 
 	UPROPERTY()
