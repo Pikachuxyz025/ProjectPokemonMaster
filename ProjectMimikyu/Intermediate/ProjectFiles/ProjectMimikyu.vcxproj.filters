@@ -191,6 +191,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonMoveDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonProgressionDataAsset.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
@@ -570,6 +573,9 @@
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonProgressionDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h">

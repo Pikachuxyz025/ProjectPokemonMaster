@@ -74,7 +74,7 @@ virtual AActor* GetCombatTarget_Implementation() override;
 virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag) override;
 virtual int32 GetELBValue(const FGameplayTag& StatTag) override;
 virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
-virtual float GetTypeMatchup(EElementalType ElementalType) override;
+virtual float GetTypeMatchup(EElementalType AttackingType) override;
 virtual FPokemonTypeInfo GetPokemonElementalTypes() override;
 virtual UPokemonMoveDataAsset* GetPokemonActiveMove() override;
 virtual int32 GetBaseStatFromTag(const FGameplayTag& StatTag) override;
@@ -252,7 +252,7 @@ protected:
 
 	int32 CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentLevel, const FGameplayTag& StatTag);
 
-	float TypeChartDamageMultiplier(EElementalType DamageElementType);
+	float TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes);
 
 	UPROPERTY()
 	TMap<int32, int32> MultiplierMap =
@@ -307,7 +307,7 @@ protected:
 	bool bIsDead = false;
 
 	UPROPERTY(EditAnywhere)
-	UDataTable* TypeChartDataTable;
+	TObjectPtr<UDataTable> TypeChartDataTable;
 
 	float GetRunningSpeed();
 	float GetWalkingSpeed();

@@ -22,19 +22,71 @@ void UPokemonAbilitySystemLibrary::ActivateAbilityByTag(const UObject* WorldCont
 
 int32 UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag)
 {
-	AProjectMimikyuGameMode* PokemonGameMode = Cast<AProjectMimikyuGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (!PokemonGameMode) return 0;
+	FPokemonGameplayTags XPTags = FPokemonGameplayTags::Get();
+	double ExperiencePoints = 0;
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_Erratic))
+	{
+		if (PokemonLevel < 50)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * (100 - PokemonLevel)) / 50;
+		}
+		else if (PokemonLevel >= 50 && PokemonLevel < 68)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * (150 - PokemonLevel)) / 100;
+		}
+		else if (PokemonLevel >= 68 && PokemonLevel < 98)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * ((1911 - (10 * PokemonLevel)) / 3)) / 500;
+		}
+		else if (PokemonLevel >= 98 && PokemonLevel <= 100)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * (160 - PokemonLevel)) / 100;
+		}
+	}
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_Fast))
+	{
+		ExperiencePoints = (4 * FMath::Pow(PokemonLevel, 3.0)) / 5;
+	}
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_Fluctuating))
+	{
+		if (PokemonLevel < 15)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * (((PokemonLevel + 1) / 3) + 24)) / 50;
+		}
+		else if (PokemonLevel >= 15 && PokemonLevel < 36)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * (PokemonLevel + 14)) / 50;
+		}
+		else if (PokemonLevel >= 36 && PokemonLevel <= 100)
+		{
+			ExperiencePoints = (FMath::Pow(PokemonLevel, 3.0) * ((PokemonLevel / 2) + 32)) / 50;
+		}
+	}
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_MediumFast))
+	{
+		ExperiencePoints = FMath::Pow(PokemonLevel, 3.0);
+	}
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_MediumSlow))
+	{
+		ExperiencePoints = ((6 / 5) * FMath::Pow(PokemonLevel, 3.0))
+			- (15 * FMath::Pow(PokemonLevel, 2.0))
+			+ (100 * PokemonLevel)
+			- 140;
+	}
+	if (PokemonXPTag.MatchesTagExact(XPTags.XP_Slow))
+	{
+		ExperiencePoints = (5 * FMath::Pow((double)PokemonLevel, 3.0)) / 4;
+	}
 
-	int32 NewExperience=PokemonGameMode->GetExperienceAtLevel(PokemonXPTag, PokemonLevel);
+	int32 NewExperience = FMath::RoundToInt(ExperiencePoints);
 	return NewExperience;
 }
 
 int32 UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(const UObject* WorldContextObject, int32 PokemonLevel, const FGameplayTag& PokemonXPTag)
 {
-	AProjectMimikyuGameMode* PokemonGameMode = Cast<AProjectMimikyuGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (!PokemonGameMode) return 0;
-
-	return PokemonGameMode->GetExperienceNeededToLevelUp(PokemonXPTag, PokemonLevel);
+	int32 NextLevel = PokemonLevel + 1;
+	int32 ExperienceNeeded = GetPokemonXPAtLevel(WorldContextObject, NextLevel, PokemonXPTag) - GetPokemonXPAtLevel(WorldContextObject, PokemonLevel, PokemonXPTag);
+	return ExperienceNeeded;
 }
 
 

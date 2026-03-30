@@ -376,6 +376,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonMoveDataAsset.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonProgressionDataAsset.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -597,6 +600,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonInputConfig.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonMoveDataAsset.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonProgressionDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\TagCategoryDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h"/>

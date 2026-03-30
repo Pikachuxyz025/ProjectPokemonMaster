@@ -115,28 +115,22 @@ struct Z_Construct_UClass_AProjectMimikyuGameMode_Statics
 		{ "Category", "ProjectMimikyuGameMode" },
 		{ "ModuleRelativePath", "Public/GameModes/ProjectMimikyuGameMode.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TypeResponse_MetaData[] = {
+		{ "ModuleRelativePath", "Public/GameModes/ProjectMimikyuGameMode.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TagCategoryData_MetaData[] = {
 		{ "Category", "TagData" },
-		{ "ModuleRelativePath", "Public/GameModes/ProjectMimikyuGameMode.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MultiplierMap_MetaData[] = {
-		{ "ModuleRelativePath", "Public/GameModes/ProjectMimikyuGameMode.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TypeResponse_MetaData[] = {
 		{ "ModuleRelativePath", "Public/GameModes/ProjectMimikyuGameMode.h" },
 	};
 #endif // WITH_METADATA
 
 // ********** Begin Class AProjectMimikyuGameMode constinit property declarations ******************
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TypeChartDataTable;
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_TagCategoryData;
-	static const UECodeGen_Private::FIntPropertyParams NewProp_MultiplierMap_ValueProp;
-	static const UECodeGen_Private::FIntPropertyParams NewProp_MultiplierMap_Key_KeyProp;
-	static const UECodeGen_Private::FMapPropertyParams NewProp_MultiplierMap;
 	static const UECodeGen_Private::FNamePropertyParams NewProp_TypeResponse_ValueProp;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_TypeResponse_Key_KeyProp_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_TypeResponse_Key_KeyProp;
 	static const UECodeGen_Private::FMapPropertyParams NewProp_TypeResponse;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_TagCategoryData;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class AProjectMimikyuGameMode constinit property declarations ********************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
@@ -155,24 +149,18 @@ struct Z_Construct_UClass_AProjectMimikyuGameMode_Statics
 
 // ********** Begin Class AProjectMimikyuGameMode Property Definitions *****************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeChartDataTable = { "TypeChartDataTable", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuGameMode, TypeChartDataTable), Z_Construct_UClass_UDataTable_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TypeChartDataTable_MetaData), NewProp_TypeChartDataTable_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TagCategoryData = { "TagCategoryData", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuGameMode, TagCategoryData), Z_Construct_UClass_UTagCategoryDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TagCategoryData_MetaData), NewProp_TagCategoryData_MetaData) };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap_ValueProp = { "MultiplierMap", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap_Key_KeyProp = { "MultiplierMap_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap = { "MultiplierMap", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuGameMode, MultiplierMap), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MultiplierMap_MetaData), NewProp_MultiplierMap_MetaData) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_ValueProp = { "TypeResponse", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_Key_KeyProp_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_Key_KeyProp = { "TypeResponse_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UEnum_ProjectMimikyu_EElementalType, METADATA_PARAMS(0, nullptr) }; // 1457640518
 const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse = { "TypeResponse", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuGameMode, TypeResponse), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TypeResponse_MetaData), NewProp_TypeResponse_MetaData) }; // 1457640518
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TagCategoryData = { "TagCategoryData", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuGameMode, TagCategoryData), Z_Construct_UClass_UTagCategoryDataAsset_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TagCategoryData_MetaData), NewProp_TagCategoryData_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectMimikyuGameMode_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeChartDataTable,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TagCategoryData,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap_ValueProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap_Key_KeyProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_MultiplierMap,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_ValueProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_Key_KeyProp_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse_Key_KeyProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TypeResponse,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuGameMode_Statics::NewProp_TagCategoryData,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AProjectMimikyuGameMode_Statics::PropPointers) < 2048);
 // ********** End Class AProjectMimikyuGameMode Property Definitions *******************************
@@ -217,10 +205,10 @@ AProjectMimikyuGameMode::~AProjectMimikyuGameMode() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuGameMode, AProjectMimikyuGameMode::StaticClass, TEXT("AProjectMimikyuGameMode"), &Z_Registration_Info_UClass_AProjectMimikyuGameMode, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuGameMode), 14322018U) },
+		{ Z_Construct_UClass_AProjectMimikyuGameMode, AProjectMimikyuGameMode::StaticClass, TEXT("AProjectMimikyuGameMode"), &Z_Registration_Info_UClass_AProjectMimikyuGameMode, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuGameMode), 536733455U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_1164254636{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_1178963473{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_GameModes_ProjectMimikyuGameMode_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

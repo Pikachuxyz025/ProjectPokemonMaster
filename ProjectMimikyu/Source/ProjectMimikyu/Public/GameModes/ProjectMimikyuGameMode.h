@@ -21,30 +21,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* TypeChartDataTable;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "TagData")
-	UTagCategoryDataAsset* TagCategoryData;
-
-	float TypeChartDamageMultiplier(EElementalType DamageElementType,const FPokemonTypeInfo& PokemonTypes);
-
-	int32 CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentLevel, const FGameplayTag& StatTag);
-
-	float NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified);
-
-	UPROPERTY()
-	TMap<int32, int32> MultiplierMap =
-	{
-		{ 0, 0 },
-		{ 1, 2 },
-		{ 2, 3 },
-		{ 3, 4 },
-		{ 4, 7 },
-		{ 5, 8 },
-		{ 6, 9 },
-		{ 7, 14 },
-		{ 8, 15 },
-		{ 9, 16 },
-		{ 10, 25 }
-	};
+	float TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes);
 
 	UPROPERTY()
 	TMap<EElementalType, FName> TypeResponse =
@@ -68,6 +45,10 @@ public:
 		{EElementalType::EET_Water,"Water" },
 		{EElementalType::EET_Steel,"Steel" }
 	};
+
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "TagData")
+	UTagCategoryDataAsset* TagCategoryData;
 
 	int32 GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level);
 	int32 GetExperienceNeededToLevelUp(const FGameplayTag& XPType, int32 CurrentLevel);

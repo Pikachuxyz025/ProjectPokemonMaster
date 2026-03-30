@@ -31,7 +31,7 @@ public:
 	virtual float GetNatureMultiplier(const FGameplayTag& StatTagToBeModified);
 	virtual int32 GetELB(int32 BaseStat, const FGameplayTag& StatTag);
 	virtual int32 GetELBValue(const FGameplayTag& StatTag);
-	virtual float GetTypeMatchup(EElementalType ElementalType);
+	virtual float GetTypeMatchup(EElementalType AttackingType);
 	virtual void AdjustXP(int32 NewXP) = 0;
 	virtual void AdjustLevel(int32 NewLevel) = 0;
 	virtual int32 GetXPBaseReward();

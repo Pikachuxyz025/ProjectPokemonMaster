@@ -14,36 +14,6 @@ AProjectMimikyuGameMode::AProjectMimikyuGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
-
-float AProjectMimikyuGameMode::TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes)
-{
-	FString FirstTypeContextString;
-	float X = 1;
-	float Y = 1;
-	FTypeChartMatchup* FirstTypeChart;
-	FTypeChartMatchup* SecondTypeChart;
-
-	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.FirstType], FirstTypeContextString, true);
-	X = FirstTypeChart->TypeResponse[DamageElementType];
-	if (PokemonTypes.SecondType != EElementalType::EET_None)
-	{
-		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.SecondType], FirstTypeContextString, true);
-		Y = SecondTypeChart->TypeResponse[DamageElementType];
-	}
-
-	return X*Y;
-}
-
-int32 AProjectMimikyuGameMode::CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentLevel, const FGameplayTag& StatTag)
-{
-	return int32();
-}
-
-float AProjectMimikyuGameMode::NatureModifier(ENatureType CurrentNature, const FGameplayTag& StatTagToBeModified)
-{
-	return 0.0f;
-}
-
 int32 AProjectMimikyuGameMode::GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level)
 {
 	FPokemonGameplayTags XPTags = FPokemonGameplayTags::Get();
@@ -109,4 +79,22 @@ int32 AProjectMimikyuGameMode::GetExperienceNeededToLevelUp(const FGameplayTag& 
 	int32 NextLevel = CurrentLevel+1;
 	int32 ExperienceNeeded = GetExperienceAtLevel(XPType, NextLevel) - GetExperienceAtLevel(XPType, CurrentLevel);
 	return ExperienceNeeded;
+}
+float AProjectMimikyuGameMode::TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes)
+{
+	FString FirstTypeContextString;
+	float X = 1;
+	float Y = 1;
+	FTypeChartMatchup* FirstTypeChart;
+	FTypeChartMatchup* SecondTypeChart;
+
+	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.FirstType], FirstTypeContextString, true);
+	X = FirstTypeChart->TypeResponse[DamageElementType];
+	if (PokemonTypes.SecondType != EElementalType::EET_None)
+	{
+		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.SecondType], FirstTypeContextString, true);
+		Y = SecondTypeChart->TypeResponse[DamageElementType];
+	}
+
+	return X * Y;
 }

@@ -555,9 +555,9 @@ FVector APokemon_Parent::GetCombatSocketLocation_Implementation(const FGameplayT
 	return FVector();
 }
 
-float APokemon_Parent::GetTypeMatchup(EElementalType ElementalType)
+float APokemon_Parent::GetTypeMatchup(EElementalType AttackingType)
 {
-	return TypeChartDamageMultiplier(ElementalType);
+	return TypeChartDamageMultiplier(AttackingType, GetPokemonElementalTypes());
 }
 
 FPokemonTypeInfo APokemon_Parent::GetPokemonElementalTypes()
@@ -878,7 +878,7 @@ int32 APokemon_Parent::CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentL
 	return FMath::RoundToInt(((FMath::Sqrt(float(BaseStat)) * MultiplierMap[EffortLevelBaseMap[StatTag]]) + AsCurrentLevel) / 2.5f);
 }
 
-float APokemon_Parent::TypeChartDamageMultiplier(EElementalType DamageElementType)
+float APokemon_Parent::TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes)
 {
 	FString FirstTypeContextString;
 	float X = 1;
@@ -886,13 +886,14 @@ float APokemon_Parent::TypeChartDamageMultiplier(EElementalType DamageElementTyp
 	FTypeChartMatchup* FirstTypeChart;
 	FTypeChartMatchup* SecondTypeChart;
 
-	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonDataAsset->FirstType], FirstTypeContextString, true);
+	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.FirstType], FirstTypeContextString, true);
 	X = FirstTypeChart->TypeResponse[DamageElementType];
-	if (PokemonDataAsset->SecondType != EElementalType::EET_None)
+	if (PokemonTypes.SecondType != EElementalType::EET_None)
 	{
-		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonDataAsset->SecondType], FirstTypeContextString, true);
+		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.SecondType], FirstTypeContextString, true);
 		Y = SecondTypeChart->TypeResponse[DamageElementType];
 	}
+
 	return X * Y;
 }
 

@@ -37,7 +37,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 		TScriptInterface<IPokemonCombatInterface> TargetPokemon = TargetActor;
 		if (TargetPokemon)
 		{
-			Params.TypeMultiplier = UPokemonAbilitySystemLibrary::GetTypeMatchup(GetAvatarActorFromActorInfo(), MoveElementalType, TargetPokemon->GetPokemonElementalTypes());
+			Params.TypeMultiplier = TargetPokemon->GetTypeMatchup(MoveElementalType);
 		}
 	}
 

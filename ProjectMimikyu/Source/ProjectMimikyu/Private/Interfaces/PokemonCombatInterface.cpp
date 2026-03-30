@@ -25,7 +25,7 @@ int32 IPokemonCombatInterface::GetELBValue(const FGameplayTag& StatTag)
 	return 0;
 }
 
-float IPokemonCombatInterface::GetTypeMatchup(EElementalType ElementalType)
+float IPokemonCombatInterface::GetTypeMatchup(EElementalType AttackingType)
 {
 	return 0.0f;
 }
