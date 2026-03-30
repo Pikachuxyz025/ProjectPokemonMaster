@@ -41,9 +41,9 @@ int32 UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(const UObject* Wor
 float UPokemonAbilitySystemLibrary::GetCurrentXPPercentage(const UObject* WorldContextObject, const FPokemonInfo PokemonData, int32& XPRemaining)
 {
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
-	float ExperienceAtLevel = float(GetPokemonXPAtLevel(WorldContextObject, PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_Level], PokemonData.StoredPokemonDataAsset->XpStyle));
-	float ExperienceNeededAtLevel = float(GetNeededPokemonXPAtLevel(WorldContextObject, PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_Level], PokemonData.StoredPokemonDataAsset->XpStyle));
-	float CurrentExperience = PokemonData.StoredAttributeValue[GameplayTags.Attributes_Stats_XP];
+	float ExperienceAtLevel = float(GetPokemonXPAtLevel(WorldContextObject, PokemonData.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level), PokemonData.StoredPokemonDataAsset->XpStyle));
+	float ExperienceNeededAtLevel = float(GetNeededPokemonXPAtLevel(WorldContextObject, PokemonData.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level), PokemonData.StoredPokemonDataAsset->XpStyle));
+	float CurrentExperience = PokemonData.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
 
 	float ExperienceInBetween = ExperienceNeededAtLevel - ExperienceAtLevel;
 	float CurrentInBetweenExperience = CurrentExperience - ExperienceAtLevel;
@@ -338,6 +338,16 @@ void UPokemonAbilitySystemLibrary::SetTypeMultiplier(UPARAM(ref)FGameplayEffectC
 	{
 		PokemonContext->SetTypeMultiplier(InTypeMultiplier);
 	}
+}
+
+float UPokemonAbilitySystemLibrary::GetStoredAttributeValueByTag(const FPokemonInfo& PokemonInfo, FGameplayTag Tag)
+{
+	return PokemonInfo.GetStoredAttributeValue(Tag);
+}
+
+int32 UPokemonAbilitySystemLibrary::GetStoredEffortValueByTag(const FPokemonInfo& PokemonInfo, FGameplayTag Tag)
+{
+	return PokemonInfo.GetStoredEffortValue(Tag);
 }
 
 //FPokemonGameplayEffectContext* UPokemonAbilitySystemLibrary::GetPokemonContext(FGameplayEffectContextHandle& EffectContextHandle)

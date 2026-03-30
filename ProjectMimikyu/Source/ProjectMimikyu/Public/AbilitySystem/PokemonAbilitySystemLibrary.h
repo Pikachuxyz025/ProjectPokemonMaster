@@ -106,6 +106,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PokemonAbilitySystemLibrary|GameplayEffects")
 	static void SetTypeMultiplier(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InTypeMultiplier);
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Stats")
+	static float GetStoredAttributeValueByTag(const FPokemonInfo& PokemonInfo, FGameplayTag Tag);
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Stats")
+	static int32 GetStoredEffortValueByTag(const FPokemonInfo& PokemonInfo, FGameplayTag Tag);
+
+
 private:
 
 	//FPokemonGameplayEffectContext* PokemonContext;

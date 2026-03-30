@@ -29,6 +29,8 @@ struct FPokemonTypeInfo;
 
 // ********** Begin Class UPokemonAbilitySystemLibrary *********************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execGetStoredEffortValueByTag); \
+	DECLARE_FUNCTION(execGetStoredAttributeValueByTag); \
 	DECLARE_FUNCTION(execSetTypeMultiplier); \
 	DECLARE_FUNCTION(execSetDamageType); \
 	DECLARE_FUNCTION(execSetKnockbackForce); \

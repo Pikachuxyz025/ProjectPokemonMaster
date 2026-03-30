@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-using namespace UP;
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -29,34 +29,40 @@ public:
 
 	void AddToParty(APokemon_Parent* NewPokemon);
 	TArray<FPokemonInfo> GetCurrentPokemonParty() { return CurrentPartyInfo; }
+	
+	UFUNCTION()
+	void OnRep_CurrentPartyInfo();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
 
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
-	TArray<APokemon_Parent*> CurrentParty;
+	//UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	//TArray<APokemon_Parent*> CurrentParty;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentPartyInfo,VisibleAnywhere, Category = "Pokemon Party")
 	TArray<FPokemonInfo> CurrentPartyInfo;
 
 	int32 PartyIndex = 0;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	UPROPERTY(Replicated,VisibleAnywhere, Category = "Pokemon Party")
 	TObjectPtr<APokemon_Parent> ActivePokemon;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "Pokemon Party")
 	FPokemonInfo ActivePokemonInfo;
 
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	UPROPERTY(Replicated, VisibleAnywhere, Category = "Pokemon Party")
 	TObjectPtr<AActor> EngagedPokemon;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool bIsInCombat = false;
 public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetPartyIndex(int32 NewIndex) { PartyIndex = NewIndex; }
+
 	FPokemonInfo GetCurrentPokemonInfo();
 	void PokemonIsOut(APokemon_Parent* PokemonOut);
 	void UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon);
 	void SetTrainerIsInCombat(AActor* CombatTarget);
-	bool IsCurrentPartyEmpty() { return CurrentPartyInfo.Num() == 0; }
+	bool IsCurrentPartyEmpty() const { return CurrentPartyInfo.Num() == 0; }
 };

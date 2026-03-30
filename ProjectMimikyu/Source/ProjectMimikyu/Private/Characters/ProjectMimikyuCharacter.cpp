@@ -279,7 +279,7 @@ void AProjectMimikyuCharacter::CatchPokemon()
 
 	const FVector TraceStart = GetActorLocation();
 	const FVector TraceEnd = TraceStart + (FollowCamera->GetForwardVector() * CatchingDistance);
-	ServerRequetCatchPokemon(TraceStart, TraceEnd);
+	ServerRequestCatchPokemon(TraceStart, TraceEnd);
 }
 
 void AProjectMimikyuCharacter::AddToParty(APokemon_Parent* NewPokemon)

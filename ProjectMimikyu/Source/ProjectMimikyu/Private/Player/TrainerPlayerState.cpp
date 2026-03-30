@@ -3,19 +3,39 @@
 
 #include "Player/TrainerPlayerState.h"
 #include "Characters/Pokemon_Parent.h"
-#include "PokemonGameplayTags.h"
+#include "Net/UnrealNetwork.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 
+void ATrainerPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ATrainerPlayerState, CurrentPartyInfo);
+	DOREPLIFETIME(ATrainerPlayerState, ActivePokemon);
+	DOREPLIFETIME(ATrainerPlayerState, ActivePokemonInfo);
+	DOREPLIFETIME(ATrainerPlayerState, EngagedPokemon);
+	DOREPLIFETIME(ATrainerPlayerState, bIsInCombat);
+}
+
+void ATrainerPlayerState::OnRep_CurrentPartyInfo()
+{
+	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
+}
+
 void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
 {
+	if (!HasAuthority() || !IsValid(NewPokemon))
+	{
+		return;
+	}
+
 	if (CurrentPartyInfo.Num() < 6)
 	{
-		CurrentParty.Add(NewPokemon);
 		FPokemonInfo PokemonInfo = NewPokemon->GetPokemonInfo();
 		PokemonInfo.PartyMode = EPartyStatus::EPS_Ready;
 		CurrentPartyInfo.Add(PokemonInfo);
-		OnPartyUpdatedDelegate.Broadcast(CurrentParty);
+
 		OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
 	}
 	// TO DO
@@ -24,11 +44,25 @@ void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
 
 FPokemonInfo ATrainerPlayerState::GetCurrentPokemonInfo()
 {
+	if (!CurrentPartyInfo.IsValidIndex(PartyIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetCurrentPokemonInfo failed: invalid PartyIndex %d, PartySize %d"),
+			PartyIndex, CurrentPartyInfo.Num());
+		return FPokemonInfo();
+	}
+
 	return CurrentPartyInfo[PartyIndex];
 }
 
 void ATrainerPlayerState::PokemonIsOut(APokemon_Parent* PokemonOut)
 {
+	if (!CurrentPartyInfo.IsValidIndex(PartyIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PokemonIsOut failed: invalid PartyIndex %d, PartySize %d"),
+			PartyIndex, CurrentPartyInfo.Num());
+		return;
+	}
+
 	CurrentPartyInfo[PartyIndex].PartyMode = EPartyStatus::EPS_Out;
 	ActivePokemon = PokemonOut;
 	ActivePokemonInfo = CurrentPartyInfo[PartyIndex];
@@ -40,8 +74,6 @@ void ATrainerPlayerState::UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokem
 	if (AlteredPokemon == ActivePokemon)
 	{
 		CurrentPartyInfo[PartyIndex].UpdateStoredAttributeValues(ActivePokemon->GetPokemonAS()->GetAttributeTagValues());
-		//CurrentPartyInfo[PartyIndex].StoredAttributeValue = ;
-		//CurrentPartyInfo[PartyIndex].CurrentUiInfo.PokemonLevel = CurrentPartyInfo[PartyIndex].StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
 	}
 }
 

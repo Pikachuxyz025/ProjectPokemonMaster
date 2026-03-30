@@ -22,6 +22,41 @@ PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
 
+// ********** Begin Class ATrainerPlayerState Function OnRep_CurrentPartyInfo **********************
+struct Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/Player/TrainerPlayerState.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function OnRep_CurrentPartyInfo constinit property declarations ****************
+// ********** End Function OnRep_CurrentPartyInfo constinit property declarations ******************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_ATrainerPlayerState, nullptr, "OnRep_CurrentPartyInfo", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo_Statics::Function_MetaDataParams), Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ATrainerPlayerState::execOnRep_CurrentPartyInfo)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->OnRep_CurrentPartyInfo();
+	P_NATIVE_END;
+}
+// ********** End Class ATrainerPlayerState Function OnRep_CurrentPartyInfo ************************
+
 // ********** Begin Class ATrainerPlayerState Function SetPartyIndex *******************************
 struct Z_Construct_UFunction_ATrainerPlayerState_SetPartyIndex_Statics
 {
@@ -112,13 +147,15 @@ struct Z_Construct_UClass_ATrainerPlayerState_Statics
 		{ "ModuleRelativePath", "Public/Player/TrainerPlayerState.h" },
 		{ "ShowCategories", "Input|MouseInput Input|TouchInput" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentParty_MetaData[] = {
-		{ "Category", "Pokemon Party" },
-		{ "ModuleRelativePath", "Public/Player/TrainerPlayerState.h" },
-	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentPartyInfo_MetaData[] = {
 		{ "Category", "Pokemon Party" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "//UPROPERTY(VisibleAnywhere, Category = \"Pokemon Party\")\n//TArray<APokemon_Parent*> CurrentParty;\n" },
+#endif
 		{ "ModuleRelativePath", "Public/Player/TrainerPlayerState.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "UPROPERTY(VisibleAnywhere, Category = \"Pokemon Party\")\nTArray<APokemon_Parent*> CurrentParty;" },
+#endif
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ActivePokemon_MetaData[] = {
 		{ "Category", "Pokemon Party" },
@@ -138,8 +175,6 @@ struct Z_Construct_UClass_ATrainerPlayerState_Statics
 #endif // WITH_METADATA
 
 // ********** Begin Class ATrainerPlayerState constinit property declarations **********************
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_CurrentParty_Inner;
-	static const UECodeGen_Private::FArrayPropertyParams NewProp_CurrentParty;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_CurrentPartyInfo_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_CurrentPartyInfo;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ActivePokemon;
@@ -150,10 +185,12 @@ struct Z_Construct_UClass_ATrainerPlayerState_Statics
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class ATrainerPlayerState constinit property declarations ************************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
+		{ .NameUTF8 = UTF8TEXT("OnRep_CurrentPartyInfo"), .Pointer = &ATrainerPlayerState::execOnRep_CurrentPartyInfo },
 		{ .NameUTF8 = UTF8TEXT("SetPartyIndex"), .Pointer = &ATrainerPlayerState::execSetPartyIndex },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_ATrainerPlayerState_OnRep_CurrentPartyInfo, "OnRep_CurrentPartyInfo" }, // 3296615518
 		{ &Z_Construct_UFunction_ATrainerPlayerState_SetPartyIndex, "SetPartyIndex" }, // 2974741401
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
@@ -164,21 +201,17 @@ struct Z_Construct_UClass_ATrainerPlayerState_Statics
 }; // struct Z_Construct_UClass_ATrainerPlayerState_Statics
 
 // ********** Begin Class ATrainerPlayerState Property Definitions *********************************
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentParty_Inner = { "CurrentParty", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentParty = { "CurrentParty", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, CurrentParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentParty_MetaData), NewProp_CurrentParty_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo_Inner = { "CurrentPartyInfo", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 1637346323
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo = { "CurrentPartyInfo", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, CurrentPartyInfo), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentPartyInfo_MetaData), NewProp_CurrentPartyInfo_MetaData) }; // 1637346323
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_ActivePokemon = { "ActivePokemon", nullptr, (EPropertyFlags)0x0144000000020001, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, ActivePokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActivePokemon_MetaData), NewProp_ActivePokemon_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_ActivePokemonInfo = { "ActivePokemonInfo", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, ActivePokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActivePokemonInfo_MetaData), NewProp_ActivePokemonInfo_MetaData) }; // 1637346323
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_EngagedPokemon = { "EngagedPokemon", nullptr, (EPropertyFlags)0x0144000000020001, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, EngagedPokemon), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EngagedPokemon_MetaData), NewProp_EngagedPokemon_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo_Inner = { "CurrentPartyInfo", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 2094424460
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo = { "CurrentPartyInfo", "OnRep_CurrentPartyInfo", (EPropertyFlags)0x0040000100020021, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, CurrentPartyInfo), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentPartyInfo_MetaData), NewProp_CurrentPartyInfo_MetaData) }; // 2094424460
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_ActivePokemon = { "ActivePokemon", nullptr, (EPropertyFlags)0x0144000000020021, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, ActivePokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActivePokemon_MetaData), NewProp_ActivePokemon_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_ActivePokemonInfo = { "ActivePokemonInfo", nullptr, (EPropertyFlags)0x0040000000020021, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, ActivePokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActivePokemonInfo_MetaData), NewProp_ActivePokemonInfo_MetaData) }; // 2094424460
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_EngagedPokemon = { "EngagedPokemon", nullptr, (EPropertyFlags)0x0144000000020021, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerPlayerState, EngagedPokemon), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EngagedPokemon_MetaData), NewProp_EngagedPokemon_MetaData) };
 void Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_bIsInCombat_SetBit(void* Obj)
 {
 	((ATrainerPlayerState*)Obj)->bIsInCombat = 1;
 }
-const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_bIsInCombat = { "bIsInCombat", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(ATrainerPlayerState), &Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_bIsInCombat_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bIsInCombat_MetaData), NewProp_bIsInCombat_MetaData) };
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_bIsInCombat = { "bIsInCombat", nullptr, (EPropertyFlags)0x0040000000000020, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(ATrainerPlayerState), &Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_bIsInCombat_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bIsInCombat_MetaData), NewProp_bIsInCombat_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ATrainerPlayerState_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentParty_Inner,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentParty,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_CurrentPartyInfo,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerPlayerState_Statics::NewProp_ActivePokemon,
@@ -221,6 +254,23 @@ UClass* Z_Construct_UClass_ATrainerPlayerState()
 	}
 	return Z_Registration_Info_UClass_ATrainerPlayerState.OuterSingleton;
 }
+#if VALIDATE_CLASS_REPS
+void ATrainerPlayerState::ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const
+{
+	static FName Name_CurrentPartyInfo(TEXT("CurrentPartyInfo"));
+	static FName Name_ActivePokemon(TEXT("ActivePokemon"));
+	static FName Name_ActivePokemonInfo(TEXT("ActivePokemonInfo"));
+	static FName Name_EngagedPokemon(TEXT("EngagedPokemon"));
+	static FName Name_bIsInCombat(TEXT("bIsInCombat"));
+	const bool bIsValid = true
+		&& Name_CurrentPartyInfo == ClassReps[(int32)ENetFields_Private::CurrentPartyInfo].Property->GetFName()
+		&& Name_ActivePokemon == ClassReps[(int32)ENetFields_Private::ActivePokemon].Property->GetFName()
+		&& Name_ActivePokemonInfo == ClassReps[(int32)ENetFields_Private::ActivePokemonInfo].Property->GetFName()
+		&& Name_EngagedPokemon == ClassReps[(int32)ENetFields_Private::EngagedPokemon].Property->GetFName()
+		&& Name_bIsInCombat == ClassReps[(int32)ENetFields_Private::bIsInCombat].Property->GetFName();
+	checkf(bIsValid, TEXT("UHT Generated Rep Indices do not match runtime populated Rep Indices for properties in ATrainerPlayerState"));
+}
+#endif
 ATrainerPlayerState::ATrainerPlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 DEFINE_VTABLE_PTR_HELPER_CTOR_NS(, ATrainerPlayerState);
 ATrainerPlayerState::~ATrainerPlayerState() {}
@@ -230,10 +280,10 @@ ATrainerPlayerState::~ATrainerPlayerState() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerPlayerState, ATrainerPlayerState::StaticClass, TEXT("ATrainerPlayerState"), &Z_Registration_Info_UClass_ATrainerPlayerState, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerPlayerState), 3154136312U) },
+		{ Z_Construct_UClass_ATrainerPlayerState, ATrainerPlayerState::StaticClass, TEXT("ATrainerPlayerState"), &Z_Registration_Info_UClass_ATrainerPlayerState, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerPlayerState), 4103058023U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_135312566{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_533684406{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Player_TrainerPlayerState_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

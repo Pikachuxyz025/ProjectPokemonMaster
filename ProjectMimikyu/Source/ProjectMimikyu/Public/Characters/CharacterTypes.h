@@ -436,6 +436,30 @@ struct FPokemonUIInfo
 	float PokemonPPPercent = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FGameplayTagIntPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag Tag;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 Value = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FGameplayTagFloatPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag Tag;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Value = 0.f;
+};
+
 USTRUCT(BlueprintType, Blueprintable)
 struct FPokemonInfo
 {
@@ -457,30 +481,146 @@ struct FPokemonInfo
 	EGenderType Gender = EGenderType::EGT_None;
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<FGameplayTag, int32> StoredEffortLevelBaseMap =
+	TArray<FGameplayTagIntPair> StoredEffortLevelBaseValues =
 	{
-		{FPokemonGameplayTags::Get().Attributes_Stats_Attack, 0},
-		{FPokemonGameplayTags::Get().Attributes_Stats_Defense, 0},
-		{FPokemonGameplayTags::Get().Attributes_Stats_MaxHP, 0},
-		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialAttack, 0},
-		{FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense, 0},
-		{FPokemonGameplayTags::Get().Attributes_Stats_Speed, 0}
+		{ FPokemonGameplayTags::Get().Attributes_Stats_Attack, 0 },
+		{ FPokemonGameplayTags::Get().Attributes_Stats_Defense, 0 },
+		{ FPokemonGameplayTags::Get().Attributes_Stats_MaxHP, 0 },
+		{ FPokemonGameplayTags::Get().Attributes_Stats_SpecialAttack, 0 },
+		{ FPokemonGameplayTags::Get().Attributes_Stats_SpecialDefense, 0 },
+		{ FPokemonGameplayTags::Get().Attributes_Stats_Speed, 0 }
 	};
 
 	UPROPERTY(BlueprintReadOnly)
-	TMap<FGameplayTag, float> StoredAttributeValue;
+	TArray<FGameplayTagFloatPair> StoredAttributeValues;
 
 	UPROPERTY(EditAnywhere)
 	EPartyStatus PartyMode = EPartyStatus::EPS_Empty;
 
-	void UpdateStoredAttributeValues(TMap<FGameplayTag, float> NewSAV)
+	int32 GetStoredEffortValue(const FGameplayTag& InTag) const
 	{
-		float CurrentLevel = StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
-		StoredAttributeValue = NewSAV;
-		if (CurrentLevel != StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level])
+		for (const FGameplayTagIntPair& Pair : StoredEffortLevelBaseValues)
 		{
-			CurrentUiInfo.PokemonLevel = StoredAttributeValue[FPokemonGameplayTags::Get().Attributes_Stats_Level];
+			if (Pair.Tag == InTag)
+			{
+				return Pair.Value;
+			}
 		}
+		return 0;
+	}
+
+	float GetStoredAttributeValue(const FGameplayTag& InTag) const
+	{
+		for (const FGameplayTagFloatPair& Pair : StoredAttributeValues)
+		{
+			if (Pair.Tag == InTag)
+			{
+				return Pair.Value;
+			}
+		}
+		return 0.f;
+	}
+
+	void SetStoredEffortValue(const FGameplayTag& InTag, int32 InValue)
+	{
+		for (FGameplayTagIntPair& Pair : StoredEffortLevelBaseValues)
+		{
+			if (Pair.Tag == InTag)
+			{
+				Pair.Value = InValue;
+				return;
+			}
+		}
+
+		FGameplayTagIntPair NewPair;
+		NewPair.Tag = InTag;
+		NewPair.Value = InValue;
+		StoredEffortLevelBaseValues.Add(NewPair);
+	}
+
+	void SetStoredAttributeValue(const FGameplayTag& InTag, float InValue)
+	{
+		for (FGameplayTagFloatPair& Pair : StoredAttributeValues)
+		{
+			if (Pair.Tag == InTag)
+			{
+				Pair.Value = InValue;
+				return;
+			}
+		}
+
+		FGameplayTagFloatPair NewPair;
+		NewPair.Tag = InTag;
+		NewPair.Value = InValue;
+		StoredAttributeValues.Add(NewPair);
+	}
+
+	void SetStoredAttributeValuesFromMap(const TMap<FGameplayTag, float>& InMap)
+	{
+		StoredAttributeValues.Reset();
+
+		for (const TPair<FGameplayTag, float>& Pair : InMap)
+		{
+			SetStoredAttributeValue(Pair.Key, Pair.Value);
+		}
+	}
+
+	void SetStoredEffortValuesFromMap(const TMap<FGameplayTag, int32>& InMap)
+	{
+		StoredEffortLevelBaseValues.Reset();
+
+		for (const TPair<FGameplayTag, int32>& Pair : InMap)
+		{
+			SetStoredEffortValue(Pair.Key, Pair.Value);
+		}
+	}
+
+	void UpdateStoredAttributeValues(const TMap<FGameplayTag, float>& NewSAV)
+	{
+		const FGameplayTag LevelTag = FPokemonGameplayTags::Get().Attributes_Stats_Level;
+		const float PreviousLevel = GetStoredAttributeValue(LevelTag);
+
+		SetStoredAttributeValuesFromMap(NewSAV);
+
+		const float NewLevel = GetStoredAttributeValue(LevelTag);
+		if (!FMath::IsNearlyEqual(PreviousLevel, NewLevel))
+		{
+			CurrentUiInfo.PokemonLevel = FMath::RoundToInt(NewLevel);
+		}
+	}
+
+	void UpdateStoredAttributeValues(const TArray<FGameplayTagFloatPair>& NewSAV)
+	{
+		const FGameplayTag LevelTag = FPokemonGameplayTags::Get().Attributes_Stats_Level;
+		const float PreviousLevel = GetStoredAttributeValue(LevelTag);
+
+		StoredAttributeValues = NewSAV;
+
+		const float NewLevel = GetStoredAttributeValue(LevelTag);
+		if (!FMath::IsNearlyEqual(PreviousLevel, NewLevel))
+		{
+			CurrentUiInfo.PokemonLevel = FMath::RoundToInt(NewLevel);
+		}
+	}
+
+	TMap<FGameplayTag, float> GetStoredAttributeValuesMap() const
+	{
+		TMap<FGameplayTag, float> AttributeValuesMap;
+		for (const FGameplayTagFloatPair& Pair : StoredAttributeValues)
+		{
+			AttributeValuesMap.Add(Pair.Tag, Pair.Value);
+		}
+		return AttributeValuesMap;
+	}
+
+	TMap<FGameplayTag, int32> GetStoredEffortLevelBaseValuesMap() const
+	{
+		TMap<FGameplayTag, int32> EffortValuesMap;
+		for (const FGameplayTagIntPair& Pair : StoredEffortLevelBaseValues)
+		{
+			EffortValuesMap.Add(Pair.Tag, Pair.Value);
+		}
+		return EffortValuesMap;
 	}
 
 	// Overload the equality operator

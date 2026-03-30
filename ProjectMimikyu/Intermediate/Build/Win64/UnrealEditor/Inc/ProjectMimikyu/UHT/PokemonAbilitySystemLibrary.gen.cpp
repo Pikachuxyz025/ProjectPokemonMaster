@@ -197,7 +197,7 @@ struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage
 
 // ********** Begin Function GetCurrentXPPercentage Property Definitions ***************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::NewProp_WorldContextObject = { "WorldContextObject", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetCurrentXPPercentage_Parms, WorldContextObject), Z_Construct_UClass_UObject_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WorldContextObject_MetaData), NewProp_WorldContextObject_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::NewProp_PokemonData = { "PokemonData", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetCurrentXPPercentage_Parms, PokemonData), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonData_MetaData), NewProp_PokemonData_MetaData) }; // 1637346323
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::NewProp_PokemonData = { "PokemonData", nullptr, (EPropertyFlags)0x0010000000000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetCurrentXPPercentage_Parms, PokemonData), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonData_MetaData), NewProp_PokemonData_MetaData) }; // 2094424460
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::NewProp_XPRemaining = { "XPRemaining", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetCurrentXPPercentage_Parms, XPRemaining), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetCurrentXPPercentage_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage_Statics::PropPointers[] = {
@@ -790,6 +790,134 @@ DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetSavedTypeMatchup)
 	P_NATIVE_END;
 }
 // ********** End Class UPokemonAbilitySystemLibrary Function GetSavedTypeMatchup ******************
+
+// ********** Begin Class UPokemonAbilitySystemLibrary Function GetStoredAttributeValueByTag *******
+struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics
+{
+	struct PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms
+	{
+		FPokemonInfo PokemonInfo;
+		FGameplayTag Tag;
+		float ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Stats" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilitySystemLibrary.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonInfo_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function GetStoredAttributeValueByTag constinit property declarations **********
+	static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonInfo;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Tag;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function GetStoredAttributeValueByTag constinit property declarations ************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function GetStoredAttributeValueByTag Property Definitions *********************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_PokemonInfo = { "PokemonInfo", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms, PokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonInfo_MetaData), NewProp_PokemonInfo_MetaData) }; // 2094424460
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_Tag = { "Tag", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms, Tag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 517357616
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_PokemonInfo,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_Tag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PropPointers) < 2048);
+// ********** End Function GetStoredAttributeValueByTag Property Definitions ***********************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonAbilitySystemLibrary, nullptr, "GetStoredAttributeValueByTag", 	Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::PokemonAbilitySystemLibrary_eventGetStoredAttributeValueByTag_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetStoredAttributeValueByTag)
+{
+	P_GET_STRUCT_REF(FPokemonInfo,Z_Param_Out_PokemonInfo);
+	P_GET_STRUCT(FGameplayTag,Z_Param_Tag);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(float*)Z_Param__Result=UPokemonAbilitySystemLibrary::GetStoredAttributeValueByTag(Z_Param_Out_PokemonInfo,Z_Param_Tag);
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonAbilitySystemLibrary Function GetStoredAttributeValueByTag *********
+
+// ********** Begin Class UPokemonAbilitySystemLibrary Function GetStoredEffortValueByTag **********
+struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics
+{
+	struct PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms
+	{
+		FPokemonInfo PokemonInfo;
+		FGameplayTag Tag;
+		int32 ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Stats" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilitySystemLibrary.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonInfo_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function GetStoredEffortValueByTag constinit property declarations *************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonInfo;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Tag;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function GetStoredEffortValueByTag constinit property declarations ***************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function GetStoredEffortValueByTag Property Definitions ************************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_PokemonInfo = { "PokemonInfo", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms, PokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonInfo_MetaData), NewProp_PokemonInfo_MetaData) }; // 2094424460
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_Tag = { "Tag", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms, Tag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 517357616
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_PokemonInfo,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_Tag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PropPointers) < 2048);
+// ********** End Function GetStoredEffortValueByTag Property Definitions **************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonAbilitySystemLibrary, nullptr, "GetStoredEffortValueByTag", 	Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x14422401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::PokemonAbilitySystemLibrary_eventGetStoredEffortValueByTag_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonAbilitySystemLibrary::execGetStoredEffortValueByTag)
+{
+	P_GET_STRUCT_REF(FPokemonInfo,Z_Param_Out_PokemonInfo);
+	P_GET_STRUCT(FGameplayTag,Z_Param_Tag);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(int32*)Z_Param__Result=UPokemonAbilitySystemLibrary::GetStoredEffortValueByTag(Z_Param_Out_PokemonInfo,Z_Param_Tag);
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonAbilitySystemLibrary Function GetStoredEffortValueByTag ************
 
 // ********** Begin Class UPokemonAbilitySystemLibrary Function GetTrainerOverlayWidgetController **
 struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController_Statics
@@ -1764,6 +1892,8 @@ struct Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics
 		{ .NameUTF8 = UTF8TEXT("GetLivePlayersWithinRadius"), .Pointer = &UPokemonAbilitySystemLibrary::execGetLivePlayersWithinRadius },
 		{ .NameUTF8 = UTF8TEXT("GetPokemonMenuWidgetController"), .Pointer = &UPokemonAbilitySystemLibrary::execGetPokemonMenuWidgetController },
 		{ .NameUTF8 = UTF8TEXT("GetSavedTypeMatchup"), .Pointer = &UPokemonAbilitySystemLibrary::execGetSavedTypeMatchup },
+		{ .NameUTF8 = UTF8TEXT("GetStoredAttributeValueByTag"), .Pointer = &UPokemonAbilitySystemLibrary::execGetStoredAttributeValueByTag },
+		{ .NameUTF8 = UTF8TEXT("GetStoredEffortValueByTag"), .Pointer = &UPokemonAbilitySystemLibrary::execGetStoredEffortValueByTag },
 		{ .NameUTF8 = UTF8TEXT("GetTrainerOverlayWidgetController"), .Pointer = &UPokemonAbilitySystemLibrary::execGetTrainerOverlayWidgetController },
 		{ .NameUTF8 = UTF8TEXT("GetTypeMatchup"), .Pointer = &UPokemonAbilitySystemLibrary::execGetTypeMatchup },
 		{ .NameUTF8 = UTF8TEXT("IsBlockedHit"), .Pointer = &UPokemonAbilitySystemLibrary::execIsBlockedHit },
@@ -1784,7 +1914,7 @@ struct Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ActivateAbilityByTag, "ActivateAbilityByTag" }, // 764655069
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect, "ApplyDamageEffect" }, // 2331745183
-		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage, "GetCurrentXPPercentage" }, // 2894156885
+		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage, "GetCurrentXPPercentage" }, // 2340037961
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetDamageType, "GetDamageType" }, // 1589065481
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetDeathImpulse, "GetDeathImpulse" }, // 198539479
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetDebuffDamage, "GetDebuffDamage" }, // 660425021
@@ -1794,6 +1924,8 @@ struct Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetLivePlayersWithinRadius, "GetLivePlayersWithinRadius" }, // 2551671308
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetPokemonMenuWidgetController, "GetPokemonMenuWidgetController" }, // 3410792063
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetSavedTypeMatchup, "GetSavedTypeMatchup" }, // 473941462
+		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredAttributeValueByTag, "GetStoredAttributeValueByTag" }, // 1436037577
+		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetStoredEffortValueByTag, "GetStoredEffortValueByTag" }, // 1337427320
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTrainerOverlayWidgetController, "GetTrainerOverlayWidgetController" }, // 2357551352
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetTypeMatchup, "GetTypeMatchup" }, // 3739894216
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_IsBlockedHit, "IsBlockedHit" }, // 3316840075
@@ -1858,10 +1990,10 @@ UPokemonAbilitySystemLibrary::~UPokemonAbilitySystemLibrary() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 1541408961U) },
+		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 1989411516U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_937972747{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_2920963257{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

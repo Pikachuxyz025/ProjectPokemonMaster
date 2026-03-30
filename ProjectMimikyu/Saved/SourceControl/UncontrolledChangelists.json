@@ -1,0 +1,14 @@
+{
+	"version": 1,
+	"changelists": [
+		{
+			"guid": "00000000000000000000000000000000",
+			"description": "Default Uncontrolled Changelist",
+			"files": [
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/PokemonStatMenu/BWUI_PokemonRadarChart.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/PokemonStatMenu/BWUI_TextValueSection.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/BWUI_PlayerInventoryMenu.uasset"
+			]
+		}
+	]
+}

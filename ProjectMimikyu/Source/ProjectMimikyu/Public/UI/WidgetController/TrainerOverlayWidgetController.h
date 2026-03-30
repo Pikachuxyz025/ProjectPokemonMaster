@@ -81,12 +81,4 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonAbilityConfigured PokemonAbilityConfigured;
-	// activate pokemon move list
-	// send an event for input commands
-protected:
-
-	//UFUNCTION()
-	//void HealthChanged(const FOnAttributeChangeData& Data) const;
-	//UFUNCTION()
-	//void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
 };

@@ -48,6 +48,8 @@ PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EStatsType();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EStatusType();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FDamageInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FEnvironmentDropParams();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagFloatPair();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagIntPair();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryItemInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonMoveChart();
@@ -2008,6 +2010,152 @@ UScriptStruct* Z_Construct_UScriptStruct_FPokemonUIInfo()
 }
 // ********** End ScriptStruct FPokemonUIInfo ******************************************************
 
+// ********** Begin ScriptStruct FGameplayTagIntPair ***********************************************
+struct Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics
+{
+	static inline consteval int32 GetStructSize() { return sizeof(FGameplayTagIntPair); }
+	static inline consteval int16 GetStructAlignment() { return alignof(FGameplayTagIntPair); }
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Tag_MetaData[] = {
+		{ "Category", "GameplayTagIntPair" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Value_MetaData[] = {
+		{ "Category", "GameplayTagIntPair" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin ScriptStruct FGameplayTagIntPair constinit property declarations ***************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Tag;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_Value;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End ScriptStruct FGameplayTagIntPair constinit property declarations *****************
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FGameplayTagIntPair>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+}; // struct Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FGameplayTagIntPair;
+class UScriptStruct* FGameplayTagIntPair::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FGameplayTagIntPair, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("GameplayTagIntPair"));
+	}
+	return Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.OuterSingleton;
+	}
+
+// ********** Begin ScriptStruct FGameplayTagIntPair Property Definitions **************************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::NewProp_Tag = { "Tag", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FGameplayTagIntPair, Tag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Tag_MetaData), NewProp_Tag_MetaData) }; // 517357616
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::NewProp_Value = { "Value", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FGameplayTagIntPair, Value), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Value_MetaData), NewProp_Value_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::NewProp_Tag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::NewProp_Value,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::PropPointers) < 2048);
+// ********** End ScriptStruct FGameplayTagIntPair Property Definitions ****************************
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"GameplayTagIntPair",
+	Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::PropPointers),
+	sizeof(FGameplayTagIntPair),
+	alignof(FGameplayTagIntPair),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagIntPair()
+{
+	if (!Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.InnerSingleton, Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::StructParams);
+	}
+	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FGameplayTagIntPair.InnerSingleton);
+}
+// ********** End ScriptStruct FGameplayTagIntPair *************************************************
+
+// ********** Begin ScriptStruct FGameplayTagFloatPair *********************************************
+struct Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics
+{
+	static inline consteval int32 GetStructSize() { return sizeof(FGameplayTagFloatPair); }
+	static inline consteval int16 GetStructAlignment() { return alignof(FGameplayTagFloatPair); }
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Tag_MetaData[] = {
+		{ "Category", "GameplayTagFloatPair" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Value_MetaData[] = {
+		{ "Category", "GameplayTagFloatPair" },
+		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin ScriptStruct FGameplayTagFloatPair constinit property declarations *************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Tag;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_Value;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End ScriptStruct FGameplayTagFloatPair constinit property declarations ***************
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FGameplayTagFloatPair>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+}; // struct Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair;
+class UScriptStruct* FGameplayTagFloatPair::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FGameplayTagFloatPair, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("GameplayTagFloatPair"));
+	}
+	return Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.OuterSingleton;
+	}
+
+// ********** Begin ScriptStruct FGameplayTagFloatPair Property Definitions ************************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::NewProp_Tag = { "Tag", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FGameplayTagFloatPair, Tag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Tag_MetaData), NewProp_Tag_MetaData) }; // 517357616
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::NewProp_Value = { "Value", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FGameplayTagFloatPair, Value), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Value_MetaData), NewProp_Value_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::NewProp_Tag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::NewProp_Value,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::PropPointers) < 2048);
+// ********** End ScriptStruct FGameplayTagFloatPair Property Definitions **************************
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"GameplayTagFloatPair",
+	Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::PropPointers),
+	sizeof(FGameplayTagFloatPair),
+	alignof(FGameplayTagFloatPair),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagFloatPair()
+{
+	if (!Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.InnerSingleton, Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::StructParams);
+	}
+	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair.InnerSingleton);
+}
+// ********** End ScriptStruct FGameplayTagFloatPair ***********************************************
+
 // ********** Begin ScriptStruct FPokemonInfo ******************************************************
 struct Z_Construct_UScriptStruct_FPokemonInfo_Statics
 {
@@ -2039,11 +2187,11 @@ struct Z_Construct_UScriptStruct_FPokemonInfo_Statics
 		{ "Category", "PokemonInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_StoredEffortLevelBaseMap_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_StoredEffortLevelBaseValues_MetaData[] = {
 		{ "Category", "PokemonInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_StoredAttributeValue_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_StoredAttributeValues_MetaData[] = {
 		{ "Category", "PokemonInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
@@ -2062,12 +2210,10 @@ struct Z_Construct_UScriptStruct_FPokemonInfo_Statics
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_Nature;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_Gender_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_Gender;
-	static const UECodeGen_Private::FIntPropertyParams NewProp_StoredEffortLevelBaseMap_ValueProp;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_StoredEffortLevelBaseMap_Key_KeyProp;
-	static const UECodeGen_Private::FMapPropertyParams NewProp_StoredEffortLevelBaseMap;
-	static const UECodeGen_Private::FFloatPropertyParams NewProp_StoredAttributeValue_ValueProp;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_StoredAttributeValue_Key_KeyProp;
-	static const UECodeGen_Private::FMapPropertyParams NewProp_StoredAttributeValue;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_StoredEffortLevelBaseValues_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_StoredEffortLevelBaseValues;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_StoredAttributeValues_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_StoredAttributeValues;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_PartyMode_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_PartyMode;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
@@ -2097,12 +2243,10 @@ const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonI
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Nature = { "Nature", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, Nature), Z_Construct_UEnum_ProjectMimikyu_ENatureType, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Nature_MetaData), NewProp_Nature_MetaData) }; // 1385819911
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Gender_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Gender = { "Gender", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, Gender), Z_Construct_UEnum_ProjectMimikyu_EGenderType, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Gender_MetaData), NewProp_Gender_MetaData) }; // 3170657478
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap_ValueProp = { "StoredEffortLevelBaseMap", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap_Key_KeyProp = { "StoredEffortLevelBaseMap_Key", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 517357616
-const UECodeGen_Private::FMapPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap = { "StoredEffortLevelBaseMap", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, StoredEffortLevelBaseMap), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_StoredEffortLevelBaseMap_MetaData), NewProp_StoredEffortLevelBaseMap_MetaData) }; // 517357616
-const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue_ValueProp = { "StoredAttributeValue", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue_Key_KeyProp = { "StoredAttributeValue_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 517357616
-const UECodeGen_Private::FMapPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue = { "StoredAttributeValue", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, StoredAttributeValue), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_StoredAttributeValue_MetaData), NewProp_StoredAttributeValue_MetaData) }; // 517357616
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseValues_Inner = { "StoredEffortLevelBaseValues", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FGameplayTagIntPair, METADATA_PARAMS(0, nullptr) }; // 177425022
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseValues = { "StoredEffortLevelBaseValues", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, StoredEffortLevelBaseValues), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_StoredEffortLevelBaseValues_MetaData), NewProp_StoredEffortLevelBaseValues_MetaData) }; // 177425022
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValues_Inner = { "StoredAttributeValues", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FGameplayTagFloatPair, METADATA_PARAMS(0, nullptr) }; // 4288703064
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValues = { "StoredAttributeValues", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, StoredAttributeValues), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_StoredAttributeValues_MetaData), NewProp_StoredAttributeValues_MetaData) }; // 4288703064
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_PartyMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_PartyMode = { "PartyMode", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonInfo, PartyMode), Z_Construct_UEnum_ProjectMimikyu_EPartyStatus, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PartyMode_MetaData), NewProp_PartyMode_MetaData) }; // 4229292539
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonInfo_Statics::PropPointers[] = {
@@ -2114,12 +2258,10 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FP
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Nature,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Gender_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_Gender,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap_ValueProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap_Key_KeyProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseMap,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue_ValueProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue_Key_KeyProp,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValue,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseValues_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredEffortLevelBaseValues,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValues_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_StoredAttributeValues,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_PartyMode_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewProp_PartyMode,
 };
@@ -2796,7 +2938,9 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FEnvironmentDropParams::StaticStruct, Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics::NewStructOps, TEXT("EnvironmentDropParams"),&Z_Registration_Info_UScriptStruct_FEnvironmentDropParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FEnvironmentDropParams), 2639614269U) },
 		{ FTypeChartMatchup::StaticStruct, Z_Construct_UScriptStruct_FTypeChartMatchup_Statics::NewStructOps, TEXT("TypeChartMatchup"),&Z_Registration_Info_UScriptStruct_FTypeChartMatchup, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTypeChartMatchup), 2867906557U) },
 		{ FPokemonUIInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonUIInfo_Statics::NewStructOps, TEXT("PokemonUIInfo"),&Z_Registration_Info_UScriptStruct_FPokemonUIInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonUIInfo), 1130679456U) },
-		{ FPokemonInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewStructOps, TEXT("PokemonInfo"),&Z_Registration_Info_UScriptStruct_FPokemonInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInfo), 1637346323U) },
+		{ FGameplayTagIntPair::StaticStruct, Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics::NewStructOps, TEXT("GameplayTagIntPair"),&Z_Registration_Info_UScriptStruct_FGameplayTagIntPair, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FGameplayTagIntPair), 177425022U) },
+		{ FGameplayTagFloatPair::StaticStruct, Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics::NewStructOps, TEXT("GameplayTagFloatPair"),&Z_Registration_Info_UScriptStruct_FGameplayTagFloatPair, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FGameplayTagFloatPair), 4288703064U) },
+		{ FPokemonInfo::StaticStruct, Z_Construct_UScriptStruct_FPokemonInfo_Statics::NewStructOps, TEXT("PokemonInfo"),&Z_Registration_Info_UScriptStruct_FPokemonInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonInfo), 2094424460U) },
 		{ FTagCategoryMap::StaticStruct, Z_Construct_UScriptStruct_FTagCategoryMap_Statics::NewStructOps, TEXT("TagCategoryMap"),&Z_Registration_Info_UScriptStruct_FTagCategoryMap, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTagCategoryMap), 3977061561U) },
 		{ FSequentialShotParams::StaticStruct, Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewStructOps, TEXT("SequentialShotParams"),&Z_Registration_Info_UScriptStruct_FSequentialShotParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSequentialShotParams), 3770178490U) },
 		{ FPokemonParty::StaticStruct, Z_Construct_UScriptStruct_FPokemonParty_Statics::NewStructOps, TEXT("PokemonParty"),&Z_Registration_Info_UScriptStruct_FPokemonParty, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonParty), 1108444248U) },
@@ -2805,7 +2949,7 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"),&Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 4133680882U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_1762491350{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_1751252422{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

@@ -119,9 +119,9 @@ void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 {
 	Gender = SetupInfo.Gender;
 	Nature = SetupInfo.Nature;
-	EffortLevelBaseMap = SetupInfo.StoredEffortLevelBaseMap;
-	CurrentLevel = SetupInfo.StoredAttributeValue[GameplayTags.Attributes_Stats_Level];
-	CurrentXP = SetupInfo.StoredAttributeValue[GameplayTags.Attributes_Stats_XP];
+	EffortLevelBaseMap = SetupInfo.GetStoredEffortLevelBaseValuesMap();
+	CurrentLevel = SetupInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
+	CurrentXP = SetupInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
 	MovesetComponent->SetupMoveset(SetupInfo.CurrentPokemonMoves);
 	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
@@ -131,8 +131,8 @@ FPokemonInfo APokemon_Parent::SetupPokemonInfo()
 	FPokemonInfo NewInfo;
 	NewInfo.CurrentPokemonMoves = MovesetComponent->CurrentPokemonMoves;
 	NewInfo.CurrentUiInfo = GetPokemonUIInfo(true);
-	NewInfo.StoredEffortLevelBaseMap = EffortLevelBaseMap;
-	NewInfo.StoredAttributeValue = GetPokemonAS()->GetAttributeTagValues();
+	NewInfo.SetStoredEffortValuesFromMap(EffortLevelBaseMap);
+	NewInfo.SetStoredAttributeValuesFromMap(GetPokemonAS()->GetAttributeTagValues());
 	NewInfo.Nature = Nature;
 	NewInfo.Gender = Gender;
 	NewInfo.StoredPokemonDataAsset = PokemonDataAsset;
