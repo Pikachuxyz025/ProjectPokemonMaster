@@ -470,6 +470,77 @@ DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerCallCommand)
 }
 // ********** End Class AProjectMimikyuCharacter Function ServerCallCommand ************************
 
+// ********** Begin Class AProjectMimikyuCharacter Function ServerRequestCatchPokemon **************
+struct ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms
+{
+	FVector TraceStart;
+	FVector TraceEnd;
+};
+static FName NAME_AProjectMimikyuCharacter_ServerRequestCatchPokemon = FName(TEXT("ServerRequestCatchPokemon"));
+void AProjectMimikyuCharacter::ServerRequestCatchPokemon(FVector TraceStart, FVector TraceEnd)
+{
+	ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms Parms;
+	Parms.TraceStart=TraceStart;
+	Parms.TraceEnd=TraceEnd;
+	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerRequestCatchPokemon);
+	ProcessEvent(Func,&Parms);
+}
+struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Catching/Returning Pokemon\n" },
+#endif
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Catching/Returning Pokemon" },
+#endif
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function ServerRequestCatchPokemon constinit property declarations *************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_TraceStart;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_TraceEnd;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function ServerRequestCatchPokemon constinit property declarations ***************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function ServerRequestCatchPokemon Property Definitions ************************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::NewProp_TraceStart = { "TraceStart", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms, TraceStart), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::NewProp_TraceEnd = { "TraceEnd", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms, TraceEnd), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::NewProp_TraceStart,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::NewProp_TraceEnd,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::PropPointers) < 2048);
+// ********** End Function ServerRequestCatchPokemon Property Definitions **************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "ServerRequestCatchPokemon", 	Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::PropPointers), 
+sizeof(ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00A80CC0, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(ProjectMimikyuCharacter_eventServerRequestCatchPokemon_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerRequestCatchPokemon)
+{
+	P_GET_STRUCT(FVector,Z_Param_TraceStart);
+	P_GET_STRUCT(FVector,Z_Param_TraceEnd);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->ServerRequestCatchPokemon_Implementation(Z_Param_TraceStart,Z_Param_TraceEnd);
+	P_NATIVE_END;
+}
+// ********** End Class AProjectMimikyuCharacter Function ServerRequestCatchPokemon ****************
+
 // ********** Begin Class AProjectMimikyuCharacter Function ServerRequestReturnCurrentPokemon ******
 static FName NAME_AProjectMimikyuCharacter_ServerRequestReturnCurrentPokemon = FName(TEXT("ServerRequestReturnCurrentPokemon"));
 void AProjectMimikyuCharacter::ServerRequestReturnCurrentPokemon()
@@ -575,77 +646,6 @@ DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerRequestSendOutPokemon)
 	P_NATIVE_END;
 }
 // ********** End Class AProjectMimikyuCharacter Function ServerRequestSendOutPokemon **************
-
-// ********** Begin Class AProjectMimikyuCharacter Function ServerRequetCatchPokemon ***************
-struct ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms
-{
-	FVector TraceStart;
-	FVector TraceEnd;
-};
-static FName NAME_AProjectMimikyuCharacter_ServerRequetCatchPokemon = FName(TEXT("ServerRequetCatchPokemon"));
-void AProjectMimikyuCharacter::ServerRequetCatchPokemon(FVector TraceStart, FVector TraceEnd)
-{
-	ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms Parms;
-	Parms.TraceStart=TraceStart;
-	Parms.TraceEnd=TraceEnd;
-	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerRequetCatchPokemon);
-	ProcessEvent(Func,&Parms);
-}
-struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "// Catching/Returning Pokemon\n" },
-#endif
-		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
-#if !UE_BUILD_SHIPPING
-		{ "ToolTip", "Catching/Returning Pokemon" },
-#endif
-	};
-#endif // WITH_METADATA
-
-// ********** Begin Function ServerRequetCatchPokemon constinit property declarations **************
-	static const UECodeGen_Private::FStructPropertyParams NewProp_TraceStart;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_TraceEnd;
-	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-// ********** End Function ServerRequetCatchPokemon constinit property declarations ****************
-	static const UECodeGen_Private::FFunctionParams FuncParams;
-};
-
-// ********** Begin Function ServerRequetCatchPokemon Property Definitions *************************
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::NewProp_TraceStart = { "TraceStart", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms, TraceStart), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::NewProp_TraceEnd = { "TraceEnd", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms, TraceEnd), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::NewProp_TraceStart,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::NewProp_TraceEnd,
-};
-static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::PropPointers) < 2048);
-// ********** End Function ServerRequetCatchPokemon Property Definitions ***************************
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "ServerRequetCatchPokemon", 	Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::PropPointers, 
-	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::PropPointers), 
-sizeof(ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms),
-RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00A80CC0, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::Function_MetaDataParams)},  };
-static_assert(sizeof(ProjectMimikyuCharacter_eventServerRequetCatchPokemon_Parms) < MAX_uint16);
-UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon()
-{
-	static UFunction* ReturnFunction = nullptr;
-	if (!ReturnFunction)
-	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon_Statics::FuncParams);
-	}
-	return ReturnFunction;
-}
-DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerRequetCatchPokemon)
-{
-	P_GET_STRUCT(FVector,Z_Param_TraceStart);
-	P_GET_STRUCT(FVector,Z_Param_TraceEnd);
-	P_FINISH;
-	P_NATIVE_BEGIN;
-	P_THIS->ServerRequetCatchPokemon_Implementation(Z_Param_TraceStart,Z_Param_TraceEnd);
-	P_NATIVE_END;
-}
-// ********** End Class AProjectMimikyuCharacter Function ServerRequetCatchPokemon *****************
 
 // ********** Begin Class AProjectMimikyuCharacter Function ServerSetPokemon ***********************
 struct ProjectMimikyuCharacter_eventServerSetPokemon_Parms
@@ -949,9 +949,9 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ .NameUTF8 = UTF8TEXT("ServerAddToCurrentParty"), .Pointer = &AProjectMimikyuCharacter::execServerAddToCurrentParty },
 		{ .NameUTF8 = UTF8TEXT("ServerBroadcastTarget"), .Pointer = &AProjectMimikyuCharacter::execServerBroadcastTarget },
 		{ .NameUTF8 = UTF8TEXT("ServerCallCommand"), .Pointer = &AProjectMimikyuCharacter::execServerCallCommand },
+		{ .NameUTF8 = UTF8TEXT("ServerRequestCatchPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequestCatchPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerRequestReturnCurrentPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequestReturnCurrentPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerRequestSendOutPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequestSendOutPokemon },
-		{ .NameUTF8 = UTF8TEXT("ServerRequetCatchPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequetCatchPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerSetPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerSetPokemon },
 	};
 	static UObject* (*const DependentSingletons[])();
@@ -961,9 +961,9 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerAddToCurrentParty, "ServerAddToCurrentParty" }, // 3774299443
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 964369296
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerCallCommand, "ServerCallCommand" }, // 3429706063
+		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon, "ServerRequestCatchPokemon" }, // 2903995535
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestReturnCurrentPokemon, "ServerRequestReturnCurrentPokemon" }, // 2126475363
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestSendOutPokemon, "ServerRequestSendOutPokemon" }, // 1148336703
-		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequetCatchPokemon, "ServerRequetCatchPokemon" }, // 4244398202
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerSetPokemon, "ServerSetPokemon" }, // 1599649773
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
@@ -1102,10 +1102,10 @@ AProjectMimikyuCharacter::~AProjectMimikyuCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 1445701050U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 4063144862U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_1911167015{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_708945937{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

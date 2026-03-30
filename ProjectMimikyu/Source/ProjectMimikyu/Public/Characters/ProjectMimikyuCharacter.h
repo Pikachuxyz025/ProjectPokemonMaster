@@ -98,7 +98,7 @@ protected:
 #pragma region Server-Authoritative Gameplay
 	// Catching/Returning Pokemon
 	UFUNCTION(Server,Reliable)
-	void ServerRequetCatchPokemon(FVector TraceStart,FVector TraceEnd);
+	void ServerRequestCatchPokemon(FVector TraceStart,FVector TraceEnd);
 
 	UFUNCTION(Server,Reliable)
 	void ServerRequestReturnCurrentPokemon();

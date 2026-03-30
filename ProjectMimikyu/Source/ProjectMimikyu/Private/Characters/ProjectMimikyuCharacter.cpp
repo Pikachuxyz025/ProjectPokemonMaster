@@ -160,7 +160,7 @@ void AProjectMimikyuCharacter::ServerAddToCurrentParty_Implementation(AActor* Ad
 
 }
 
-void AProjectMimikyuCharacter::ServerRequetCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd)
+void AProjectMimikyuCharacter::ServerRequestCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd)
 {
 	APokemon_Parent* TargetPokemon = nullptr;
 	if (!TryGetCatchTarget(TraceStart, TraceEnd, TargetPokemon))
@@ -250,9 +250,6 @@ void AProjectMimikyuCharacter::HandleCatchPokemon(APokemon_Parent* CaughtPokemon
 
 	// Save into party/state first
 	TPS->AddToParty(CaughtPokemon);
-
-	CaughtPokemon->bIsCaught = true;	
-	CaughtPokemon->SetPokemonTrainer(this);
 
 	// If this was somehow the field pokemon , make sure to clear it out and update the HUD
 	if (CurrentPokemon == CaughtPokemon)

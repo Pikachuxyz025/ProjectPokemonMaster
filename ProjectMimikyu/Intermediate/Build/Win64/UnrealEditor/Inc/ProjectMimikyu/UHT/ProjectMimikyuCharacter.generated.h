@@ -47,7 +47,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	virtual void ServerCallCommand_Implementation(int32 Index); \
 	virtual void ServerRequestSendOutPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	virtual void ServerRequestReturnCurrentPokemon_Implementation(); \
-	virtual void ServerRequetCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
+	virtual void ServerRequestCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	DECLARE_FUNCTION(execGetCurrentPokemon); \
 	DECLARE_FUNCTION(execServerSetPokemon); \
 	DECLARE_FUNCTION(execServerBroadcastTarget); \
@@ -56,7 +56,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	DECLARE_FUNCTION(execServerCallCommand); \
 	DECLARE_FUNCTION(execServerRequestSendOutPokemon); \
 	DECLARE_FUNCTION(execServerRequestReturnCurrentPokemon); \
-	DECLARE_FUNCTION(execServerRequetCatchPokemon);
+	DECLARE_FUNCTION(execServerRequestCatchPokemon);
 
 
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_34_CALLBACK_WRAPPERS
