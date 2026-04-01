@@ -59,15 +59,31 @@ void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
 void APokemon_Parent::BeginPlay()
 {
 	Super::BeginPlay();
-	if(!SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("BeginPlay entered on %s | bSpawnedFromPartyStartup=%d | SpawnPointTag=%s | Level=%d | XP=%d"),
+		*GetName(),
+		bSpawnedFromPartyStartup ? 1 : 0,
+		*SpawnPointTag.ToString(),
+		CurrentLevel,
+		CurrentXP);
+
+	if (!bSpawnedFromPartyStartup)
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("BeginPlay XP init on %s | SpawnPointTag=%s | CurrentLevel=%d | CurrentXP(before)=%d"),
+			*GetName(),
+			*SpawnPointTag.ToString(),
+			CurrentLevel,
+			CurrentXP);
+
 		MovesetComponent->SpawnWithDataMoveSet(CurrentLevel, PokemonDataAsset);
 		CurrentXP = UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(this, CurrentLevel, PokemonDataAsset->XpStyle);
 		UE_LOG(LogTemp, Warning, TEXT("Changed CurrentXP on %s. XP %f"), *GetName(), (float)CurrentXP);
 	}
 
 	AddPokemonAbilities();
-	InitAbilityActorInfo();	
+	InitAbilityActorInfo();
 	GetPokemonUIInfo(true);
 }
 
@@ -117,6 +133,10 @@ FPokemonInfo APokemon_Parent::GetPokemonInfo()
 
 void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 {
+	StartupPokemonInfo = SetupInfo;
+	bHasStartupPokemonInfo = true;
+	bSpawnedFromPartyStartup = true;
+
 	Gender = SetupInfo.Gender;
 	Nature = SetupInfo.Nature;
 	EffortLevelBaseMap = SetupInfo.GetStoredEffortLevelBaseValuesMap();
@@ -209,6 +229,69 @@ void APokemon_Parent::InitializeDefaultAttributes()
 
 void APokemon_Parent::InitializeAttributesFromStartupData()
 {
+	if (!bHasStartupPokemonInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InitializeAttributesFromStartupData failed on %s: no startup info"), *GetName());
+		InitializeDefaultAttributes();
+		return;
+	}
+	CurrentLevel = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
+	CurrentXP = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
+	EffortLevelBaseMap = StartupPokemonInfo.GetStoredEffortLevelBaseValuesMap();
+
+	// Re-apply the standard attribute effects, but now they use the restored
+	// CurrentLevel and CurrentXP that were assigned in SetPokemonStartup().
+	InitializeDefaultAttributes();
+
+	UPokemonBaseAttributeSet* PAS = GetPokemonAS();
+	if (!PAS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InitializeAttributesFromStartupData failed on %s: no attribute set"), *GetName());
+		return;
+	}
+
+	const float StoredHealth = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Vital_HP);
+	const float StoredMaxHealth = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_MaxHP);
+	const float StoredLevel = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
+	const float StoredXP = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
+
+	// Restore values that should persist from party state.
+	// Only set them if they exist in the stored data.
+	if (StoredLevel > 0.f)
+	{
+		PAS->SetCurrentLevel(StoredLevel);
+		CurrentLevel = FMath::RoundToInt(StoredLevel);
+	}
+
+	if (StoredXP >= 0.f)
+	{
+		PAS->SetXP(StoredXP);
+		CurrentXP = FMath::RoundToInt(StoredXP);
+	}
+
+	if (StoredMaxHealth > 0.f)
+	{
+		PAS->SetMaxHealth(StoredMaxHealth);
+	}
+
+	if (StoredHealth > 0.f)
+	{
+		PAS->SetHealth(StoredHealth);
+	}
+	else if (StoredMaxHealth > 0.f)
+	{
+		PAS->SetHealth(StoredMaxHealth);
+	}
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("InitializeAttributesFromStartupData on %s | Level=%d XP=%d HP=%.2f/%.2f PP=%.2f/%.2f"),
+		*GetName(),
+		CurrentLevel,
+		CurrentXP,
+		PAS->GetHealth(),
+		PAS->GetMaxHealth(),
+		PAS->GetPowerPoints(),
+		PAS->GetMaxPowerPoints());
 }
 
 void APokemon_Parent::ReinitializeDefaultAttributes()
@@ -228,14 +311,26 @@ void APokemon_Parent::InitAbilityActorInfo()
 		return;
 	}
 
-	if (SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
+	InitializeDefaultAttributes();
+
+	if (bSpawnedFromPartyStartup && bHasStartupPokemonInfo)
 	{
 		InitializeAttributesFromStartupData();
 	}
-	else
-	{
-		InitializeDefaultAttributes();
-	}
+}
+
+void APokemon_Parent::OnRep_StartupPokemonInfo()
+{
+	bHasStartupPokemonInfo = true;
+	bSpawnedFromPartyStartup = true;
+
+	Gender = StartupPokemonInfo.Gender;
+	Nature = StartupPokemonInfo.Nature;
+	EffortLevelBaseMap = StartupPokemonInfo.GetStoredEffortLevelBaseValuesMap();
+	CurrentLevel = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
+	CurrentXP = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
+	MovesetComponent->SetupMoveset(StartupPokemonInfo.CurrentPokemonMoves);
+	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
 
 void APokemon_Parent::AttackEnded()

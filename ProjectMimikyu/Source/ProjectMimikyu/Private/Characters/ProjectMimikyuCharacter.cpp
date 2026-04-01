@@ -542,9 +542,9 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
-	//UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
-	//UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
-	//TPS->PokemonIsOut(IChooseYou);
+	UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
+	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
+	TPS->PokemonIsOut(IChooseYou);
 }
 
 #pragma endregion

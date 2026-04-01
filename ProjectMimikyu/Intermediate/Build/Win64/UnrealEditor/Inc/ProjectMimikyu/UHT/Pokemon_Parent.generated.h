@@ -76,6 +76,7 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
 	DECLARE_FUNCTION(execEnterFaintedState); \
 	DECLARE_FUNCTION(execMulticastPlayReturnEffects); \
 	DECLARE_FUNCTION(execPrepareForFieldRemoval); \
+	DECLARE_FUNCTION(execOnRep_StartupPokemonInfo); \
 	DECLARE_FUNCTION(execAttackEnded);
 
 
@@ -96,7 +97,9 @@ public: \
 	enum class ENetFields_Private : uint16 \
 	{ \
 		NETFIELD_REP_START=(uint16)((int32)Super::ENetFields_Private::NETFIELD_REP_END + (int32)1), \
-		CurrentTrainer=NETFIELD_REP_START, \
+		bSpawnedFromPartyStartup=NETFIELD_REP_START, \
+		StartupPokemonInfo, \
+		CurrentTrainer, \
 		PokemonStatus, \
 		bIsCaught, \
 		NETFIELD_REP_END=bIsCaught	}; \

@@ -98,6 +98,19 @@ virtual	void AttackEnded();
 	void InitializeAttributesFromStartupData();
 	void InitAbilityActorInfo();
 
+	UFUNCTION()
+	void OnRep_StartupPokemonInfo();
+
+	UPROPERTY(Replicated)
+	bool bSpawnedFromPartyStartup = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_StartupPokemonInfo)
+	FPokemonInfo StartupPokemonInfo;
+
+	UPROPERTY()
+	bool bHasStartupPokemonInfo = false;
+
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<APokemonAIController> PokemonController;
 
