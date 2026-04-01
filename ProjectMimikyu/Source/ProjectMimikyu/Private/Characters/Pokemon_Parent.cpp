@@ -207,6 +207,10 @@ void APokemon_Parent::InitializeDefaultAttributes()
 	CurrentDependentStatHandle = ApplyEffectToSelf(DependentStatAttributes, 1.f);
 }
 
+void APokemon_Parent::InitializeAttributesFromStartupData()
+{
+}
+
 void APokemon_Parent::ReinitializeDefaultAttributes()
 {
 	AbilitySystemComponent->RemoveActiveGameplayEffect(CurrentStatHandle);
@@ -218,8 +222,20 @@ void APokemon_Parent::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UPokemonAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	if(HasAuthority())
-	InitializeDefaultAttributes();
+
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (SpawnPointTag.MatchesTagExact(GameplayTags.SpawnPoint_ComeOnOut))
+	{
+		InitializeAttributesFromStartupData();
+	}
+	else
+	{
+		InitializeDefaultAttributes();
+	}
 }
 
 void APokemon_Parent::AttackEnded()

@@ -66,7 +66,12 @@ void ATrainerPlayerState::PokemonIsOut(APokemon_Parent* PokemonOut)
 	CurrentPartyInfo[PartyIndex].PartyMode = EPartyStatus::EPS_Out;
 	ActivePokemon = PokemonOut;
 	ActivePokemonInfo = CurrentPartyInfo[PartyIndex];
-	OnPokemonActiveDelegate.Broadcast(ActivePokemon);
+	UE_LOG(LogTemp, Warning, TEXT("PokemonIsOut broadcasting. HasAuthority=%d LocalRole=%d PartyIndex=%d ActivePokemon=%s"),
+		HasAuthority() ? 1 : 0,
+		(int32)GetLocalRole(),
+		PartyIndex,
+		*GetNameSafe(ActivePokemon));
+	//OnPokemonActiveDelegate.Broadcast(ActivePokemon);
 }
 
 void ATrainerPlayerState::UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon)

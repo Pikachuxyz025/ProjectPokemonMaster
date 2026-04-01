@@ -625,6 +625,10 @@ struct Z_Construct_UClass_UTrainerOverlayWidgetController_Statics
 		{ "Category", "GAS|Attributes" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_BoundPokemonASC_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UTrainerOverlayWidgetController constinit property declarations **********
@@ -643,6 +647,7 @@ struct Z_Construct_UClass_UTrainerOverlayWidgetController_Statics
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_PokemonActivatedDelegate;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_KeyDirectionDelegate;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_PokemonAbilityConfigured;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_BoundPokemonASC;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UTrainerOverlayWidgetController constinit property declarations ************
 	static UObject* (*const DependentSingletons[])();
@@ -668,6 +673,7 @@ const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTr
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonActivatedDelegate = { "PokemonActivatedDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, PokemonActivatedDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_OnEventActivatedSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonActivatedDelegate_MetaData), NewProp_PokemonActivatedDelegate_MetaData) }; // 2954336686
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_KeyDirectionDelegate = { "KeyDirectionDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, KeyDirectionDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_KeyDirectionDelegate_MetaData), NewProp_KeyDirectionDelegate_MetaData) }; // 3849497204
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonAbilityConfigured = { "PokemonAbilityConfigured", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, PokemonAbilityConfigured), Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonAbilityConfigured__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonAbilityConfigured_MetaData), NewProp_PokemonAbilityConfigured_MetaData) }; // 118471024
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_BoundPokemonASC = { "BoundPokemonASC", nullptr, (EPropertyFlags)0x0124080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, BoundPokemonASC), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BoundPokemonASC_MetaData), NewProp_BoundPokemonASC_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnHealthChanged,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnLevelChanged,
@@ -684,6 +690,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTrainerO
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonActivatedDelegate,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_KeyDirectionDelegate,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonAbilityConfigured,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_BoundPokemonASC,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers) < 2048);
 // ********** End Class UTrainerOverlayWidgetController Property Definitions ***********************
@@ -727,10 +734,10 @@ UTrainerOverlayWidgetController::~UTrainerOverlayWidgetController() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 1569854946U) },
+		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 734524843U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_1923718201{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_3312135453{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

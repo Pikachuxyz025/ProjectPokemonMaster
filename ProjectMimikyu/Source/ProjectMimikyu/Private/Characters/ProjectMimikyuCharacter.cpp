@@ -451,7 +451,7 @@ void AProjectMimikyuCharacter::ComeOnOut()
 {
 	if (!IsLocallyControlled())
 		return;
-	FVector Start = FollowCamera->GetComponentLocation();
+	FVector Start = GetActorLocation();
 	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
 	ServerRequestSendOutPokemon(Start, End);
 }
@@ -521,6 +521,8 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 		return;
 	}
 
+	UE_LOG(LogTemp, Display, TEXT("Create Pokemon here!"));
+
 	APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
 		(
 			PokemonOut.StoredPokemonDataAsset->StoredPokemonClass,
@@ -540,9 +542,9 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
-	UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
-	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
-	TPS->PokemonIsOut(IChooseYou);
+	//UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
+	//UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
+	//TPS->PokemonIsOut(IChooseYou);
 }
 
 #pragma endregion

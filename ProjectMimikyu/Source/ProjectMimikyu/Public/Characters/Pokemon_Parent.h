@@ -95,6 +95,7 @@ virtual	void AttackEnded();
 	void SetupPokemonUIInfo();
 	void UpdatePokemonUIInfo();
 	void InitializeDefaultAttributes();
+	void InitializeAttributesFromStartupData();
 	void InitAbilityActorInfo();
 
 	UPROPERTY(VisibleAnywhere)

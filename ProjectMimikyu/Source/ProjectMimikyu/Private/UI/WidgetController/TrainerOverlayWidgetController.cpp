@@ -6,6 +6,7 @@
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
+#include "Net/UnrealNetwork.h"
 #include "AIControllers/TrainerController.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "DataAssets/PokemonDataAsset.h"
@@ -35,15 +36,9 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 		}
 	);
 	GetTPS()->OnPokemonActiveDelegate.AddLambda(
-		[this](APokemon_Parent* ActivePokemon)
+		[](APokemon_Parent* ActivePokemon)
 		{
-			UAbilitySystemComponent* PASC = ActivePokemon->GetAbilitySystemComponent();
-			UAttributeSet* PAS = ActivePokemon->GetAttributeSet();
-			FWidgetControllerParams PokemonWidgetParams(PASC, PAS);
-			SetUpPokemonAbilitySystem(PokemonWidgetParams);
-			BindPokemonCallbacksToDependencies();
-			BroadcastInitialValues();
-			PokemonAbilityConfigured.Broadcast(PASC);
+			UE_LOG(LogTemp, Warning, TEXT("Simple OnPokemonActive test hit: %s"), *GetNameSafe(ActivePokemon));
 		}
 	);
 	GetTPS()->PokemonActiveInCombat.AddLambda(
@@ -84,47 +79,112 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 
 void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 {
-	if (!AbilitySystemComponent) return;
+	if (!AbilitySystemComponent || !GetPAS())
+	{
+		return;
+	}
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+	BoundPokemonASC = AbilitySystemComponent;
+
+	HealthChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnHealthChanged.Broadcast((int32)Data.NewValue);
 			}
-	);
+		);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+	MaxHealthChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				GetPAS()->SetHealth(Data.NewValue);
 				OnMaxHealthChanged.Broadcast((int32)Data.NewValue);
 			}
-	);
+		);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+	MaxPowerPointsChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetMaxPowerPointsAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				GetPAS()->SetPowerPoints(Data.NewValue);
 				OnMaxPowerPointsChanged.Broadcast((int32)Data.NewValue);
 			}
-	);
+		);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+	PowerPointsChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetPowerPointsAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnPowerPointsChanged.Broadcast((int32)Data.NewValue);
 			}
-	);
+		);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+	LevelChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetCurrentLevelAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnLevelChanged.Broadcast((int32)Data.NewValue);
 			}
 		);
+}
+
+void UTrainerOverlayWidgetController::UnbindPokemonCallbacksFromDependencies()
+{
+	if (!BoundPokemonASC || !GetPAS())
+	{
+		return;
+	}
+
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetHealthAttribute()).Remove(HealthChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetMaxHealthAttribute()).Remove(MaxHealthChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetMaxPowerPointsAttribute()).Remove(MaxPowerPointsChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetPowerPointsAttribute()).Remove(PowerPointsChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetCurrentLevelAttribute()).Remove(LevelChangedHandle);
+
+	HealthChangedHandle.Reset();
+	MaxHealthChangedHandle.Reset();
+	PowerPointsChangedHandle.Reset();
+	MaxPowerPointsChangedHandle.Reset();
+	LevelChangedHandle.Reset();
+
+	BoundPokemonASC = nullptr;
+}
+
+void UTrainerOverlayWidgetController::RebindActivePokemon(APokemon_Parent* ActivePokemon)
+{
+	if (!IsValid(ActivePokemon))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RebindActivePokemon failed: ActivePokemon invalid"));
+		return;
+}
+
+	UAbilitySystemComponent* PASC = ActivePokemon->GetAbilitySystemComponent();
+	UAttributeSet* PAS = ActivePokemon->GetAttributeSet();
+
+	if (!PASC || !PAS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RebindActivePokemon failed: missing ASC or AttributeSet on %s"), *GetNameSafe(ActivePokemon));
+		return;
+	}
+
+	if (BoundPokemonASC == PASC)
+	{
+		UE_LOG(LogTemp, Display, TEXT("RebindActivePokemon skipped: ASC already bound for %s"), *GetNameSafe(ActivePokemon));
+		return;
+	}
+
+	UnbindPokemonCallbacksFromDependencies();
+
+	FWidgetControllerParams PokemonWidgetParams(PASC, PAS);
+	SetUpPokemonAbilitySystem(PokemonWidgetParams);
+
+	BindPokemonCallbacksToDependencies();
+	BroadcastInitialValues();
+	PokemonAbilityConfigured.Broadcast(PASC);
 }

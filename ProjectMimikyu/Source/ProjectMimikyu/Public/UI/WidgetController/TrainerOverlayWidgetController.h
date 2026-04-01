@@ -57,7 +57,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonInfoSignature PokemonInfoDelegate;
-
+	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnPartyChangedSignature OnPartyChanged;
 
@@ -81,4 +81,17 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonAbilityConfigured PokemonAbilityConfigured;
+
+protected:
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> BoundPokemonASC=nullptr;
+
+	FDelegateHandle HealthChangedHandle;
+	FDelegateHandle MaxHealthChangedHandle;
+	FDelegateHandle PowerPointsChangedHandle;
+	FDelegateHandle MaxPowerPointsChangedHandle;
+	FDelegateHandle LevelChangedHandle;
+
+	void UnbindPokemonCallbacksFromDependencies();
+	void RebindActivePokemon(APokemon_Parent* ActivePokemon);
 };
