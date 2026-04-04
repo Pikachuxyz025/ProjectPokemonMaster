@@ -152,6 +152,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\AIControllers">
       <UniqueIdentifier>{B6A94C6B-3C09-3327-8E37-A8253E579551}</UniqueIdentifier>
     </Filter>
@@ -531,6 +534,9 @@
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\AIControllers">

@@ -10,6 +10,7 @@ AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+	SetReplicateMovement(true);
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
 	SetRootComponent(SphereCollision);
 	SphereCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);

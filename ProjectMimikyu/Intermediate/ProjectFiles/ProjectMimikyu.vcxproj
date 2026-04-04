@@ -346,6 +346,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AIControllers\PokemonAIController.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -589,6 +592,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonBrainComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>

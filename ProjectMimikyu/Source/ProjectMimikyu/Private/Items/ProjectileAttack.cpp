@@ -16,10 +16,6 @@
 AProjectileAttack::AProjectileAttack()
 {
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement Component"));
-	//ProjectileMovementComponent->bRotationFollowsVelocity = true;
-	//ProjectileMovementComponent->InitialSpeed = InitialSpeed;
-	//ProjectileMovementComponent->MaxSpeed = InitialSpeed;
-	//ProjectileMovementComponent->ProjectileGravityScale = ProjectileGravity;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>("Projectile Mesh");
 	ProjectileMesh->SetupAttachment(RootComponent);
@@ -28,6 +24,7 @@ AProjectileAttack::AProjectileAttack()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.f; // Likey will be overriden by ability settings
 	ProjectileMovementComponent->bShouldBounce = false;
 	ProjectileMovementComponent->Bounciness = 0.f;
+
 }
 
 #if( WITH_EDITOR)

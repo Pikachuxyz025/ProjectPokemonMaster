@@ -59,10 +59,6 @@ inline EProjectileEditorMode InferProjectileEditorModeFromTags(const FGameplayTa
 	{
 		return EProjectileEditorMode::Sequential;
 	}
-	else if (bIsSequential)
-	{
-		return EProjectileEditorMode::Sequential;
-	}
 	else if (bIsAOE)
 	{
 		return EProjectileEditorMode::AOE;
