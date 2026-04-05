@@ -92,6 +92,7 @@ protected:
 
 	FString BuildPrefix(const UObject* SourceObject, const FGameplayTag& CategoryTag) const;
 	FString GetNetModePrefix(const UObject* SourceObject) const;
+	FString GetActorRolePrefix(const UObject* SourceObject) const;
 	bool PassesObservedActorFilter(const UObject* SourceObject) const;
 	void StoreMessage(const FPokemonDebugMessage& MessageData);
 };

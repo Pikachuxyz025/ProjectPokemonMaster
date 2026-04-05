@@ -6,6 +6,7 @@ using namespace UP;
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Interfaces/PlayerInterface.h"
+#include "ActorComponents/TargetingType.h"
 #include "GameplayTagContainer.h"
 #include "CharacterTypes.h"
 #include "ProjectMimikyuCharacter.generated.h"
@@ -21,6 +22,8 @@ struct FInputActionValue;
 class AItem;
 class APokemon_Parent;
 class UPokemonAbilitySystemComponent;
+class UInventorySystemComponent;
+class UTargetingComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -89,6 +92,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Command;
+	
 #pragma endregion
 
 	// HUD / moveset display
@@ -120,14 +124,18 @@ protected:
 	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
 
 	// selecting a move 
-	void SelectMove(int32 Index);
+	void SelectMove(int32 MoveIndex);
 
 	UFUNCTION(Server, Reliable)
-	void ServerCallCommand(int32 Index);
+	void ServerCallCommand(int32 MoveIndex, const FAimData& AimData);
 
 	// engaging a target 
 	// updating party state
 
+	// targeting/locking on
+	void Input_ToggleLockOn();
+	void Input_BeginFreeAim();
+	void Input_EndFreeAim();
 
 #pragma endregion
 
@@ -175,11 +183,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UPokemonGameplayAbilities> DodgeAbility;
 
-	// Multiplayer testing
-	
-	//UPROPERTY(Replicated)
-	//FPokemonParty CurrentSParty;
-
 	UPROPERTY()
 	TObjectPtr<ATrainerController> TrainerController;
 
@@ -196,7 +199,10 @@ private:
 	UPokemonAbilitySystemComponent* GetPASC();
 
 	UPROPERTY(EditDefaultsOnly)
-	class UInventorySystemComponent* InventorySystem;
+	TObjectPtr<UInventorySystemComponent> InventorySystem;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UTargetingComponent> TargetingComponent;
 
 	UPROPERTY(EditAnywhere)
 	float CatchingDistance = 1000.f;

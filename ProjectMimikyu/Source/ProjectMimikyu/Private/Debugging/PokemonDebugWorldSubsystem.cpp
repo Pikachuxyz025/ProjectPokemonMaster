@@ -177,6 +177,7 @@ void UPokemonDebugWorldSubsystem::DrawDebugLineForCategory(const UObject* Source
 FString UPokemonDebugWorldSubsystem::BuildPrefix(const UObject* SourceObject, const FGameplayTag& CategoryTag) const
 {
 	const FString NetPrefix = GetNetModePrefix(SourceObject);
+	const FString RolePrefix = GetActorRolePrefix(SourceObject);
 	const FString CategoryString = CategoryTag.IsValid() ? CategoryTag.ToString() : TEXT("Debug.Unknown");
 
 	FString SourceName = TEXT("NoSource");
@@ -185,7 +186,7 @@ FString UPokemonDebugWorldSubsystem::BuildPrefix(const UObject* SourceObject, co
 		SourceName = SourceObject->GetName();
 	}
 
-	return FString::Printf(TEXT("[%s][%s][%s]"), *NetPrefix, *CategoryString, *SourceName);
+	return FString::Printf(TEXT("[%s][%s][%s][%s]"), *NetPrefix, *RolePrefix, *CategoryString, *SourceName);
 }
 
 FString UPokemonDebugWorldSubsystem::GetNetModePrefix(const UObject* SourceObject) const
@@ -213,6 +214,38 @@ FString UPokemonDebugWorldSubsystem::GetNetModePrefix(const UObject* SourceObjec
 		return TEXT("Client");
 	default:
 		return TEXT("UnknownNetMode");
+	}
+}
+
+FString UPokemonDebugWorldSubsystem::GetActorRolePrefix(const UObject* SourceObject) const
+{
+	if (!IsValid(SourceObject))
+	{
+		return TEXT("NoRole");
+	}
+
+	const AActor* SourceActor = Cast<AActor>(SourceObject);
+	if (!SourceActor)
+	{
+		SourceActor = SourceObject->GetTypedOuter<AActor>();
+	}
+
+	if (!SourceActor)
+	{
+		return TEXT("NoActor");
+	}
+
+	switch (SourceActor->GetLocalRole())
+	{
+	case ROLE_Authority:
+		return TEXT("Authority");
+	case ROLE_AutonomousProxy:
+		return TEXT("AutonomousProxy");
+	case ROLE_SimulatedProxy:
+		return TEXT("SimulatedProxy");
+	case ROLE_None:
+	default:
+		return TEXT("None");
 	}
 }
 

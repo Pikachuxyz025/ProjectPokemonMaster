@@ -3,6 +3,7 @@
 
 #include "ActorComponents/TargetingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Interfaces/TargetableInterface.h"
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
@@ -533,23 +534,71 @@ bool UTargetingComponent::IsActorTargetable(AActor* Target) const
 		return false;
 	}
 
-	// Later:
-	// - Targetable component / interface
-	// - fainted state check
-	// - obscured state tags
-	// - hidden / decoy logic
-	return true;
-}
-
-bool UTargetingComponent::IsActorHostileOrRelevant(AActor* Target) const
-{
-	if (!IsValid(Target))
+	if (!Target->GetClass()->ImplementsInterface(UTargetableInterface::StaticClass()))
 	{
 		return false;
 	}
 
-	// Later:
-	// - compare team / ownership
-	// - allow interactables or catchables depending on AimContext
-	return true;
+	if (!ITargetableInterface::Execute_IsTargetable(Target))
+	{
+		return false;
+	}
+
+	if (ITargetableInterface::Execute_IsFaintedForTargeting(Target))
+	{
+		return false;
+	}
+
+	if (ITargetableInterface::Execute_IsTargetHidden(Target))
+	{
+		return false;
+	}
+
+	switch (CurrentAimMode)
+	{
+	case EAimTypeMode::None:
+		break;
+	case EAimTypeMode::LockOn:
+		return ITargetableInterface::Execute_CanBeLockOnTargeted(Target, CurrentAimContext);
+		break;
+	case EAimTypeMode::FreeAim:
+		return ITargetableInterface::Execute_CanBeFreeAimTargeted(Target, CurrentAimContext);
+		break;
+	default:
+		// For general searches, allow either style if that actor is targetable
+		return true;
+		break;
+	}
+}
+
+bool UTargetingComponent::IsActorHostileOrRelevant(AActor* Target) const
+{
+	if (!IsValid(Target)||!GetOwner())
+	{
+		return false;
+	}
+
+	if (!Target->GetClass()->ImplementsInterface(UTargetableInterface::StaticClass()))
+	{
+		return false;
+	}
+
+	switch (CurrentAimContext)
+	{
+		case EAimContext::Combat:
+		return ITargetableInterface::Execute_IsHostileToActor(Target, GetOwner());
+		
+		case EAimContext::Capture:
+			return ITargetableInterface::Execute_IsCatchableTarget(Target);
+
+		case EAimContext::Interaction:
+			return ITargetableInterface::Execute_IsInteractableTarget(Target);
+
+		case EAimContext::CommandMove:
+			// for now, treated like combat
+			return ITargetableInterface::Execute_IsHostileToActor(Target, GetOwner());
+
+			default:
+				return false;
+	}
 }

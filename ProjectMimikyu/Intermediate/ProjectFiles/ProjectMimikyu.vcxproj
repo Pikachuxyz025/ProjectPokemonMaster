@@ -442,6 +442,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\PokemonLevelInterface.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Interfaces\TargetableInterface.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\Berries.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -593,6 +596,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonBrainComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>
@@ -625,6 +629,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PlayerInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonCombatInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\PokemonLevelInterface.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\TargetableInterface.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Berries.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Item.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\PokeBall.h"/>

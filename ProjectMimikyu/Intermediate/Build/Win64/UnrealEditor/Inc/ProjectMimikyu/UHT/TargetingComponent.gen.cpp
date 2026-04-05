@@ -21,250 +21,8 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode();
-PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FAimData();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
-
-// ********** Begin Enum EAimTypeMode **************************************************************
-static FEnumRegistrationInfo Z_Registration_Info_UEnum_EAimTypeMode;
-static UEnum* EAimTypeMode_StaticEnum()
-{
-	if (!Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton)
-	{
-		Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EAimTypeMode"));
-	}
-	return Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton;
-}
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimTypeMode>()
-{
-	return EAimTypeMode_StaticEnum();
-}
-struct Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
-		{ "FreeAim.DisplayName", "Free Aim" },
-		{ "FreeAim.Name", "EAimTypeMode::FreeAim" },
-		{ "LockOn.DisplayName", "Lock On" },
-		{ "LockOn.Name", "EAimTypeMode::LockOn" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-		{ "None.DisplayName", "None" },
-		{ "None.Name", "EAimTypeMode::None" },
-	};
-#endif // WITH_METADATA
-	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
-		{ "EAimTypeMode::None", (int64)EAimTypeMode::None },
-		{ "EAimTypeMode::LockOn", (int64)EAimTypeMode::LockOn },
-		{ "EAimTypeMode::FreeAim", (int64)EAimTypeMode::FreeAim },
-	};
-	static const UECodeGen_Private::FEnumParams EnumParams;
-}; // struct Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics 
-const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::EnumParams = {
-	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	nullptr,
-	"EAimTypeMode",
-	"EAimTypeMode",
-	Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enumerators,
-	RF_Public|RF_Transient|RF_MarkAsNative,
-	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enumerators),
-	EEnumFlags::None,
-	(uint8)UEnum::ECppForm::EnumClass,
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enum_MetaDataParams)
-};
-UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode()
-{
-	if (!Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton)
-	{
-		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::EnumParams);
-	}
-	return Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton;
-}
-// ********** End Enum EAimTypeMode ****************************************************************
-
-// ********** Begin Enum EAimContext ***************************************************************
-static FEnumRegistrationInfo Z_Registration_Info_UEnum_EAimContext;
-static UEnum* EAimContext_StaticEnum()
-{
-	if (!Z_Registration_Info_UEnum_EAimContext.OuterSingleton)
-	{
-		Z_Registration_Info_UEnum_EAimContext.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EAimContext, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EAimContext"));
-	}
-	return Z_Registration_Info_UEnum_EAimContext.OuterSingleton;
-}
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimContext>()
-{
-	return EAimContext_StaticEnum();
-}
-struct Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
-		{ "Capture.DisplayName", "Capture" },
-		{ "Capture.Name", "EAimContext::Capture" },
-		{ "Combat.DisplayName", "Combat" },
-		{ "Combat.Name", "EAimContext::Combat" },
-		{ "CommandMove.DisplayName", "Command Move" },
-		{ "CommandMove.Name", "EAimContext::CommandMove" },
-		{ "Interaction.DisplayName", "Interaction" },
-		{ "Interaction.Name", "EAimContext::Interaction" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-#endif // WITH_METADATA
-	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
-		{ "EAimContext::Combat", (int64)EAimContext::Combat },
-		{ "EAimContext::Capture", (int64)EAimContext::Capture },
-		{ "EAimContext::CommandMove", (int64)EAimContext::CommandMove },
-		{ "EAimContext::Interaction", (int64)EAimContext::Interaction },
-	};
-	static const UECodeGen_Private::FEnumParams EnumParams;
-}; // struct Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics 
-const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::EnumParams = {
-	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	nullptr,
-	"EAimContext",
-	"EAimContext",
-	Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::Enumerators,
-	RF_Public|RF_Transient|RF_MarkAsNative,
-	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::Enumerators),
-	EEnumFlags::None,
-	(uint8)UEnum::ECppForm::EnumClass,
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::Enum_MetaDataParams)
-};
-UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext()
-{
-	if (!Z_Registration_Info_UEnum_EAimContext.InnerSingleton)
-	{
-		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EAimContext.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EAimContext_Statics::EnumParams);
-	}
-	return Z_Registration_Info_UEnum_EAimContext.InnerSingleton;
-}
-// ********** End Enum EAimContext *****************************************************************
-
-// ********** Begin ScriptStruct FAimData **********************************************************
-struct Z_Construct_UScriptStruct_FAimData_Statics
-{
-	static inline consteval int32 GetStructSize() { return sizeof(FAimData); }
-	static inline consteval int16 GetStructAlignment() { return alignof(FAimData); }
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimMode_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimContext_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetActor_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimWorldLocation_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimDirection_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHasValidTarget_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bUsingAimAssist_MetaData[] = {
-		{ "Category", "AimData" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
-	};
-#endif // WITH_METADATA
-
-// ********** Begin ScriptStruct FAimData constinit property declarations **************************
-	static const UECodeGen_Private::FBytePropertyParams NewProp_AimMode_Underlying;
-	static const UECodeGen_Private::FEnumPropertyParams NewProp_AimMode;
-	static const UECodeGen_Private::FBytePropertyParams NewProp_AimContext_Underlying;
-	static const UECodeGen_Private::FEnumPropertyParams NewProp_AimContext;
-	static const UECodeGen_Private::FWeakObjectPropertyParams NewProp_TargetActor;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_AimWorldLocation;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_AimDirection;
-	static void NewProp_bHasValidTarget_SetBit(void* Obj);
-	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHasValidTarget;
-	static void NewProp_bUsingAimAssist_SetBit(void* Obj);
-	static const UECodeGen_Private::FBoolPropertyParams NewProp_bUsingAimAssist;
-	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-// ********** End ScriptStruct FAimData constinit property declarations ****************************
-	static void* NewStructOps()
-	{
-		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FAimData>();
-	}
-	static const UECodeGen_Private::FStructParams StructParams;
-}; // struct Z_Construct_UScriptStruct_FAimData_Statics
-static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FAimData;
-class UScriptStruct* FAimData::StaticStruct()
-{
-	if (!Z_Registration_Info_UScriptStruct_FAimData.OuterSingleton)
-	{
-		Z_Registration_Info_UScriptStruct_FAimData.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FAimData, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("AimData"));
-	}
-	return Z_Registration_Info_UScriptStruct_FAimData.OuterSingleton;
-	}
-
-// ********** Begin ScriptStruct FAimData Property Definitions *************************************
-const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode = { "AimMode", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimMode), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimMode_MetaData), NewProp_AimMode_MetaData) }; // 1723687927
-const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext = { "AimContext", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimContext_MetaData), NewProp_AimContext_MetaData) }; // 3009642627
-const UECodeGen_Private::FWeakObjectPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_TargetActor = { "TargetActor", nullptr, (EPropertyFlags)0x0014000000000014, UECodeGen_Private::EPropertyGenFlags::WeakObject, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, TargetActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetActor_MetaData), NewProp_TargetActor_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimWorldLocation = { "AimWorldLocation", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimWorldLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimWorldLocation_MetaData), NewProp_AimWorldLocation_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimDirection = { "AimDirection", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimDirection), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimDirection_MetaData), NewProp_AimDirection_MetaData) };
-void Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bHasValidTarget_SetBit(void* Obj)
-{
-	((FAimData*)Obj)->bHasValidTarget = 1;
-}
-const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bHasValidTarget = { "bHasValidTarget", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FAimData), &Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bHasValidTarget_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bHasValidTarget_MetaData), NewProp_bHasValidTarget_MetaData) };
-void Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bUsingAimAssist_SetBit(void* Obj)
-{
-	((FAimData*)Obj)->bUsingAimAssist = 1;
-}
-const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bUsingAimAssist = { "bUsingAimAssist", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FAimData), &Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bUsingAimAssist_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bUsingAimAssist_MetaData), NewProp_bUsingAimAssist_MetaData) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FAimData_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode_Underlying,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext_Underlying,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_TargetActor,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimWorldLocation,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimDirection,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bHasValidTarget,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FAimData_Statics::NewProp_bUsingAimAssist,
-};
-static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FAimData_Statics::PropPointers) < 2048);
-// ********** End ScriptStruct FAimData Property Definitions ***************************************
-const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FAimData_Statics::StructParams = {
-	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	nullptr,
-	&NewStructOps,
-	"AimData",
-	Z_Construct_UScriptStruct_FAimData_Statics::PropPointers,
-	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FAimData_Statics::PropPointers),
-	sizeof(FAimData),
-	alignof(FAimData),
-	RF_Public|RF_Transient|RF_MarkAsNative,
-	EStructFlags(0x00000001),
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FAimData_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FAimData_Statics::Struct_MetaDataParams)
-};
-UScriptStruct* Z_Construct_UScriptStruct_FAimData()
-{
-	if (!Z_Registration_Info_UScriptStruct_FAimData.InnerSingleton)
-	{
-		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FAimData.InnerSingleton, Z_Construct_UScriptStruct_FAimData_Statics::StructParams);
-	}
-	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FAimData.InnerSingleton);
-}
-// ********** End ScriptStruct FAimData ************************************************************
 
 // ********** Begin Class UTargetingComponent Function BeginFreeAim ********************************
 struct Z_Construct_UFunction_UTargetingComponent_BeginFreeAim_Statics
@@ -398,7 +156,7 @@ struct Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics
 
 // ********** Begin Function GetAimContext Property Definitions ************************************
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::NewProp_ReturnValue_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventGetAimContext_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(0, nullptr) }; // 3009642627
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventGetAimContext_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(0, nullptr) }; // 726377209
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::NewProp_ReturnValue_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_GetAimContext_Statics::NewProp_ReturnValue,
@@ -452,7 +210,7 @@ struct Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics
 
 // ********** Begin Function GetAimMode Property Definitions ***************************************
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::NewProp_ReturnValue_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventGetAimMode_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(0, nullptr) }; // 1723687927
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventGetAimMode_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(0, nullptr) }; // 2135877534
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::NewProp_ReturnValue_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_GetAimMode_Statics::NewProp_ReturnValue,
@@ -832,7 +590,7 @@ struct Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics
 
 // ********** Begin Function SetAimContext Property Definitions ************************************
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::NewProp_NewContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::NewProp_NewContext = { "NewContext", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventSetAimContext_Parms, NewContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(0, nullptr) }; // 3009642627
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::NewProp_NewContext = { "NewContext", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventSetAimContext_Parms, NewContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(0, nullptr) }; // 726377209
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::NewProp_NewContext_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_SetAimContext_Statics::NewProp_NewContext,
@@ -1268,15 +1026,15 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 		{ &Z_Construct_UFunction_UTargetingComponent_BeginFreeAim, "BeginFreeAim" }, // 3349991688
 		{ &Z_Construct_UFunction_UTargetingComponent_ClearLockOn, "ClearLockOn" }, // 3504410803
 		{ &Z_Construct_UFunction_UTargetingComponent_EndFreeAim, "EndFreeAim" }, // 2793834022
-		{ &Z_Construct_UFunction_UTargetingComponent_GetAimContext, "GetAimContext" }, // 1406252617
-		{ &Z_Construct_UFunction_UTargetingComponent_GetAimMode, "GetAimMode" }, // 2011296225
+		{ &Z_Construct_UFunction_UTargetingComponent_GetAimContext, "GetAimContext" }, // 769336294
+		{ &Z_Construct_UFunction_UTargetingComponent_GetAimMode, "GetAimMode" }, // 3880439843
 		{ &Z_Construct_UFunction_UTargetingComponent_GetCurrentAimDirection, "GetCurrentAimDirection" }, // 2018634523
 		{ &Z_Construct_UFunction_UTargetingComponent_GetCurrentAimWorldLocation, "GetCurrentAimWorldLocation" }, // 764347254
 		{ &Z_Construct_UFunction_UTargetingComponent_GetCurrentLockedTarget, "GetCurrentLockedTarget" }, // 1359426526
 		{ &Z_Construct_UFunction_UTargetingComponent_IsInFreeAim, "IsInFreeAim" }, // 2820394613
 		{ &Z_Construct_UFunction_UTargetingComponent_IsLockedOn, "IsLockedOn" }, // 2190021792
 		{ &Z_Construct_UFunction_UTargetingComponent_IsLockTargetStillValid, "IsLockTargetStillValid" }, // 3026871408
-		{ &Z_Construct_UFunction_UTargetingComponent_SetAimContext, "SetAimContext" }, // 1528286805
+		{ &Z_Construct_UFunction_UTargetingComponent_SetAimContext, "SetAimContext" }, // 2570926335
 		{ &Z_Construct_UFunction_UTargetingComponent_SwitchTargetLeft, "SwitchTargetLeft" }, // 2923658136
 		{ &Z_Construct_UFunction_UTargetingComponent_SwitchTargetRight, "SwitchTargetRight" }, // 3158887825
 		{ &Z_Construct_UFunction_UTargetingComponent_ToggleLockOn, "ToggleLockOn" }, // 2870946607
@@ -1292,9 +1050,9 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 
 // ********** Begin Class UTargetingComponent Property Definitions *********************************
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext = { "CurrentAimContext", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentAimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentAimContext_MetaData), NewProp_CurrentAimContext_MetaData) }; // 3009642627
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext = { "CurrentAimContext", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentAimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentAimContext_MetaData), NewProp_CurrentAimContext_MetaData) }; // 726377209
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimMode = { "CurrentAimMode", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentAimMode), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentAimMode_MetaData), NewProp_CurrentAimMode_MetaData) }; // 1723687927
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimMode = { "CurrentAimMode", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentAimMode), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentAimMode_MetaData), NewProp_CurrentAimMode_MetaData) }; // 2135877534
 const UECodeGen_Private::FWeakObjectPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentLockedTarget = { "CurrentLockedTarget", nullptr, (EPropertyFlags)0x0024080000000015, UECodeGen_Private::EPropertyGenFlags::WeakObject, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentLockedTarget), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentLockedTarget_MetaData), NewProp_CurrentLockedTarget_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CachedAimLocation = { "CachedAimLocation", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CachedAimLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedAimLocation_MetaData), NewProp_CachedAimLocation_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CachedAimDirection = { "CachedAimDirection", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CachedAimDirection), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedAimDirection_MetaData), NewProp_CachedAimDirection_MetaData) };
@@ -1383,22 +1141,15 @@ UTargetingComponent::~UTargetingComponent() {}
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics
 {
-	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
-		{ EAimTypeMode_StaticEnum, TEXT("EAimTypeMode"), &Z_Registration_Info_UEnum_EAimTypeMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1723687927U) },
-		{ EAimContext_StaticEnum, TEXT("EAimContext"), &Z_Registration_Info_UEnum_EAimContext, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3009642627U) },
-	};
-	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FAimData::StaticStruct, Z_Construct_UScriptStruct_FAimData_Statics::NewStructOps, TEXT("AimData"),&Z_Registration_Info_UScriptStruct_FAimData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAimData), 255403614U) },
-	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 4254215026U) },
+		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 3782800705U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_1678862261{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_2558046619{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::EnumInfo),
+	nullptr, 0,
+	nullptr, 0,
 };
 // ********** End Registration *********************************************************************
 

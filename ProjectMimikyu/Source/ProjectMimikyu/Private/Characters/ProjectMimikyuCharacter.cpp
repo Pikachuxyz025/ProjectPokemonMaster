@@ -10,12 +10,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "AIControllers/TrainerController.h"
 #include "DataAssets/PokemonDataAsset.h"
-#include "AIControllers/PokemonAIController.h"
+#include "ActorComponents/TargetingComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
-#include "Interfaces/DamageInterface.h"
 #include "Components/CapsuleComponent.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -70,6 +69,7 @@ AProjectMimikyuCharacter::AProjectMimikyuCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	InventorySystem = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("Inventory System"));
+	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("Targeting Component"));
 	bReplicates = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -384,7 +384,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 //	OnPokemonHealthUpdated.Broadcast();
 //}
 
-void AProjectMimikyuCharacter::SelectMove(int32 Index)
+void AProjectMimikyuCharacter::SelectMove(int32 MoveIndex)
 {
 	if (!IsLocallyControlled()) return;
 
@@ -394,7 +394,7 @@ void AProjectMimikyuCharacter::SelectMove(int32 Index)
 		return;
 	}
 
-	if (Index == INDEX_NONE || Index < 0)
+	if (MoveIndex == INDEX_NONE || MoveIndex < 0)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Invalid Move Index"));
 		return;
@@ -406,11 +406,40 @@ void AProjectMimikyuCharacter::SelectMove(int32 Index)
 		return;
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), Index);
-	ServerCallCommand(Index);
+	UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), MoveIndex);
+	if (!TargetingComponent)
+	{
+		return;
+	}
+	const FAimData AimData = TargetingComponent->BuildAimData();
+	ServerCallCommand(MoveIndex, AimData);
 }
 
-void AProjectMimikyuCharacter::ServerCallCommand_Implementation(int32 Index)
+void AProjectMimikyuCharacter::Input_ToggleLockOn()
+{
+	if (TargetingComponent)
+	{
+		TargetingComponent->ToggleLockOn();
+	}
+}
+
+void AProjectMimikyuCharacter::Input_BeginFreeAim()
+{
+	if (TargetingComponent)
+	{
+		TargetingComponent->BeginFreeAim();
+	}
+}
+
+void AProjectMimikyuCharacter::Input_EndFreeAim()
+{
+	if(TargetingComponent)
+	{
+		TargetingComponent->EndFreeAim();
+	}
+}
+
+void AProjectMimikyuCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const FAimData& AimData)
 {
 	if(!CurrentPokemon)
 	{
@@ -419,12 +448,12 @@ void AProjectMimikyuCharacter::ServerCallCommand_Implementation(int32 Index)
 	
 	}
 
-	if (Index == INDEX_NONE || Index < 0)
+	if (MoveIndex == INDEX_NONE || MoveIndex < 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerCallCommand failed: Invalid move index."));
 		return;
 	}
-	CurrentPokemon->CallCommand(Index);
+	CurrentPokemon->CallCommand(MoveIndex);
 }
 
 void AProjectMimikyuCharacter::CommandDodge(FGameplayTag GameplayTag)

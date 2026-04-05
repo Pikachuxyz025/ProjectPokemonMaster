@@ -4,54 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "ActorComponents/TargetingType.h"
 #include "TargetingComponent.generated.h"
-
-
-UENUM(BlueprintType)
-enum class EAimTypeMode : uint8
-{
-	None UMETA(DisplayName = "None"),
-	LockOn UMETA(DisplayName = "Lock On"),
-	FreeAim UMETA(DisplayName = "Free Aim")
-};
-
-UENUM(BlueprintType)
-enum class EAimContext :uint8
-{
-	Combat UMETA(DisplayName = "Combat"),
-	Capture UMETA(DisplayName = "Capture"),
-	CommandMove UMETA(DisplayName = "Command Move"),
-	Interaction UMETA(DisplayName = "Interaction")
-};
-
-USTRUCT(BlueprintType)
-struct FAimData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadOnly)
-	EAimTypeMode AimMode = EAimTypeMode::None;
-
-	UPROPERTY(BlueprintReadOnly)
-	EAimContext AimContext = EAimContext::Combat;
-
-
-	UPROPERTY(BlueprintReadOnly)
-	TWeakObjectPtr<AActor> TargetActor;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector AimWorldLocation = FVector::ZeroVector;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector AimDirection = FVector::ForwardVector;
-
-UPROPERTY(BlueprintReadOnly)
-bool bHasValidTarget = false;
-	
-	UPROPERTY(BlueprintReadOnly)
-	bool bUsingAimAssist = false;
-
-};
 
 UCLASS(ClassGroup = (Custom), BlueprintType, Blueprintable, meta = (BlueprintSpawnableComponent))
 class PROJECTMIMIKYU_API UTargetingComponent : public UActorComponent
