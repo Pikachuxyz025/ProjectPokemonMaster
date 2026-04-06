@@ -169,7 +169,7 @@ protected:
 #pragma region Queries
 	bool GetViewPoint(FVector& OutLocation, FRotator& OutRotation) const;
 	bool PerformAimTrace(FHitResult& OutHit) const;
-	void GatherTargetCandidates(TArray<AActor*>& OutCandidates) const;
+	void GatherTargetCandidates(TArray<AActor*>& OutCandidates,EAimTypeMode QueryAimMode) const;
 	AActor* FindBestLockOnTarget() const;
 	AActor* FindSwitchTarget(bool bSwitchRight) const;
 #pragma endregion
@@ -179,7 +179,7 @@ protected:
 	float ScoreTargetForLockOn(AActor* Candidate) const;
 	bool HasLineOfSightToTarget(AActor* Target) const;
 	FVector GetTargetAimPoint(AActor* Target) const;
-	bool IsActorTargetable(AActor* Target) const;
+	bool IsActorTargetable(AActor* Target, EAimTypeMode QueryAimMode) const;
 	bool IsActorHostileOrRelevant(AActor* Target) const;
 #pragma endregion
 };

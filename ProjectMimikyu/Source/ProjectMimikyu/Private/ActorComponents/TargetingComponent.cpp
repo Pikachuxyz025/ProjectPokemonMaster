@@ -145,7 +145,7 @@ bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
 		return false;
 	}
 
-	if (!IsActorTargetable(Target))
+	if (!IsActorTargetable(Target, EAimTypeMode::LockOn))
 	{
 		return false;
 	}
@@ -154,6 +154,14 @@ bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
 	if (DistanceToTargetSquared > FMath::Square(MaxLockOnDistance))
 	{
 		return false;
+	}
+
+	if (Target->GetClass()->ImplementsInterface(UTargetableInterface::StaticClass()))
+	{
+		if (ITargetableInterface::Execute_IsTargetObscured(Target))
+		{
+			return false;
+		}
 	}
 
 	if (!HasLineOfSightToTarget(Target))
@@ -183,7 +191,7 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 	const FVector ViewForward = ViewRotation.Vector();
 
 	TArray<AActor*> CandidateTargets;
-	GatherTargetCandidates(CandidateTargets);
+	GatherTargetCandidates(CandidateTargets,EAimTypeMode::FreeAim);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -331,7 +339,7 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 	return GetWorld()->LineTraceSingleByChannel(OutHit, ViewLocation, TraceEnd, AimTraceChannel, Params);
 }
 
-void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates) const
+void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates, EAimTypeMode QueryAimMode) const
 {
 	OutCandidates.Reset();
 
@@ -353,7 +361,7 @@ void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates)
 			continue;
 		}
 
-		if(!IsActorTargetable(Actor))
+		if(!IsActorTargetable(Actor,QueryAimMode))
 		{
 			continue;
 		}
@@ -376,7 +384,7 @@ void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates)
 AActor* UTargetingComponent::FindBestLockOnTarget() const
 {
 	TArray<AActor*> Candidates;
-	GatherTargetCandidates(Candidates);
+	GatherTargetCandidates(Candidates,EAimTypeMode::LockOn);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -412,7 +420,7 @@ AActor* UTargetingComponent::FindSwitchTarget(bool bSwitchRight) const
 	const FVector CurrentTargetPoint = GetTargetAimPoint(CurrentLockedTarget.Get());
 
 	TArray<AActor*> Candidates;
-	GatherTargetCandidates(Candidates);
+	GatherTargetCandidates(Candidates, EAimTypeMode::LockOn);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -490,7 +498,14 @@ float UTargetingComponent::ScoreTargetForLockOn(AActor* Candidate) const
 	}
 
 	const float DistanceScore = 1.f - FMath::Clamp(Distance / MaxLockOnDistance, 0.f, 1.f);
-	return (DotScore * LockScoreAlignmentWeight) + (DistanceScore * LockScoreDistanceWeight);
+
+	float PriorityScore = 0.f;
+	if (Candidate->GetClass()->ImplementsInterface(UTargetableInterface::StaticClass()))
+	{
+		PriorityScore = ITargetableInterface::Execute_GetTargetPriorityScore(Candidate);
+	}
+
+	return (DotScore * LockScoreAlignmentWeight) + (DistanceScore * LockScoreDistanceWeight) + PriorityScore;
 }
 
 bool UTargetingComponent::HasLineOfSightToTarget(AActor* Target) const
@@ -524,10 +539,15 @@ FVector UTargetingComponent::GetTargetAimPoint(AActor* Target) const
 	{
 		return FVector::ZeroVector;
 	}
-	return Target->GetActorLocation() + FVector(0.f, 0.f, 50.f); // what determined this offset
+
+	if (Target->GetClass()->ImplementsInterface(UTargetableInterface::StaticClass()))
+	{
+		return ITargetableInterface::Execute_GetTargetAimPoint(Target);
+	}
+	return Target->GetActorLocation();
 }
 
-bool UTargetingComponent::IsActorTargetable(AActor* Target) const
+bool UTargetingComponent::IsActorTargetable(AActor* Target, EAimTypeMode QueryAimMode) const
 {
 	if (!IsValid(Target))
 	{
@@ -554,20 +574,16 @@ bool UTargetingComponent::IsActorTargetable(AActor* Target) const
 		return false;
 	}
 
-	switch (CurrentAimMode)
+	switch (QueryAimMode)
 	{
 	case EAimTypeMode::None:
-		break;
 	case EAimTypeMode::LockOn:
 		return ITargetableInterface::Execute_CanBeLockOnTargeted(Target, CurrentAimContext);
-		break;
 	case EAimTypeMode::FreeAim:
 		return ITargetableInterface::Execute_CanBeFreeAimTargeted(Target, CurrentAimContext);
-		break;
 	default:
 		// For general searches, allow either style if that actor is targetable
 		return true;
-		break;
 	}
 }
 

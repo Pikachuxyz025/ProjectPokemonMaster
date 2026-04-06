@@ -745,6 +745,102 @@ void APokemon_Parent::UpdatePokemonInfoInParty_Implementation()
 	}
 }
 
+bool APokemon_Parent::IsTargetable_Implementation() const
+{
+	return true;
+}
+
+bool APokemon_Parent::CanBeLockOnTargeted_Implementation(EAimContext AimContext) const
+{
+	if(IsFaintedForTargeting())
+		{
+		return false;
+	}
+
+	switch (AimContext)
+	{
+	case EAimContext::Combat:
+	case EAimContext::Capture:
+		return true;
+	case EAimContext::Interaction:
+	case EAimContext::CommandMove:
+	default:
+		return false;
+	}
+}
+
+bool APokemon_Parent::CanBeFreeAimTargeted_Implementation(EAimContext AimContext) const
+{
+	return CanBeLockOnTargeted_Implementation(AimContext);
+}
+
+bool APokemon_Parent::IsFaintedForTargeting_Implementation() const
+{
+	// Replace with your actual fainted state logic
+// e.g. return CurrentPokemonState == EPokemonState::Fainted;
+	return false;
+}
+
+bool APokemon_Parent::IsTargetObscured_Implementation() const
+{
+	// Later:
+	// - Smokescreen gameplay tag
+	// - Double Team gameplay tag
+	// - Sand Veil + Sandstorm combo
+	return false;
+}
+
+bool APokemon_Parent::IsTargetHidden_Implementation() const
+{
+	// Later:
+// - untargetable state
+// - underground / vanished state
+// - illusion / phase states
+	return false;
+}
+
+FVector APokemon_Parent::GetTargetAimPoint_Implementation() const
+{
+	const FName SocketName = GetTargetingSocketName_Implementation();
+
+	if (GetMesh() && SocketName != NAME_None && GetMesh()->DoesSocketExist(SocketName))
+	{
+		return GetMesh()->GetSocketLocation(SocketName);
+	}
+
+	return GetActorLocation() + FVector(0.f, 0.f, 60.f);
+}
+
+FVector APokemon_Parent::GetLockOnFocusPoint_Implementation() const
+{
+	return GetTargetAimPoint_Implementation();
+}
+
+FName APokemon_Parent::GetTargetingSocketName_Implementation() const
+{
+	return TEXT("head");
+}
+
+bool APokemon_Parent::IsHostileToActor_Implementation(const AActor* RequestingActor) const
+{
+	// Replace with your ownership/team comparison
+	// Wild pokemon: probably hostile to player in combat context
+	// Trainer-owned: compare trainer/team/faction
+	return RequestingActor!=this;
+}
+
+bool APokemon_Parent::IsCatchableTarget_Implementation() const
+{
+	// Replace with your actual logic:
+// wild + not owned + not fainted + maybe special restrictions
+	return true;
+}
+
+float APokemon_Parent::GetTargetPriorityScore_Implementation() const
+{
+	return 0.0f;
+}
+
 void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
 {
 	DodgeDirection = NewDodgeDirection;

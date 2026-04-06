@@ -8,6 +8,7 @@ using namespace UP;
 #include "GameplayEffectTypes.h"
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/PokemonCombatInterface.h"
+#include "Interfaces/TargetableInterface.h"
 #include "AbilitySystemInterface.h"
 #include "PokemonGameplayTags.h"
 #include "GameplayTagContainer.h"
@@ -33,7 +34,8 @@ class UBehaviorTree;
 class APokemonAIController;
 
 UCLASS()
-class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface,public IAbilitySystemInterface,public IPokemonCombatInterface
+class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
+
 {
 	GENERATED_BODY()
 
@@ -87,6 +89,22 @@ virtual int32 GetExperienceNeededAtLevel(int32 Level) override;
 virtual int32 GetExperienceAtLevel(int32 Level) override;
 virtual void UpdatePokemonInfoInParty_Implementation() override;
 #pragma endregion
+
+#pragma region ITargetableInterface
+virtual bool IsTargetable_Implementation() const override;
+virtual bool CanBeLockOnTargeted_Implementation(EAimContext AimContext) const override;
+virtual bool CanBeFreeAimTargeted_Implementation(EAimContext AimContext) const override;
+virtual bool IsFaintedForTargeting_Implementation() const override;
+virtual bool IsTargetObscured_Implementation() const override;
+virtual bool IsTargetHidden_Implementation() const override;
+virtual FVector GetTargetAimPoint_Implementation() const override;
+virtual FVector GetLockOnFocusPoint_Implementation() const override;
+virtual FName GetTargetingSocketName_Implementation() const override;
+virtual bool IsHostileToActor_Implementation(const AActor* RequestingActor) const override;
+virtual bool IsCatchableTarget_Implementation() const override;
+virtual float GetTargetPriorityScore_Implementation() const override;
+#pragma endregion
+
 
 UFUNCTION(BlueprintCallable)
 virtual	void AttackEnded();

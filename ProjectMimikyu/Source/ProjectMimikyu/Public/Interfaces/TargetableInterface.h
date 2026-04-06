@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
-#include "ActorComponent/TargetingType.h"
+#include "ActorComponents/TargetingType.h"
 #include "TargetableInterface.generated.h"
 
 UINTERFACE(BlueprintType)
