@@ -505,6 +505,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\BasicHealthBar.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\CrosshairWidget.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\DD_InventorySlot.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -651,6 +654,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_RoamTo.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\MyBTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\BasicHealthBar.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\CrosshairWidget.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\DD_InventorySlot.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\DragPreview.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\InventoryGrid.h"/>

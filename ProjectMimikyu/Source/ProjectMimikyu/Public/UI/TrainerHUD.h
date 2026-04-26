@@ -8,6 +8,7 @@
 
 class UPokemonMenuWidgetController;
 class UPlayerInventoryMenuOverlay;
+class UCrosshairWidget;
 class UPlayerMenuOverlay;
 class UTrainerOverlay;
 class UPokemonUserWidget;
@@ -24,6 +25,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UUserWidget> InventoryOverlayClass;
+
+	UPROPERTY(EditAnywhere, Category = "Widget Classes")
+	TSubclassOf<UCrosshairWidget> CrosshairWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = "Widget Classes")
 	TSubclassOf<UPokemonUserWidget> TrainerOverlayClass;
@@ -59,6 +63,9 @@ public:
 	UPROPERTY()
 	 TObjectPtr<UPlayerMenuOverlay> MenuOverlay;	
 	
+	 UPROPERTY()
+	 TObjectPtr<UCrosshairWidget> CrosshairWidget;
+
 	UPROPERTY()
 	 TObjectPtr<UPokemonUserWidget> TrainerOverlay;
 

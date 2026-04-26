@@ -325,36 +325,61 @@ bool UTargetingComponent::GetViewPoint(FVector& OutLocation, FRotator& OutRotati
 
 bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 {
-if(!GetWorld())
+	if (!GetWorld())
 	{
 		return false;
 	}
 
-APlayerController* PC = nullptr;
-if (const APawn* OwnerPawn = Cast<APawn>(GetOwner()))
+	APlayerController* PC = nullptr;
+	if (const APawn* OwnerPawn = Cast<APawn>(GetOwner()))
 	{
 		PC = Cast<APlayerController>(OwnerPawn->GetController());
-}
+	}
 
-if (!PC)
+	if (!PC)
 	{
 		return false;
 	}
 
-FVector2D ViewportSize;
-if (!GEngine || !GEngine->GameViewport)
+	FVector2D ViewportSize;
+	if (!GEngine || !GEngine->GameViewport)
 	{
 		return false;
 	}
 
-GEngine->GameViewport->GetViewportSize(ViewportSize);
+	GEngine->GameViewport->GetViewportSize(ViewportSize);
 
-const FVector2D CrosshairScreenLocation(ViewportSize.X * 0.5f, ViewportSize.Y * 0.5f);
+	const FVector2D CrosshairScreenLocation(ViewportSize.X * 0.5f, ViewportSize.Y * 0.5f);
 
-FVector CrosshairWorldLocation;
-FVector CrosshairWorldDirection;
+	FVector CrosshairWorldLocation;
+	FVector CrosshairWorldDirection;
 
-const bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(PC, CrosshairScreenLocation, CrosshairWorldLocation, CrosshairWorldDirection);
+	const bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(PC, CrosshairScreenLocation, CrosshairWorldLocation, CrosshairWorldDirection);
+
+		if (!bScreenToWorld)
+		{
+			return false;
+		}
+
+	FVector Start = CrosshairWorldLocation;
+	if (GetOwner())
+	{
+		const float DistanceToOwner = FVector::Distance(GetOwner()->GetActorLocation(), Start);
+		Start += CrosshairWorldDirection * (DistanceToOwner + 100.f);
+	}
+
+	const FVector End = Start + (CrosshairWorldDirection * FreeAimTraceDistance);
+
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(TargetingAimTrace), false, GetOwner());
+
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, AimTraceChannel, Params);
+
+	if (!bHit)
+	{
+		OutHit.ImpactPoint = End;
+	}
+
+	return true;
 }
 
 void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates, EAimTypeMode QueryAimMode) const

@@ -359,6 +359,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\BasicHealthBar.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\CrosshairWidget.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\DD_InventorySlot.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI</Filter>
     </ClCompile>
@@ -753,6 +756,9 @@
       <UniqueIdentifier>{0576D641-0850-3EE2-A02A-C92633D72B00}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\BasicHealthBar.h">
+      <Filter>Source\ProjectMimikyu\Public\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\CrosshairWidget.h">
       <Filter>Source\ProjectMimikyu\Public\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\DD_InventorySlot.h">
