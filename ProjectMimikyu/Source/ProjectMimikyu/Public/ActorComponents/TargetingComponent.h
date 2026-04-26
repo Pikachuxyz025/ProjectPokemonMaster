@@ -7,6 +7,31 @@
 #include "ActorComponents/TargetingType.h"
 #include "TargetingComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FCrosshairDisplayData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	float Spead = 16.f;
+
+
+	UPROPERTY(BlueprintReadWrite)
+	FLinearColor Color = FLinearColor::White;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bVisible = true;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasTarget = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	EAimTypeMode AimMode = EAimTypeMode::None;
+
+	UPROPERTY(BlueprintReadWrite)
+	EAimContext AimContext = EAimContext::Combat;
+};
+
 UCLASS(ClassGroup = (Custom), BlueprintType, Blueprintable, meta = (BlueprintSpawnableComponent))
 class PROJECTMIMIKYU_API UTargetingComponent : public UActorComponent
 {

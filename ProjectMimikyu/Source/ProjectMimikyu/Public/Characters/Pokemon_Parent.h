@@ -1,5 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-using namespace UP;
 #pragma once
 
 #include "CoreMinimal.h"
@@ -32,10 +31,10 @@ class UPokemonMoveDataAsset;
 struct FPokemonTypeInfo;
 class UBehaviorTree;
 class APokemonAIController;
+struct FPropertyChangedEvent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
-
 {
 	GENERATED_BODY()
 
@@ -55,7 +54,7 @@ public:
 	FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
 
 #if WITH_EDITOR
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& Event) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& Event) override;
 #endif
 
 	void AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag);

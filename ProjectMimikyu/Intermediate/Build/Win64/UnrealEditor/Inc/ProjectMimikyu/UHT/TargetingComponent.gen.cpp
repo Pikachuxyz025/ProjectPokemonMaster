@@ -13,6 +13,7 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 void EmptyLinkFunctionForGeneratedCodeTargetingComponent() {}
 
 // ********** Begin Cross Module References ********************************************************
+COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FLinearColor();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_UActorComponent();
@@ -21,8 +22,126 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FCrosshairDisplayData();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
+
+// ********** Begin ScriptStruct FCrosshairDisplayData *********************************************
+struct Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics
+{
+	static inline consteval int32 GetStructSize() { return sizeof(FCrosshairDisplayData); }
+	static inline consteval int16 GetStructAlignment() { return alignof(FCrosshairDisplayData); }
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Spead_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Color_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bVisible_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHasTarget_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimMode_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimContext_MetaData[] = {
+		{ "Category", "CrosshairDisplayData" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin ScriptStruct FCrosshairDisplayData constinit property declarations *************
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_Spead;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_Color;
+	static void NewProp_bVisible_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bVisible;
+	static void NewProp_bHasTarget_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHasTarget;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_AimMode_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_AimMode;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_AimContext_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_AimContext;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End ScriptStruct FCrosshairDisplayData constinit property declarations ***************
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FCrosshairDisplayData>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+}; // struct Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FCrosshairDisplayData;
+class UScriptStruct* FCrosshairDisplayData::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FCrosshairDisplayData, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("CrosshairDisplayData"));
+	}
+	return Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.OuterSingleton;
+	}
+
+// ********** Begin ScriptStruct FCrosshairDisplayData Property Definitions ************************
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spead = { "Spead", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, Spead), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Spead_MetaData), NewProp_Spead_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Color = { "Color", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, Color), Z_Construct_UScriptStruct_FLinearColor, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Color_MetaData), NewProp_Color_MetaData) };
+void Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible_SetBit(void* Obj)
+{
+	((FCrosshairDisplayData*)Obj)->bVisible = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible = { "bVisible", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FCrosshairDisplayData), &Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bVisible_MetaData), NewProp_bVisible_MetaData) };
+void Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bHasTarget_SetBit(void* Obj)
+{
+	((FCrosshairDisplayData*)Obj)->bHasTarget = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bHasTarget = { "bHasTarget", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FCrosshairDisplayData), &Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bHasTarget_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bHasTarget_MetaData), NewProp_bHasTarget_MetaData) };
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimMode = { "AimMode", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, AimMode), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimMode_MetaData), NewProp_AimMode_MetaData) }; // 2135877534
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext = { "AimContext", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, AimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimContext_MetaData), NewProp_AimContext_MetaData) }; // 726377209
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spead,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Color,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bHasTarget,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimMode_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimMode,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::PropPointers) < 2048);
+// ********** End ScriptStruct FCrosshairDisplayData Property Definitions **************************
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"CrosshairDisplayData",
+	Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::PropPointers),
+	sizeof(FCrosshairDisplayData),
+	alignof(FCrosshairDisplayData),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FCrosshairDisplayData()
+{
+	if (!Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.InnerSingleton, Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::StructParams);
+	}
+	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FCrosshairDisplayData.InnerSingleton);
+}
+// ********** End ScriptStruct FCrosshairDisplayData ***********************************************
 
 // ********** Begin Class UTargetingComponent Function BeginFreeAim ********************************
 struct Z_Construct_UFunction_UTargetingComponent_BeginFreeAim_Statics
@@ -1141,14 +1260,17 @@ UTargetingComponent::~UTargetingComponent() {}
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics
 {
+	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
+		{ FCrosshairDisplayData::StaticStruct, Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewStructOps, TEXT("CrosshairDisplayData"),&Z_Registration_Info_UScriptStruct_FCrosshairDisplayData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCrosshairDisplayData), 1386935279U) },
+	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
 		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 3782800705U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_2558046619{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_2233675082{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
-	nullptr, 0,
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	nullptr, 0,
 };
 // ********** End Registration *********************************************************************

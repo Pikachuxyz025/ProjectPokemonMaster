@@ -42,6 +42,7 @@ APokemon_Parent::APokemon_Parent()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
+#if WITH_EDITOR
 void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
 {
 	Super::PostEditChangeProperty(Event);
@@ -54,7 +55,7 @@ void APokemon_Parent::PostEditChangeProperty(FPropertyChangedEvent& Event)
 		}
 	}
 }
-
+#endif
 // Called when the game starts or when spawned
 void APokemon_Parent::BeginPlay()
 {

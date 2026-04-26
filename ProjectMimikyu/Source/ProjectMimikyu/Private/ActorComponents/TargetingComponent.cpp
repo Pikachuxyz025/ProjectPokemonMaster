@@ -325,18 +325,36 @@ bool UTargetingComponent::GetViewPoint(FVector& OutLocation, FRotator& OutRotati
 
 bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 {
-	FVector ViewLocation;
-	FRotator ViewRotation;
-
-	if (!GetViewPoint(ViewLocation, ViewRotation))
+if(!GetWorld())
 	{
 		return false;
 	}
 
-	const FVector TraceEnd = ViewLocation + (ViewRotation.Vector() * FreeAimTraceDistance);
+APlayerController* PC = nullptr;
+if (const APawn* OwnerPawn = Cast<APawn>(GetOwner()))
+	{
+		PC = Cast<APlayerController>(OwnerPawn->GetController());
+}
 
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(TargetingAimTrace), false, GetOwner());
-	return GetWorld()->LineTraceSingleByChannel(OutHit, ViewLocation, TraceEnd, AimTraceChannel, Params);
+if (!PC)
+	{
+		return false;
+	}
+
+FVector2D ViewportSize;
+if (!GEngine || !GEngine->GameViewport)
+	{
+		return false;
+	}
+
+GEngine->GameViewport->GetViewportSize(ViewportSize);
+
+const FVector2D CrosshairScreenLocation(ViewportSize.X * 0.5f, ViewportSize.Y * 0.5f);
+
+FVector CrosshairWorldLocation;
+FVector CrosshairWorldDirection;
+
+const bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(PC, CrosshairScreenLocation, CrosshairWorldLocation, CrosshairWorldDirection);
 }
 
 void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates, EAimTypeMode QueryAimMode) const
