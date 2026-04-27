@@ -859,6 +859,26 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ "Category", "Input" },
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bEnableLockOnCamera_MetaData[] = {
+		{ "Category", "Camera|LockOn" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LockOnCameraInterpSpeed_MetaData[] = {
+		{ "Category", "Camera|LockOn" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LockOnFocusTargetBias_MetaData[] = {
+		{ "Category", "Camera|LockOn" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LockOnFocusHeightOffset_MetaData[] = {
+		{ "Category", "Camera|LockOn" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetSwitchCooldown_MetaData[] = {
+		{ "Category", "Camera|LockOn" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHasPokemon_MetaData[] = {
 		{ "Category", "Pokemon Party" },
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
@@ -943,6 +963,12 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_Command;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_ToggleLockOn;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_Aim;
+	static void NewProp_bEnableLockOnCamera_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bEnableLockOnCamera;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_LockOnCameraInterpSpeed;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_LockOnFocusTargetBias;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_LockOnFocusHeightOffset;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_TargetSwitchCooldown;
 	static void NewProp_bHasPokemon_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHasPokemon;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_CurrentPokemon;
@@ -1012,6 +1038,15 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimiky
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_Command = { "IA_Command", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, IA_Command), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_Command_MetaData), NewProp_IA_Command_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_ToggleLockOn = { "IA_ToggleLockOn", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, IA_ToggleLockOn), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_ToggleLockOn_MetaData), NewProp_IA_ToggleLockOn_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_Aim = { "IA_Aim", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, IA_Aim), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_Aim_MetaData), NewProp_IA_Aim_MetaData) };
+void Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera_SetBit(void* Obj)
+{
+	((AProjectMimikyuCharacter*)Obj)->bEnableLockOnCamera = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera = { "bEnableLockOnCamera", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(AProjectMimikyuCharacter), &Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bEnableLockOnCamera_MetaData), NewProp_bEnableLockOnCamera_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnCameraInterpSpeed = { "LockOnCameraInterpSpeed", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, LockOnCameraInterpSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LockOnCameraInterpSpeed_MetaData), NewProp_LockOnCameraInterpSpeed_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnFocusTargetBias = { "LockOnFocusTargetBias", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, LockOnFocusTargetBias), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LockOnFocusTargetBias_MetaData), NewProp_LockOnFocusTargetBias_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnFocusHeightOffset = { "LockOnFocusHeightOffset", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, LockOnFocusHeightOffset), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LockOnFocusHeightOffset_MetaData), NewProp_LockOnFocusHeightOffset_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TargetSwitchCooldown = { "TargetSwitchCooldown", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, TargetSwitchCooldown), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetSwitchCooldown_MetaData), NewProp_TargetSwitchCooldown_MetaData) };
 void Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bHasPokemon_SetBit(void* Obj)
 {
 	((AProjectMimikyuCharacter*)Obj)->bHasPokemon = 1;
@@ -1057,6 +1092,11 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectM
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_Command,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_ToggleLockOn,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_IA_Aim,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnCameraInterpSpeed,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnFocusTargetBias,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnFocusHeightOffset,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TargetSwitchCooldown,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bHasPokemon,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentPokemon,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentParty_Inner,
@@ -1132,10 +1172,10 @@ AProjectMimikyuCharacter::~AProjectMimikyuCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 4070145782U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 1100310465U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_3980507534{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_2971782329{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

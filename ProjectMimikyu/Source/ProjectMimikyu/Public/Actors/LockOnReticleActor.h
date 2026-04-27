@@ -14,18 +14,28 @@ class PROJECTMIMIKYU_API ALockOnReticleActor : public AActor
 	
 public:	
 	ALockOnReticleActor();
+	virtual void Tick(float DeltaTime) override;
 
+	void LockOnTarget(AActor* TargetActor);
+	void UnlockTarget();
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UWidgetComponent> ReticleWidgetComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> RootSceneComponent;
+
+	UPROPERTY()
+	TObjectPtr<AActor> LockedTarget;
+
+	UPROPERTY(EditAnywhere, Category = "LockOn")
+	float ReticleForwardOffset = 45.f;
+
 	void LookAtCamera();
-public:	
 
-	virtual void Tick(float DeltaTime) override;
+private:
+	FVector GetReticleDisplayLocation(AActor* TargetActor) const;
 
-	void LockOnTarget(AActor* TargetActor);
-	void UnlockTarget();
 };

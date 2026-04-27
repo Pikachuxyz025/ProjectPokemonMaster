@@ -65,7 +65,6 @@ void UCrosshairWidget::InitializeCrosshairPiece(UImage* Image) const
 	CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
 	CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 	CanvasSlot->SetPosition(FVector2D::ZeroVector);
-	//CanvasSlot->SetAutoSize(true);
 
 	Image->SetRenderTranslation(FVector2D::ZeroVector);
 }

@@ -199,7 +199,9 @@ bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
 		return false;
 	}
 
-	const float DistanceToTargetSquared = FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetActorLocation());
+	const float DistanceToTargetSquared =
+		FVector::DistSquared(GetOwner()->GetActorLocation(), Target->GetActorLocation());
+
 	if (DistanceToTargetSquared > FMath::Square(MaxLockOnDistance))
 	{
 		return false;
@@ -217,6 +219,7 @@ bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
 	{
 		return false;
 	}
+
 	return true;
 }
 
@@ -701,7 +704,7 @@ float UTargetingComponent::ScoreTargetForLockOn(AActor* Candidate) const
 
 bool UTargetingComponent::HasLineOfSightToTarget(AActor* Target) const
 {
-	if(!IsValid(Target)||!GetWorld())
+	if (!IsValid(Target) || !GetWorld())
 	{
 		return false;
 	}
@@ -717,11 +720,27 @@ bool UTargetingComponent::HasLineOfSightToTarget(AActor* Target) const
 
 	FHitResult Hit;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(TargetingLOS), false, GetOwner());
-	Params.AddIgnoredActor(Target);
 
-	const bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, ViewLocation, TargetPoint, ECC_Visibility, Params);
+	const bool bHit = GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		ViewLocation,
+		TargetPoint,
+		ECC_Visibility,
+		Params
+	);
 
-	return !bHit;
+	if (!bHit)
+	{
+		return true;
+	}
+
+	AActor* HitActor = Hit.GetActor();
+
+	if (HitActor == Target || HitActor->IsAttachedTo(Target))
+	{
+		return true;
+	}
+	return false;
 }
 
 FVector UTargetingComponent::GetTargetAimPoint(AActor* Target) const

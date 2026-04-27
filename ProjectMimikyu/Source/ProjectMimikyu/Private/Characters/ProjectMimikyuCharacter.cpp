@@ -127,7 +127,7 @@ void AProjectMimikyuCharacter::BeginPlay()
 void AProjectMimikyuCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	// SelectMove();
+	UpdateTargetingCamera(DeltaTime);
 }
 
 FPokemonInfo AProjectMimikyuCharacter::GetCurrentPokemonInfo()
@@ -202,6 +202,74 @@ void AProjectMimikyuCharacter::ServerRequestReturnCurrentPokemon_Implementation(
 	CurrentPokemon = nullptr;
 
 	PokemonToReturn->Return();
+}
+
+void AProjectMimikyuCharacter::UpdateTargetingCamera(float DeltaTime)
+{
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
+
+	if (!TargetingComponent)
+	{
+		return;
+	}
+
+	if (TargetingComponent->IsLockedOn())
+	{
+		UpdateLockOnCamera(DeltaTime);
+	}
+}
+
+void AProjectMimikyuCharacter::UpdateLockOnCamera(float DeltaTime)
+{
+	if (!TargetingComponent || !Controller)
+	{
+		return;
+	}
+
+	AActor* TargetActor = TargetingComponent->GetCurrentLockedTarget();
+	if (!IsValid(TargetActor))
+	{
+		return;
+	}
+
+	const FVector PlayerLocation = GetActorLocation();
+
+	FVector TargetLocation = TargetActor->GetActorLocation();
+	TargetLocation.Z += LockOnFocusHeightOffset;
+
+	const FVector FocusPoint = FMath::Lerp(PlayerLocation, TargetLocation, LockOnFocusTargetBias);
+	APlayerController* PC = Cast<APlayerController>(Controller);
+
+	if (!PC || !PC->PlayerCameraManager)
+	{
+		return;
+	}
+
+	const FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
+
+	const FRotator DesiredRotation = (FocusPoint - CameraLocation).Rotation();
+
+	const FRotator CurrentRotation = Controller->GetControlRotation();
+
+	const FRotator NewRotation = FMath::RInterpTo(CurrentRotation, DesiredRotation, DeltaTime, LockOnCameraInterpSpeed);
+
+	Controller->SetControlRotation(NewRotation);
+
+	if (GetWorld())
+	{
+		DrawDebugSphere(
+			GetWorld(),
+			FocusPoint,
+			16.f,
+			12,
+			FColor::Blue,
+			false,
+			0.f
+		);
+	}
 }
 
 bool AProjectMimikyuCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
@@ -373,7 +441,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
-		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::Input_ToggleLockOn);
+		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_ToggleLockOn);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
@@ -605,14 +673,34 @@ void AProjectMimikyuCharacter::Move(const FInputActionValue& Value)
 
 void AProjectMimikyuCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (!Controller)
 	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		return;
+	}
+
+	if (TargetingComponent && TargetingComponent->IsLockedOn())
+	{
+		HandleLockOnLookInput(LookAxisVector);
+		return;
+	}
+
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AProjectMimikyuCharacter::HandleLockOnLookInput(const FVector2D& LookAxisVector)
+{
+	constexpr float SwitchThreshold = 0.75f;
+
+	if (LookAxisVector.X > SwitchThreshold)
+	{
+		TargetingComponent->SwitchTargetRight();
+	}
+	else if (LookAxisVector.X < -SwitchThreshold)
+	{
+		TargetingComponent->SwitchTargetLeft();
 	}
 }
 

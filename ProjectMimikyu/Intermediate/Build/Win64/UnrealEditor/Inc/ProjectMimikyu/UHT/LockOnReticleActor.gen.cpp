@@ -13,6 +13,8 @@ void EmptyLinkFunctionForGeneratedCodeLockOnReticleActor() {}
 
 // ********** Begin Cross Module References ********************************************************
 ENGINE_API UClass* Z_Construct_UClass_AActor();
+ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
+ENGINE_API UClass* Z_Construct_UClass_USceneComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ALockOnReticleActor();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ALockOnReticleActor_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UWidgetComponent_NoRegister();
@@ -61,10 +63,25 @@ struct Z_Construct_UClass_ALockOnReticleActor_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/Actors/LockOnReticleActor.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_RootSceneComponent_MetaData[] = {
+		{ "Category", "LockOnReticleActor" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/Actors/LockOnReticleActor.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LockedTarget_MetaData[] = {
+		{ "ModuleRelativePath", "Public/Actors/LockOnReticleActor.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ReticleForwardOffset_MetaData[] = {
+		{ "Category", "LockOn" },
+		{ "ModuleRelativePath", "Public/Actors/LockOnReticleActor.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class ALockOnReticleActor constinit property declarations **********************
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReticleWidgetComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_RootSceneComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_LockedTarget;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_ReticleForwardOffset;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class ALockOnReticleActor constinit property declarations ************************
 	static UObject* (*const DependentSingletons[])();
@@ -76,8 +93,14 @@ struct Z_Construct_UClass_ALockOnReticleActor_Statics
 
 // ********** Begin Class ALockOnReticleActor Property Definitions *********************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_ReticleWidgetComponent = { "ReticleWidgetComponent", nullptr, (EPropertyFlags)0x0124080000090009, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ALockOnReticleActor, ReticleWidgetComponent), Z_Construct_UClass_UWidgetComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ReticleWidgetComponent_MetaData), NewProp_ReticleWidgetComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_RootSceneComponent = { "RootSceneComponent", nullptr, (EPropertyFlags)0x01240800000a0009, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ALockOnReticleActor, RootSceneComponent), Z_Construct_UClass_USceneComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RootSceneComponent_MetaData), NewProp_RootSceneComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_LockedTarget = { "LockedTarget", nullptr, (EPropertyFlags)0x0124080000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ALockOnReticleActor, LockedTarget), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LockedTarget_MetaData), NewProp_LockedTarget_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_ReticleForwardOffset = { "ReticleForwardOffset", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ALockOnReticleActor, ReticleForwardOffset), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ReticleForwardOffset_MetaData), NewProp_ReticleForwardOffset_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ALockOnReticleActor_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_ReticleWidgetComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_RootSceneComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_LockedTarget,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ALockOnReticleActor_Statics::NewProp_ReticleForwardOffset,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_ALockOnReticleActor_Statics::PropPointers) < 2048);
 // ********** End Class ALockOnReticleActor Property Definitions ***********************************
@@ -120,10 +143,10 @@ ALockOnReticleActor::~ALockOnReticleActor() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ALockOnReticleActor, ALockOnReticleActor::StaticClass, TEXT("ALockOnReticleActor"), &Z_Registration_Info_UClass_ALockOnReticleActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ALockOnReticleActor), 340888426U) },
+		{ Z_Construct_UClass_ALockOnReticleActor, ALockOnReticleActor::StaticClass, TEXT("ALockOnReticleActor"), &Z_Registration_Info_UClass_ALockOnReticleActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ALockOnReticleActor), 1422497276U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_2733762437{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_4170254846{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Actors_LockOnReticleActor_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

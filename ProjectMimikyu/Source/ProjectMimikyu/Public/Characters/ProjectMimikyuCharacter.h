@@ -105,7 +105,25 @@ protected:
 	// Camera Usage
 
 #pragma region Dynamic Camera
-	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Camera|LockOn")
+	bool bEnableLockOnCamera = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
+	float LockOnCameraInterpSpeed = 8.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
+	float LockOnFocusTargetBias = .65f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
+	float LockOnFocusHeightOffset = 50.f;
+
+	float LastTargetSwitchTime = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
+	float TargetSwitchCooldown = .35f;
+
+	void UpdateTargetingCamera(float DeltaTime);
+	void UpdateLockOnCamera(float DeltaTime);
 #pragma endregion
 
 
@@ -160,6 +178,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void HandleLockOnLookInput(const FVector2D& LookAxisVector);
 			
 	void Pickup();
 	void TargetAndEngage();
