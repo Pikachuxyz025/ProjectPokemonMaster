@@ -4,6 +4,10 @@
 #include "ActorComponents/TargetingComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/TargetableInterface.h"
+#include "Characters/ProjectMimikyuCharacter.h"
+#include "Actors/LockOnReticleActor.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "UI/TrainerHUD.h"
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
@@ -24,6 +28,7 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	UpdateFreeAimTrace();
 	UpdateLockOnState(DeltaTime);
 	UpdateAimMode();
+	UpdateCrosshair(DeltaTime);
 }
 
 
@@ -55,9 +60,28 @@ bool UTargetingComponent::TryLockOnToBestTarget()
 	CurrentLockInvalidTime = 0.f;
 	UpdateAimMode();
 
+	if(GetWorld())
+	{
+		if (!CurrentLockOnReticle.IsValid())
+		{
+			CurrentLockOnReticle = GetWorld()->SpawnActor<ALockOnReticleActor>(LockOnReticleActorClass);
+		}
+		ALockOnReticleActor* ReticleActor = CurrentLockOnReticle.Get();
+		if(ReticleActor)
+		{
+			ReticleActor->LockOnTarget(BestTarget);
+			if(ATrainerHUD* TrainerHUD=GetTrainerHUD())
+			{
+				TrainerHUD->RemoveCrosshairWidget();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LockOnReticleActor is not valid after spawning."));
+		}
+	}
 	// TODO: Add Log with custom debugging system
 	return true;
-	return false;
 }
 
 void UTargetingComponent::ClearLockOn()
@@ -70,6 +94,17 @@ void UTargetingComponent::ClearLockOn()
 	CurrentLockedTarget = nullptr;
 	CurrentLockInvalidTime = 0.f;
 	UpdateAimMode();
+	
+	if (ATrainerHUD* TrainerHUD = GetTrainerHUD())
+	{
+		TrainerHUD->RestoreCrosshairWidget();
+	}
+	if (!CurrentLockOnReticle.IsValid())
+	{
+		return;
+	}
+	ALockOnReticleActor* ReticleActor = CurrentLockOnReticle.Get();
+	ReticleActor->UnlockTarget();
 }
 
 void UTargetingComponent::SwitchTargetLeft()
@@ -79,6 +114,13 @@ void UTargetingComponent::SwitchTargetLeft()
 	{
 		CurrentLockedTarget = NewTarget;
 		CurrentLockInvalidTime = 0.f;
+
+		if (!CurrentLockOnReticle.IsValid())
+		{
+			return;
+		}
+		ALockOnReticleActor* ReticleActor = CurrentLockOnReticle.Get();
+		ReticleActor->LockOnTarget(NewTarget);
 	}
 }
 
@@ -89,6 +131,13 @@ void UTargetingComponent::SwitchTargetRight()
 	{
 		CurrentLockedTarget = NewTarget;
 		CurrentLockInvalidTime = 0.f;
+
+		if (!CurrentLockOnReticle.IsValid())
+		{
+			return;
+		}
+		ALockOnReticleActor* ReticleActor = CurrentLockOnReticle.Get();
+		ReticleActor->LockOnTarget(NewTarget);
 	}
 }
 
@@ -300,6 +349,105 @@ void UTargetingComponent::UpdateLockOnState(float DeltaTime)
 	{
 		// TODO: Add Log with custom debugging system
 		ClearLockOn();
+	}
+}
+
+void UTargetingComponent::UpdateCrosshair(float DeltaTime)
+{
+	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+	if (!OwnerCharacter)
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* MoveComp = OwnerCharacter->GetCharacterMovement();
+	if (!MoveComp)
+	{
+		return;
+	}
+
+	// Velocity Factor
+	const float MaxSpeed = OwnerCharacter->bIsCrouched ? MoveComp->MaxWalkSpeedCrouched : MoveComp->MaxWalkSpeed;
+
+	const float CurrentSpeed = OwnerCharacter->GetVelocity().Size();
+
+	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(
+		FVector2D(0.f, MaxSpeed),
+		FVector2D(0.f, CrosshairMaxVelocitySpread),
+		CurrentSpeed
+	);
+
+	// In-Air Factor
+	if (MoveComp->IsFalling())
+	{
+		CrosshairInAirFactor = FMath::FInterpTo(
+			CrosshairInAirFactor,
+			CrosshairInAirSpreadAmount,
+			DeltaTime,
+			2.25f
+		);
+	}
+	else
+	{
+		CrosshairInAirFactor = FMath::FInterpTo(
+			CrosshairInAirFactor,
+			0.f,
+			DeltaTime,
+			30.f
+		);
+	}
+
+	// Aim Factor
+	if (IsInFreeAim() || IsLockedOn())
+	{
+		CrosshairAimFactor = FMath::FInterpTo(
+			CrosshairAimFactor,
+			CrosshairAimReductionAmount,
+			DeltaTime,
+			30.f
+		);
+
+	}
+	else
+	{
+		CrosshairAimFactor = FMath::FInterpTo(
+			CrosshairAimFactor,
+			0.f,
+			DeltaTime,
+			30.f
+		);
+	}
+
+	// Target Factor
+	const FAimData AimData = BuildAimData();
+
+	const float TargetFactor = AimData.bHasValidTarget ? CrosshairTargetReductionAmount : 0.f;
+	CrosshairTargetFactor = FMath::FInterpTo(
+		CrosshairTargetFactor,
+		TargetFactor,
+		DeltaTime,
+		20.f
+	);
+
+	CurrentCrosshairSpread =
+		CrosshairBaseSpread
+		+ CrosshairVelocityFactor
+		+ CrosshairInAirFactor
+		- CrosshairAimFactor
+		- CrosshairTargetFactor;
+	CurrentCrosshairSpread = FMath::Max(CurrentCrosshairSpread, 4.f);
+
+	// Update Crosshair Display Data and update hud
+	CrosshairDisplayData.Spread = CurrentCrosshairSpread;
+	CrosshairDisplayData.Color = AimData.bHasValidTarget ? FLinearColor::Red: FLinearColor::White;
+	CrosshairDisplayData.bVisible = true;
+	CrosshairDisplayData.bHasTarget = AimData.bHasValidTarget;
+	CrosshairDisplayData.AimMode = CurrentAimMode;
+	CrosshairDisplayData.AimContext = CurrentAimContext;
+
+	if(ATrainerHUD* TrainerHUD = GetTrainerHUD())
+	{
+		TrainerHUD->UpdateCrosshairDisplay(CrosshairDisplayData);
 	}
 }
 
@@ -660,4 +808,24 @@ bool UTargetingComponent::IsActorHostileOrRelevant(AActor* Target) const
 			default:
 				return false;
 	}
+}
+
+ATrainerHUD* UTargetingComponent::GetTrainerHUD()
+{
+	if (OwnerTrainerHUD)
+		return OwnerTrainerHUD;
+
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (!OwnerPawn)
+	{
+		return nullptr;
+	}
+	if (APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController()))
+	{
+		if (OwnerTrainerHUD = Cast<ATrainerHUD>(PC->GetHUD()))
+		{
+			return OwnerTrainerHUD;
+		}
+	}
+	return nullptr;
 }

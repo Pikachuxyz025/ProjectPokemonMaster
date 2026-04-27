@@ -65,22 +65,26 @@ void UPlayerInventoryMenuOverlay::RemoveMouseCursor()
 
 FReply UPlayerInventoryMenuOverlay::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	//Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
 	if (InKeyEvent.GetKey() == ExitKey)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Remove"));
 		CurrentController = CurrentController ? CurrentController : GetOwningPlayer();
-		ATrainerHUD* TrainerHUD = CastChecked<ATrainerHUD>(CurrentController->GetHUD());
-		ATrainerController* TrainerController = CastChecked<ATrainerController>(CurrentController);
-		TrainerController->RemoveMouseCursor();
-		TrainerHUD->SwitchOverlays(this,ReturnToWidget);
+		if (ATrainerController* TrainerController = Cast<ATrainerController>(CurrentController))
+		{
+			TrainerController->RemoveMouseCursor();
+		}
+
+		if (ATrainerHUD* TrainerHUD = CurrentController ? Cast<ATrainerHUD>(CurrentController->GetHUD()) : nullptr)
+		{
+			TrainerHUD->RestoreGameplayHUD(this);
+		}
+		return FReply::Handled();
 	}
 	else
 	{
 		UE_LOG(LogTemp, Display, TEXT("Wrong Key"));
 	}
-	//Super::NativeOnKeyDown(InGeometry, InKeyEvent);
-	return FReply::Handled();
+	return Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
 }
 
 void UPlayerInventoryMenuOverlay::NativeDestruct()

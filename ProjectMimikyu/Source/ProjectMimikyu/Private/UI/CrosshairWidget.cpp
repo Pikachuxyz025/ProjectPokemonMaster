@@ -3,6 +3,7 @@
 
 #include "UI/CrosshairWidget.h"
 #include "Components/Image.h"
+#include <Components/CanvasPanelSlot.h>
 
 void UCrosshairWidget::SetCrosshairSpread(float Spread)
 {
@@ -28,4 +29,43 @@ void UCrosshairWidget::SetCrosshairColor(FLinearColor Color)
 	if (IMG_Left) IMG_Left->SetColorAndOpacity(Color);
 
 	if (IMG_Center) IMG_Center->SetColorAndOpacity(Color);
+}
+
+void UCrosshairWidget::SetCrosshairDisplayData(const FCrosshairDisplayData& CrosshairData)
+{
+	SetVisibility(CrosshairData.bVisible ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	SetCrosshairSpread(CrosshairData.Spread);
+	SetCrosshairColor(CrosshairData.Color);
+}
+
+void UCrosshairWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	InitializeCrosshairPiece(IMG_Center);
+	InitializeCrosshairPiece(IMG_Left);
+	InitializeCrosshairPiece(IMG_Right);
+	InitializeCrosshairPiece(IMG_Top);
+	InitializeCrosshairPiece(IMG_Bottom);
+	SetCrosshairSpread(16.f);
+}
+
+void UCrosshairWidget::InitializeCrosshairPiece(UImage* Image) const
+{
+	if (!Image) 
+	{
+		return;
+	}
+
+	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image->Slot);
+	if (!CanvasSlot)
+	{
+		return;
+	}
+
+	CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+	CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+	CanvasSlot->SetPosition(FVector2D::ZeroVector);
+	//CanvasSlot->SetAutoSize(true);
+
+	Image->SetRenderTranslation(FVector2D::ZeroVector);
 }

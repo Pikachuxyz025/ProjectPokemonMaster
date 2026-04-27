@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include <ActorComponents/TargetingComponent.h>
 #include "TrainerHUD.generated.h"
 
 class UPokemonMenuWidgetController;
@@ -52,6 +53,11 @@ private:
 public:
 
 	void AddTrainerOverlay();
+	void AddCrosshairWidget();
+	void RemoveCrosshairWidget();
+	void RestoreCrosshairWidget();
+	void RestoreGameplayHUD(UUserWidget* CurrentMenuWidget);
+	void UpdateCrosshairDisplay(const FCrosshairDisplayData& CrosshairData);
 	//void AddInventoryOverlay();
 	void AddPlayerInventoryMenuOverlay();
 

@@ -6,6 +6,7 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "UI/CrosshairWidget.h"
+#include "ActorComponents/TargetingComponent.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compiled with !UE_WITH_CONSTINIT_OBJECT");
@@ -15,6 +16,7 @@ void EmptyLinkFunctionForGeneratedCodeCrosshairWidget() {}
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FLinearColor();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UCrosshairWidget();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UCrosshairWidget_NoRegister();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FCrosshairDisplayData();
 UMG_API UClass* Z_Construct_UClass_UImage_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UUserWidget();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
@@ -71,6 +73,61 @@ DEFINE_FUNCTION(UCrosshairWidget::execSetCrosshairColor)
 	P_NATIVE_END;
 }
 // ********** End Class UCrosshairWidget Function SetCrosshairColor ********************************
+
+// ********** Begin Class UCrosshairWidget Function SetCrosshairDisplayData ************************
+struct Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics
+{
+	struct CrosshairWidget_eventSetCrosshairDisplayData_Parms
+	{
+		FCrosshairDisplayData CrosshairData;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Crosshair" },
+		{ "ModuleRelativePath", "Public/UI/CrosshairWidget.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairData_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function SetCrosshairDisplayData constinit property declarations ***************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CrosshairData;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function SetCrosshairDisplayData constinit property declarations *****************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function SetCrosshairDisplayData Property Definitions **************************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::NewProp_CrosshairData = { "CrosshairData", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(CrosshairWidget_eventSetCrosshairDisplayData_Parms, CrosshairData), Z_Construct_UScriptStruct_FCrosshairDisplayData, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairData_MetaData), NewProp_CrosshairData_MetaData) }; // 3977036123
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::NewProp_CrosshairData,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::PropPointers) < 2048);
+// ********** End Function SetCrosshairDisplayData Property Definitions ****************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UCrosshairWidget, nullptr, "SetCrosshairDisplayData", 	Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::CrosshairWidget_eventSetCrosshairDisplayData_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::Function_MetaDataParams), Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::CrosshairWidget_eventSetCrosshairDisplayData_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UCrosshairWidget::execSetCrosshairDisplayData)
+{
+	P_GET_STRUCT_REF(FCrosshairDisplayData,Z_Param_Out_CrosshairData);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->SetCrosshairDisplayData(Z_Param_Out_CrosshairData);
+	P_NATIVE_END;
+}
+// ********** End Class UCrosshairWidget Function SetCrosshairDisplayData **************************
 
 // ********** Begin Class UCrosshairWidget Function SetCrosshairSpread *****************************
 struct Z_Construct_UFunction_UCrosshairWidget_SetCrosshairSpread_Statics
@@ -198,11 +255,13 @@ struct Z_Construct_UClass_UCrosshairWidget_Statics
 // ********** End Class UCrosshairWidget constinit property declarations ***************************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("SetCrosshairColor"), .Pointer = &UCrosshairWidget::execSetCrosshairColor },
+		{ .NameUTF8 = UTF8TEXT("SetCrosshairDisplayData"), .Pointer = &UCrosshairWidget::execSetCrosshairDisplayData },
 		{ .NameUTF8 = UTF8TEXT("SetCrosshairSpread"), .Pointer = &UCrosshairWidget::execSetCrosshairSpread },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UCrosshairWidget_SetCrosshairColor, "SetCrosshairColor" }, // 3858955792
+		{ &Z_Construct_UFunction_UCrosshairWidget_SetCrosshairDisplayData, "SetCrosshairDisplayData" }, // 3747950751
 		{ &Z_Construct_UFunction_UCrosshairWidget_SetCrosshairSpread, "SetCrosshairSpread" }, // 1378093382
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
@@ -269,10 +328,10 @@ UCrosshairWidget::~UCrosshairWidget() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UCrosshairWidget, UCrosshairWidget::StaticClass, TEXT("UCrosshairWidget"), &Z_Registration_Info_UClass_UCrosshairWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCrosshairWidget), 3350014505U) },
+		{ Z_Construct_UClass_UCrosshairWidget, UCrosshairWidget::StaticClass, TEXT("UCrosshairWidget"), &Z_Registration_Info_UClass_UCrosshairWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UCrosshairWidget), 3286805094U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_329356642{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_2139853778{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_CrosshairWidget_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

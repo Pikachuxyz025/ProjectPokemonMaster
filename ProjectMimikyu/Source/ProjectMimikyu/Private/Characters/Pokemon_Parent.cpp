@@ -753,7 +753,7 @@ bool APokemon_Parent::IsTargetable_Implementation() const
 
 bool APokemon_Parent::CanBeLockOnTargeted_Implementation(EAimContext AimContext) const
 {
-	if(IsFaintedForTargeting())
+	if(ITargetableInterface::Execute_IsFaintedForTargeting(this))
 		{
 		return false;
 	}

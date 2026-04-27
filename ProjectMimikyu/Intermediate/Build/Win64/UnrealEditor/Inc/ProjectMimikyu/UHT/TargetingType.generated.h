@@ -52,4 +52,15 @@ template<> struct TIsUEnumClass<EAimContext> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimContext>();
 // ********** End Enum EAimContext *****************************************************************
 
+// ********** Begin Enum ETargetCameraMode *********************************************************
+#define FOREACH_ENUM_ETARGETCAMERAMODE(op) \
+	op(ETargetCameraMode::Default) \
+	op(ETargetCameraMode::LockOn) \
+	op(ETargetCameraMode::FreeAim) 
+
+enum class ETargetCameraMode : uint8;
+template<> struct TIsUEnumClass<ETargetCameraMode> { enum { Value = true }; };
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<ETargetCameraMode>();
+// ********** End Enum ETargetCameraMode ***********************************************************
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

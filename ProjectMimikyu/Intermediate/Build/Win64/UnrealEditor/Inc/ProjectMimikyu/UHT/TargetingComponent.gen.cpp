@@ -13,11 +13,14 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 void EmptyLinkFunctionForGeneratedCodeTargetingComponent() {}
 
 // ********** Begin Cross Module References ********************************************************
+COREUOBJECT_API UClass* Z_Construct_UClass_UClass_NoRegister();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FLinearColor();
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_UActorComponent();
 ENGINE_API UEnum* Z_Construct_UEnum_Engine_ECollisionChannel();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ALockOnReticleActor_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerHUD_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext();
@@ -36,7 +39,7 @@ struct Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Spead_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Spread_MetaData[] = {
 		{ "Category", "CrosshairDisplayData" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
 	};
@@ -63,7 +66,7 @@ struct Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics
 #endif // WITH_METADATA
 
 // ********** Begin ScriptStruct FCrosshairDisplayData constinit property declarations *************
-	static const UECodeGen_Private::FFloatPropertyParams NewProp_Spead;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_Spread;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_Color;
 	static void NewProp_bVisible_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bVisible;
@@ -92,7 +95,7 @@ class UScriptStruct* FCrosshairDisplayData::StaticStruct()
 	}
 
 // ********** Begin ScriptStruct FCrosshairDisplayData Property Definitions ************************
-const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spead = { "Spead", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, Spead), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Spead_MetaData), NewProp_Spead_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spread = { "Spread", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, Spread), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Spread_MetaData), NewProp_Spread_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Color = { "Color", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, Color), Z_Construct_UScriptStruct_FLinearColor, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Color_MetaData), NewProp_Color_MetaData) };
 void Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible_SetBit(void* Obj)
 {
@@ -109,7 +112,7 @@ const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FCrosshai
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_AimContext = { "AimContext", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FCrosshairDisplayData, AimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimContext_MetaData), NewProp_AimContext_MetaData) }; // 726377209
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spead,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Spread,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_Color,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bVisible,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewProp_bHasTarget,
@@ -1011,6 +1014,9 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 		{ "IsBlueprintBase", "true" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OwnerTrainerHUD_MetaData[] = {
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentAimContext_MetaData[] = {
 		{ "Category", "Targeting|State" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
@@ -1094,9 +1100,62 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentLockInvalidTime_MetaData[] = {
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LockOnReticleActorClass_MetaData[] = {
+		{ "Category", "Targeting|Lock-On" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentLockOnReticle_MetaData[] = {
+		{ "Category", "Targeting|Lock-On" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairBaseSpread_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairMaxVelocitySpread_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairInAirSpreadAmount_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairAimReductionAmount_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairTargetReductionAmount_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairVelocityFactor_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairInAirFactor_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairAimFactor_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairTargetFactor_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentCrosshairSpread_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CrosshairDisplayData_MetaData[] = {
+		{ "Category", "Targeting|Crosshair" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UTargetingComponent constinit property declarations **********************
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_OwnerTrainerHUD;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_CurrentAimContext_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_CurrentAimContext;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_CurrentAimMode_Underlying;
@@ -1119,6 +1178,19 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_AimAssistMaxDistance;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_AimAssistConeDotThreshold;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_CurrentLockInvalidTime;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_LockOnReticleActorClass;
+	static const UECodeGen_Private::FWeakObjectPropertyParams NewProp_CurrentLockOnReticle;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairBaseSpread;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairMaxVelocitySpread;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairInAirSpreadAmount;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairAimReductionAmount;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairTargetReductionAmount;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairVelocityFactor;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairInAirFactor;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairAimFactor;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CrosshairTargetFactor;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_CurrentCrosshairSpread;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CrosshairDisplayData;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UTargetingComponent constinit property declarations ************************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
@@ -1168,6 +1240,7 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 }; // struct Z_Construct_UClass_UTargetingComponent_Statics
 
 // ********** Begin Class UTargetingComponent Property Definitions *********************************
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_OwnerTrainerHUD = { "OwnerTrainerHUD", nullptr, (EPropertyFlags)0x0124080000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, OwnerTrainerHUD), Z_Construct_UClass_ATrainerHUD_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwnerTrainerHUD_MetaData), NewProp_OwnerTrainerHUD_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext = { "CurrentAimContext", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentAimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentAimContext_MetaData), NewProp_CurrentAimContext_MetaData) }; // 726377209
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
@@ -1196,7 +1269,21 @@ const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UTargetingCompon
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_AimAssistMaxDistance = { "AimAssistMaxDistance", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, AimAssistMaxDistance), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimAssistMaxDistance_MetaData), NewProp_AimAssistMaxDistance_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_AimAssistConeDotThreshold = { "AimAssistConeDotThreshold", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, AimAssistConeDotThreshold), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimAssistConeDotThreshold_MetaData), NewProp_AimAssistConeDotThreshold_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentLockInvalidTime = { "CurrentLockInvalidTime", nullptr, (EPropertyFlags)0x0020080000002000, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentLockInvalidTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentLockInvalidTime_MetaData), NewProp_CurrentLockInvalidTime_MetaData) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_LockOnReticleActorClass = { "LockOnReticleActorClass", nullptr, (EPropertyFlags)0x0014000000000015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, LockOnReticleActorClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_ALockOnReticleActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LockOnReticleActorClass_MetaData), NewProp_LockOnReticleActorClass_MetaData) };
+const UECodeGen_Private::FWeakObjectPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentLockOnReticle = { "CurrentLockOnReticle", nullptr, (EPropertyFlags)0x0014000000020015, UECodeGen_Private::EPropertyGenFlags::WeakObject, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentLockOnReticle), Z_Construct_UClass_ALockOnReticleActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentLockOnReticle_MetaData), NewProp_CurrentLockOnReticle_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairBaseSpread = { "CrosshairBaseSpread", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairBaseSpread), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairBaseSpread_MetaData), NewProp_CrosshairBaseSpread_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairMaxVelocitySpread = { "CrosshairMaxVelocitySpread", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairMaxVelocitySpread), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairMaxVelocitySpread_MetaData), NewProp_CrosshairMaxVelocitySpread_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairInAirSpreadAmount = { "CrosshairInAirSpreadAmount", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairInAirSpreadAmount), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairInAirSpreadAmount_MetaData), NewProp_CrosshairInAirSpreadAmount_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairAimReductionAmount = { "CrosshairAimReductionAmount", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairAimReductionAmount), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairAimReductionAmount_MetaData), NewProp_CrosshairAimReductionAmount_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairTargetReductionAmount = { "CrosshairTargetReductionAmount", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairTargetReductionAmount), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairTargetReductionAmount_MetaData), NewProp_CrosshairTargetReductionAmount_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairVelocityFactor = { "CrosshairVelocityFactor", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairVelocityFactor), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairVelocityFactor_MetaData), NewProp_CrosshairVelocityFactor_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairInAirFactor = { "CrosshairInAirFactor", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairInAirFactor), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairInAirFactor_MetaData), NewProp_CrosshairInAirFactor_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairAimFactor = { "CrosshairAimFactor", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairAimFactor), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairAimFactor_MetaData), NewProp_CrosshairAimFactor_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairTargetFactor = { "CrosshairTargetFactor", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairTargetFactor), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairTargetFactor_MetaData), NewProp_CrosshairTargetFactor_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentCrosshairSpread = { "CurrentCrosshairSpread", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CurrentCrosshairSpread), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentCrosshairSpread_MetaData), NewProp_CurrentCrosshairSpread_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairDisplayData = { "CrosshairDisplayData", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTargetingComponent, CrosshairDisplayData), Z_Construct_UScriptStruct_FCrosshairDisplayData, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CrosshairDisplayData_MetaData), NewProp_CrosshairDisplayData_MetaData) }; // 3977036123
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTargetingComponent_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_OwnerTrainerHUD,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimContext,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentAimMode_Underlying,
@@ -1217,6 +1304,19 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTargetin
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_AimAssistMaxDistance,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_AimAssistConeDotThreshold,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentLockInvalidTime,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_LockOnReticleActorClass,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentLockOnReticle,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairBaseSpread,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairMaxVelocitySpread,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairInAirSpreadAmount,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairAimReductionAmount,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairTargetReductionAmount,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairVelocityFactor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairInAirFactor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairAimFactor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairTargetFactor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CurrentCrosshairSpread,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTargetingComponent_Statics::NewProp_CrosshairDisplayData,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UTargetingComponent_Statics::PropPointers) < 2048);
 // ********** End Class UTargetingComponent Property Definitions ***********************************
@@ -1261,13 +1361,13 @@ UTargetingComponent::~UTargetingComponent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FCrosshairDisplayData::StaticStruct, Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewStructOps, TEXT("CrosshairDisplayData"),&Z_Registration_Info_UScriptStruct_FCrosshairDisplayData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCrosshairDisplayData), 1386935279U) },
+		{ FCrosshairDisplayData::StaticStruct, Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewStructOps, TEXT("CrosshairDisplayData"),&Z_Registration_Info_UScriptStruct_FCrosshairDisplayData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCrosshairDisplayData), 3977036123U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 3782800705U) },
+		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 2073801202U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_2233675082{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_3706966663{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

@@ -7,14 +7,16 @@
 #include "ActorComponents/TargetingType.h"
 #include "TargetingComponent.generated.h"
 
+class ALockOnReticleActor;
+class ATrainerHUD;
+
 USTRUCT(BlueprintType)
 struct FCrosshairDisplayData
 {
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-	float Spead = 16.f;
-
+	float Spread = 16.f;
 
 	UPROPERTY(BlueprintReadWrite)
 	FLinearColor Color = FLinearColor::White;
@@ -38,6 +40,9 @@ class PROJECTMIMIKYU_API UTargetingComponent : public UActorComponent
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY()
+	TObjectPtr<ATrainerHUD> OwnerTrainerHUD = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|State")
 	EAimContext CurrentAimContext = EAimContext::Combat;
@@ -154,6 +159,13 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
 	AActor* GetCurrentLockedTarget() const { return CurrentLockedTarget.Get(); }
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Lock-On")
+	TSubclassOf<ALockOnReticleActor> LockOnReticleActorClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Lock-On")
+	TWeakObjectPtr<ALockOnReticleActor> CurrentLockOnReticle;
+
 #pragma endregion
 
 #pragma region Free Aim
@@ -189,6 +201,7 @@ protected:
 	void UpdateAimMode();
 	void UpdateFreeAimTrace();
 	void UpdateLockOnState(float DeltaTime);
+	void UpdateCrosshair(float DeltaTime);
 #pragma endregion
 
 #pragma region Queries
@@ -199,12 +212,48 @@ protected:
 	AActor* FindSwitchTarget(bool bSwitchRight) const;
 #pragma endregion
 
-
 #pragma region Helpers
 	float ScoreTargetForLockOn(AActor* Candidate) const;
 	bool HasLineOfSightToTarget(AActor* Target) const;
 	FVector GetTargetAimPoint(AActor* Target) const;
 	bool IsActorTargetable(AActor* Target, EAimTypeMode QueryAimMode) const;
 	bool IsActorHostileOrRelevant(AActor* Target) const;
+	ATrainerHUD* GetTrainerHUD();
 #pragma endregion
+
+#pragma region Crosshair Visual Settings
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairBaseSpread = 16.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairMaxVelocitySpread = 18.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairInAirSpreadAmount = 28.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairAimReductionAmount = 12.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairTargetReductionAmount = 8.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairVelocityFactor = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairInAirFactor = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairAimFactor = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CrosshairTargetFactor = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	float CurrentCrosshairSpread = 16.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting|Crosshair")
+	FCrosshairDisplayData CrosshairDisplayData;
+#pragma endregion
+
 };

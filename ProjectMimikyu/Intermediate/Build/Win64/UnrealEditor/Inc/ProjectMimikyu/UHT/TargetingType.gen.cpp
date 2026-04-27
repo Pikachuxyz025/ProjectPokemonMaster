@@ -16,6 +16,7 @@ COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FAimData();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
@@ -261,18 +262,76 @@ UScriptStruct* Z_Construct_UScriptStruct_FAimData()
 }
 // ********** End ScriptStruct FAimData ************************************************************
 
+// ********** Begin Enum ETargetCameraMode *********************************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_ETargetCameraMode;
+static UEnum* ETargetCameraMode_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("ETargetCameraMode"));
+	}
+	return Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<ETargetCameraMode>()
+{
+	return ETargetCameraMode_StaticEnum();
+}
+struct Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "Default.DisplayName", "Default" },
+		{ "Default.Name", "ETargetCameraMode::Default" },
+		{ "FreeAim.DisplayName", "Free Aim" },
+		{ "FreeAim.Name", "ETargetCameraMode::FreeAim" },
+		{ "LockOn.DisplayName", "Lock On" },
+		{ "LockOn.Name", "ETargetCameraMode::LockOn" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingType.h" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "ETargetCameraMode::Default", (int64)ETargetCameraMode::Default },
+		{ "ETargetCameraMode::LockOn", (int64)ETargetCameraMode::LockOn },
+		{ "ETargetCameraMode::FreeAim", (int64)ETargetCameraMode::FreeAim },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+}; // struct Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics 
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	"ETargetCameraMode",
+	"ETargetCameraMode",
+	Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode()
+{
+	if (!Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton;
+}
+// ********** End Enum ETargetCameraMode ***********************************************************
+
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
 		{ EAimTypeMode_StaticEnum, TEXT("EAimTypeMode"), &Z_Registration_Info_UEnum_EAimTypeMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2135877534U) },
 		{ EAimContext_StaticEnum, TEXT("EAimContext"), &Z_Registration_Info_UEnum_EAimContext, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 726377209U) },
+		{ ETargetCameraMode_StaticEnum, TEXT("ETargetCameraMode"), &Z_Registration_Info_UEnum_ETargetCameraMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1046748059U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FAimData::StaticStruct, Z_Construct_UScriptStruct_FAimData_Statics::NewStructOps, TEXT("AimData"),&Z_Registration_Info_UScriptStruct_FAimData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAimData), 3223164285U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_2161788560{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_558173710{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

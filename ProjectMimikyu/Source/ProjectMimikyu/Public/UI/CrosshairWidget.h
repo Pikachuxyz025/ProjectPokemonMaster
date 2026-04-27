@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include <ActorComponents/TargetingComponent.h>
 #include "CrosshairWidget.generated.h"
+
 
 class UImage;
 class UTexture2D;
@@ -20,12 +22,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Crosshair")
 	void SetCrosshairColor(FLinearColor Color);
 
+	UFUNCTION(BlueprintCallable, Category = "Crosshair")
+	void SetCrosshairDisplayData(const FCrosshairDisplayData& CrosshairData);
 protected:
+
+	virtual void NativeConstruct() override;
+
+	void InitializeCrosshairPiece(UImage* Image) const;
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UImage> IMG_Center;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta  = (BindWidget))
 	TObjectPtr<UImage> IMG_Left;
 
 	UPROPERTY(meta = (BindWidget))

@@ -155,6 +155,12 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Actors">
+      <UniqueIdentifier>{A5CE9ECB-68A4-3F50-9F3E-6B7333482E80}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Actors\LockOnReticleActor.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Actors</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\AIControllers">
       <UniqueIdentifier>{B6A94C6B-3C09-3327-8E37-A8253E579551}</UniqueIdentifier>
     </Filter>
@@ -547,6 +553,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Actors">
+      <UniqueIdentifier>{420438D6-D231-3131-AE41-8E550577394D}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Actors\LockOnReticleActor.h">
+      <Filter>Source\ProjectMimikyu\Public\Actors</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\AIControllers">
       <UniqueIdentifier>{B6BFAE92-5830-35BB-AF35-2E40F5D5C2EF}</UniqueIdentifier>

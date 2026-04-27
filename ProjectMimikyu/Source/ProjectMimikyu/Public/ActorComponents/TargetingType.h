@@ -47,3 +47,11 @@ struct FAimData
 	UPROPERTY(BlueprintReadOnly)
 	bool bUsingAimAssist = false;
 };
+
+UENUM(BlueprintType)
+enum class ETargetCameraMode : uint8
+{
+	Default		UMETA(DisplayName = "Default"),
+	LockOn		UMETA(DisplayName = "Lock On"),
+	FreeAim		UMETA(DisplayName = "Free Aim")
+};

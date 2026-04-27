@@ -3,6 +3,7 @@
 
 #include "UI/TrainerHUD.h"
 #include "UI/TrainerOverlay.h"
+#include "UI/CrosshairWidget.h"
 #include "Interfaces/MouseInterface.h"
 #include "UI/PlayerInventoryMenuOverlay.h"
 #include "AbilitySystemComponent.h"
@@ -60,18 +61,81 @@ void ATrainerHUD::AddTrainerOverlay()
 	TrainerOverlay->SetWidgetController(WC);
 
 	TrainerOverlay->AddToViewport();
+	AddCrosshairWidget();
 }
 
-/*void ATrainerHUD::AddInventoryOverlay()
+void ATrainerHUD::AddCrosshairWidget()
 {
-	APlayerController* PlayerController = GetOwningPlayerController();
-	if (PlayerController)
+	APlayerController* PC = GetOwningPlayerController();
+	if (!PC)
 	{
-		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), InventoryOverlayClass);
-		InventoryOverlay = Cast<UPlayerInventoryMenuOverlay>(Widget);
-		InventoryOverlay->AddToViewport();
+		UE_LOG(LogTemp, Warning, TEXT("AddCrosshairWidget failed: No Player Controller found for HUD"));
+		return;
 	}
-}*/
+
+	if (CrosshairWidget)
+	{
+		return;
+	}
+
+	if (!CrosshairWidgetClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddCrosshairWidget failed: CrosshairWidgetClass is not set"));
+		return;
+	}
+	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
+	CrosshairWidget = Cast<UCrosshairWidget>(Widget);
+	if (!CrosshairWidget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddCrosshairWidget failed: Created widget is invalid"));
+		return;
+	}
+
+	CrosshairWidget->AddToViewport();
+}
+
+void ATrainerHUD::RemoveCrosshairWidget()
+{
+	if (CrosshairWidget && CrosshairWidget->IsInViewport())
+	{
+		CrosshairWidget->RemoveFromParent();
+	}
+}
+
+void ATrainerHUD::RestoreCrosshairWidget()
+{
+	if (CrosshairWidget && !CrosshairWidget->IsInViewport())
+	{
+		CrosshairWidget->AddToViewport();
+	}
+	else if (!CrosshairWidget)
+	{
+		AddCrosshairWidget();
+	}
+}
+
+void ATrainerHUD::RestoreGameplayHUD(UUserWidget* CurrentMenuWidget)
+{
+	if (CurrentMenuWidget && CurrentMenuWidget->IsInViewport())
+	{
+		CurrentMenuWidget->RemoveFromParent();
+	}
+
+	if (TrainerOverlay && !TrainerOverlay->IsInViewport())
+	{
+		TrainerOverlay->AddToViewport();
+	}
+
+	RestoreCrosshairWidget();
+}
+
+void ATrainerHUD::UpdateCrosshairDisplay(const FCrosshairDisplayData& CrosshairData)
+{
+	if (CrosshairWidget)
+	{
+		CrosshairWidget->SetCrosshairDisplayData(CrosshairData);
+	}
+}
 
 void ATrainerHUD::AddPlayerInventoryMenuOverlay()
 {

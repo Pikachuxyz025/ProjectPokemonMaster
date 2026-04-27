@@ -373,6 +373,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
+		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::Input_ToggleLockOn);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);

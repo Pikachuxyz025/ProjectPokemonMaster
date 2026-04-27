@@ -1,3 +1,4 @@
+
 // Copyright Epic Games, Inc. All Rights Reserved.
 using namespace UP;
 #pragma once
@@ -93,11 +94,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_Command;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_ToggleLockOn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* IA_Aim;
 #pragma endregion
 
 	// HUD / moveset display
 	// Camera Usage
+
+#pragma region Dynamic Camera
+	
 #pragma endregion
+
 
 #pragma region Server-Authoritative Gameplay
 	// Catching/Returning Pokemon
