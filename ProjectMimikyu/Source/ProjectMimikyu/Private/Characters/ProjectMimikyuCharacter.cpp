@@ -24,6 +24,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
+#include "Items/PokeBall.h"
 #include "PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "PokemonDebugTags.h"
@@ -206,12 +207,7 @@ void AProjectMimikyuCharacter::ServerRequestReturnCurrentPokemon_Implementation(
 
 void AProjectMimikyuCharacter::UpdateTargetingCamera(float DeltaTime)
 {
-	if (!IsLocallyControlled())
-	{
-		return;
-	}
-
-	if (!TargetingComponent)
+	if (!IsLocallyControlled() || !TargetingComponent || !FollowCamera)
 	{
 		return;
 	}
@@ -220,6 +216,8 @@ void AProjectMimikyuCharacter::UpdateTargetingCamera(float DeltaTime)
 	{
 		UpdateLockOnCamera(DeltaTime);
 	}
+
+	UpdateAimZoom(DeltaTime);
 }
 
 void AProjectMimikyuCharacter::UpdateLockOnCamera(float DeltaTime)
@@ -269,6 +267,26 @@ void AProjectMimikyuCharacter::UpdateLockOnCamera(float DeltaTime)
 			false,
 			0.f
 		);
+	}
+}
+
+void AProjectMimikyuCharacter::UpdateAimZoom(float DeltaTime)
+{
+	const bool bShouldZoom = TargetingComponent && TargetingComponent->IsInFreeAim();
+
+	const float TargetFOV = bShouldZoom ? FreeAimZoomFOV : DefaultFOV;
+
+	const float NewFOV = FMath::FInterpTo(FollowCamera->FieldOfView, TargetFOV, DeltaTime, AimFOVInterpSpeed);
+
+	FollowCamera->SetFieldOfView(NewFOV);
+
+	// Movement speed adjustment based on zoom level
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		const float TargetSpeed = bShouldZoom ? AimWalkSpeed : NormalWalkSpeed;
+
+		MoveComp->MaxWalkSpeed = FMath::FInterpTo(MoveComp->MaxWalkSpeed, TargetSpeed, DeltaTime, WalkSpeedInterpSpeed);
 	}
 }
 
@@ -436,12 +454,15 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Look);
 
 		PokemonInput->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
-		PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
-		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ComeOnOut);
+		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ThrowPokeballInput);
+		//PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
+		//PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ComeOnOut);
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
 		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_ToggleLockOn);
+		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::Input_BeginFreeAim);
+		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_EndFreeAim);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
@@ -545,6 +566,61 @@ void AProjectMimikyuCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_
 
 
 #pragma region Come On Out
+
+void AProjectMimikyuCharacter::ThrowPokeball(const FAimData& AimData)
+{
+	if (!PokeballClass || !TargetingComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: PokeballClass or TargetingComponent is null."));
+		return;
+	}
+
+	const FVector SpawnLocation = 
+		GetActorLocation() 
+		+ GetActorForwardVector() * PokeballSpawnForwardOffset 
+		+ FVector::UpVector * PokeballSpawnUpOffset;
+
+	const FVector LaunchVelocity =
+		AimData.bHasProjectileSolution
+		? AimData.ProjectileLaunchVelocity
+		: AimData.AimDirection * PokeballThrowSpeed;
+
+	const FRotator SpawnRotation = LaunchVelocity.Rotation();
+
+	APokeBall* Pokeball = GetWorld()->SpawnActor<APokeBall>(PokeballClass, SpawnLocation, SpawnRotation);
+
+	if (Pokeball)
+	{
+		Pokeball->SetOwner(this);
+		Pokeball->LaunchProjectile(LaunchVelocity);
+	}
+}
+
+void AProjectMimikyuCharacter::ThrowPokeballInput()
+{
+	if (!TargetingComponent)
+		return;
+
+	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * PokeballSpawnForwardOffset + FVector::UpVector * PokeballSpawnUpOffset;
+
+	FAimData AimData;
+	TargetingComponent->BuildProjectileAimData
+	(
+		SpawnLocation,
+		PokeballThrowSpeed,
+		PokeballCollisionRadius,
+		AimData
+	);
+
+
+	ServerThrowPokeball(AimData);
+}
+
+void AProjectMimikyuCharacter::ServerThrowPokeball_Implementation(const FAimData& AimData)
+{
+	ThrowPokeball(AimData);
+}
+
 void AProjectMimikyuCharacter::ComeOnOut()
 {
 	if (!IsLocallyControlled())

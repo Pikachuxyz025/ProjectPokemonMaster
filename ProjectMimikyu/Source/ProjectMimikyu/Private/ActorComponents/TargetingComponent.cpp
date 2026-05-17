@@ -172,6 +172,28 @@ FAimData UTargetingComponent::BuildAimData() const
 		return AimData;
 	}
 
+	if (CurrentAimMode == EAimTypeMode::FreeAim)
+	{
+		AActor* CrosshairTarget = nullptr;
+		FVector CrosshairAimLocation = CachedAimLocation;
+
+		if (TryGetDirectCrosshairTarget(CrosshairTarget, CrosshairAimLocation))
+		{
+			AimData.TargetActor = CrosshairTarget;
+			AimData.AimWorldLocation = CrosshairAimLocation;
+			AimData.AimDirection = (CrosshairAimLocation - GetOwner()->GetActorLocation()).GetSafeNormal();
+			AimData.bHasValidTarget = true;
+			AimData.bUsingAimAssist = false;
+			return AimData;
+		}
+
+		// Important: free aim does NOT fall through to aim assist.
+		AimData.bHasValidTarget = false;
+		AimData.bUsingAimAssist = false;
+		return AimData;
+	}
+
+	// Aim assist only for non-lock-on, non-free-aim quick commands.
 	AActor* AimAssistTarget = nullptr;
 	FVector AssistedAimLocation = FVector::ZeroVector;
 	if (TryGetAimAssistTarget(AimAssistTarget, AssistedAimLocation))
@@ -183,8 +205,52 @@ FAimData UTargetingComponent::BuildAimData() const
 		AimData.bUsingAimAssist = true;
 		return AimData;
 	}
+
 	AimData.bHasValidTarget = false;
+	AimData.bUsingAimAssist = false;
 	return AimData;
+}
+
+bool UTargetingComponent::BuildProjectileAimData(const FVector& ProjectileSpawnLocation, float MaxProjectileSpeed, float ProjectileRadius, FAimData& OutAimData) const
+{
+	OutAimData = BuildAimData();
+
+	FVector TossVelocity;
+	const float OverrideGravityZ = 0.f; // uses the default gravity if left at 0
+
+	const bool bHasSolution = UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		TossVelocity,
+		ProjectileSpawnLocation,
+		OutAimData.AimWorldLocation,
+		MaxProjectileSpeed,
+		false, // bHighArc
+		ProjectileRadius, // OverrideRadius
+		OverrideGravityZ,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
+
+	if (bHasSolution)
+	{
+		OutAimData.bHasProjectileSolution = true;
+		OutAimData.ProjectileLaunchVelocity = TossVelocity;
+		OutAimData.ProjectileLaunchSpeed = TossVelocity.Size();
+		OutAimData.bProjectileAtMaxSpeed = false;
+		return true;
+	}
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+
+	if(GetViewPoint(ViewLocation, ViewRotation))
+	{
+		OutAimData.bHasProjectileSolution = false;
+		OutAimData.ProjectileLaunchVelocity = ViewRotation.Vector()*MaxProjectileSpeed;
+		OutAimData.ProjectileLaunchSpeed = MaxProjectileSpeed;
+		OutAimData.bProjectileAtMaxSpeed = true;
+	}
+
+	return false;
 }
 
 bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
@@ -293,6 +359,38 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 
 	OutTarget = BestTarget;
 	OutAimLocation = BestTargetPoint;
+	return true;
+}
+
+bool UTargetingComponent::TryGetDirectCrosshairTarget(AActor*& OutTarget, FVector& OutAimLocation) const
+{
+	OutTarget = nullptr;
+	OutAimLocation = CachedAimLocation;
+
+	FHitResult Hit;
+	if (!PerformAimTrace(Hit))
+	{
+		return false;
+	}
+	
+	AActor* HitActor = Hit.GetActor();
+	if(!IsValid(HitActor))
+	{
+		return false;
+	}
+
+	if (!IsActorTargetable(HitActor, EAimTypeMode::FreeAim))
+	{
+		return false;
+	}
+
+	if (!IsActorHostileOrRelevant(HitActor))
+	{
+		return false;
+	}
+
+	OutTarget = HitActor;
+	OutAimLocation = Hit.ImpactPoint;
 	return true;
 }
 

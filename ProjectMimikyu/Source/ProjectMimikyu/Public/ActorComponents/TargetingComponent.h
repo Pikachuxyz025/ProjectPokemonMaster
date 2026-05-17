@@ -106,7 +106,7 @@ protected:
 	float AimAssistMaxDistance = 2500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Aim Assist")
-	float AimAssistConeDotThreshold = 0.94f;
+	float AimAssistConeDotThreshold = 0.985f;
 #pragma endregion
 
 #pragma region Runtime
@@ -185,6 +185,8 @@ public:
 
 #pragma region Final Aim Output
 	FAimData BuildAimData() const;
+
+	bool BuildProjectileAimData(const FVector& ProjectileSpawnLocation,float MaxProjectileSpeed, float ProjectileRadius,FAimData& OutAimData) const;
 #pragma endregion
 
 #pragma region Validation / Assist
@@ -193,6 +195,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
 	bool TryGetAimAssistTarget(AActor*& OutTarget, FVector& OutAimLocation) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Targeting")
+	bool TryGetDirectCrosshairTarget(AActor*& OutTarget, FVector& OutAimLocation) const;
 #pragma endregion
 
 protected:

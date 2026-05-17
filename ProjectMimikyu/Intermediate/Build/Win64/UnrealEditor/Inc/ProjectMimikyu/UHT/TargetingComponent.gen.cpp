@@ -917,6 +917,72 @@ DEFINE_FUNCTION(UTargetingComponent::execTryGetAimAssistTarget)
 }
 // ********** End Class UTargetingComponent Function TryGetAimAssistTarget *************************
 
+// ********** Begin Class UTargetingComponent Function TryGetDirectCrosshairTarget *****************
+struct Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics
+{
+	struct TargetingComponent_eventTryGetDirectCrosshairTarget_Parms
+	{
+		AActor* OutTarget;
+		FVector OutAimLocation;
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Targeting" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TargetingComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function TryGetDirectCrosshairTarget constinit property declarations ***********
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_OutTarget;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_OutAimLocation;
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function TryGetDirectCrosshairTarget constinit property declarations *************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function TryGetDirectCrosshairTarget Property Definitions **********************
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_OutTarget = { "OutTarget", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventTryGetDirectCrosshairTarget_Parms, OutTarget), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_OutAimLocation = { "OutAimLocation", nullptr, (EPropertyFlags)0x0010000000000180, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TargetingComponent_eventTryGetDirectCrosshairTarget_Parms, OutAimLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+void Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((TargetingComponent_eventTryGetDirectCrosshairTarget_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(TargetingComponent_eventTryGetDirectCrosshairTarget_Parms), &Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_OutTarget,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_OutAimLocation,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::PropPointers) < 2048);
+// ********** End Function TryGetDirectCrosshairTarget Property Definitions ************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UTargetingComponent, nullptr, "TryGetDirectCrosshairTarget", 	Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::TargetingComponent_eventTryGetDirectCrosshairTarget_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54C20401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::Function_MetaDataParams), Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::TargetingComponent_eventTryGetDirectCrosshairTarget_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UTargetingComponent::execTryGetDirectCrosshairTarget)
+{
+	P_GET_OBJECT_REF(AActor,Z_Param_Out_OutTarget);
+	P_GET_STRUCT_REF(FVector,Z_Param_Out_OutAimLocation);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->TryGetDirectCrosshairTarget(P_ARG_GC_BARRIER(Z_Param_Out_OutTarget),Z_Param_Out_OutAimLocation);
+	P_NATIVE_END;
+}
+// ********** End Class UTargetingComponent Function TryGetDirectCrosshairTarget *******************
+
 // ********** Begin Class UTargetingComponent Function TryLockOnToBestTarget ***********************
 struct Z_Construct_UFunction_UTargetingComponent_TryLockOnToBestTarget_Statics
 {
@@ -1210,6 +1276,7 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 		{ .NameUTF8 = UTF8TEXT("SwitchTargetRight"), .Pointer = &UTargetingComponent::execSwitchTargetRight },
 		{ .NameUTF8 = UTF8TEXT("ToggleLockOn"), .Pointer = &UTargetingComponent::execToggleLockOn },
 		{ .NameUTF8 = UTF8TEXT("TryGetAimAssistTarget"), .Pointer = &UTargetingComponent::execTryGetAimAssistTarget },
+		{ .NameUTF8 = UTF8TEXT("TryGetDirectCrosshairTarget"), .Pointer = &UTargetingComponent::execTryGetDirectCrosshairTarget },
 		{ .NameUTF8 = UTF8TEXT("TryLockOnToBestTarget"), .Pointer = &UTargetingComponent::execTryLockOnToBestTarget },
 	};
 	static UObject* (*const DependentSingletons[])();
@@ -1230,6 +1297,7 @@ struct Z_Construct_UClass_UTargetingComponent_Statics
 		{ &Z_Construct_UFunction_UTargetingComponent_SwitchTargetRight, "SwitchTargetRight" }, // 3158887825
 		{ &Z_Construct_UFunction_UTargetingComponent_ToggleLockOn, "ToggleLockOn" }, // 2870946607
 		{ &Z_Construct_UFunction_UTargetingComponent_TryGetAimAssistTarget, "TryGetAimAssistTarget" }, // 3189535486
+		{ &Z_Construct_UFunction_UTargetingComponent_TryGetDirectCrosshairTarget, "TryGetDirectCrosshairTarget" }, // 943533645
 		{ &Z_Construct_UFunction_UTargetingComponent_TryLockOnToBestTarget, "TryLockOnToBestTarget" }, // 3438990547
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
@@ -1364,10 +1432,10 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FCrosshairDisplayData::StaticStruct, Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics::NewStructOps, TEXT("CrosshairDisplayData"),&Z_Registration_Info_UScriptStruct_FCrosshairDisplayData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FCrosshairDisplayData), 3977036123U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 2073801202U) },
+		{ Z_Construct_UClass_UTargetingComponent, UTargetingComponent::StaticClass, TEXT("UTargetingComponent"), &Z_Registration_Info_UClass_UTargetingComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTargetingComponent), 1182502163U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_3706966663{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_1538902220{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

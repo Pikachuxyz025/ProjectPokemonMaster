@@ -9,10 +9,11 @@
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/HUD/BP_TrainerHUD.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Input/IMC_Default.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Input/Actions/IA_Aim.uasset",
-				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Actor/BP_WorldLockOnReticle.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Actor/BP_LockOnReticle.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Input/Actions/IA_LockOn.uasset",
-				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/ThirdPerson/Blueprints/BP_TrainerCharacter.uasset"
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/ThirdPerson/Blueprints/BP_TrainerCharacter.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Items/Pokeballs/BP_Pokeball.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Actor/BP_WorldLockOnReticle.uasset"
 			]
 		}
 	]

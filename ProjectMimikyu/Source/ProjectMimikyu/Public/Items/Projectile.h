@@ -35,4 +35,6 @@ protected:
 
 public:
 	USphereComponent* GetSphereComponent() { return SphereCollision; }
+
+	void LaunchProjectile(const FVector& LaunchVelocity);
 };

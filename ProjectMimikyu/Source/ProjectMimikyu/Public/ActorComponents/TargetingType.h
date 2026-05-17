@@ -42,10 +42,22 @@ struct FAimData
 	FVector AimDirection = FVector::ForwardVector;
 
 	UPROPERTY(BlueprintReadOnly)
+	FVector ProjectileLaunchVelocity = FVector::ZeroVector;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bHasProjectileSolution = false;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bHasValidTarget = false;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bUsingAimAssist = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bProjectileAtMaxSpeed = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	float ProjectileLaunchSpeed = 0.f;
 };
 
 UENUM(BlueprintType)

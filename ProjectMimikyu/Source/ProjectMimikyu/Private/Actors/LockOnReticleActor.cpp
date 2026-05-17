@@ -47,14 +47,12 @@ FVector ALockOnReticleActor::GetReticleDisplayLocation(AActor* TargetActor) cons
 {
 	if (!TargetActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LockReticle] GetReticleDisplayLocation failed: TargetActor is null"));
 		return GetActorLocation();
 	}
 
 	APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
 	if (!PC || !PC->PlayerCameraManager)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LockReticle] Target=%s No valid PlayerCameraManager"), *GetNameSafe(TargetActor));
 		return TargetActor->GetActorLocation();
 	}
 
@@ -64,17 +62,6 @@ FVector ALockOnReticleActor::GetReticleDisplayLocation(AActor* TargetActor) cons
 
 	const FVector DesiredLocation = TargetLocation + TowardCamera * ReticleForwardOffset;
 
-	UE_LOG(
-		LogTemp,
-		Display,
-		TEXT("[LockReticleCalc] Target=%s TargetLoc=(%.2f %.2f %.2f) Camera=(%.2f %.2f %.2f) TowardCamera=(%.2f %.2f %.2f) Desired=(%.2f %.2f %.2f)"),
-		*GetNameSafe(TargetActor),
-		TargetLocation.X, TargetLocation.Y, TargetLocation.Z,
-		CameraLocation.X, CameraLocation.Y, CameraLocation.Z,
-		TowardCamera.X, TowardCamera.Y, TowardCamera.Z,
-		DesiredLocation.X, DesiredLocation.Y, DesiredLocation.Z
-	);
-
 	return DesiredLocation;
 }
 
@@ -82,13 +69,10 @@ void ALockOnReticleActor::LockOnTarget(AActor* TargetActor)
 {
 	if (!TargetActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[LockReticle] LockOnTarget failed: TargetActor null"));
 		return;
 	}
 
 	LockedTarget = TargetActor;
-
-	UE_LOG(LogTemp, Display, TEXT("[LockReticle] Locked onto Target=%s"), *GetNameSafe(TargetActor));
 
 	SetActorHiddenInGame(false);
 	SetActorLocation(GetReticleDisplayLocation(TargetActor));
@@ -96,7 +80,6 @@ void ALockOnReticleActor::LockOnTarget(AActor* TargetActor)
 
 void ALockOnReticleActor::UnlockTarget()
 {
-	UE_LOG(LogTemp, Warning, TEXT("[LockReticle] UnlockTarget called. OldTarget=%s"), *GetNameSafe(LockedTarget));
 	LockedTarget = nullptr;
 	SetActorHiddenInGame(true);
 	//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
@@ -122,22 +105,7 @@ void ALockOnReticleActor::Tick(float DeltaTime)
 
 		const float RemainingDist = FVector::Distance(CurrentLocation, DesiredLocation);
 
-		UE_LOG(
-			LogTemp,
-			Display,
-			TEXT("[LockReticle] Target=%s Current=(%.2f %.2f %.2f) Desired=(%.2f %.2f %.2f) New=(%.2f %.2f %.2f) RemainingDist=%.2f"),
-			*GetNameSafe(LockedTarget),
-			CurrentLocation.X, CurrentLocation.Y, CurrentLocation.Z,
-			DesiredLocation.X, DesiredLocation.Y, DesiredLocation.Z,
-			NewLocation.X, NewLocation.Y, NewLocation.Z,
-			RemainingDist
-		);
-
 		SetActorLocation(NewLocation);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[LockReticle] LockedTarget invalid or lost. Reticle=%s"), *GetNameSafe(this));
 	}
 
 	LookAtCamera();

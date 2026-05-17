@@ -25,6 +25,7 @@ class APokemon_Parent;
 class UPokemonAbilitySystemComponent;
 class UInventorySystemComponent;
 class UTargetingComponent;
+class APokeBall;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -122,8 +123,27 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
 	float TargetSwitchCooldown = .35f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
+	float DefaultFOV = 90.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
+	float FreeAimZoomFOV = 65.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
+	float AimFOVInterpSpeed = 8.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float NormalWalkSpeed = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float AimWalkSpeed = 275.f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float WalkSpeedInterpSpeed = 8.f;
+
 	void UpdateTargetingCamera(float DeltaTime);
 	void UpdateLockOnCamera(float DeltaTime);
+	void UpdateAimZoom(float DeltaTime);
 #pragma endregion
 
 
@@ -140,6 +160,28 @@ protected:
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
 	void CatchPokemon();
+
+	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
+	TSubclassOf<APokeBall> PokeballClass;
+
+	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
+	float PokeballThrowSpeed = 1800.f;
+
+	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
+	float PokeballSpawnForwardOffset = 80.f;
+
+	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
+	float PokeballSpawnUpOffset = 40.f;
+
+	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
+	float PokeballCollisionRadius = 12.f;
+
+	void ThrowPokeball(const FAimData& AimData);
+	void ThrowPokeballInput();
+
+	UFUNCTION(Server, Reliable)
+	void ServerThrowPokeball(const FAimData& AimData);
+
 	// Sending Pokemon out 
 
 	void ComeOnOut();

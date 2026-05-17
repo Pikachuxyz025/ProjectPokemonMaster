@@ -10,14 +10,17 @@ AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+
 	SetReplicateMovement(true);
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
 	SetRootComponent(SphereCollision);
+
 	SphereCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	SphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SphereCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	SphereCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-	SphereCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	SphereCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
+	SphereCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 }
 
  void AProjectile::BeginPlay()
@@ -36,4 +39,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimi
 void AProjectile::OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Destroy();
+}
+
+void AProjectile::LaunchProjectile(const FVector& LaunchVelocity)
+{
+	if(ProjectileMovementComponent)
+	{
+		ProjectileMovementComponent->Velocity = LaunchVelocity;
+	}
 }

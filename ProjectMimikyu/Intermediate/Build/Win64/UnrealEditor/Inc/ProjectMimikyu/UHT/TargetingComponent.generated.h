@@ -31,6 +31,7 @@ struct FCrosshairDisplayData;
 
 // ********** Begin Class UTargetingComponent ******************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingComponent_h_40_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execTryGetDirectCrosshairTarget); \
 	DECLARE_FUNCTION(execTryGetAimAssistTarget); \
 	DECLARE_FUNCTION(execIsLockTargetStillValid); \
 	DECLARE_FUNCTION(execGetCurrentAimDirection); \
