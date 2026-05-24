@@ -15,68 +15,64 @@ void EmptyLinkFunctionForGeneratedCodeTargetingType() {}
 COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimContext();
-PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode();
-PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FAimData();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
 
-// ********** Begin Enum EAimTypeMode **************************************************************
-static FEnumRegistrationInfo Z_Registration_Info_UEnum_EAimTypeMode;
-static UEnum* EAimTypeMode_StaticEnum()
+// ********** Begin Enum EPokemonAimMode ***********************************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_EPokemonAimMode;
+static UEnum* EPokemonAimMode_StaticEnum()
 {
-	if (!Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton)
+	if (!Z_Registration_Info_UEnum_EPokemonAimMode.OuterSingleton)
 	{
-		Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EAimTypeMode"));
+		Z_Registration_Info_UEnum_EPokemonAimMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EPokemonAimMode"));
 	}
-	return Z_Registration_Info_UEnum_EAimTypeMode.OuterSingleton;
+	return Z_Registration_Info_UEnum_EPokemonAimMode.OuterSingleton;
 }
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimTypeMode>()
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokemonAimMode>()
 {
-	return EAimTypeMode_StaticEnum();
+	return EPokemonAimMode_StaticEnum();
 }
-struct Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics
+struct Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "FreeAim.DisplayName", "Free Aim" },
-		{ "FreeAim.Name", "EAimTypeMode::FreeAim" },
+		{ "FreeAim.Name", "EPokemonAimMode::FreeAim" },
 		{ "LockOn.DisplayName", "Lock On" },
-		{ "LockOn.Name", "EAimTypeMode::LockOn" },
+		{ "LockOn.Name", "EPokemonAimMode::LockOn" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TargetingType.h" },
-		{ "None.DisplayName", "None" },
-		{ "None.Name", "EAimTypeMode::None" },
 	};
 #endif // WITH_METADATA
 	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
-		{ "EAimTypeMode::None", (int64)EAimTypeMode::None },
-		{ "EAimTypeMode::LockOn", (int64)EAimTypeMode::LockOn },
-		{ "EAimTypeMode::FreeAim", (int64)EAimTypeMode::FreeAim },
+		{ "EPokemonAimMode::LockOn", (int64)EPokemonAimMode::LockOn },
+		{ "EPokemonAimMode::FreeAim", (int64)EPokemonAimMode::FreeAim },
 	};
 	static const UECodeGen_Private::FEnumParams EnumParams;
-}; // struct Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics 
-const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::EnumParams = {
+}; // struct Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics 
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::EnumParams = {
 	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	nullptr,
-	"EAimTypeMode",
-	"EAimTypeMode",
-	Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enumerators,
+	"EPokemonAimMode",
+	"EPokemonAimMode",
+	Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::Enumerators,
 	RF_Public|RF_Transient|RF_MarkAsNative,
-	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enumerators),
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::Enumerators),
 	EEnumFlags::None,
 	(uint8)UEnum::ECppForm::EnumClass,
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::Enum_MetaDataParams)
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::Enum_MetaDataParams)
 };
-UEnum* Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode()
+UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode()
 {
-	if (!Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton)
+	if (!Z_Registration_Info_UEnum_EPokemonAimMode.InnerSingleton)
 	{
-		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode_Statics::EnumParams);
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EPokemonAimMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode_Statics::EnumParams);
 	}
-	return Z_Registration_Info_UEnum_EAimTypeMode.InnerSingleton;
+	return Z_Registration_Info_UEnum_EPokemonAimMode.InnerSingleton;
 }
-// ********** End Enum EAimTypeMode ****************************************************************
+// ********** End Enum EPokemonAimMode *************************************************************
 
 // ********** Begin Enum EAimContext ***************************************************************
 static FEnumRegistrationInfo Z_Registration_Info_UEnum_EAimContext;
@@ -232,7 +228,7 @@ class UScriptStruct* FAimData::StaticStruct()
 
 // ********** Begin ScriptStruct FAimData Property Definitions *************************************
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode = { "AimMode", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimMode), Z_Construct_UEnum_ProjectMimikyu_EAimTypeMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimMode_MetaData), NewProp_AimMode_MetaData) }; // 2135877534
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimMode = { "AimMode", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimMode), Z_Construct_UEnum_ProjectMimikyu_EPokemonAimMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimMode_MetaData), NewProp_AimMode_MetaData) }; // 3126381474
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_AimContext = { "AimContext", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, AimContext), Z_Construct_UEnum_ProjectMimikyu_EAimContext, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimContext_MetaData), NewProp_AimContext_MetaData) }; // 726377209
 const UECodeGen_Private::FWeakObjectPropertyParams Z_Construct_UScriptStruct_FAimData_Statics::NewProp_TargetActor = { "TargetActor", nullptr, (EPropertyFlags)0x0014000000000014, UECodeGen_Private::EPropertyGenFlags::WeakObject, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FAimData, TargetActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetActor_MetaData), NewProp_TargetActor_MetaData) };
@@ -300,76 +296,18 @@ UScriptStruct* Z_Construct_UScriptStruct_FAimData()
 }
 // ********** End ScriptStruct FAimData ************************************************************
 
-// ********** Begin Enum ETargetCameraMode *********************************************************
-static FEnumRegistrationInfo Z_Registration_Info_UEnum_ETargetCameraMode;
-static UEnum* ETargetCameraMode_StaticEnum()
-{
-	if (!Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton)
-	{
-		Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("ETargetCameraMode"));
-	}
-	return Z_Registration_Info_UEnum_ETargetCameraMode.OuterSingleton;
-}
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<ETargetCameraMode>()
-{
-	return ETargetCameraMode_StaticEnum();
-}
-struct Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
-		{ "Default.DisplayName", "Default" },
-		{ "Default.Name", "ETargetCameraMode::Default" },
-		{ "FreeAim.DisplayName", "Free Aim" },
-		{ "FreeAim.Name", "ETargetCameraMode::FreeAim" },
-		{ "LockOn.DisplayName", "Lock On" },
-		{ "LockOn.Name", "ETargetCameraMode::LockOn" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TargetingType.h" },
-	};
-#endif // WITH_METADATA
-	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
-		{ "ETargetCameraMode::Default", (int64)ETargetCameraMode::Default },
-		{ "ETargetCameraMode::LockOn", (int64)ETargetCameraMode::LockOn },
-		{ "ETargetCameraMode::FreeAim", (int64)ETargetCameraMode::FreeAim },
-	};
-	static const UECodeGen_Private::FEnumParams EnumParams;
-}; // struct Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics 
-const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::EnumParams = {
-	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	nullptr,
-	"ETargetCameraMode",
-	"ETargetCameraMode",
-	Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enumerators,
-	RF_Public|RF_Transient|RF_MarkAsNative,
-	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enumerators),
-	EEnumFlags::None,
-	(uint8)UEnum::ECppForm::EnumClass,
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::Enum_MetaDataParams)
-};
-UEnum* Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode()
-{
-	if (!Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton)
-	{
-		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_ETargetCameraMode_Statics::EnumParams);
-	}
-	return Z_Registration_Info_UEnum_ETargetCameraMode.InnerSingleton;
-}
-// ********** End Enum ETargetCameraMode ***********************************************************
-
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
-		{ EAimTypeMode_StaticEnum, TEXT("EAimTypeMode"), &Z_Registration_Info_UEnum_EAimTypeMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 2135877534U) },
+		{ EPokemonAimMode_StaticEnum, TEXT("EPokemonAimMode"), &Z_Registration_Info_UEnum_EPokemonAimMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3126381474U) },
 		{ EAimContext_StaticEnum, TEXT("EAimContext"), &Z_Registration_Info_UEnum_EAimContext, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 726377209U) },
-		{ ETargetCameraMode_StaticEnum, TEXT("ETargetCameraMode"), &Z_Registration_Info_UEnum_ETargetCameraMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1046748059U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FAimData::StaticStruct, Z_Construct_UScriptStruct_FAimData_Statics::NewStructOps, TEXT("AimData"),&Z_Registration_Info_UScriptStruct_FAimData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAimData), 473272226U) },
+		{ FAimData::StaticStruct, Z_Construct_UScriptStruct_FAimData_Statics::NewStructOps, TEXT("AimData"),&Z_Registration_Info_UScriptStruct_FAimData, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAimData), 713287180U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_1873288087{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_2785751405{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

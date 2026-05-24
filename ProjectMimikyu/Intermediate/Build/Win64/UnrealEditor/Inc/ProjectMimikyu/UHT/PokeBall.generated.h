@@ -15,10 +15,13 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class AActor;
+class UPrimitiveComponent;
 struct FHitResult;
 
 // ********** Begin Class APokeBall ****************************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execOnBeginOverlap); \
 	DECLARE_FUNCTION(execDestroyPokeball); \
 	DECLARE_FUNCTION(execOnPokeballStop);
 

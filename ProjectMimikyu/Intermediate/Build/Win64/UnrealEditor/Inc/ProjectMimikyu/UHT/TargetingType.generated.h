@@ -18,7 +18,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 // ********** Begin ScriptStruct FAimData **********************************************************
 struct Z_Construct_UScriptStruct_FAimData_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h_27_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h_26_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FAimData_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -29,16 +29,15 @@ struct FAimData;
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TargetingType_h
 
-// ********** Begin Enum EAimTypeMode **************************************************************
-#define FOREACH_ENUM_EAIMTYPEMODE(op) \
-	op(EAimTypeMode::None) \
-	op(EAimTypeMode::LockOn) \
-	op(EAimTypeMode::FreeAim) 
+// ********** Begin Enum EPokemonAimMode ***********************************************************
+#define FOREACH_ENUM_EPOKEMONAIMMODE(op) \
+	op(EPokemonAimMode::LockOn) \
+	op(EPokemonAimMode::FreeAim) 
 
-enum class EAimTypeMode : uint8;
-template<> struct TIsUEnumClass<EAimTypeMode> { enum { Value = true }; };
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimTypeMode>();
-// ********** End Enum EAimTypeMode ****************************************************************
+enum class EPokemonAimMode : uint8;
+template<> struct TIsUEnumClass<EPokemonAimMode> { enum { Value = true }; };
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokemonAimMode>();
+// ********** End Enum EPokemonAimMode *************************************************************
 
 // ********** Begin Enum EAimContext ***************************************************************
 #define FOREACH_ENUM_EAIMCONTEXT(op) \
@@ -51,16 +50,5 @@ enum class EAimContext : uint8;
 template<> struct TIsUEnumClass<EAimContext> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EAimContext>();
 // ********** End Enum EAimContext *****************************************************************
-
-// ********** Begin Enum ETargetCameraMode *********************************************************
-#define FOREACH_ENUM_ETARGETCAMERAMODE(op) \
-	op(ETargetCameraMode::Default) \
-	op(ETargetCameraMode::LockOn) \
-	op(ETargetCameraMode::FreeAim) 
-
-enum class ETargetCameraMode : uint8;
-template<> struct TIsUEnumClass<ETargetCameraMode> { enum { Value = true }; };
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<ETargetCameraMode>();
-// ********** End Enum ETargetCameraMode ***********************************************************
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

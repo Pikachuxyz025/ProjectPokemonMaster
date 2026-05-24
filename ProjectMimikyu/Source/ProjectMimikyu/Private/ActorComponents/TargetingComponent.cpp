@@ -141,20 +141,26 @@ void UTargetingComponent::SwitchTargetRight()
 	}
 }
 
-void UTargetingComponent::BeginFreeAim()
+void UTargetingComponent::BeginFocusAim()
 {
-	bFreeAimHeld = true;
-	UpdateAimMode();
+	bFocusAimHeld = true;
 }
 
-void UTargetingComponent::EndFreeAim()
+void UTargetingComponent::EndFocusAim()
 {
-	bFreeAimHeld = false;
-	UpdateAimMode();
+	bFocusAimHeld = false;
 }
 
 FAimData UTargetingComponent::BuildAimData() const
 {
+	// Show current aim mode
+	UE_LOG(LogTemp, Warning, TEXT("[BuildAimData] CurrentAimMode=%s CurrentAimContext=%s CachedAimLocation=(%.1f %.1f %.1f) CachedAimDirection=(%.2f %.2f %.2f)"),
+		*UEnum::GetValueAsString(CurrentAimMode),
+		*UEnum::GetValueAsString(CurrentAimContext),
+		CachedAimLocation.X, CachedAimLocation.Y, CachedAimLocation.Z,
+		CachedAimDirection.X, CachedAimDirection.Y, CachedAimDirection.Z
+	);
+
 	FAimData AimData;
 	AimData.AimMode = CurrentAimMode;
 	AimData.AimContext = CurrentAimContext;
@@ -162,7 +168,10 @@ FAimData UTargetingComponent::BuildAimData() const
 	AimData.AimWorldLocation = CachedAimLocation;
 	AimData.AimDirection = CachedAimDirection;
 
-	if (CurrentAimMode == EAimTypeMode::LockOn && CurrentLockedTarget.IsValid())
+
+	switch (CurrentAimMode)
+	{
+	case EPokemonAimMode::LockOn:
 	{
 		AimData.TargetActor = CurrentLockedTarget;
 		AimData.AimWorldLocation = GetTargetAimPoint(CurrentLockedTarget.Get());
@@ -172,7 +181,7 @@ FAimData UTargetingComponent::BuildAimData() const
 		return AimData;
 	}
 
-	if (CurrentAimMode == EAimTypeMode::FreeAim)
+	case EPokemonAimMode::FreeAim:
 	{
 		AActor* CrosshairTarget = nullptr;
 		FVector CrosshairAimLocation = CachedAimLocation;
@@ -184,6 +193,9 @@ FAimData UTargetingComponent::BuildAimData() const
 			AimData.AimDirection = (CrosshairAimLocation - GetOwner()->GetActorLocation()).GetSafeNormal();
 			AimData.bHasValidTarget = true;
 			AimData.bUsingAimAssist = false;
+
+			// Confirm that free aim with a direct target does not use aim assist.
+			UE_LOG(LogTemp, Warning, TEXT("[TryGetDirectCrosshairTarget Confirmed] Free aim with direct target found: %s. Aim assist should NOT be applied."), *GetNameSafe(CrosshairTarget));
 			return AimData;
 		}
 
@@ -191,6 +203,9 @@ FAimData UTargetingComponent::BuildAimData() const
 		AimData.bHasValidTarget = false;
 		AimData.bUsingAimAssist = false;
 		return AimData;
+	}
+	default:
+		break;
 	}
 
 	// Aim assist only for non-lock-on, non-free-aim quick commands.
@@ -230,6 +245,19 @@ bool UTargetingComponent::BuildProjectileAimData(const FVector& ProjectileSpawnL
 		ESuggestProjVelocityTraceOption::DoNotTrace
 	);
 
+	UE_LOG(LogTemp, Warning,
+		TEXT("[CatchSolver] HasSolution=%d Target=%s AimPoint=(%.1f %.1f %.1f) Spawn=(%.1f %.1f %.1f) Velocity=(%.1f %.1f %.1f) Speed=%.1f MaxSpeed=%.1f HasValidTarget=%d Assist=%d"),
+		bHasSolution,
+		*GetNameSafe(OutAimData.TargetActor.Get()),
+		OutAimData.AimWorldLocation.X, OutAimData.AimWorldLocation.Y, OutAimData.AimWorldLocation.Z,
+		ProjectileSpawnLocation.X, ProjectileSpawnLocation.Y, ProjectileSpawnLocation.Z,
+		TossVelocity.X, TossVelocity.Y, TossVelocity.Z,
+		TossVelocity.Size(),
+		MaxProjectileSpeed,
+		OutAimData.bHasValidTarget,
+		OutAimData.bUsingAimAssist
+	);
+
 	if (bHasSolution)
 	{
 		OutAimData.bHasProjectileSolution = true;
@@ -260,7 +288,7 @@ bool UTargetingComponent::IsLockTargetStillValid(AActor* Target) const
 		return false;
 	}
 
-	if (!IsActorTargetable(Target, EAimTypeMode::LockOn))
+	if (!IsActorTargetable(Target, EPokemonAimMode::LockOn))
 	{
 		return false;
 	}
@@ -309,7 +337,7 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 	const FVector ViewForward = ViewRotation.Vector();
 
 	TArray<AActor*> CandidateTargets;
-	GatherTargetCandidates(CandidateTargets,EAimTypeMode::FreeAim);
+	GatherTargetCandidates(CandidateTargets,EPokemonAimMode::FreeAim);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -359,6 +387,12 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 
 	OutTarget = BestTarget;
 	OutAimLocation = BestTargetPoint;
+	UE_LOG(LogTemp, Warning,
+		TEXT("[AimAssist] Target=%s AimPoint=(%.1f %.1f %.1f) Score=%.3f"),
+		*GetNameSafe(BestTarget),
+		BestTargetPoint.X, BestTargetPoint.Y, BestTargetPoint.Z,
+		BestScore
+	);
 	return true;
 }
 
@@ -370,45 +404,54 @@ bool UTargetingComponent::TryGetDirectCrosshairTarget(AActor*& OutTarget, FVecto
 	FHitResult Hit;
 	if (!PerformAimTrace(Hit))
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[DirectTarget] PerformAimTrace failed"));
 		return false;
 	}
-	
+
 	AActor* HitActor = Hit.GetActor();
-	if(!IsValid(HitActor))
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[DirectTarget] HitActor=%s Impact=(%.1f %.1f %.1f) Blocking=%d"),
+		*GetNameSafe(HitActor),
+		Hit.ImpactPoint.X,
+		Hit.ImpactPoint.Y,
+		Hit.ImpactPoint.Z,
+		Hit.bBlockingHit
+	);
+
+	if (!IsValid(HitActor))
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[DirectTarget] Failed: HitActor invalid"));
 		return false;
 	}
 
-	if (!IsActorTargetable(HitActor, EAimTypeMode::FreeAim))
+	if (!IsActorTargetable(HitActor, EPokemonAimMode::FreeAim))
 	{
-		return false;
-	}
-
-	if (!IsActorHostileOrRelevant(HitActor))
-	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[DirectTarget] Failed: Actor NOT targetable: %s"),
+			*GetNameSafe(HitActor));
 		return false;
 	}
 
 	OutTarget = HitActor;
 	OutAimLocation = Hit.ImpactPoint;
+
+	UE_LOG(LogTemp, Warning, 
+		TEXT("[DirectTarget] SUCCESS Target=%s AimPoint=(%.1f %.1f %.1f)"),
+		*GetNameSafe(HitActor),
+		OutAimLocation.X, OutAimLocation.Y, OutAimLocation.Z
+	);
+
 	return true;
 }
 
 void UTargetingComponent::UpdateAimMode()
 {
-	if(bFreeAimHeld)
-	{
-		CurrentAimMode = EAimTypeMode::FreeAim;
-		return;
-	}
-
-	if(CurrentLockedTarget.IsValid())
-	{
-		CurrentAimMode = EAimTypeMode::LockOn;
-		return;
-	}
-
-	CurrentAimMode = EAimTypeMode::None;
+	CurrentAimMode = CurrentLockedTarget.IsValid()
+		? EPokemonAimMode::LockOn
+		: EPokemonAimMode::FreeAim;
 }
 
 void UTargetingComponent::UpdateFreeAimTrace()
@@ -499,7 +542,7 @@ void UTargetingComponent::UpdateCrosshair(float DeltaTime)
 	}
 
 	// Aim Factor
-	if (IsInFreeAim() || IsLockedOn())
+	if (IsInFocusAim() || IsLockedOn())
 	{
 		CrosshairAimFactor = FMath::FInterpTo(
 			CrosshairAimFactor,
@@ -627,11 +670,22 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 	{
 		OutHit.ImpactPoint = End;
 	}
-
+	//UE_LOG(LogTemp, Warning,
+		//TEXT("[AimTrace] Start=(%.1f %.1f %.1f) End=(%.1f %.1f %.1f) Hit=%d Actor=%s Impact=(%.1f %.1f %.1f)"),
+		//Start.X, Start.Y, Start.Z,
+		//End.X, End.Y, End.Z,
+		//bHit,
+		//*GetNameSafe(OutHit.GetActor()),
+		//OutHit.ImpactPoint.X, OutHit.ImpactPoint.Y, OutHit.ImpactPoint.Z
+	//);
+	// Draw line from owner character to crosshair hit location for debugging
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), OutHit.ImpactPoint, FColor::Blue, false, 1.f, 0, 1.f);
+	DrawDebugSphere(GetWorld(), OutHit.ImpactPoint, 10.f, 12, FColor::Blue
+		, false, 1.f);
 	return true;
 }
 
-void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates, EAimTypeMode QueryAimMode) const
+void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates, EPokemonAimMode QueryAimMode) const
 {
 	OutCandidates.Reset();
 
@@ -676,7 +730,7 @@ void UTargetingComponent::GatherTargetCandidates(TArray<AActor*>& OutCandidates,
 AActor* UTargetingComponent::FindBestLockOnTarget() const
 {
 	TArray<AActor*> Candidates;
-	GatherTargetCandidates(Candidates,EAimTypeMode::LockOn);
+	GatherTargetCandidates(Candidates,EPokemonAimMode::LockOn);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -712,7 +766,7 @@ AActor* UTargetingComponent::FindSwitchTarget(bool bSwitchRight) const
 	const FVector CurrentTargetPoint = GetTargetAimPoint(CurrentLockedTarget.Get());
 
 	TArray<AActor*> Candidates;
-	GatherTargetCandidates(Candidates, EAimTypeMode::LockOn);
+	GatherTargetCandidates(Candidates, EPokemonAimMode::LockOn);
 
 	float BestScore = -FLT_MAX;
 	AActor* BestTarget = nullptr;
@@ -855,7 +909,7 @@ FVector UTargetingComponent::GetTargetAimPoint(AActor* Target) const
 	return Target->GetActorLocation();
 }
 
-bool UTargetingComponent::IsActorTargetable(AActor* Target, EAimTypeMode QueryAimMode) const
+bool UTargetingComponent::IsActorTargetable(AActor* Target, EPokemonAimMode QueryAimMode) const
 {
 	if (!IsValid(Target))
 	{
@@ -884,10 +938,9 @@ bool UTargetingComponent::IsActorTargetable(AActor* Target, EAimTypeMode QueryAi
 
 	switch (QueryAimMode)
 	{
-	case EAimTypeMode::None:
-	case EAimTypeMode::LockOn:
+	case EPokemonAimMode::LockOn:
 		return ITargetableInterface::Execute_CanBeLockOnTargeted(Target, CurrentAimContext);
-	case EAimTypeMode::FreeAim:
+	case EPokemonAimMode::FreeAim:
 		return ITargetableInterface::Execute_CanBeFreeAimTargeted(Target, CurrentAimContext);
 	default:
 		// For general searches, allow either style if that actor is targetable

@@ -3,6 +3,10 @@
 
 #include "Items/PokeBall.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Characters/Pokemon_Parent.h"
+#include <Characters/ProjectMimikyuCharacter.h>
+#include "Components/SphereComponent.h"
+
 
 APokeBall::APokeBall()
 {
@@ -31,6 +35,7 @@ void APokeBall::BeginPlay()
 	if (ProjectileMovementComponent)
 	{
 		ProjectileMovementComponent->OnProjectileStop.AddDynamic(this, &APokeBall::OnPokeballStop);
+		SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APokeBall::OnBeginOverlap);
 	}
 }
 
@@ -50,12 +55,37 @@ void APokeBall::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimiti
 {
 	UE_LOG(LogTemp, Display, TEXT("[Pokeball] Hit detected. Actor: %s"), *OtherActor->GetName());
 
-	// Temporary behavior:
-	// Do not destroy on impact
-	// Let ProjectileMovement bounce/roll and trigger OnProjectileStop.
+
+	HandlePokemonContact(OtherActor);
+	// For now, we'll just destroy. I actually intend on having the pokeball be interactable after the pokemon is caught
+	Destroy();
 }
 
 void APokeBall::DestroyPokeball()
 {
 	Destroy();
+}
+
+void APokeBall::HandlePokemonContact(AActor* OtherActor)
+{
+	APokemon_Parent* HitPokemon = Cast<APokemon_Parent>(OtherActor);
+	if (!IsValid(HitPokemon))
+	{
+		return;
+	}
+
+	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(GetOwner());
+	if (!IsValid(Trainer))
+	{
+		return;
+	}
+
+	Trainer->ServerRequestCatchPokemonWithPokeball(HitPokemon);
+}
+
+void APokeBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	HandlePokemonContact(OtherActor);
+
+	// If not a pokemon, let it bounce/roll/stop
 }

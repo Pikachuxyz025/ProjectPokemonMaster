@@ -1,6 +1,5 @@
-
 // Copyright Epic Games, Inc. All Rights Reserved.
-using namespace UP;
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -26,6 +25,8 @@ class UPokemonAbilitySystemComponent;
 class UInventorySystemComponent;
 class UTargetingComponent;
 class APokeBall;
+class UPokemonGameplayAbilities;
+class UEnhancedInputLocalPlayerSubsystem;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -33,134 +34,175 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Pare
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,AActor*,CombatTarget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
-UCLASS(config=Game)
+UCLASS(config = Game)
 class AProjectMimikyuCharacter : public ACharacter, public IPlayerInterface
 {
 	GENERATED_BODY()
+
 public:
 	AProjectMimikyuCharacter();
-	
-	void SetOverlappingItem(AItem* NewItem);
-	virtual void PostInitializeComponents()override;
 
+	// Public gameplay API
+	void SetOverlappingItem(AItem* NewItem);
+	void SetCurrentPokemon(APokemon_Parent* LeadPokemon);
+	void CommandDodge(FGameplayTag GameplayTag);
+
+	virtual void PostInitializeComponents() override;
+	virtual void UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon) override;
+
+	// Delegates
 	FOnPartyUpdated OnPartyUpdated;
 	FOnTargetRegistered OnTargetRegistered;
 	FOnPokemonSentOut OnPokemonSentOut;
-	//FOnPokemonHealthUpdated OnPokemonHealthUpdated;
 
-	void CommandDodge(FGameplayTag GameplayTag);
+	// Getters
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UInventorySystemComponent* GetInventorySystem() const { return InventorySystem; }
+	FORCEINLINE TArray<APokemon_Parent*> GetCurrentParty() const { return CurrentParty; }
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE APokemon_Parent* GetCurrentPokemon() const { return CurrentPokemon; }
 
-	virtual void UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon) override;
+	FORCEINLINE void SetCurrentThrowableItem(TSubclassOf<AProjectile> NewItemClass)
+	{
+		CurrentThrowableItem = NewItemClass;
+	}
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestCatchPokemonWithPokeball(APokemon_Parent* TargetPokemon);
+
 protected:
-#pragma region Local-Only
-	// Input Mapping
-#pragma region Input Mapping
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
+	// Unreal lifecycle
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
+	// Input handlers
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Pickup();
+	void TargetAndEngage();
 
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
+	void Input_ToggleLockOn();
+	void Input_BeginFocusAim();
+	void Input_EndFocusAim();
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
+	void ThrowPokeballInput();
+	void CatchPokemon();
+	void ComeOnOut();
 
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+	void SelectMove(int32 MoveIndex);
+	void ShowPokemonMoveset();
+	void RemovePokemonMoveset();
+	void HandleLockOnLookInput(const FVector2D& LookAxisVector);
 
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_Pickup;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_Throw;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_ThrowPokeball;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_Engage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_Command;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_ToggleLockOn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* IA_Aim;
-#pragma endregion
-
-	// HUD / moveset display
-	// Camera Usage
-
-#pragma region Dynamic Camera
-	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Camera|LockOn")
-	bool bEnableLockOnCamera = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
-	float LockOnCameraInterpSpeed = 8.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
-	float LockOnFocusTargetBias = .65f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
-	float LockOnFocusHeightOffset = 50.f;
-
-	float LastTargetSwitchTime = 0.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn")
-	float TargetSwitchCooldown = .35f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
-	float DefaultFOV = 90.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
-	float FreeAimZoomFOV = 65.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim")
-	float AimFOVInterpSpeed = 8.f;
-
-	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
-	float NormalWalkSpeed = 500.f;
-
-	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
-	float AimWalkSpeed = 275.f;
-
-	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
-	float WalkSpeedInterpSpeed = 8.f;
-
+	// Camera
 	void UpdateTargetingCamera(float DeltaTime);
 	void UpdateLockOnCamera(float DeltaTime);
 	void UpdateAimZoom(float DeltaTime);
-#pragma endregion
 
+private:
+	// Server RPCs
+	UFUNCTION(Server, Reliable)
+	void ServerSetPokemon(APokemon_Parent* LeadPokemon);
 
-#pragma region Server-Authoritative Gameplay
-	// Catching/Returning Pokemon
-	UFUNCTION(Server,Reliable)
-	void ServerRequestCatchPokemon(FVector TraceStart,FVector TraceEnd);
+	UFUNCTION(Server, Reliable)
+	void ServerRequestCatchPokemon(FVector TraceStart, FVector TraceEnd);
 
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server, Reliable)
 	void ServerRequestReturnCurrentPokemon();
 
+	UFUNCTION(Server, Reliable)
+	void ServerThrowPokeball(const FAimData& AimData);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestSendOutPokemon(FVector TraceStart, FVector TraceEnd);
+
+	UFUNCTION(Server, Reliable)
+	void ServerCallCommand(int32 MoveIndex, const FAimData& AimData);
+
+	UFUNCTION(Server, Reliable)
+	void ServerAddToCurrentParty(AActor* AddedActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerBroadcastTarget(AActor* Target);
+
+	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
 	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon);
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
-	void CatchPokemon();
+	void ThrowPokeball(const FAimData& AimData);
 
+	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
+	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
+
+	void AddToParty(APokemon_Parent* NewPokemon);
+	FPokemonInfo GetCurrentPokemonInfo();
+	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
+
+	// Cached getters
+	ATrainerController* GetTC();
+	ATrainerPlayerState* GetTPS();
+	UPokemonAbilitySystemComponent* GetPASC();
+
+	UFUNCTION()
+	void OnRep_CurrentPokemon();
+
+private:
+	// Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInventorySystemComponent> InventorySystem;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTargetingComponent> TargetingComponent;
+
+	// Input assets
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UPokemonInputConfig> InputConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_Pickup;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_Throw;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_ThrowPokeball;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_Engage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_Command;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_ToggleLockOn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_Aim;
+
+	// Poké Ball settings
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
 	TSubclassOf<APokeBall> PokeballClass;
 
@@ -176,84 +218,45 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
 	float PokeballCollisionRadius = 12.f;
 
-	void ThrowPokeball(const FAimData& AimData);
-	void ThrowPokeballInput();
+	// Camera settings
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
+	bool bEnableLockOnCamera = true;
 
-	UFUNCTION(Server, Reliable)
-	void ServerThrowPokeball(const FAimData& AimData);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
+	float LockOnCameraInterpSpeed = 8.f;
 
-	// Sending Pokemon out 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
+	float LockOnFocusTargetBias = .65f;
 
-	void ComeOnOut();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
+	float LockOnFocusHeightOffset = 50.f;
 
-	UFUNCTION(Server, Reliable)
-	void ServerRequestSendOutPokemon(FVector TraceStart,FVector TraceEnd);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
+	float TargetSwitchCooldown = .35f;
 
-	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd,FTransform& OutSpawnTransform) const;
+	float LastTargetSwitchTime = 0.f;
 
-	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim", meta = (AllowPrivateAccess = "true"))
+	float DefaultFOV = 90.f;
 
-	// selecting a move 
-	void SelectMove(int32 MoveIndex);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim", meta = (AllowPrivateAccess = "true"))
+	float FreeAimZoomFOV = 65.f;
 
-	UFUNCTION(Server, Reliable)
-	void ServerCallCommand(int32 MoveIndex, const FAimData& AimData);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Aim", meta = (AllowPrivateAccess = "true"))
+	float AimFOVInterpSpeed = 8.f;
 
-	// engaging a target 
-	// updating party state
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float NormalWalkSpeed = 500.f;
 
-	// targeting/locking on
-	void Input_ToggleLockOn();
-	void Input_BeginFreeAim();
-	void Input_EndFreeAim();
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float AimWalkSpeed = 275.f;
 
-#pragma endregion
+	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
+	float WalkSpeedInterpSpeed = 8.f;
 
-#pragma region Replication/Cached References
-	// CurrentPokemon
-	// Cached Controller/player state refernces
-	// future replicated command/aim states
-#pragma endregion
-
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-
-	void HandleLockOnLookInput(const FVector2D& LookAxisVector);
-			
-	void Pickup();
-	void TargetAndEngage();
-	void AddToParty(APokemon_Parent* NewPokemon);
-
-	FPokemonInfo GetCurrentPokemonInfo();
-
-	UFUNCTION(Server, Reliable)
-	void ServerAddToCurrentParty(AActor* AddedActor);
-	void ShowPokemonMoveset();
-	void RemovePokemonMoveset();
-	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-private:
-	class UEnhancedInputLocalPlayerSubsystem* Subsystem;
-
-	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
-	bool bHasPokemon = false;
-
-	UPROPERTY(VisibleAnywhere,ReplicatedUsing=OnRep_CurrentPokemon,Category = "Pokemon Party")
-	TObjectPtr<APokemon_Parent>CurrentPokemon = nullptr;
-
-	UFUNCTION()
-	void OnRep_CurrentPokemon();
-
-	UPROPERTY(VisibleAnywhere,Category = "Pokemon Party")
-	TArray<APokemon_Parent*> CurrentParty;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UPokemonGameplayAbilities> DodgeAbility;
+	// Runtime state
+	UPROPERTY()
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> Subsystem;
 
 	UPROPERTY()
 	TObjectPtr<ATrainerController> TrainerController;
@@ -264,70 +267,37 @@ private:
 	UPROPERTY()
 	TObjectPtr<UPokemonAbilitySystemComponent> PokemonASC;
 
-	ATrainerController* GetTC();
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentPokemon, Category = "Pokemon Party")
+	TObjectPtr<APokemon_Parent> CurrentPokemon = nullptr;
 
-	ATrainerPlayerState* GetTPS();
+	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	TArray<TObjectPtr<APokemon_Parent>> CurrentParty;
 
-	UPokemonAbilitySystemComponent* GetPASC();
+	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
+	bool bHasPokemon = false;
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInventorySystemComponent> InventorySystem;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AItem> OverlappingItem;
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UTargetingComponent> TargetingComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<AActor> EngagedTarget;
+
+	UPROPERTY(VisibleAnywhere)
+	TSubclassOf<AProjectile> CurrentThrowableItem;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bPokemonIsOut = false;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bAreMovesSelectable = false;
 
 	UPROPERTY(EditAnywhere)
 	float CatchingDistance = 1000.f;
 
-	UPROPERTY(VisibleAnywhere)
-	 AItem* OverlappingItem;
-
-	 UPROPERTY(VisibleAnywhere)
-	 AActor* EngagedTarget;
-
-	 UPROPERTY(VisibleAnywhere)
-	 TSubclassOf<class AProjectile> CurrentThrowableItem;
-
-	 UPROPERTY(VisibleAnywhere)
-	 bool bPokemonIsOut;
-
-	 UPROPERTY(VisibleAnywhere)
-	 bool bAreMovesSelectable = false;
-
-protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
-
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPokemonGameplayAbilities> DodgeAbility;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FKey>DirectionKeyBind;
-
-	UFUNCTION(Server,Reliable)
-	void ServerBroadcastTarget(AActor* Target);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<UPokemonInputConfig> InputConfig;
-public:
-
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	void SetCurrentPokemon(APokemon_Parent* LeadPokemon);
-
-	UFUNCTION(Server,Reliable)
-	void ServerSetPokemon(APokemon_Parent* LeadPokemon);
-
-	FORCEINLINE void SetCurrentThrowableItem(TSubclassOf<class AProjectile> NewItemClass) { CurrentThrowableItem = NewItemClass; }
-
-	FORCEINLINE UInventorySystemComponent* GetInventorySystem() { return InventorySystem; }
-	FORCEINLINE TArray<APokemon_Parent*> GetCurrentParty() { return CurrentParty; }
-	UFUNCTION(BlueprintCallable,BlueprintPure)
-	FORCEINLINE APokemon_Parent* GetCurrentPokemon() { return CurrentPokemon; }
-
+	TArray<FKey> DirectionKeyBind;
 };
 

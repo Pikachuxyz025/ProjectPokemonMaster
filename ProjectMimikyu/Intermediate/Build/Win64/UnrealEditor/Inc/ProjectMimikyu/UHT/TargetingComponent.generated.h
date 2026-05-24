@@ -17,7 +17,7 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class AActor;
 enum class EAimContext : uint8;
-enum class EAimTypeMode : uint8;
+enum class EPokemonAimMode : uint8;
 
 // ********** Begin ScriptStruct FCrosshairDisplayData *********************************************
 struct Z_Construct_UScriptStruct_FCrosshairDisplayData_Statics;
@@ -36,14 +36,15 @@ struct FCrosshairDisplayData;
 	DECLARE_FUNCTION(execIsLockTargetStillValid); \
 	DECLARE_FUNCTION(execGetCurrentAimDirection); \
 	DECLARE_FUNCTION(execGetCurrentAimWorldLocation); \
-	DECLARE_FUNCTION(execEndFreeAim); \
-	DECLARE_FUNCTION(execBeginFreeAim); \
+	DECLARE_FUNCTION(execEndFocusAim); \
+	DECLARE_FUNCTION(execBeginFocusAim); \
 	DECLARE_FUNCTION(execGetCurrentLockedTarget); \
 	DECLARE_FUNCTION(execSwitchTargetRight); \
 	DECLARE_FUNCTION(execSwitchTargetLeft); \
 	DECLARE_FUNCTION(execClearLockOn); \
 	DECLARE_FUNCTION(execTryLockOnToBestTarget); \
 	DECLARE_FUNCTION(execToggleLockOn); \
+	DECLARE_FUNCTION(execIsInFocusAim); \
 	DECLARE_FUNCTION(execIsLockedOn); \
 	DECLARE_FUNCTION(execIsInFreeAim); \
 	DECLARE_FUNCTION(execGetAimMode); \

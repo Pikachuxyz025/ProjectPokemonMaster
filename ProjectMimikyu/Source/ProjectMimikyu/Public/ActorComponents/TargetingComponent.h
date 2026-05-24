@@ -28,7 +28,7 @@ struct FCrosshairDisplayData
 	bool bHasTarget = false;
 
 	UPROPERTY(BlueprintReadWrite)
-	EAimTypeMode AimMode = EAimTypeMode::None;
+	EPokemonAimMode AimMode = EPokemonAimMode::FreeAim;
 
 	UPROPERTY(BlueprintReadWrite)
 	EAimContext AimContext = EAimContext::Combat;
@@ -48,7 +48,7 @@ protected:
 	EAimContext CurrentAimContext = EAimContext::Combat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|State")
-	EAimTypeMode CurrentAimMode = EAimTypeMode::None;
+	EPokemonAimMode CurrentAimMode = EPokemonAimMode::FreeAim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|State")
 	TWeakObjectPtr<AActor> CurrentLockedTarget = nullptr;
@@ -60,7 +60,7 @@ protected:
 	FVector CachedAimDirection = FVector::ForwardVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|State")
-	bool bFreeAimHeld = false;
+	bool bFocusAimHeld = false;
 
 #pragma region Lock-On Settings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Lock-On")
@@ -132,13 +132,16 @@ public:
 	EAimContext GetAimContext() const { return CurrentAimContext; }
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
-	EAimTypeMode GetAimMode() const { return CurrentAimMode; }
+	EPokemonAimMode GetAimMode() const { return CurrentAimMode; }
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
-	bool IsInFreeAim() const { return CurrentAimMode == EAimTypeMode::FreeAim; }
+	bool IsInFreeAim() const { return CurrentAimMode == EPokemonAimMode::FreeAim; }
 
 	UFUNCTION(BlueprintPure, Category = "Targeting")
-	bool IsLockedOn() const { return CurrentAimMode == EAimTypeMode::LockOn && CurrentLockedTarget.IsValid(); }
+	bool IsLockedOn() const { return CurrentAimMode == EPokemonAimMode::LockOn && CurrentLockedTarget.IsValid(); }
+
+	UFUNCTION(BlueprintPure, Category = "Targeting")
+	bool IsInFocusAim() const { return bFocusAimHeld; }
 #pragma endregion
 
 #pragma region Lock-On
@@ -171,10 +174,10 @@ public:
 #pragma region Free Aim
 	
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void BeginFreeAim();
+	void BeginFocusAim();
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
-	void EndFreeAim();
+	void EndFocusAim();
 
 	UFUNCTION(BlueprintPure,Category="Targeting")
 	FVector GetCurrentAimWorldLocation() const { return CachedAimLocation; }
@@ -212,7 +215,7 @@ protected:
 #pragma region Queries
 	bool GetViewPoint(FVector& OutLocation, FRotator& OutRotation) const;
 	bool PerformAimTrace(FHitResult& OutHit) const;
-	void GatherTargetCandidates(TArray<AActor*>& OutCandidates,EAimTypeMode QueryAimMode) const;
+	void GatherTargetCandidates(TArray<AActor*>& OutCandidates,EPokemonAimMode QueryAimMode) const;
 	AActor* FindBestLockOnTarget() const;
 	AActor* FindSwitchTarget(bool bSwitchRight) const;
 #pragma endregion
@@ -221,7 +224,7 @@ protected:
 	float ScoreTargetForLockOn(AActor* Candidate) const;
 	bool HasLineOfSightToTarget(AActor* Target) const;
 	FVector GetTargetAimPoint(AActor* Target) const;
-	bool IsActorTargetable(AActor* Target, EAimTypeMode QueryAimMode) const;
+	bool IsActorTargetable(AActor* Target, EPokemonAimMode QueryAimMode) const;
 	bool IsActorHostileOrRelevant(AActor* Target) const;
 	ATrainerHUD* GetTrainerHUD();
 #pragma endregion

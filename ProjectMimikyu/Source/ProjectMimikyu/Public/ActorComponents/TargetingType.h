@@ -5,9 +5,8 @@
 #include "TargetingType.generated.h"
 
 UENUM(BlueprintType)
-enum class EAimTypeMode : uint8
+enum class EPokemonAimMode : uint8
 {
-	None		UMETA(DisplayName = "None"),
 	LockOn		UMETA(DisplayName = "Lock On"),
 	FreeAim		UMETA(DisplayName = "Free Aim")
 };
@@ -27,7 +26,7 @@ struct FAimData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	EAimTypeMode AimMode = EAimTypeMode::None;
+	EPokemonAimMode AimMode = EPokemonAimMode::FreeAim;
 
 	UPROPERTY(BlueprintReadOnly)
 	EAimContext AimContext = EAimContext::Combat;
@@ -58,12 +57,4 @@ struct FAimData
 
 	UPROPERTY(BlueprintReadOnly)
 	float ProjectileLaunchSpeed = 0.f;
-};
-
-UENUM(BlueprintType)
-enum class ETargetCameraMode : uint8
-{
-	Default		UMETA(DisplayName = "Default"),
-	LockOn		UMETA(DisplayName = "Lock On"),
-	FreeAim		UMETA(DisplayName = "Free Aim")
 };

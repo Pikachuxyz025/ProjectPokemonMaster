@@ -28,6 +28,7 @@
 #include "PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "PokemonDebugTags.h"
+#include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -272,7 +273,7 @@ void AProjectMimikyuCharacter::UpdateLockOnCamera(float DeltaTime)
 
 void AProjectMimikyuCharacter::UpdateAimZoom(float DeltaTime)
 {
-	const bool bShouldZoom = TargetingComponent && TargetingComponent->IsInFreeAim();
+	const bool bShouldZoom = TargetingComponent && TargetingComponent->IsInFocusAim();
 
 	const float TargetFOV = bShouldZoom ? FreeAimZoomFOV : DefaultFOV;
 
@@ -288,6 +289,22 @@ void AProjectMimikyuCharacter::UpdateAimZoom(float DeltaTime)
 
 		MoveComp->MaxWalkSpeed = FMath::FInterpTo(MoveComp->MaxWalkSpeed, TargetSpeed, DeltaTime, WalkSpeedInterpSpeed);
 	}
+}
+
+void AProjectMimikyuCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon)
+{
+	if(!HasAuthority() || !IsValid(TargetPokemon))
+	{
+		return;
+	}
+
+	if (TargetPokemon->bIsCaught)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerRequestCatchPokemonWithPokeball failed: Target Pokemon is already caught."));
+		return;
+	}
+
+	HandleCatchPokemon(TargetPokemon);
 }
 
 bool AProjectMimikyuCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
@@ -461,8 +478,8 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::ShowPokemonMoveset);
 		PokemonInput->BindAction(IA_Command, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::RemovePokemonMoveset);
 		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_ToggleLockOn);
-		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::Input_BeginFreeAim);
-		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_EndFreeAim);
+		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &AProjectMimikyuCharacter::Input_BeginFocusAim);
+		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::Input_EndFocusAim);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
@@ -513,19 +530,19 @@ void AProjectMimikyuCharacter::Input_ToggleLockOn()
 	}
 }
 
-void AProjectMimikyuCharacter::Input_BeginFreeAim()
+void AProjectMimikyuCharacter::Input_BeginFocusAim()
 {
 	if (TargetingComponent)
 	{
-		TargetingComponent->BeginFreeAim();
+		TargetingComponent->BeginFocusAim();
 	}
 }
 
-void AProjectMimikyuCharacter::Input_EndFreeAim()
+void AProjectMimikyuCharacter::Input_EndFocusAim()
 {
 	if(TargetingComponent)
 	{
-		TargetingComponent->EndFreeAim();
+		TargetingComponent->EndFocusAim();
 	}
 }
 
@@ -575,17 +592,45 @@ void AProjectMimikyuCharacter::ThrowPokeball(const FAimData& AimData)
 		return;
 	}
 
-	const FVector SpawnLocation = 
-		GetActorLocation() 
-		+ GetActorForwardVector() * PokeballSpawnForwardOffset 
+	const FVector SpawnLocation =
+		GetActorLocation()
+		+ GetActorForwardVector() * PokeballSpawnForwardOffset
 		+ FVector::UpVector * PokeballSpawnUpOffset;
 
-	const FVector LaunchVelocity =
-		AimData.bHasProjectileSolution
-		? AimData.ProjectileLaunchVelocity
-		: AimData.AimDirection * PokeballThrowSpeed;
+	FVector LaunchVelocity;
+
+	const bool bHasSolution = UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		LaunchVelocity,
+		SpawnLocation,
+		AimData.AimWorldLocation,
+		PokeballThrowSpeed,
+		false,
+		PokeballCollisionRadius,
+		0.f,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
+
+	if (!bHasSolution)
+	{
+		LaunchVelocity = AimData.AimDirection * PokeballThrowSpeed;
+	}
 
 	const FRotator SpawnRotation = LaunchVelocity.Rotation();
+	AActor* TargetActor = AimData.TargetActor.Get();
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[CatchThrow] Target=%s, ActorLocation=(%.1f %.1f %.1f), AimPoint=(%.1f %.1f %.1f) Launch=(%.1f %.1f %.1f) Speed=%.1f HasSolution=%d"),
+		*GetNameSafe(TargetActor),
+		TargetActor ? TargetActor->GetActorLocation().X : 0.f, TargetActor ? TargetActor->GetActorLocation().Y : 0.f, TargetActor ? TargetActor->GetActorLocation().Z : 0.f,
+		AimData.AimWorldLocation.X, AimData.AimWorldLocation.Y, AimData.AimWorldLocation.Z,
+		LaunchVelocity.X, LaunchVelocity.Y, LaunchVelocity.Z,
+		LaunchVelocity.Size(),
+		AimData.bHasProjectileSolution
+	);
+
+	DrawDebugSphere(GetWorld(), AimData.AimWorldLocation, 12.f, 12, FColor::Green, false, 3.f);
+	DrawDebugLine(GetWorld(), SpawnLocation, AimData.AimWorldLocation, FColor::Green, false, 3.f, 0, 2.f);
 
 	APokeBall* Pokeball = GetWorld()->SpawnActor<APokeBall>(PokeballClass, SpawnLocation, SpawnRotation);
 
