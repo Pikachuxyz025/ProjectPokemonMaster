@@ -64,9 +64,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE APokemon_Parent* GetCurrentPokemon() const { return CurrentPokemon; }
 
-	FORCEINLINE void SetCurrentThrowableItem(TSubclassOf<AProjectile> NewItemClass)
+	FORCEINLINE void SetCurrentThrowableItem(FName ItemID, TSubclassOf<AProjectile> ProjectileClass)
 	{
-		CurrentThrowableItem = NewItemClass;
+		CurrentThrowableItemID = ItemID;
+		CurrentThrowableProjectileClass = ProjectileClass;
 	}
 
 	UFUNCTION(Server, Reliable)
@@ -89,7 +90,8 @@ protected:
 	void Input_BeginFocusAim();
 	void Input_EndFocusAim();
 
-	void ThrowPokeballInput();
+	void ThrowSelectedItemInput();
+	void ServerThrowSelectedItem_Implementation(FName ItemID, const FAimData& AimData);
 	void CatchPokemon();
 	void ComeOnOut();
 
@@ -115,7 +117,7 @@ private:
 	void ServerRequestReturnCurrentPokemon();
 
 	UFUNCTION(Server, Reliable)
-	void ServerThrowPokeball(const FAimData& AimData);
+	void ServerThrowSelectedItem(FName ItemID, const FAimData& AimData);
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestSendOutPokemon(FVector TraceStart, FVector TraceEnd);
@@ -134,7 +136,7 @@ private:
 	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon);
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
-	void ThrowPokeball(const FAimData& AimData);
+	void ThrowThrowableProjectile (TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData);
 
 	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
 	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
@@ -150,6 +152,8 @@ private:
 
 	UFUNCTION()
 	void OnRep_CurrentPokemon();
+
+	FInventoryItemInfo* GetInventoryItemInfo(FName ItemID) const;
 
 private:
 	// Components
@@ -206,6 +210,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
 	TSubclassOf<APokeBall> PokeballClass;
 
+	UPROPERTY(VisibleAnywhere,Category = "Inventory")
+	TSubclassOf<AProjectile> CurrentThrowableProjectileClass;
+
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
 	float PokeballThrowSpeed = 1800.f;
 
@@ -253,6 +260,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
 	float WalkSpeedInterpSpeed = 8.f;
+
+	UPROPERTY(VisibleAnywhere,Category="Inventory")
+	FName CurrentThrowableItemID = NAME_None;
 
 	// Runtime state
 	UPROPERTY()

@@ -37,6 +37,10 @@ public:
 	void AddToStack(int32 Index, int32 Quantity,FName ItemID, bool bIsThrowable);
 	bool FindSlot(FName ItemID,int32& Index);
 	void TransferSlot(int32 SourceIndex,UInventorySystemComponent* SourceInventory,int32 DestinationIndex);
+
+	bool HasItem(FName ItemID, int32 RequiredQuantity = 1)const;
+	bool TryConsumeItem(FName ItemID, int32 QuantityToConsume = 1);
+	bool GetSlotByItemID(FName ItemID, FSlotInfo& OutSlotInfo) const;
 	int32 GetMaxStackSize(FName ItemID);
 
 	FOnInventoryUpdated OnInventoryUpdated;

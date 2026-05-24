@@ -88,6 +88,11 @@ void AProjectMimikyuCharacter::OnRep_CurrentPokemon()
 {
 }
 
+FInventoryItemInfo* AProjectMimikyuCharacter::GetInventoryItemInfo(FName ItemID) const
+{
+	return nullptr;
+}
+
 void AProjectMimikyuCharacter::SetOverlappingItem(AItem* NewItem)
 {
 	OverlappingItem = NewItem;
@@ -471,7 +476,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Look);
 
 		PokemonInput->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
-		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ThrowPokeballInput);
+		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ThrowSelectedItemInput);
 		//PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
 		//PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ComeOnOut);
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
@@ -584,11 +589,11 @@ void AProjectMimikyuCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_
 
 #pragma region Come On Out
 
-void AProjectMimikyuCharacter::ThrowPokeball(const FAimData& AimData)
+void AProjectMimikyuCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData)
 {
-	if (!PokeballClass || !TargetingComponent)
+	if (!ProjectileClass || !TargetingComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: PokeballClass or TargetingComponent is null."));
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: ProjectileClass or TargetingComponent is null."));
 		return;
 	}
 
@@ -619,32 +624,27 @@ void AProjectMimikyuCharacter::ThrowPokeball(const FAimData& AimData)
 	const FRotator SpawnRotation = LaunchVelocity.Rotation();
 	AActor* TargetActor = AimData.TargetActor.Get();
 
-	UE_LOG(LogTemp, Warning,
-		TEXT("[CatchThrow] Target=%s, ActorLocation=(%.1f %.1f %.1f), AimPoint=(%.1f %.1f %.1f) Launch=(%.1f %.1f %.1f) Speed=%.1f HasSolution=%d"),
-		*GetNameSafe(TargetActor),
-		TargetActor ? TargetActor->GetActorLocation().X : 0.f, TargetActor ? TargetActor->GetActorLocation().Y : 0.f, TargetActor ? TargetActor->GetActorLocation().Z : 0.f,
-		AimData.AimWorldLocation.X, AimData.AimWorldLocation.Y, AimData.AimWorldLocation.Z,
-		LaunchVelocity.X, LaunchVelocity.Y, LaunchVelocity.Z,
-		LaunchVelocity.Size(),
-		AimData.bHasProjectileSolution
-	);
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 
-	DrawDebugSphere(GetWorld(), AimData.AimWorldLocation, 12.f, 12, FColor::Green, false, 3.f);
-	DrawDebugLine(GetWorld(), SpawnLocation, AimData.AimWorldLocation, FColor::Green, false, 3.f, 0, 2.f);
-
-	APokeBall* Pokeball = GetWorld()->SpawnActor<APokeBall>(PokeballClass, SpawnLocation, SpawnRotation);
-
-	if (Pokeball)
+	if (Projectile)
 	{
-		Pokeball->SetOwner(this);
-		Pokeball->LaunchProjectile(LaunchVelocity);
+		Projectile->SetOwner(this);
+
+		// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
+		Projectile->LaunchProjectile(LaunchVelocity);
 	}
 }
 
-void AProjectMimikyuCharacter::ThrowPokeballInput()
+void AProjectMimikyuCharacter::ThrowSelectedItemInput()
 {
-	if (!TargetingComponent)
+	if (!IsLocallyControlled() || !TargetingComponent)
 		return;
+
+	if(CurrentThrowableItemID.IsNone()||!CurrentThrowableProjectileClass)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No throwable item selected"));
+		return;
+	}
 
 	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * PokeballSpawnForwardOffset + FVector::UpVector * PokeballSpawnUpOffset;
 
@@ -658,12 +658,32 @@ void AProjectMimikyuCharacter::ThrowPokeballInput()
 	);
 
 
-	ServerThrowPokeball(AimData);
+	ServerThrowSelectedItem(CurrentThrowableItemID, AimData);
 }
 
-void AProjectMimikyuCharacter::ServerThrowPokeball_Implementation(const FAimData& AimData)
+void AProjectMimikyuCharacter::ServerThrowSelectedItem_Implementation(FName ItemID, const FAimData& AimData)
 {
-	ThrowPokeball(AimData);
+	if(!InventorySystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: InventorySystem is null."));
+		return;
+	}
+
+	if (!InventorySystem->HasItem(ItemID,1))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Player does not have item %s."), *ItemID.ToString());
+		return;
+	}
+
+	FInventoryItemInfo* ItemInfo = GetInventoryItemInfo(ItemID); // Helper function
+
+	if (!InventorySystem->TryConsumeItem(ItemID, 1))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Could not consume item %s."), *ItemID.ToString());
+		return;
+	}
+
+	ThrowThrowableProjectile(ItemInfo->ProjectileClass,AimData);
 }
 
 void AProjectMimikyuCharacter::ComeOnOut()

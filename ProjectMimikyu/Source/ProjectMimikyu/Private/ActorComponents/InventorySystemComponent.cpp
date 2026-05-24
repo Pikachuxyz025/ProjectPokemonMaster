@@ -181,6 +181,76 @@ void UInventorySystemComponent::TransferSlot(int32 SourceIndex, UInventorySystem
 
 }
 
+bool UInventorySystemComponent::HasItem(FName ItemID, int32 RequiredQuantity) const
+{
+	if(ItemID.IsNone()||RequiredQuantity<=0)
+	{
+		return false;
+	}
+
+	int32 TotalQuantity = 0;
+
+	for(const FSlotInfo& SlotInfo : Content)
+	{
+		if (SlotInfo.ItemName == ItemID)
+		{
+			TotalQuantity += SlotInfo.Quantity;
+			if (TotalQuantity >= RequiredQuantity)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool UInventorySystemComponent::TryConsumeItem(FName ItemID, int32 QuantityToConsume)
+{
+	if (ItemID.IsNone() || QuantityToConsume <= 0)
+	{
+		return false;
+	}
+
+	for (FSlotInfo& SlotInfo : Content)
+	{
+		if (SlotInfo.ItemName != ItemID)
+		{
+			continue;
+		}
+
+		if (SlotInfo.Quantity < QuantityToConsume)
+		{
+			return false;
+		}
+
+		SlotInfo.Quantity -= QuantityToConsume;
+
+		if (SlotInfo.Quantity <= 0)
+		{
+			SlotInfo.ItemName = NAME_None;
+			SlotInfo.Quantity = 0;
+			SlotInfo.bIsThrowable = false;
+		}
+		OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	return false;
+}
+
+bool UInventorySystemComponent::GetSlotByItemID(FName ItemID, FSlotInfo& OutSlotInfo) const
+{
+	for (const FSlotInfo& SlotInfo : Content)
+	{
+		if (SlotInfo.ItemName == ItemID&&SlotInfo.Quantity>0)
+		{
+			OutSlotInfo = SlotInfo;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int32 UInventorySystemComponent::GetMaxStackSize(FName ItemID)
 {
 	FString ItemContextString;

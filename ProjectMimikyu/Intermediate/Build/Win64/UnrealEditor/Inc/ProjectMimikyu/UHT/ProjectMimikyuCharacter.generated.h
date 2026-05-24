@@ -46,7 +46,6 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	virtual void ServerAddToCurrentParty_Implementation(AActor* AddedActor); \
 	virtual void ServerCallCommand_Implementation(int32 MoveIndex, FAimData const& AimData); \
 	virtual void ServerRequestSendOutPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
-	virtual void ServerThrowPokeball_Implementation(FAimData const& AimData); \
 	virtual void ServerRequestReturnCurrentPokemon_Implementation(); \
 	virtual void ServerRequestCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	virtual void ServerSetPokemon_Implementation(APokemon_Parent* LeadPokemon); \
@@ -56,7 +55,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	DECLARE_FUNCTION(execServerAddToCurrentParty); \
 	DECLARE_FUNCTION(execServerCallCommand); \
 	DECLARE_FUNCTION(execServerRequestSendOutPokemon); \
-	DECLARE_FUNCTION(execServerThrowPokeball); \
+	DECLARE_FUNCTION(execServerThrowSelectedItem); \
 	DECLARE_FUNCTION(execServerRequestReturnCurrentPokemon); \
 	DECLARE_FUNCTION(execServerRequestCatchPokemon); \
 	DECLARE_FUNCTION(execServerSetPokemon); \

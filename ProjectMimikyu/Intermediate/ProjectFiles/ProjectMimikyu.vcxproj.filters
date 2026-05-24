@@ -155,6 +155,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TrainerQuickSlotComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Actors">
       <UniqueIdentifier>{A5CE9ECB-68A4-3F50-9F3E-6B7333482E80}</UniqueIdentifier>
     </Filter>
@@ -552,6 +555,9 @@
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerQuickSlotComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Actors">

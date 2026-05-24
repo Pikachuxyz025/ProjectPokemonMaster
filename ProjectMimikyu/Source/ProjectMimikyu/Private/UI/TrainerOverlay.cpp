@@ -247,6 +247,12 @@ void UTrainerOverlay::AllocateInventoryInfo()
 	FInventoryItemInfo* NewItem = nullptr;
 	FText QuantityText = FText::GetEmpty();
 
+	if (ThrowableContent.IsValidIndex(InventoryIndex))
+	{
+		NewItem = GetInventoryInfo(ThrowableContent[InventoryIndex].ItemName);
+		QuantityText = FText::AsNumber(ThrowableContent[InventoryIndex].Quantity);
+	}
+
 	switch (ThrowableContent.Num())
 	{
 	case 0:
@@ -255,7 +261,7 @@ void UTrainerOverlay::AllocateInventoryInfo()
 		PokemonLeftImage->SetBrushFromTexture(DefaultImage);
 		PokemonName->SetText(FText::FromString(FString::Printf(TEXT(" "))));
 		PokemonLevel->SetText(FText::FromString(FString::Printf(TEXT(" "))));
-		OwnerCharacter->SetCurrentThrowableItem(NULL);
+		OwnerCharacter->SetCurrentThrowableItem(NAME_None,nullptr);
 		return;
 	case 1:
 		InventoryIndex = 0;
@@ -268,19 +274,21 @@ void UTrainerOverlay::AllocateInventoryInfo()
 		break;
 	default:
 		break;
-	}	
-	
-	if (NewItem)
+	}
+
+	if (NewItem && NewItem->ProjectileClass)
 	{
 		SelectedPokemonImage->SetBrushFromTexture(NewItem->Thumbnail);
-		PokemonName->SetText(FText::FromString(NewItem->ItemName.ToString()));
+		PokemonName->SetText(NewItem->ItemName);
 		PokemonLevel->SetText(QuantityText);
+
+		OwnerCharacter->SetCurrentThrowableItem(ThrowableContent[InventoryIndex].ItemName, NewItem->ProjectileClass);
 	}
 	else
 	{
 		SelectedPokemonImage->SetBrushFromTexture(DefaultImage);
+		OwnerCharacter->SetCurrentThrowableItem(NAME_None, nullptr);
 	}
-	OwnerCharacter->SetCurrentThrowableItem(*NewItem->ProjectileClass);
 
 	if (ThrowableContent.Num() >= 2)
 	{

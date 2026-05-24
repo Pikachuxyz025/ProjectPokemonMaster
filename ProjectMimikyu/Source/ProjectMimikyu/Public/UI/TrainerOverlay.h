@@ -116,4 +116,5 @@ private:
 
 public:
 	UPokemonMoveDataAsset* GetMove(EDirectionPoint DirectionPoint);
+	ESlotType GetCurrentSlotMode() const { return CurrentSlotMode; }
 };
