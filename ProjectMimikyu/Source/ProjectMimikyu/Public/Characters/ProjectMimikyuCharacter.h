@@ -27,6 +27,7 @@ class UTargetingComponent;
 class APokeBall;
 class UPokemonGameplayAbilities;
 class UEnhancedInputLocalPlayerSubsystem;
+class UTrainerQuickSlotComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -60,6 +61,7 @@ public:
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UInventorySystemComponent* GetInventorySystem() const { return InventorySystem; }
 	FORCEINLINE TArray<APokemon_Parent*> GetCurrentParty() const { return CurrentParty; }
+	FORCEINLINE UTrainerQuickSlotComponent* GetQuickSlotComponent() const { return QuickSlotComponent; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE APokemon_Parent* GetCurrentPokemon() const { return CurrentPokemon; }
@@ -90,8 +92,10 @@ protected:
 	void Input_BeginFocusAim();
 	void Input_EndFocusAim();
 
-	void ThrowSelectedItemInput();
-	void ServerThrowSelectedItem_Implementation(FName ItemID, const FAimData& AimData);
+	void ThrowQuickSlotInput();
+	void ThrowSelectedInventoryItemInput();
+	void ThrowSelectedPokemonInput();
+
 	void CatchPokemon();
 	void ComeOnOut();
 
@@ -117,9 +121,6 @@ private:
 	void ServerRequestReturnCurrentPokemon();
 
 	UFUNCTION(Server, Reliable)
-	void ServerThrowSelectedItem(FName ItemID, const FAimData& AimData);
-
-	UFUNCTION(Server, Reliable)
 	void ServerRequestSendOutPokemon(FVector TraceStart, FVector TraceEnd);
 
 	UFUNCTION(Server, Reliable)
@@ -130,6 +131,12 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void ServerBroadcastTarget(AActor* Target);
+
+	UFUNCTION(Server, Reliable)
+	void ServerThrowSelectedInventoryItem(FName ItemID, const FAimData& AimData);
+
+	UFUNCTION(Server, Reliable)
+	void ServerThrowSelectedPokemon(int32 SelectedPartyIndex, const FAimData& AimData);
 
 	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
@@ -153,8 +160,6 @@ private:
 	UFUNCTION()
 	void OnRep_CurrentPokemon();
 
-	FInventoryItemInfo* GetInventoryItemInfo(FName ItemID) const;
-
 private:
 	// Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -168,6 +173,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UTargetingComponent> TargetingComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
 
 	// Input assets
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
@@ -225,6 +233,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
 	float PokeballCollisionRadius = 12.f;
 
+	UPROPERTY(VisibleAnywhere, Category = "Inventory")
+	FName CurrentThrowableItemID = NAME_None;
+
 	// Camera settings
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|LockOn", meta = (AllowPrivateAccess = "true"))
 	bool bEnableLockOnCamera = true;
@@ -260,9 +271,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
 	float WalkSpeedInterpSpeed = 8.f;
-
-	UPROPERTY(VisibleAnywhere,Category="Inventory")
-	FName CurrentThrowableItemID = NAME_None;
 
 	// Runtime state
 	UPROPERTY()

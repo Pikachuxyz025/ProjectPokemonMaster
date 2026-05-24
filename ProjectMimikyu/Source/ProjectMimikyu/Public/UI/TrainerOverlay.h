@@ -15,6 +15,7 @@ class APokemon_Parent;
 class UPokemonMoveDataAsset;
 class UPokemonMoveList;
 class UTrainerOverlayWidgetController;
+class UTrainerQuickSlotComponent;
 /**
  *
  */
@@ -54,6 +55,15 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UPokemonMoveList* PokemonMoveList;
 
+	UPROPERTY()
+	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
+
+	UFUNCTION()
+	void HandleQuickSlotModeChanged(ESlotType NewMode);
+
+	UFUNCTION()
+	void HandleQuickSlotSelectionChanged();
+
 	void ShiftUILeft();
 	void ShiftUIRight();
 	void SetLeftRightImages(const int32 RightIndex, const int32 LeftIndex);
@@ -65,6 +75,8 @@ public:
 
 	void AllocatePokemonInfo();
 
+	void SetupPartyInfoFromQuickSlots();
+	void SetupInventoryInfoFromQuickSlots();
 
 	UFUNCTION()
 	void SetCurrentPokemonUI();

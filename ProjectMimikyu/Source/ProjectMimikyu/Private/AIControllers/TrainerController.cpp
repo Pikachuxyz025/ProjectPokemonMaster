@@ -8,6 +8,8 @@
 #include "Input/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Debugging/PokemonDebugWorldSubsystem.h"
+#include "Characters/ProjectMimikyuCharacter.h"
+#include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "PokemonDebugTags.h"
 #include "Debugging/PokemonDebugLog.h"
 
@@ -133,6 +135,29 @@ void ATrainerController::DisplayPlayerMenu()
 	UE_LOG(LogTemp, Display, TEXT("Menu Added"));
 }
 
+AProjectMimikyuCharacter* ATrainerController::GetTrainerCharacter() 
+{
+	if (!TrainerCharacter)
+	{
+		TrainerCharacter = Cast<AProjectMimikyuCharacter>(GetPawn());
+	}
+
+	return TrainerCharacter;
+}
+
+UTrainerQuickSlotComponent* ATrainerController::GetQuickSlotComponent()
+{
+	if(!QuickSlotComponent)
+	{
+		if (AProjectMimikyuCharacter* TCharacter = GetTrainerCharacter())
+		{
+			QuickSlotComponent = TCharacter->GetQuickSlotComponent();
+		}
+	}
+
+	return QuickSlotComponent;
+}
+
 void ATrainerController::TryInitializeHUD()
 {
 	if (!IsLocalController())
@@ -166,29 +191,20 @@ void ATrainerController::HandleGameHasStarted()
 
 void ATrainerController::SwapUIMode()
 {
-//	if (TrainerHUD->TrainerOverlay)
-//	{
-//		UE_LOG(LogTemp, Display, TEXT("X"));
-//		TrainerHUD->TrainerOverlay->SwapSlotModes();
-//}
+	UE_LOG(LogTemp, Display, TEXT("Swap UI Mode"));
+	GetQuickSlotComponent()->SwapSlotMode();
 	SwapUIModeDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftLeft()
 {
-	//if (TrainerHUD->TrainerOverlay)
-	//{
-	//	TrainerHUD->TrainerOverlay->ShiftUILeft();
-	//}
+	GetQuickSlotComponent()->ShiftLeft();
 	ShiftLeftDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftRight()
 {
-	//if (TrainerHUD->TrainerOverlay)
-	//{
-	//	TrainerHUD->TrainerOverlay->ShiftUIRight();
-	//}
+	GetQuickSlotComponent()->ShiftRight();
 	ShiftRightDelegate.Broadcast();
 }
 

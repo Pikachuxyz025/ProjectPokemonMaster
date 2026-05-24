@@ -38,6 +38,7 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoR
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyUpdated__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonSentOut__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature();
@@ -779,22 +780,22 @@ DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerSetPokemon)
 }
 // ********** End Class AProjectMimikyuCharacter Function ServerSetPokemon *************************
 
-// ********** Begin Class AProjectMimikyuCharacter Function ServerThrowSelectedItem ****************
-struct ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms
+// ********** Begin Class AProjectMimikyuCharacter Function ServerThrowSelectedInventoryItem *******
+struct ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms
 {
 	FName ItemID;
 	FAimData AimData;
 };
-static FName NAME_AProjectMimikyuCharacter_ServerThrowSelectedItem = FName(TEXT("ServerThrowSelectedItem"));
-void AProjectMimikyuCharacter::ServerThrowSelectedItem(FName ItemID, FAimData const& AimData)
+static FName NAME_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem = FName(TEXT("ServerThrowSelectedInventoryItem"));
+void AProjectMimikyuCharacter::ServerThrowSelectedInventoryItem(FName ItemID, FAimData const& AimData)
 {
-	ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms Parms;
+	ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms Parms;
 	Parms.ItemID=ItemID;
 	Parms.AimData=AimData;
-	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerThrowSelectedItem);
+	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem);
 	ProcessEvent(Func,&Parms);
 }
-struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics
+struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -805,47 +806,115 @@ struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_St
 	};
 #endif // WITH_METADATA
 
-// ********** Begin Function ServerThrowSelectedItem constinit property declarations ***************
+// ********** Begin Function ServerThrowSelectedInventoryItem constinit property declarations ******
 	static const UECodeGen_Private::FNamePropertyParams NewProp_ItemID;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_AimData;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-// ********** End Function ServerThrowSelectedItem constinit property declarations *****************
+// ********** End Function ServerThrowSelectedInventoryItem constinit property declarations ********
 	static const UECodeGen_Private::FFunctionParams FuncParams;
 };
 
-// ********** Begin Function ServerThrowSelectedItem Property Definitions **************************
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::NewProp_ItemID = { "ItemID", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms, ItemID), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::NewProp_AimData = { "AimData", nullptr, (EPropertyFlags)0x0010000008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms, AimData), Z_Construct_UScriptStruct_FAimData, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimData_MetaData), NewProp_AimData_MetaData) }; // 713287180
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::NewProp_ItemID,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::NewProp_AimData,
+// ********** Begin Function ServerThrowSelectedInventoryItem Property Definitions *****************
+const UECodeGen_Private::FNamePropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::NewProp_ItemID = { "ItemID", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms, ItemID), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::NewProp_AimData = { "AimData", nullptr, (EPropertyFlags)0x0010000008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms, AimData), Z_Construct_UScriptStruct_FAimData, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimData_MetaData), NewProp_AimData_MetaData) }; // 713287180
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::NewProp_ItemID,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::NewProp_AimData,
 };
-static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::PropPointers) < 2048);
-// ********** End Function ServerThrowSelectedItem Property Definitions ****************************
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "ServerThrowSelectedItem", 	Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::PropPointers, 
-	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::PropPointers), 
-sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms),
-RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00240CC1, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::Function_MetaDataParams)},  };
-static_assert(sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedItem_Parms) < MAX_uint16);
-UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem()
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::PropPointers) < 2048);
+// ********** End Function ServerThrowSelectedInventoryItem Property Definitions *******************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "ServerThrowSelectedInventoryItem", 	Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::PropPointers), 
+sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00240CC1, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedInventoryItem_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem()
 {
 	static UFunction* ReturnFunction = nullptr;
 	if (!ReturnFunction)
 	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem_Statics::FuncParams);
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem_Statics::FuncParams);
 	}
 	return ReturnFunction;
 }
-DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerThrowSelectedItem)
+DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerThrowSelectedInventoryItem)
 {
 	P_GET_PROPERTY(FNameProperty,Z_Param_ItemID);
 	P_GET_STRUCT(FAimData,Z_Param_AimData);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->ServerThrowSelectedItem_Implementation(Z_Param_ItemID,Z_Param_AimData);
+	P_THIS->ServerThrowSelectedInventoryItem_Implementation(Z_Param_ItemID,Z_Param_AimData);
 	P_NATIVE_END;
 }
-// ********** End Class AProjectMimikyuCharacter Function ServerThrowSelectedItem ******************
+// ********** End Class AProjectMimikyuCharacter Function ServerThrowSelectedInventoryItem *********
+
+// ********** Begin Class AProjectMimikyuCharacter Function ServerThrowSelectedPokemon *************
+struct ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms
+{
+	int32 SelectedPartyIndex;
+	FAimData AimData;
+};
+static FName NAME_AProjectMimikyuCharacter_ServerThrowSelectedPokemon = FName(TEXT("ServerThrowSelectedPokemon"));
+void AProjectMimikyuCharacter::ServerThrowSelectedPokemon(int32 SelectedPartyIndex, FAimData const& AimData)
+{
+	ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms Parms;
+	Parms.SelectedPartyIndex=SelectedPartyIndex;
+	Parms.AimData=AimData;
+	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerThrowSelectedPokemon);
+	ProcessEvent(Func,&Parms);
+}
+struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AimData_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function ServerThrowSelectedPokemon constinit property declarations ************
+	static const UECodeGen_Private::FIntPropertyParams NewProp_SelectedPartyIndex;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_AimData;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function ServerThrowSelectedPokemon constinit property declarations **************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function ServerThrowSelectedPokemon Property Definitions ***********************
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::NewProp_SelectedPartyIndex = { "SelectedPartyIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms, SelectedPartyIndex), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::NewProp_AimData = { "AimData", nullptr, (EPropertyFlags)0x0010000008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms, AimData), Z_Construct_UScriptStruct_FAimData, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimData_MetaData), NewProp_AimData_MetaData) }; // 713287180
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::NewProp_SelectedPartyIndex,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::NewProp_AimData,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::PropPointers) < 2048);
+// ********** End Function ServerThrowSelectedPokemon Property Definitions *************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_AProjectMimikyuCharacter, nullptr, "ServerThrowSelectedPokemon", 	Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::PropPointers), 
+sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00240CC1, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::Function_MetaDataParams), Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(ProjectMimikyuCharacter_eventServerThrowSelectedPokemon_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerThrowSelectedPokemon)
+{
+	P_GET_PROPERTY(FIntProperty,Z_Param_SelectedPartyIndex);
+	P_GET_STRUCT(FAimData,Z_Param_AimData);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->ServerThrowSelectedPokemon_Implementation(Z_Param_SelectedPartyIndex,Z_Param_AimData);
+	P_NATIVE_END;
+}
+// ********** End Class AProjectMimikyuCharacter Function ServerThrowSelectedPokemon ***************
 
 // ********** Begin Class AProjectMimikyuCharacter *************************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_AProjectMimikyuCharacter;
@@ -910,6 +979,12 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetingComponent_MetaData[] = {
+		{ "AllowPrivateAccess", "true" },
+		{ "Category", "Components" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_QuickSlotComponent_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Components" },
 		{ "EditInline", "true" },
@@ -1010,6 +1085,10 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ "Category", "Items|Pokeball" },
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentThrowableItemID_MetaData[] = {
+		{ "Category", "Inventory" },
+		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bEnableLockOnCamera_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Camera|LockOn" },
@@ -1066,10 +1145,6 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WalkSpeedInterpSpeed_MetaData[] = {
 		{ "Category", "Movement|Aim" },
-		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentThrowableItemID_MetaData[] = {
-		{ "Category", "Inventory" },
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Subsystem_MetaData[] = {
@@ -1142,6 +1217,7 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_FollowCamera;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InventorySystem;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetingComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_QuickSlotComponent;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_DefaultMappingContext;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InputConfig;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_JumpAction;
@@ -1160,6 +1236,7 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_PokeballSpawnForwardOffset;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_PokeballSpawnUpOffset;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_PokeballCollisionRadius;
+	static const UECodeGen_Private::FNamePropertyParams NewProp_CurrentThrowableItemID;
 	static void NewProp_bEnableLockOnCamera_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bEnableLockOnCamera;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_LockOnCameraInterpSpeed;
@@ -1172,7 +1249,6 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_NormalWalkSpeed;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_AimWalkSpeed;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_WalkSpeedInterpSpeed;
-	static const UECodeGen_Private::FNamePropertyParams NewProp_CurrentThrowableItemID;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_Subsystem;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerController;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerPlayerState;
@@ -1206,7 +1282,8 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ .NameUTF8 = UTF8TEXT("ServerRequestReturnCurrentPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequestReturnCurrentPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerRequestSendOutPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerRequestSendOutPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerSetPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerSetPokemon },
-		{ .NameUTF8 = UTF8TEXT("ServerThrowSelectedItem"), .Pointer = &AProjectMimikyuCharacter::execServerThrowSelectedItem },
+		{ .NameUTF8 = UTF8TEXT("ServerThrowSelectedInventoryItem"), .Pointer = &AProjectMimikyuCharacter::execServerThrowSelectedInventoryItem },
+		{ .NameUTF8 = UTF8TEXT("ServerThrowSelectedPokemon"), .Pointer = &AProjectMimikyuCharacter::execServerThrowSelectedPokemon },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
@@ -1220,7 +1297,8 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestReturnCurrentPokemon, "ServerRequestReturnCurrentPokemon" }, // 3182058855
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestSendOutPokemon, "ServerRequestSendOutPokemon" }, // 977042158
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerSetPokemon, "ServerSetPokemon" }, // 1244206130
-		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedItem, "ServerThrowSelectedItem" }, // 3668387826
+		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedInventoryItem, "ServerThrowSelectedInventoryItem" }, // 3001861684
+		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerThrowSelectedPokemon, "ServerThrowSelectedPokemon" }, // 4073225435
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static const UECodeGen_Private::FImplementedInterfaceParams InterfaceParams[];
@@ -1235,6 +1313,7 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimiky
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_FollowCamera = { "FollowCamera", nullptr, (EPropertyFlags)0x01440000000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, FollowCamera), Z_Construct_UClass_UCameraComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_FollowCamera_MetaData), NewProp_FollowCamera_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_InventorySystem = { "InventorySystem", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, InventorySystem), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventorySystem_MetaData), NewProp_InventorySystem_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TargetingComponent = { "TargetingComponent", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, TargetingComponent), Z_Construct_UClass_UTargetingComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetingComponent_MetaData), NewProp_TargetingComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_QuickSlotComponent = { "QuickSlotComponent", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, QuickSlotComponent), Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_QuickSlotComponent_MetaData), NewProp_QuickSlotComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DefaultMappingContext = { "DefaultMappingContext", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, DefaultMappingContext), Z_Construct_UClass_UInputMappingContext_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefaultMappingContext_MetaData), NewProp_DefaultMappingContext_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_InputConfig = { "InputConfig", nullptr, (EPropertyFlags)0x0144000000010001, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, InputConfig), Z_Construct_UClass_UPokemonInputConfig_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputConfig_MetaData), NewProp_InputConfig_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_JumpAction = { "JumpAction", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, JumpAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_JumpAction_MetaData), NewProp_JumpAction_MetaData) };
@@ -1253,6 +1332,7 @@ const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyu
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballSpawnForwardOffset = { "PokeballSpawnForwardOffset", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, PokeballSpawnForwardOffset), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballSpawnForwardOffset_MetaData), NewProp_PokeballSpawnForwardOffset_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballSpawnUpOffset = { "PokeballSpawnUpOffset", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, PokeballSpawnUpOffset), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballSpawnUpOffset_MetaData), NewProp_PokeballSpawnUpOffset_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballCollisionRadius = { "PokeballCollisionRadius", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, PokeballCollisionRadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballCollisionRadius_MetaData), NewProp_PokeballCollisionRadius_MetaData) };
+const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentThrowableItemID = { "CurrentThrowableItemID", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, CurrentThrowableItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentThrowableItemID_MetaData), NewProp_CurrentThrowableItemID_MetaData) };
 void Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera_SetBit(void* Obj)
 {
 	((AProjectMimikyuCharacter*)Obj)->bEnableLockOnCamera = 1;
@@ -1268,7 +1348,6 @@ const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyu
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_NormalWalkSpeed = { "NormalWalkSpeed", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, NormalWalkSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_NormalWalkSpeed_MetaData), NewProp_NormalWalkSpeed_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_AimWalkSpeed = { "AimWalkSpeed", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, AimWalkSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AimWalkSpeed_MetaData), NewProp_AimWalkSpeed_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_WalkSpeedInterpSpeed = { "WalkSpeedInterpSpeed", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, WalkSpeedInterpSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WalkSpeedInterpSpeed_MetaData), NewProp_WalkSpeedInterpSpeed_MetaData) };
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentThrowableItemID = { "CurrentThrowableItemID", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, CurrentThrowableItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentThrowableItemID_MetaData), NewProp_CurrentThrowableItemID_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_Subsystem = { "Subsystem", nullptr, (EPropertyFlags)0x0144000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, Subsystem), Z_Construct_UClass_UEnhancedInputLocalPlayerSubsystem_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Subsystem_MetaData), NewProp_Subsystem_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerController = { "TrainerController", nullptr, (EPropertyFlags)0x0144000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, TrainerController), Z_Construct_UClass_ATrainerController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TrainerController_MetaData), NewProp_TrainerController_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerPlayerState = { "TrainerPlayerState", nullptr, (EPropertyFlags)0x0144000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AProjectMimikyuCharacter, TrainerPlayerState), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TrainerPlayerState_MetaData), NewProp_TrainerPlayerState_MetaData) };
@@ -1303,6 +1382,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectM
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_FollowCamera,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_InventorySystem,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TargetingComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_QuickSlotComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_DefaultMappingContext,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_InputConfig,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_JumpAction,
@@ -1321,6 +1401,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectM
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballSpawnForwardOffset,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballSpawnUpOffset,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_PokeballCollisionRadius,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentThrowableItemID,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_bEnableLockOnCamera,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnCameraInterpSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_LockOnFocusTargetBias,
@@ -1332,7 +1413,6 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AProjectM
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_NormalWalkSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_AimWalkSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_WalkSpeedInterpSpeed,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_CurrentThrowableItemID,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_Subsystem,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerController,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AProjectMimikyuCharacter_Statics::NewProp_TrainerPlayerState,
@@ -1406,10 +1486,10 @@ AProjectMimikyuCharacter::~AProjectMimikyuCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 497656752U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 92391658U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_2329281599{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_88905480{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

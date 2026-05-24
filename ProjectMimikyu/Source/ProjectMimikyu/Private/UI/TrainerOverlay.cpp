@@ -13,20 +13,58 @@
 #include "Components/ProgressBar.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Engine/DataTable.h"
+#include "ActorComponents/TrainerQuickSlotComponent.h"
 
 void UTrainerOverlay::NativeConstruct()
 {
 	Super::NativeConstruct();
+	UE_LOG(LogTemp, Display, TEXT("Constructing Trainer Overlay"));
 
 	OwnerCharacter = Cast<AProjectMimikyuCharacter>(GetOwningPlayerPawn());
+
 	if (OwnerCharacter)
 		UE_LOG(LogTemp, Display, TEXT("The character is real!"));
+
 	InventorySystem = OwnerCharacter->GetInventorySystem();
 	if (!InventorySystem)
 		UE_LOG(LogTemp, Display, TEXT(" not Constructed"));
+
+	
+	QuickSlotComponent = OwnerCharacter->GetQuickSlotComponent();
+
+	if (QuickSlotComponent)
+	{
+		QuickSlotComponent->OnQuickSlotModeChanged.AddDynamic(this, &UTrainerOverlay::HandleQuickSlotModeChanged);
+		QuickSlotComponent->OnQuickSlotSelectionChanged.AddDynamic(this, &UTrainerOverlay::HandleQuickSlotSelectionChanged);
+	}
+
 	InventorySystem->OnInventoryUpdated.AddDynamic(this, &UTrainerOverlay::SetupInventoryInfo);
 	OwnerCharacter->OnPartyUpdated.AddDynamic(this, &UTrainerOverlay::SetupPartyInfo);
 	//OwnerCharacter->OnPokemonHealthUpdated.AddDynamic(this, &UTrainerOverlay::SetCurrentPokemonUI);
+}
+
+void UTrainerOverlay::HandleQuickSlotModeChanged(ESlotType NewMode)
+{
+	HandleQuickSlotSelectionChanged();
+}
+
+void UTrainerOverlay::HandleQuickSlotSelectionChanged()
+{
+	if(!QuickSlotComponent)
+		return;
+
+	switch (QuickSlotComponent->GetCurrentSlotMode())
+	{
+	case ESlotType::EST_PokemonParty:
+		SetupPartyInfoFromQuickSlots();
+		break;
+
+	case ESlotType::EST_Inventory:
+		SetupInventoryInfoFromQuickSlots();
+				break;
+	default:
+		break;
+	}
 }
 
 void UTrainerOverlay::ShiftUILeft()
@@ -224,6 +262,27 @@ void UTrainerOverlay::AllocatePokemonInfo()
 	}
 
 	SetCurrentPokemonUI();
+}
+
+void UTrainerOverlay::SetupPartyInfoFromQuickSlots()
+{
+	if(!QuickSlotComponent)
+		return;
+
+	PokemonPartyInfo = QuickSlotComponent->GetCachedPokemonParty();
+	CurrentSlotMode = QuickSlotComponent->GetCurrentSlotMode();
+	AllocatePokemonInfo();
+}
+
+void UTrainerOverlay::SetupInventoryInfoFromQuickSlots()
+{
+	if (!QuickSlotComponent)
+		return;
+
+	ThrowableContent = QuickSlotComponent->GetCachedThrowableContent();
+	CurrentSlotMode = QuickSlotComponent->GetCurrentSlotMode();
+
+	AllocateInventoryInfo();
 }
 
 void UTrainerOverlay::SetCurrentPokemonUI()

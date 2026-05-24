@@ -29,6 +29,7 @@
 #include "Debugging/PokemonDebugLibrary.h"
 #include "PokemonDebugTags.h"
 #include <Kismet/GameplayStatics.h>
+#include "ActorComponents/TrainerQuickSlotComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -72,6 +73,7 @@ AProjectMimikyuCharacter::AProjectMimikyuCharacter()
 
 	InventorySystem = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("Inventory System"));
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("Targeting Component"));
+	QuickSlotComponent = CreateDefaultSubobject<UTrainerQuickSlotComponent>(TEXT("Quick Slot Component"));
 	bReplicates = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -88,11 +90,6 @@ void AProjectMimikyuCharacter::OnRep_CurrentPokemon()
 {
 }
 
-FInventoryItemInfo* AProjectMimikyuCharacter::GetInventoryItemInfo(FName ItemID) const
-{
-	return nullptr;
-}
-
 void AProjectMimikyuCharacter::SetOverlappingItem(AItem* NewItem)
 {
 	OverlappingItem = NewItem;
@@ -103,6 +100,10 @@ void AProjectMimikyuCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	InventorySystem->OwnerCharacter = this;
 
+	if (QuickSlotComponent)
+	{
+		QuickSlotComponent->InitializeQuickSlots(this);
+	}
 }
 
 void AProjectMimikyuCharacter::BeginPlay()
@@ -128,6 +129,11 @@ void AProjectMimikyuCharacter::BeginPlay()
 			}
 			TrainerController->HandleGameHasStarted();
 		}
+	}
+
+	if (InventorySystem && QuickSlotComponent)
+	{
+		InventorySystem->OnInventoryUpdated.AddDynamic(QuickSlotComponent, &UTrainerQuickSlotComponent::RefreshInventory);
 	}
 }
 
@@ -312,6 +318,11 @@ void AProjectMimikyuCharacter::ServerRequestCatchPokemonWithPokeball_Implementat
 	HandleCatchPokemon(TargetPokemon);
 }
 
+void AProjectMimikyuCharacter::ServerThrowSelectedPokemon_Implementation(int32 SelectedPartyIndex, const FAimData& AimData)
+{
+	// TODO: Implement this function to throw a selected Pokemon from the party using the provided AimData for trajectory calculation.
+}
+
 bool AProjectMimikyuCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
 {
 	OutPokemon = nullptr;
@@ -476,7 +487,7 @@ void AProjectMimikyuCharacter::SetupPlayerInputComponent(UInputComponent* Player
 		PokemonInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Look);
 
 		PokemonInput->BindAction(IA_Pickup, ETriggerEvent::Triggered, this, &AProjectMimikyuCharacter::Pickup);
-		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ThrowSelectedItemInput);
+		PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ThrowQuickSlotInput);
 		//PokemonInput->BindAction(IA_Throw, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::CatchPokemon);
 		//PokemonInput->BindAction(IA_ThrowPokeball, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::ComeOnOut);
 		PokemonInput->BindAction(IA_Engage, ETriggerEvent::Completed, this, &AProjectMimikyuCharacter::TargetAndEngage);
@@ -626,23 +637,56 @@ void AProjectMimikyuCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile>
 
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 
-	if (Projectile)
+	if (!Projectile)
 	{
-		Projectile->SetOwner(this);
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: Could not spawn projectile."));
+		return;
+	}
 
-		// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
-		Projectile->LaunchProjectile(LaunchVelocity);
+	Projectile->SetOwner(this);
+
+	// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
+	Projectile->LaunchProjectile(LaunchVelocity);
+}
+
+void AProjectMimikyuCharacter::ThrowQuickSlotInput()
+{
+	if(!QuickSlotComponent)
+	{
+		return;
+	}
+
+	switch (QuickSlotComponent->GetCurrentSlotMode())
+	{
+	case ESlotType::EST_Inventory:
+		ThrowSelectedInventoryItemInput();
+		break;
+
+	case ESlotType::EST_PokemonParty:
+		ThrowSelectedPokemonInput();
+		break;
+
+	default:
+		break;
 	}
 }
 
-void AProjectMimikyuCharacter::ThrowSelectedItemInput()
+void AProjectMimikyuCharacter::ThrowSelectedInventoryItemInput()
 {
-	if (!IsLocallyControlled() || !TargetingComponent)
-		return;
-
-	if(CurrentThrowableItemID.IsNone()||!CurrentThrowableProjectileClass)
+	if (!IsLocallyControlled() || !TargetingComponent || !QuickSlotComponent)
 	{
-		UE_LOG(LogTemp, Display, TEXT("No throwable item selected"));
+		return;
+	}
+
+	if (QuickSlotComponent->GetCurrentSlotMode() != ESlotType::EST_Inventory)
+	{
+		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedInventoryItemInput failed: Current Quick Slot is not set to Inventory"));
+		return;
+	}
+
+	if (!QuickSlotComponent->HasSelectedThrowableItem())
+	{
+		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedInventoryItemInput failed: No throwable item in selected Quick Slot"));
 		return;
 	}
 
@@ -658,14 +702,38 @@ void AProjectMimikyuCharacter::ThrowSelectedItemInput()
 	);
 
 
-	ServerThrowSelectedItem(CurrentThrowableItemID, AimData);
+	ServerThrowSelectedInventoryItem(QuickSlotComponent->GetSelectedThrowableItemID(), AimData);
 }
 
-void AProjectMimikyuCharacter::ServerThrowSelectedItem_Implementation(FName ItemID, const FAimData& AimData)
+void AProjectMimikyuCharacter::ThrowSelectedPokemonInput()
 {
-	if(!InventorySystem)
+	if (!IsLocallyControlled() || !QuickSlotComponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: InventorySystem is null."));
+		return;
+	}
+
+	if (QuickSlotComponent->GetCurrentSlotMode() != ESlotType::EST_PokemonParty)
+	{
+		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedPokemonInput failed: Current Quick Slot is not set to Pokemon Party"));
+		return;
+	}
+
+	if (!QuickSlotComponent->HasSelectedPokemon())
+	{
+		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedPokemonInput failed: No Pokemon in selected Quick Slot"));
+		return;
+	}
+
+	FVector Start = GetActorLocation();
+	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
+
+	ServerRequestSendOutPokemon(Start, End);
+}
+
+void AProjectMimikyuCharacter::ServerThrowSelectedInventoryItem_Implementation(FName ItemID, const FAimData& AimData)
+{
+	if(!HasAuthority()||!InventorySystem)
+	{
 		return;
 	}
 
@@ -675,7 +743,19 @@ void AProjectMimikyuCharacter::ServerThrowSelectedItem_Implementation(FName Item
 		return;
 	}
 
-	FInventoryItemInfo* ItemInfo = GetInventoryItemInfo(ItemID); // Helper function
+	FInventoryItemInfo* ItemInfo = InventorySystem->GetInventoryItemInfo(ItemID);
+
+	if(!ItemInfo)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Could not find item info for %s."), *ItemID.ToString());
+		return;
+	}
+
+	if (!ItemInfo->bIsThrowable || !ItemInfo->ProjectileClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Item %s is not a throwable item."), *ItemID.ToString());
+		return;
+	}
 
 	if (!InventorySystem->TryConsumeItem(ItemID, 1))
 	{

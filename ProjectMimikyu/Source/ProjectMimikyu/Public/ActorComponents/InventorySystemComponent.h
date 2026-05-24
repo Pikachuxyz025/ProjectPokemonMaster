@@ -57,4 +57,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UDataTable*ItemDataTable;
 
+
+	FInventoryItemInfo* GetInventoryItemInfo(FName ItemID) const;
 };

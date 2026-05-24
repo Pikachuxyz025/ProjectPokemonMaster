@@ -12,6 +12,8 @@ class UPokemonInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class AProjectMimikyuCharacter;
+class UTrainerQuickSlotComponent;
 
 DECLARE_MULTICAST_DELEGATE(FOnEventCaller);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnKeyCalled,const EDirectionPoint);
@@ -61,6 +63,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UPokemonInputConfig> InputConfig;
 
+	UPROPERTY()
+	TObjectPtr<AProjectMimikyuCharacter> TrainerCharacter;
+
+	UPROPERTY()
+	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* InputMappingContext;
 
@@ -80,6 +88,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* IA_MoveSelection;
+
+private:
+
+	AProjectMimikyuCharacter* GetTrainerCharacter();
+	UTrainerQuickSlotComponent* GetQuickSlotComponent();
 
 public:
 

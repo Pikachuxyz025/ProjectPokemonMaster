@@ -153,14 +153,6 @@ void UTargetingComponent::EndFocusAim()
 
 FAimData UTargetingComponent::BuildAimData() const
 {
-	// Show current aim mode
-	UE_LOG(LogTemp, Warning, TEXT("[BuildAimData] CurrentAimMode=%s CurrentAimContext=%s CachedAimLocation=(%.1f %.1f %.1f) CachedAimDirection=(%.2f %.2f %.2f)"),
-		*UEnum::GetValueAsString(CurrentAimMode),
-		*UEnum::GetValueAsString(CurrentAimContext),
-		CachedAimLocation.X, CachedAimLocation.Y, CachedAimLocation.Z,
-		CachedAimDirection.X, CachedAimDirection.Y, CachedAimDirection.Z
-	);
-
 	FAimData AimData;
 	AimData.AimMode = CurrentAimMode;
 	AimData.AimContext = CurrentAimContext;
@@ -194,12 +186,8 @@ FAimData UTargetingComponent::BuildAimData() const
 			AimData.bHasValidTarget = true;
 			AimData.bUsingAimAssist = false;
 
-			// Confirm that free aim with a direct target does not use aim assist.
-			UE_LOG(LogTemp, Warning, TEXT("[TryGetDirectCrosshairTarget Confirmed] Free aim with direct target found: %s. Aim assist should NOT be applied."), *GetNameSafe(CrosshairTarget));
 			return AimData;
 		}
-
-		// Important: free aim does NOT fall through to aim assist.
 		AimData.bHasValidTarget = false;
 		AimData.bUsingAimAssist = false;
 		return AimData;
@@ -208,7 +196,6 @@ FAimData UTargetingComponent::BuildAimData() const
 		break;
 	}
 
-	// Aim assist only for non-lock-on, non-free-aim quick commands.
 	AActor* AimAssistTarget = nullptr;
 	FVector AssistedAimLocation = FVector::ZeroVector;
 	if (TryGetAimAssistTarget(AimAssistTarget, AssistedAimLocation))
@@ -243,19 +230,6 @@ bool UTargetingComponent::BuildProjectileAimData(const FVector& ProjectileSpawnL
 		ProjectileRadius, // OverrideRadius
 		OverrideGravityZ,
 		ESuggestProjVelocityTraceOption::DoNotTrace
-	);
-
-	UE_LOG(LogTemp, Warning,
-		TEXT("[CatchSolver] HasSolution=%d Target=%s AimPoint=(%.1f %.1f %.1f) Spawn=(%.1f %.1f %.1f) Velocity=(%.1f %.1f %.1f) Speed=%.1f MaxSpeed=%.1f HasValidTarget=%d Assist=%d"),
-		bHasSolution,
-		*GetNameSafe(OutAimData.TargetActor.Get()),
-		OutAimData.AimWorldLocation.X, OutAimData.AimWorldLocation.Y, OutAimData.AimWorldLocation.Z,
-		ProjectileSpawnLocation.X, ProjectileSpawnLocation.Y, ProjectileSpawnLocation.Z,
-		TossVelocity.X, TossVelocity.Y, TossVelocity.Z,
-		TossVelocity.Size(),
-		MaxProjectileSpeed,
-		OutAimData.bHasValidTarget,
-		OutAimData.bUsingAimAssist
 	);
 
 	if (bHasSolution)
@@ -387,12 +361,7 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 
 	OutTarget = BestTarget;
 	OutAimLocation = BestTargetPoint;
-	UE_LOG(LogTemp, Warning,
-		TEXT("[AimAssist] Target=%s AimPoint=(%.1f %.1f %.1f) Score=%.3f"),
-		*GetNameSafe(BestTarget),
-		BestTargetPoint.X, BestTargetPoint.Y, BestTargetPoint.Z,
-		BestScore
-	);
+
 	return true;
 }
 
@@ -404,45 +373,23 @@ bool UTargetingComponent::TryGetDirectCrosshairTarget(AActor*& OutTarget, FVecto
 	FHitResult Hit;
 	if (!PerformAimTrace(Hit))
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[DirectTarget] PerformAimTrace failed"));
 		return false;
 	}
 
 	AActor* HitActor = Hit.GetActor();
 
-	UE_LOG(LogTemp, Warning,
-		TEXT("[DirectTarget] HitActor=%s Impact=(%.1f %.1f %.1f) Blocking=%d"),
-		*GetNameSafe(HitActor),
-		Hit.ImpactPoint.X,
-		Hit.ImpactPoint.Y,
-		Hit.ImpactPoint.Z,
-		Hit.bBlockingHit
-	);
-
 	if (!IsValid(HitActor))
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[DirectTarget] Failed: HitActor invalid"));
 		return false;
 	}
 
 	if (!IsActorTargetable(HitActor, EPokemonAimMode::FreeAim))
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[DirectTarget] Failed: Actor NOT targetable: %s"),
-			*GetNameSafe(HitActor));
 		return false;
 	}
 
 	OutTarget = HitActor;
 	OutAimLocation = Hit.ImpactPoint;
-
-	UE_LOG(LogTemp, Warning, 
-		TEXT("[DirectTarget] SUCCESS Target=%s AimPoint=(%.1f %.1f %.1f)"),
-		*GetNameSafe(HitActor),
-		OutAimLocation.X, OutAimLocation.Y, OutAimLocation.Z
-	);
 
 	return true;
 }

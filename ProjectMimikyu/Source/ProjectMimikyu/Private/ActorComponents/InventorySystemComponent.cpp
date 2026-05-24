@@ -183,18 +183,19 @@ void UInventorySystemComponent::TransferSlot(int32 SourceIndex, UInventorySystem
 
 bool UInventorySystemComponent::HasItem(FName ItemID, int32 RequiredQuantity) const
 {
-	if(ItemID.IsNone()||RequiredQuantity<=0)
+	if (ItemID.IsNone() || RequiredQuantity <= 0)
 	{
 		return false;
 	}
 
 	int32 TotalQuantity = 0;
 
-	for(const FSlotInfo& SlotInfo : Content)
+	for (const FSlotInfo& SlotInfo : Content)
 	{
 		if (SlotInfo.ItemName == ItemID)
 		{
 			TotalQuantity += SlotInfo.Quantity;
+
 			if (TotalQuantity >= RequiredQuantity)
 			{
 				return true;
@@ -231,17 +232,24 @@ bool UInventorySystemComponent::TryConsumeItem(FName ItemID, int32 QuantityToCon
 			SlotInfo.Quantity = 0;
 			SlotInfo.bIsThrowable = false;
 		}
+
 		OnInventoryUpdated.Broadcast();
 		return true;
 	}
+
 	return false;
 }
 
 bool UInventorySystemComponent::GetSlotByItemID(FName ItemID, FSlotInfo& OutSlotInfo) const
 {
+	if (ItemID.IsNone())
+	{
+		return false;
+	}
+
 	for (const FSlotInfo& SlotInfo : Content)
 	{
-		if (SlotInfo.ItemName == ItemID&&SlotInfo.Quantity>0)
+		if (SlotInfo.ItemName == ItemID && SlotInfo.Quantity > 0)
 		{
 			OutSlotInfo = SlotInfo;
 			return true;
@@ -253,18 +261,13 @@ bool UInventorySystemComponent::GetSlotByItemID(FName ItemID, FSlotInfo& OutSlot
 
 int32 UInventorySystemComponent::GetMaxStackSize(FName ItemID)
 {
-	FString ItemContextString;
+	FInventoryItemInfo* ItemInfo = GetInventoryItemInfo(ItemID);
 
-	FDataTableRowHandle ItemRow;
-	ItemRow.DataTable = ItemDataTable;
-	ItemRow.RowName = ItemID;
-
-	if (!ItemDataTable) return -1;
-	FInventoryItemInfo* NewItem=  ItemRow.GetRow<FInventoryItemInfo>(ItemContextString);
-	if(NewItem)
+	if(ItemInfo)
 	{
-		return NewItem->StackSize;
+		return ItemInfo->StackSize;
 	}
+
 	return -1;
 }
 
@@ -279,5 +282,19 @@ TArray<FSlotInfo> UInventorySystemComponent::GetThrowableContent()
 		}
 	}
 	return ThrowableContent;
+}
+
+FInventoryItemInfo* UInventorySystemComponent::GetInventoryItemInfo(FName ItemID) const
+{
+	if(!ItemDataTable||ItemID.IsNone())
+	return nullptr;
+
+	FString ItemContextString;
+
+	FDataTableRowHandle ItemRow;
+	ItemRow.DataTable = ItemDataTable;
+	ItemRow.RowName = ItemID;
+
+	return ItemRow.GetRow<FInventoryItemInfo>(ItemContextString);
 }
 
