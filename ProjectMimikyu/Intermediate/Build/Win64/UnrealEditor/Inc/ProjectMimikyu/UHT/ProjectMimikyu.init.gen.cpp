@@ -18,16 +18,19 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnFireProjectileFinished__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnIncapacitationEvent__DelegateSignature();
+	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryUpdated__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnMaxHealthChangedSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyChangedSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyUpdated__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonActiveSignature__DelegateSignature();
+	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonSentOut__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnProjectileImpact__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeChanged__DelegateSignature();
+	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotSelectionChanged__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature();
 	PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnTickTaskDelegate__DelegateSignature();
@@ -53,16 +56,19 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnFireProjectileFinished__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnIncapacitationEvent__DelegateSignature,
+			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryUpdated__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnMaxHealthChangedSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyChangedSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyUpdated__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonActiveSignature__DelegateSignature,
+			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonSentOut__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnProjectileImpact__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeChanged__DelegateSignature,
+			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotSelectionChanged__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature,
 			(UObject* (*)())Z_Construct_UDelegateFunction_ProjectMimikyu_OnTickTaskDelegate__DelegateSignature,
@@ -77,13 +83,13 @@ static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compi
 			SingletonFuncArray,
 			UE_ARRAY_COUNT(SingletonFuncArray),
 			PKG_CompiledIn | 0x00000000,
-			0xD1490525,
-			0x2D600AD4,
+			0x339213CA,
+			0xB0D85652,
 			METADATA_PARAMS(0, nullptr)
 		};
 		UECodeGen_Private::ConstructUPackage(Z_Registration_Info_UPackage__Script_ProjectMimikyu.OuterSingleton, PackageParams);
 	}
 	return Z_Registration_Info_UPackage__Script_ProjectMimikyu.OuterSingleton;
 }
-static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_ProjectMimikyu(Z_Construct_UPackage__Script_ProjectMimikyu, TEXT("/Script/ProjectMimikyu"), Z_Registration_Info_UPackage__Script_ProjectMimikyu, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0xD1490525, 0x2D600AD4));
+static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_ProjectMimikyu(Z_Construct_UPackage__Script_ProjectMimikyu, TEXT("/Script/ProjectMimikyu"), Z_Registration_Info_UPackage__Script_ProjectMimikyu, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0x339213CA, 0xB0D85652));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

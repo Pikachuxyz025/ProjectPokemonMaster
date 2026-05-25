@@ -18,21 +18,228 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonWidgetController();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlayWidgetController();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EDirectionPoint();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ESlotType();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnEventActivatedSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature();
+PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnMaxHealthChangedSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyChangedSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonActiveSignature__DelegateSignature();
+PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonStatChangedSignature__DelegateSignature();
+PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonAbilityConfigured__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonInfoSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonUIInfoSignature__DelegateSignature();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonUIInfo();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
+
+// ********** Begin Delegate FOnQuickSlotModeUIChanged *********************************************
+struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics
+{
+	struct _Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms
+	{
+		ESlotType NewMode;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Delegate FOnQuickSlotModeUIChanged constinit property declarations *************
+	static const UECodeGen_Private::FBytePropertyParams NewProp_NewMode_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_NewMode;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Delegate FOnQuickSlotModeUIChanged constinit property declarations ***************
+	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
+};
+
+// ********** Begin Delegate FOnQuickSlotModeUIChanged Property Definitions ************************
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::NewProp_NewMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::NewProp_NewMode = { "NewMode", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms, NewMode), Z_Construct_UEnum_ProjectMimikyu_ESlotType, METADATA_PARAMS(0, nullptr) }; // 819695976
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::NewProp_NewMode_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::NewProp_NewMode,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::PropPointers) < 2048);
+// ********** End Delegate FOnQuickSlotModeUIChanged Property Definitions **************************
+const UECodeGen_Private::FDelegateFunctionParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu, nullptr, "OnQuickSlotModeUIChanged__DelegateSignature", 	Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::PropPointers), 
+sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00130000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms) < MAX_uint16);
+UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUDelegateFunction(&ReturnFunction, Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+void FOnQuickSlotModeUIChanged_DelegateWrapper(const FMulticastScriptDelegate& OnQuickSlotModeUIChanged, ESlotType NewMode)
+{
+	struct _Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms
+	{
+		ESlotType NewMode;
+	};
+	_Script_ProjectMimikyu_eventOnQuickSlotModeUIChanged_Parms Parms;
+	Parms.NewMode=NewMode;
+	OnQuickSlotModeUIChanged.ProcessMulticastDelegate<UObject>(&Parms);
+}
+// ********** End Delegate FOnQuickSlotModeUIChanged ***********************************************
+
+// ********** Begin Delegate FOnInventoryQuickSlotChanged ******************************************
+struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics
+{
+	struct _Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms
+	{
+		TArray<FSlotInfo> ThrowableItems;
+		int32 SelectedIndex;
+		FName SelectedItemID;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ThrowableItems_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Delegate FOnInventoryQuickSlotChanged constinit property declarations **********
+	static const UECodeGen_Private::FStructPropertyParams NewProp_ThrowableItems_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_ThrowableItems;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_SelectedIndex;
+	static const UECodeGen_Private::FNamePropertyParams NewProp_SelectedItemID;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Delegate FOnInventoryQuickSlotChanged constinit property declarations ************
+	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
+};
+
+// ********** Begin Delegate FOnInventoryQuickSlotChanged Property Definitions *********************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems_Inner = { "ThrowableItems", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FSlotInfo, METADATA_PARAMS(0, nullptr) }; // 211375262
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems = { "ThrowableItems", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, ThrowableItems), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ThrowableItems_MetaData), NewProp_ThrowableItems_MetaData) }; // 211375262
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex = { "SelectedIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, SelectedIndex), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FNamePropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedItemID = { "SelectedItemID", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, SelectedItemID), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedItemID,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers) < 2048);
+// ********** End Delegate FOnInventoryQuickSlotChanged Property Definitions ***********************
+const UECodeGen_Private::FDelegateFunctionParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu, nullptr, "OnInventoryQuickSlotChanged__DelegateSignature", 	Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers), 
+sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00530000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms) < MAX_uint16);
+UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUDelegateFunction(&ReturnFunction, Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FSlotInfo> const& ThrowableItems, int32 SelectedIndex, FName SelectedItemID)
+{
+	struct _Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms
+	{
+		TArray<FSlotInfo> ThrowableItems;
+		int32 SelectedIndex;
+		FName SelectedItemID;
+	};
+	_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms Parms;
+	Parms.ThrowableItems=ThrowableItems;
+	Parms.SelectedIndex=SelectedIndex;
+	Parms.SelectedItemID=SelectedItemID;
+	OnInventoryQuickSlotChanged.ProcessMulticastDelegate<UObject>(&Parms);
+}
+// ********** End Delegate FOnInventoryQuickSlotChanged ********************************************
+
+// ********** Begin Delegate FOnPokemonQuickSlotChanged ********************************************
+struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics
+{
+	struct _Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms
+	{
+		TArray<FPokemonInfo> PokemonParty;
+		int32 SelectedIndex;
+		FPokemonInfo SelectedPokemonInfo;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokemonParty_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SelectedPokemonInfo_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Delegate FOnPokemonQuickSlotChanged constinit property declarations ************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_PokemonParty_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_PokemonParty;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_SelectedIndex;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_SelectedPokemonInfo;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Delegate FOnPokemonQuickSlotChanged constinit property declarations **************
+	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
+};
+
+// ********** Begin Delegate FOnPokemonQuickSlotChanged Property Definitions ***********************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_PokemonParty_Inner = { "PokemonParty", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 2094424460
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_PokemonParty = { "PokemonParty", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms, PokemonParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonParty_MetaData), NewProp_PokemonParty_MetaData) }; // 2094424460
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex = { "SelectedIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms, SelectedIndex), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedPokemonInfo = { "SelectedPokemonInfo", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms, SelectedPokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedPokemonInfo_MetaData), NewProp_SelectedPokemonInfo_MetaData) }; // 2094424460
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_PokemonParty_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_PokemonParty,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedPokemonInfo,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::PropPointers) < 2048);
+// ********** End Delegate FOnPokemonQuickSlotChanged Property Definitions *************************
+const UECodeGen_Private::FDelegateFunctionParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu, nullptr, "OnPokemonQuickSlotChanged__DelegateSignature", 	Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::PropPointers), 
+sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00530000, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::Function_MetaDataParams), Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms) < MAX_uint16);
+UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUDelegateFunction(&ReturnFunction, Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+void FOnPokemonQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnPokemonQuickSlotChanged, TArray<FPokemonInfo> const& PokemonParty, int32 SelectedIndex, FPokemonInfo const& SelectedPokemonInfo)
+{
+	struct _Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms
+	{
+		TArray<FPokemonInfo> PokemonParty;
+		int32 SelectedIndex;
+		FPokemonInfo SelectedPokemonInfo;
+	};
+	_Script_ProjectMimikyu_eventOnPokemonQuickSlotChanged_Parms Parms;
+	Parms.PokemonParty=PokemonParty;
+	Parms.SelectedIndex=SelectedIndex;
+	Parms.SelectedPokemonInfo=SelectedPokemonInfo;
+	OnPokemonQuickSlotChanged.ProcessMulticastDelegate<UObject>(&Parms);
+}
+// ********** End Delegate FOnPokemonQuickSlotChanged **********************************************
 
 // ********** Begin Delegate FOnHealthChangedSignature *********************************************
 struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnHealthChangedSignature__DelegateSignature_Statics
@@ -526,6 +733,95 @@ void FOnKeyInputSignature_DelegateWrapper(const FMulticastScriptDelegate& OnKeyI
 }
 // ********** End Delegate FOnKeyInputSignature ****************************************************
 
+// ********** Begin Class UTrainerOverlayWidgetController Function HandleQuickSlotModeChanged ******
+struct Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics
+{
+	struct TrainerOverlayWidgetController_eventHandleQuickSlotModeChanged_Parms
+	{
+		ESlotType NewMode;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function HandleQuickSlotModeChanged constinit property declarations ************
+	static const UECodeGen_Private::FBytePropertyParams NewProp_NewMode_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_NewMode;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function HandleQuickSlotModeChanged constinit property declarations **************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function HandleQuickSlotModeChanged Property Definitions ***********************
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::NewProp_NewMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::NewProp_NewMode = { "NewMode", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerOverlayWidgetController_eventHandleQuickSlotModeChanged_Parms, NewMode), Z_Construct_UEnum_ProjectMimikyu_ESlotType, METADATA_PARAMS(0, nullptr) }; // 819695976
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::NewProp_NewMode_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::NewProp_NewMode,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::PropPointers) < 2048);
+// ********** End Function HandleQuickSlotModeChanged Property Definitions *************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UTrainerOverlayWidgetController, nullptr, "HandleQuickSlotModeChanged", 	Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::TrainerOverlayWidgetController_eventHandleQuickSlotModeChanged_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00080401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::Function_MetaDataParams), Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::TrainerOverlayWidgetController_eventHandleQuickSlotModeChanged_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UTrainerOverlayWidgetController::execHandleQuickSlotModeChanged)
+{
+	P_GET_ENUM(ESlotType,Z_Param_NewMode);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->HandleQuickSlotModeChanged(ESlotType(Z_Param_NewMode));
+	P_NATIVE_END;
+}
+// ********** End Class UTrainerOverlayWidgetController Function HandleQuickSlotModeChanged ********
+
+// ********** Begin Class UTrainerOverlayWidgetController Function HandleQuickSlotSelectionChanged *
+struct Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function HandleQuickSlotSelectionChanged constinit property declarations *******
+// ********** End Function HandleQuickSlotSelectionChanged constinit property declarations *********
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UTrainerOverlayWidgetController, nullptr, "HandleQuickSlotSelectionChanged", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00080401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged_Statics::Function_MetaDataParams), Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UTrainerOverlayWidgetController::execHandleQuickSlotSelectionChanged)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->HandleQuickSlotSelectionChanged();
+	P_NATIVE_END;
+}
+// ********** End Class UTrainerOverlayWidgetController Function HandleQuickSlotSelectionChanged ***
+
 // ********** Begin Class UTrainerOverlayWidgetController ******************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_UTrainerOverlayWidgetController;
 UClass* UTrainerOverlayWidgetController::GetPrivateStaticClass()
@@ -625,7 +921,23 @@ struct Z_Construct_UClass_UTrainerOverlayWidgetController_Statics
 		{ "Category", "GAS|Attributes" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OnQuickSlotModeChanged_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OnInventoryQuickSlotChanged_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OnPokemonQuickSlotChanged_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_BoundPokemonASC_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_QuickSlotComponent_MetaData[] = {
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/WidgetController/TrainerOverlayWidgetController.h" },
 	};
@@ -647,10 +959,23 @@ struct Z_Construct_UClass_UTrainerOverlayWidgetController_Statics
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_PokemonActivatedDelegate;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_KeyDirectionDelegate;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_PokemonAbilityConfigured;
+	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnQuickSlotModeChanged;
+	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnInventoryQuickSlotChanged;
+	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnPokemonQuickSlotChanged;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_BoundPokemonASC;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_QuickSlotComponent;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UTrainerOverlayWidgetController constinit property declarations ************
+	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
+		{ .NameUTF8 = UTF8TEXT("HandleQuickSlotModeChanged"), .Pointer = &UTrainerOverlayWidgetController::execHandleQuickSlotModeChanged },
+		{ .NameUTF8 = UTF8TEXT("HandleQuickSlotSelectionChanged"), .Pointer = &UTrainerOverlayWidgetController::execHandleQuickSlotSelectionChanged },
+	};
 	static UObject* (*const DependentSingletons[])();
+	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
+		{ &Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotModeChanged, "HandleQuickSlotModeChanged" }, // 1053722995
+		{ &Z_Construct_UFunction_UTrainerOverlayWidgetController_HandleQuickSlotSelectionChanged, "HandleQuickSlotSelectionChanged" }, // 494818372
+	};
+	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UTrainerOverlayWidgetController>::IsAbstract,
 	};
@@ -673,7 +998,11 @@ const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTr
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonActivatedDelegate = { "PokemonActivatedDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, PokemonActivatedDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_OnEventActivatedSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonActivatedDelegate_MetaData), NewProp_PokemonActivatedDelegate_MetaData) }; // 2954336686
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_KeyDirectionDelegate = { "KeyDirectionDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, KeyDirectionDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_KeyDirectionDelegate_MetaData), NewProp_KeyDirectionDelegate_MetaData) }; // 3849497204
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonAbilityConfigured = { "PokemonAbilityConfigured", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, PokemonAbilityConfigured), Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonAbilityConfigured__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonAbilityConfigured_MetaData), NewProp_PokemonAbilityConfigured_MetaData) }; // 118471024
+const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnQuickSlotModeChanged = { "OnQuickSlotModeChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnQuickSlotModeChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnQuickSlotModeChanged_MetaData), NewProp_OnQuickSlotModeChanged_MetaData) }; // 1779850480
+const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnInventoryQuickSlotChanged = { "OnInventoryQuickSlotChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnInventoryQuickSlotChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnInventoryQuickSlotChanged_MetaData), NewProp_OnInventoryQuickSlotChanged_MetaData) }; // 1315744195
+const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnPokemonQuickSlotChanged = { "OnPokemonQuickSlotChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnPokemonQuickSlotChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnPokemonQuickSlotChanged_MetaData), NewProp_OnPokemonQuickSlotChanged_MetaData) }; // 2340349211
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_BoundPokemonASC = { "BoundPokemonASC", nullptr, (EPropertyFlags)0x0124080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, BoundPokemonASC), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BoundPokemonASC_MetaData), NewProp_BoundPokemonASC_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_QuickSlotComponent = { "QuickSlotComponent", nullptr, (EPropertyFlags)0x0124080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, QuickSlotComponent), Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_QuickSlotComponent_MetaData), NewProp_QuickSlotComponent_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnHealthChanged,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnLevelChanged,
@@ -690,7 +1019,11 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTrainerO
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonActivatedDelegate,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_KeyDirectionDelegate,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonAbilityConfigured,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnQuickSlotModeChanged,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnInventoryQuickSlotChanged,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnPokemonQuickSlotChanged,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_BoundPokemonASC,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_QuickSlotComponent,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers) < 2048);
 // ********** End Class UTrainerOverlayWidgetController Property Definitions ***********************
@@ -704,11 +1037,11 @@ const UECodeGen_Private::FClassParams Z_Construct_UClass_UTrainerOverlayWidgetCo
 	nullptr,
 	&StaticCppClassTypeInfo,
 	DependentSingletons,
-	nullptr,
+	FuncInfo,
 	Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers,
 	nullptr,
 	UE_ARRAY_COUNT(DependentSingletons),
-	0,
+	UE_ARRAY_COUNT(FuncInfo),
 	UE_ARRAY_COUNT(Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::PropPointers),
 	0,
 	0x009000A0u,
@@ -716,6 +1049,8 @@ const UECodeGen_Private::FClassParams Z_Construct_UClass_UTrainerOverlayWidgetCo
 };
 void UTrainerOverlayWidgetController::StaticRegisterNativesUTrainerOverlayWidgetController()
 {
+	UClass* Class = UTrainerOverlayWidgetController::StaticClass();
+	FNativeFunctionRegistrar::RegisterFunctions(Class, MakeConstArrayView(Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::Funcs));
 }
 UClass* Z_Construct_UClass_UTrainerOverlayWidgetController()
 {
@@ -734,10 +1069,10 @@ UTrainerOverlayWidgetController::~UTrainerOverlayWidgetController() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 734524843U) },
+		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 1294642518U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_3312135453{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_973115187{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

@@ -707,7 +707,7 @@ void AProjectMimikyuCharacter::ThrowSelectedInventoryItemInput()
 
 void AProjectMimikyuCharacter::ThrowSelectedPokemonInput()
 {
-	if (!IsLocallyControlled() || !QuickSlotComponent)
+	if (!IsLocallyControlled() || !QuickSlotComponent||!FollowCamera)
 	{
 		return;
 	}
@@ -718,7 +718,7 @@ void AProjectMimikyuCharacter::ThrowSelectedPokemonInput()
 		return;
 	}
 
-	if (!QuickSlotComponent->HasSelectedPokemon())
+	if (!QuickSlotComponent->HasSelectedPokemonInfo())
 	{
 		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedPokemonInput failed: No Pokemon in selected Quick Slot"));
 		return;
@@ -727,7 +727,7 @@ void AProjectMimikyuCharacter::ThrowSelectedPokemonInput()
 	FVector Start = GetActorLocation();
 	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
 
-	ServerRequestSendOutPokemon(Start, End);
+	ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
 }
 
 void AProjectMimikyuCharacter::ServerThrowSelectedInventoryItem_Implementation(FName ItemID, const FAimData& AimData)
@@ -772,12 +772,12 @@ void AProjectMimikyuCharacter::ComeOnOut()
 		return;
 	FVector Start = GetActorLocation();
 	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
-	ServerRequestSendOutPokemon(Start, End);
+	ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
 }
 
-void AProjectMimikyuCharacter::ServerRequestSendOutPokemon_Implementation(FVector TraceStart, FVector TraceEnd)
+void AProjectMimikyuCharacter::ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd)
 {
-	HandleSendOutPokemon(TraceStart, TraceEnd);
+	HandleSendOutPokemonAtIndex(SelectedPartyIndex, TraceStart, TraceEnd);
 }
 
 bool AProjectMimikyuCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const
@@ -798,7 +798,7 @@ bool AProjectMimikyuCharacter::TryBuildPokemonSpawnTransform(const FVector& Trac
 	return true;
 }
 
-void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd)
+void AProjectMimikyuCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, const FVector& TraceStart, const FVector& TraceEnd)
 {
 	// Server checks if player has a Pokemon, if the Pokemon is ready, and if the spawn location is valid before spawning the Pokemon and setting it as the current active Pokemon
 	
@@ -819,7 +819,13 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 		return;
 	}
 
-	FPokemonInfo PokemonOut = TPS->GetCurrentPokemonInfo();
+	FPokemonInfo PokemonOut;
+
+	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Party Index"));
+		return;
+	}
 
 	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
 	{
@@ -828,6 +834,7 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 	}
 
 	FTransform SpawnTransform;
+
 	if (!TryBuildPokemonSpawnTransform(TraceStart, TraceEnd, SpawnTransform))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Invalid Spawn Location"));
@@ -856,13 +863,14 @@ void AProjectMimikyuCharacter::HandleSendOutPokemon(const FVector& TraceStart, c
 		UE_LOG(LogTemp, Display, TEXT("Failed to spawn Pokemon"));
 		return;
 	}
+
 	IChooseYou->SetPokemonStartup(PokemonOut);
 	IChooseYou->SetPokemonTrainer(this);
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
-	UPokemonDebugLibrary::SetObservedActor(this, CurrentPokemon);
-	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::AI, true);
+
+	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);
 }
 

@@ -47,7 +47,6 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	virtual void ServerBroadcastTarget_Implementation(AActor* Target); \
 	virtual void ServerAddToCurrentParty_Implementation(AActor* AddedActor); \
 	virtual void ServerCallCommand_Implementation(int32 MoveIndex, FAimData const& AimData); \
-	virtual void ServerRequestSendOutPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	virtual void ServerRequestReturnCurrentPokemon_Implementation(); \
 	virtual void ServerRequestCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	virtual void ServerSetPokemon_Implementation(APokemon_Parent* LeadPokemon); \

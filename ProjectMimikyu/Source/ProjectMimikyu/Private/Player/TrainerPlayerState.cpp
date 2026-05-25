@@ -42,6 +42,67 @@ void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
 	// When there are too many Pokemon in the Party, send them to a PC.
 }
 
+bool ATrainerPlayerState::IsValidPartyIndex(int32 Index) const
+{
+	return CurrentPartyInfo.IsValidIndex(Index);
+}
+
+bool ATrainerPlayerState::GetPokemonInfoAtPartyIndex(int32 Index, FPokemonInfo& OutPokemonInfo) const
+{
+	if (!CurrentPartyInfo.IsValidIndex(Index))
+	{
+		return false;
+	}
+	OutPokemonInfo = CurrentPartyInfo[Index];
+	return true;
+}
+
+void ATrainerPlayerState::SetPartyIndexClamped(int32 NewIndex)
+{
+	if (CurrentPartyInfo.Num() <= 0)
+	{
+		PartyIndex = 0;
+		return;
+	}
+
+	PartyIndex = FMath::Clamp(NewIndex, 0, CurrentPartyInfo.Num() - 1);
+	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
+}
+
+void ATrainerPlayerState::ShiftPartyIndexLeft()
+{
+	if(CurrentPartyInfo.Num()<=1)
+	{
+		return;
+	}
+
+	PartyIndex--;
+
+	if(PartyIndex<0)
+	{
+		PartyIndex = CurrentPartyInfo.Num() - 1;
+	}
+
+	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
+}
+
+void ATrainerPlayerState::ShiftPartyIndexRight()
+{
+	if(CurrentPartyInfo.Num()<=1)
+	{
+		return;
+	}
+
+	PartyIndex++;
+
+	if(PartyIndex>=CurrentPartyInfo.Num())
+	{
+		PartyIndex = 0;
+	}
+
+	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
+}
+
 FPokemonInfo ATrainerPlayerState::GetCurrentPokemonInfo()
 {
 	if (!CurrentPartyInfo.IsValidIndex(PartyIndex))

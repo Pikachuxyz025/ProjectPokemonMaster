@@ -15,15 +15,16 @@ void EmptyLinkFunctionForGeneratedCodeTrainerQuickSlotComponent() {}
 // ********** Begin Cross Module References ********************************************************
 COREUOBJECT_API UClass* Z_Construct_UClass_UClass_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_UActorComponent();
-PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectile_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerPlayerState_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySystemComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerQuickSlotComponent();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister();
 PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_ESlotType();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeChanged__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotSelectionChanged__DelegateSignature();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
@@ -151,63 +152,6 @@ DEFINE_FUNCTION(UTrainerQuickSlotComponent::execRefreshInventory)
 }
 // ********** End Class UTrainerQuickSlotComponent Function RefreshInventory ***********************
 
-// ********** Begin Class UTrainerQuickSlotComponent Function RefreshParty *************************
-struct Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics
-{
-	struct TrainerQuickSlotComponent_eventRefreshParty_Parms
-	{
-		TArray<APokemon_Parent*> NewParty;
-	};
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_NewParty_MetaData[] = {
-		{ "NativeConst", "" },
-	};
-#endif // WITH_METADATA
-
-// ********** Begin Function RefreshParty constinit property declarations **************************
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_NewParty_Inner;
-	static const UECodeGen_Private::FArrayPropertyParams NewProp_NewParty;
-	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-// ********** End Function RefreshParty constinit property declarations ****************************
-	static const UECodeGen_Private::FFunctionParams FuncParams;
-};
-
-// ********** Begin Function RefreshParty Property Definitions *************************************
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::NewProp_NewParty_Inner = { "NewParty", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::NewProp_NewParty = { "NewParty", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerQuickSlotComponent_eventRefreshParty_Parms, NewParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_NewParty_MetaData), NewProp_NewParty_MetaData) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::NewProp_NewParty_Inner,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::NewProp_NewParty,
-};
-static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::PropPointers) < 2048);
-// ********** End Function RefreshParty Property Definitions ***************************************
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UTrainerQuickSlotComponent, nullptr, "RefreshParty", 	Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::PropPointers, 
-	UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::PropPointers), 
-sizeof(Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::TrainerQuickSlotComponent_eventRefreshParty_Parms),
-RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00420401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::Function_MetaDataParams), Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::Function_MetaDataParams)},  };
-static_assert(sizeof(Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::TrainerQuickSlotComponent_eventRefreshParty_Parms) < MAX_uint16);
-UFunction* Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty()
-{
-	static UFunction* ReturnFunction = nullptr;
-	if (!ReturnFunction)
-	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty_Statics::FuncParams);
-	}
-	return ReturnFunction;
-}
-DEFINE_FUNCTION(UTrainerQuickSlotComponent::execRefreshParty)
-{
-	P_GET_TARRAY_REF(APokemon_Parent*,Z_Param_Out_NewParty);
-	P_FINISH;
-	P_NATIVE_BEGIN;
-	P_THIS->RefreshParty(Z_Param_Out_NewParty);
-	P_NATIVE_END;
-}
-// ********** End Class UTrainerQuickSlotComponent Function RefreshParty ***************************
-
 // ********** Begin Class UTrainerQuickSlotComponent ***********************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_UTrainerQuickSlotComponent;
 UClass* UTrainerQuickSlotComponent::GetPrivateStaticClass()
@@ -250,6 +194,9 @@ struct Z_Construct_UClass_UTrainerQuickSlotComponent_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_OwnerCharacter_MetaData[] = {
 		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TrainerPlayerState_MetaData[] = {
+		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_InventorySystem_MetaData[] = {
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
@@ -266,23 +213,27 @@ struct Z_Construct_UClass_UTrainerQuickSlotComponent_Statics
 		{ "Category", "Quick Slots" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedPartyInfo_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedThrowableContent_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SelectedPokemonInfo_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bHasSelectedPokemonInfo_MetaData[] = {
+		{ "Category", "Quick Slots" },
+		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SelectedThrowableItemID_MetaData[] = {
 		{ "Category", "Quick Slots" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SelectedThrowableProjectileClass_MetaData[] = {
-		{ "Category", "Quick Slots" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SelectedPokemon_MetaData[] = {
-		{ "Category", "Quick Slots" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedPokemonParty_MetaData[] = {
-		{ "Category", "Quick Slots" },
-		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedThrowableContent_MetaData[] = {
 		{ "Category", "Quick Slots" },
 		{ "ModuleRelativePath", "Public/ActorComponents/TrainerQuickSlotComponent.h" },
 	};
@@ -298,30 +249,31 @@ struct Z_Construct_UClass_UTrainerQuickSlotComponent_Statics
 
 // ********** Begin Class UTrainerQuickSlotComponent constinit property declarations ***************
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_OwnerCharacter;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_TrainerPlayerState;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InventorySystem;
 	static const UECodeGen_Private::FBytePropertyParams NewProp_CurrentSlotMode_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_CurrentSlotMode;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_PartyIndex;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_InventoryIndex;
-	static const UECodeGen_Private::FNamePropertyParams NewProp_SelectedThrowableItemID;
-	static const UECodeGen_Private::FClassPropertyParams NewProp_SelectedThrowableProjectileClass;
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectedPokemon;
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_CachedPokemonParty_Inner;
-	static const UECodeGen_Private::FArrayPropertyParams NewProp_CachedPokemonParty;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CachedPartyInfo_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_CachedPartyInfo;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_CachedThrowableContent_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_CachedThrowableContent;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_SelectedPokemonInfo;
+	static void NewProp_bHasSelectedPokemonInfo_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bHasSelectedPokemonInfo;
+	static const UECodeGen_Private::FNamePropertyParams NewProp_SelectedThrowableItemID;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_SelectedThrowableProjectileClass;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnQuickSlotModeChanged;
 	static const UECodeGen_Private::FMulticastDelegatePropertyParams NewProp_OnQuickSlotSelectionChanged;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UTrainerQuickSlotComponent constinit property declarations *****************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("RefreshInventory"), .Pointer = &UTrainerQuickSlotComponent::execRefreshInventory },
-		{ .NameUTF8 = UTF8TEXT("RefreshParty"), .Pointer = &UTrainerQuickSlotComponent::execRefreshParty },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshInventory, "RefreshInventory" }, // 568382118
-		{ &Z_Construct_UFunction_UTrainerQuickSlotComponent_RefreshParty, "RefreshParty" }, // 1913042101
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -332,34 +284,42 @@ struct Z_Construct_UClass_UTrainerQuickSlotComponent_Statics
 
 // ********** Begin Class UTrainerQuickSlotComponent Property Definitions **************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OwnerCharacter = { "OwnerCharacter", nullptr, (EPropertyFlags)0x0144000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, OwnerCharacter), Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwnerCharacter_MetaData), NewProp_OwnerCharacter_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_TrainerPlayerState = { "TrainerPlayerState", nullptr, (EPropertyFlags)0x0144000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, TrainerPlayerState), Z_Construct_UClass_ATrainerPlayerState_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TrainerPlayerState_MetaData), NewProp_TrainerPlayerState_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_InventorySystem = { "InventorySystem", nullptr, (EPropertyFlags)0x0144000000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, InventorySystem), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventorySystem_MetaData), NewProp_InventorySystem_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CurrentSlotMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CurrentSlotMode = { "CurrentSlotMode", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, CurrentSlotMode), Z_Construct_UEnum_ProjectMimikyu_ESlotType, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentSlotMode_MetaData), NewProp_CurrentSlotMode_MetaData) }; // 819695976
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_PartyIndex = { "PartyIndex", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, PartyIndex), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PartyIndex_MetaData), NewProp_PartyIndex_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_InventoryIndex = { "InventoryIndex", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, InventoryIndex), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventoryIndex_MetaData), NewProp_InventoryIndex_MetaData) };
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableItemID = { "SelectedThrowableItemID", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedThrowableItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedThrowableItemID_MetaData), NewProp_SelectedThrowableItemID_MetaData) };
-const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableProjectileClass = { "SelectedThrowableProjectileClass", nullptr, (EPropertyFlags)0x0044000000020001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedThrowableProjectileClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_AProjectile_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedThrowableProjectileClass_MetaData), NewProp_SelectedThrowableProjectileClass_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedPokemon = { "SelectedPokemon", nullptr, (EPropertyFlags)0x0144000000020001, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedPokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedPokemon_MetaData), NewProp_SelectedPokemon_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPokemonParty_Inner = { "CachedPokemonParty", nullptr, (EPropertyFlags)0x0104000000020000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPokemonParty = { "CachedPokemonParty", nullptr, (EPropertyFlags)0x0144000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, CachedPokemonParty), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedPokemonParty_MetaData), NewProp_CachedPokemonParty_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPartyInfo_Inner = { "CachedPartyInfo", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(0, nullptr) }; // 2094424460
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPartyInfo = { "CachedPartyInfo", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, CachedPartyInfo), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedPartyInfo_MetaData), NewProp_CachedPartyInfo_MetaData) }; // 2094424460
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedThrowableContent_Inner = { "CachedThrowableContent", nullptr, (EPropertyFlags)0x0000000000020000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FSlotInfo, METADATA_PARAMS(0, nullptr) }; // 211375262
 const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedThrowableContent = { "CachedThrowableContent", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, CachedThrowableContent), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedThrowableContent_MetaData), NewProp_CachedThrowableContent_MetaData) }; // 211375262
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedPokemonInfo = { "SelectedPokemonInfo", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedPokemonInfo), Z_Construct_UScriptStruct_FPokemonInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedPokemonInfo_MetaData), NewProp_SelectedPokemonInfo_MetaData) }; // 2094424460
+void Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_bHasSelectedPokemonInfo_SetBit(void* Obj)
+{
+	((UTrainerQuickSlotComponent*)Obj)->bHasSelectedPokemonInfo = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_bHasSelectedPokemonInfo = { "bHasSelectedPokemonInfo", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(UTrainerQuickSlotComponent), &Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_bHasSelectedPokemonInfo_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bHasSelectedPokemonInfo_MetaData), NewProp_bHasSelectedPokemonInfo_MetaData) };
+const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableItemID = { "SelectedThrowableItemID", nullptr, (EPropertyFlags)0x0040000000020001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedThrowableItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedThrowableItemID_MetaData), NewProp_SelectedThrowableItemID_MetaData) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableProjectileClass = { "SelectedThrowableProjectileClass", nullptr, (EPropertyFlags)0x0044000000020001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, SelectedThrowableProjectileClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_AProjectile_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SelectedThrowableProjectileClass_MetaData), NewProp_SelectedThrowableProjectileClass_MetaData) };
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OnQuickSlotModeChanged = { "OnQuickSlotModeChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, OnQuickSlotModeChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnQuickSlotModeChanged_MetaData), NewProp_OnQuickSlotModeChanged_MetaData) }; // 2698894198
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OnQuickSlotSelectionChanged = { "OnQuickSlotSelectionChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerQuickSlotComponent, OnQuickSlotSelectionChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotSelectionChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnQuickSlotSelectionChanged_MetaData), NewProp_OnQuickSlotSelectionChanged_MetaData) }; // 4291432152
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OwnerCharacter,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_TrainerPlayerState,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_InventorySystem,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CurrentSlotMode_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CurrentSlotMode,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_PartyIndex,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_InventoryIndex,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableItemID,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableProjectileClass,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedPokemon,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPokemonParty_Inner,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPokemonParty,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPartyInfo_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedPartyInfo,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedThrowableContent_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_CachedThrowableContent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedPokemonInfo,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_bHasSelectedPokemonInfo,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableItemID,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_SelectedThrowableProjectileClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OnQuickSlotModeChanged,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UTrainerQuickSlotComponent_Statics::NewProp_OnQuickSlotSelectionChanged,
 };
@@ -406,10 +366,10 @@ UTrainerQuickSlotComponent::~UTrainerQuickSlotComponent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTrainerQuickSlotComponent, UTrainerQuickSlotComponent::StaticClass, TEXT("UTrainerQuickSlotComponent"), &Z_Registration_Info_UClass_UTrainerQuickSlotComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerQuickSlotComponent), 1005749555U) },
+		{ Z_Construct_UClass_UTrainerQuickSlotComponent, UTrainerQuickSlotComponent::StaticClass, TEXT("UTrainerQuickSlotComponent"), &Z_Registration_Info_UClass_UTrainerQuickSlotComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerQuickSlotComponent), 2583892772U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_168143815{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_3170957067{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_TrainerQuickSlotComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

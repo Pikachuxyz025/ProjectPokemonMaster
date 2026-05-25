@@ -11,6 +11,7 @@ class AProjectMimikyuCharacter;
 class APokemon_Parent;
 class AProjectile;
 class UInventorySystemComponent;
+class ATrainerPlayerState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotModeChanged, ESlotType, NewMode);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickSlotSelectionChanged);
@@ -27,8 +28,12 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
 	UPROPERTY()
 	TObjectPtr<AProjectMimikyuCharacter> OwnerCharacter;
+
+	UPROPERTY()
+	TObjectPtr<ATrainerPlayerState> TrainerPlayerState;
 
 	UPROPERTY()
 	TObjectPtr<UInventorySystemComponent> InventorySystem;
@@ -43,19 +48,22 @@ private:
 	int32 InventoryIndex = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
+	TArray<FPokemonInfo> CachedPartyInfo;
+
+	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
+	TArray<FSlotInfo> CachedThrowableContent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
+	FPokemonInfo SelectedPokemonInfo;
+
+	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
+	bool bHasSelectedPokemonInfo = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
 	FName SelectedThrowableItemID = NAME_None;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
 	TSubclassOf<AProjectile> SelectedThrowableProjectileClass = nullptr;
-
-	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
-	TObjectPtr<APokemon_Parent> SelectedPokemon = nullptr;
-
-	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
-	TArray<TObjectPtr<APokemon_Parent>> CachedPokemonParty;
-
-	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
-	TArray<FSlotInfo> CachedThrowableContent;
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Quick Slots")
@@ -69,32 +77,30 @@ public:
 	void InitializeQuickSlots(AProjectMimikyuCharacter* InOwnerCharacter);
 
 	UFUNCTION()
-	void RefreshParty(const TArray<APokemon_Parent*>& NewParty);
-
-	UFUNCTION()
 	void RefreshInventory();
 
+	void RefreshPartyInfo(const TArray<FPokemonInfo>& NewPartyInfo);
+
 	void SwapSlotMode();
+	void SetSlotMode(ESlotType NewMode);
+
 	void ShiftLeft();
 	void ShiftRight();
-
-	void SetSlotMode(ESlotType NewMode);
 
 	ESlotType GetCurrentSlotMode() const { return CurrentSlotMode; }
 
 	int32 GetPartyIndex() const { return PartyIndex; }
 	int32 GetInventoryIndex() const { return InventoryIndex; }
 
-	APokemon_Parent* GetSelectedPokemon() const { return SelectedPokemon; }
-
-	FName GetSelectedThrowableItemID() const { return SelectedThrowableItemID; }
-	TSubclassOf<AProjectile> GetSelectedThrowableProjectileClass() const { return SelectedThrowableProjectileClass; }
-
-	const TArray<TObjectPtr<APokemon_Parent>>& GetCachedPokemonParty() const { return CachedPokemonParty; }
+	const TArray<FPokemonInfo>& GetCachedPartyInfo() const { return CachedPartyInfo; }
 	const TArray<FSlotInfo>& GetCachedThrowableContent() const { return CachedThrowableContent; }
 
-	bool HasSelectedPokemon() const;
+	bool HasSelectedPokemonInfo() const { return bHasSelectedPokemonInfo; }
+	const FPokemonInfo& GetSelectedPokemonInfo() const { return SelectedPokemonInfo; }
+
 	bool HasSelectedThrowableItem() const;
+	FName GetSelectedThrowableItemID() const { return SelectedThrowableItemID; }
+	TSubclassOf<AProjectile> GetSelectedThrowableProjectileClass() const { return SelectedThrowableProjectileClass; }
 
 private:
 	void RebuildSelection();

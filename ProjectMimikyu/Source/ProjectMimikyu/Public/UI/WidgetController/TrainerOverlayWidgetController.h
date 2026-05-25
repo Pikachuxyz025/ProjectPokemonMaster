@@ -9,6 +9,21 @@
 
 struct FPokemonUIInfo;
 struct FPokemonInfo;
+class UTrainerQuickSlotComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotModeUIChanged, ESlotType, NewMode);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnInventoryQuickSlotChanged, 
+	const TArray<FSlotInfo>&, ThrowableItems,
+	int32, SelectedIndex, 
+	FName, SelectedItemID
+);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+	FOnPokemonQuickSlotChanged,
+	const TArray<FPokemonInfo>&, PokemonParty,
+	int32, SelectedIndex,
+	const FPokemonInfo&, SelectedPokemonInfo
+);
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
@@ -82,9 +97,28 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonAbilityConfigured PokemonAbilityConfigured;
 
+	UPROPERTY(BlueprintAssignable, Category = "Quick Slots")
+	FOnQuickSlotModeUIChanged OnQuickSlotModeChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Quick Slots")
+	FOnInventoryQuickSlotChanged OnInventoryQuickSlotChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Quick Slots")
+	FOnPokemonQuickSlotChanged OnPokemonQuickSlotChanged;
 protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> BoundPokemonASC=nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
+
+	UFUNCTION()
+	void HandleQuickSlotModeChanged(ESlotType NewMode);
+
+	UFUNCTION()
+	void HandleQuickSlotSelectionChanged();
+
+	void BroadcastQuickSlotState();
 
 	FDelegateHandle HealthChangedHandle;
 	FDelegateHandle MaxHealthChangedHandle;

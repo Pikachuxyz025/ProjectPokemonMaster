@@ -3,13 +3,11 @@
 
 #include "UI/WidgetController/TrainerOverlayWidgetController.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
-#include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "Characters/ProjectMimikyuCharacter.h"
+#include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
-#include "Net/UnrealNetwork.h"
 #include "AIControllers/TrainerController.h"
-#include "Interfaces/PokemonCombatInterface.h"
-#include "DataAssets/PokemonDataAsset.h"
 
 void UTrainerOverlayWidgetController::BroadcastInitialValues()
 {
@@ -75,6 +73,18 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 			KeyDirectionDelegate.Broadcast(KeyDirection);
 		}
 	);
+
+	if(AProjectMimikyuCharacter* TrainerCharacter=Cast<AProjectMimikyuCharacter>(GetTC()->GetPawn()))
+	{
+		QuickSlotComponent = TrainerCharacter->GetQuickSlotComponent();
+		if (QuickSlotComponent)
+		{
+			QuickSlotComponent->OnQuickSlotModeChanged.AddDynamic(this, &UTrainerOverlayWidgetController::HandleQuickSlotModeChanged);
+			QuickSlotComponent->OnQuickSlotSelectionChanged.AddDynamic(this, &UTrainerOverlayWidgetController::HandleQuickSlotSelectionChanged);
+
+			BroadcastQuickSlotState();
+		}
+	}
 }
 
 void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
@@ -127,6 +137,52 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 				OnLevelChanged.Broadcast((int32)Data.NewValue);
 			}
 		);
+}
+
+void UTrainerOverlayWidgetController::HandleQuickSlotModeChanged(ESlotType NewMode)
+{
+	OnQuickSlotModeChanged.Broadcast(NewMode);
+	BroadcastQuickSlotState();
+}
+
+void UTrainerOverlayWidgetController::HandleQuickSlotSelectionChanged()
+{
+	BroadcastQuickSlotState();
+}
+
+void UTrainerOverlayWidgetController::BroadcastQuickSlotState()
+{
+	if(!QuickSlotComponent)
+	{
+		return;
+	}
+
+	const ESlotType CurrentMode = QuickSlotComponent->GetCurrentSlotMode();
+
+	OnQuickSlotModeChanged.Broadcast(CurrentMode);
+
+	switch (CurrentMode)
+	{
+	case ESlotType::EST_PokemonParty:
+
+		OnPokemonQuickSlotChanged.Broadcast(
+			QuickSlotComponent->GetCachedPartyInfo(),
+			QuickSlotComponent->GetPartyIndex(),
+			QuickSlotComponent->GetSelectedPokemonInfo()
+		);
+		break;
+
+	case ESlotType::EST_Inventory:
+		OnInventoryQuickSlotChanged.Broadcast(
+			QuickSlotComponent->GetCachedThrowableContent(),
+			QuickSlotComponent->GetInventoryIndex(),
+			QuickSlotComponent->GetSelectedThrowableItemID()
+		);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void UTrainerOverlayWidgetController::UnbindPokemonCallbacksFromDependencies()

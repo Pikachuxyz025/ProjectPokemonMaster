@@ -18,77 +18,105 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class APokemon_Parent;
 class UAbilitySystemComponent;
 enum class EDirectionPoint : uint8;
+enum class ESlotType : uint8;
 struct FPokemonInfo;
 struct FPokemonUIInfo;
+struct FSlotInfo;
+
+// ********** Begin Delegate FOnQuickSlotModeUIChanged *********************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_14_DELEGATE \
+PROJECTMIMIKYU_API void FOnQuickSlotModeUIChanged_DelegateWrapper(const FMulticastScriptDelegate& OnQuickSlotModeUIChanged, ESlotType NewMode);
+
+
+// ********** End Delegate FOnQuickSlotModeUIChanged ***********************************************
+
+// ********** Begin Delegate FOnInventoryQuickSlotChanged ******************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_19_DELEGATE \
+PROJECTMIMIKYU_API void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FSlotInfo> const& ThrowableItems, int32 SelectedIndex, FName SelectedItemID);
+
+
+// ********** End Delegate FOnInventoryQuickSlotChanged ********************************************
+
+// ********** Begin Delegate FOnPokemonQuickSlotChanged ********************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_25_DELEGATE \
+PROJECTMIMIKYU_API void FOnPokemonQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnPokemonQuickSlotChanged, TArray<FPokemonInfo> const& PokemonParty, int32 SelectedIndex, FPokemonInfo const& SelectedPokemonInfo);
+
+
+// ********** End Delegate FOnPokemonQuickSlotChanged **********************************************
 
 // ********** Begin Delegate FOnHealthChangedSignature *********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_13_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_28_DELEGATE \
 PROJECTMIMIKYU_API void FOnHealthChangedSignature_DelegateWrapper(const FMulticastScriptDelegate& OnHealthChangedSignature, float NewHealth);
 
 
 // ********** End Delegate FOnHealthChangedSignature ***********************************************
 
 // ********** Begin Delegate FOnMaxHealthChangedSignature ******************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_14_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_29_DELEGATE \
 PROJECTMIMIKYU_API void FOnMaxHealthChangedSignature_DelegateWrapper(const FMulticastScriptDelegate& OnMaxHealthChangedSignature, float NewMaxHealth);
 
 
 // ********** End Delegate FOnMaxHealthChangedSignature ********************************************
 
 // ********** Begin Delegate FPokemonUIInfoSignature ***********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_15_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_30_DELEGATE \
 PROJECTMIMIKYU_API void FPokemonUIInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& PokemonUIInfoSignature, FPokemonUIInfo const& Info);
 
 
 // ********** End Delegate FPokemonUIInfoSignature *************************************************
 
 // ********** Begin Delegate FPokemonInfoSignature *************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_16_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_31_DELEGATE \
 PROJECTMIMIKYU_API void FPokemonInfoSignature_DelegateWrapper(const FMulticastScriptDelegate& PokemonInfoSignature, TArray<FPokemonInfo> const& Info);
 
 
 // ********** End Delegate FPokemonInfoSignature ***************************************************
 
 // ********** Begin Delegate FOnPartyChangedSignature **********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_19_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_34_DELEGATE \
 PROJECTMIMIKYU_API void FOnPartyChangedSignature_DelegateWrapper(const FMulticastScriptDelegate& OnPartyChangedSignature, TArray<APokemon_Parent*> const& PokemonParty);
 
 
 // ********** End Delegate FOnPartyChangedSignature ************************************************
 
 // ********** Begin Delegate FOnPokemonActiveSignature *********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_20_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_35_DELEGATE \
 PROJECTMIMIKYU_API void FOnPokemonActiveSignature_DelegateWrapper(const FMulticastScriptDelegate& OnPokemonActiveSignature, APokemon_Parent* NewActivePokemon);
 
 
 // ********** End Delegate FOnPokemonActiveSignature ***********************************************
 
 // ********** Begin Delegate FOnEventActivatedSignature ********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_21_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_36_DELEGATE \
 PROJECTMIMIKYU_API void FOnEventActivatedSignature_DelegateWrapper(const FMulticastScriptDelegate& OnEventActivatedSignature);
 
 
 // ********** End Delegate FOnEventActivatedSignature **********************************************
 
 // ********** Begin Delegate FPokemonAbilityConfigured *********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_22_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_37_DELEGATE \
 PROJECTMIMIKYU_API void FPokemonAbilityConfigured_DelegateWrapper(const FMulticastScriptDelegate& PokemonAbilityConfigured, UAbilitySystemComponent* ASC);
 
 
 // ********** End Delegate FPokemonAbilityConfigured ***********************************************
 
 // ********** Begin Delegate FOnKeyInputSignature **************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_27_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_42_DELEGATE \
 PROJECTMIMIKYU_API void FOnKeyInputSignature_DelegateWrapper(const FMulticastScriptDelegate& OnKeyInputSignature, EDirectionPoint const& KeyDirection);
 
 
 // ********** End Delegate FOnKeyInputSignature ****************************************************
 
 // ********** Begin Class UTrainerOverlayWidgetController ******************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execHandleQuickSlotSelectionChanged); \
+	DECLARE_FUNCTION(execHandleQuickSlotModeChanged);
+
+
 struct Z_Construct_UClass_UTrainerOverlayWidgetController_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlayWidgetController_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_33_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUTrainerOverlayWidgetController(); \
 	friend struct ::Z_Construct_UClass_UTrainerOverlayWidgetController_Statics; \
@@ -99,7 +127,7 @@ public: \
 	DECLARE_SERIALIZER(UTrainerOverlayWidgetController)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_33_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UTrainerOverlayWidgetController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	/** Deleted move- and copy-constructors, should never be used */ \
@@ -111,12 +139,13 @@ public: \
 	NO_API virtual ~UTrainerOverlayWidgetController();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_30_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_33_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_45_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_33_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_33_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_48_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

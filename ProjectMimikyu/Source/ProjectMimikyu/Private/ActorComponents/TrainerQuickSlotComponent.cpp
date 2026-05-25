@@ -4,6 +4,7 @@
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "ActorComponents/InventorySystemComponent.h"
+#include "Player/TrainerPlayerState.h"
 #include "Characters/Pokemon_Parent.h"
 
 UTrainerQuickSlotComponent::UTrainerQuickSlotComponent()
@@ -34,27 +35,21 @@ void UTrainerQuickSlotComponent::InitializeQuickSlots(AProjectMimikyuCharacter* 
 	}
 
 	InventorySystem = OwnerCharacter->GetInventorySystem();
+	TrainerPlayerState = OwnerCharacter->GetPlayerState<ATrainerPlayerState>();
 
-	RefreshParty(OwnerCharacter->GetCurrentParty());
+	if (TrainerPlayerState)
+	{
+		RefreshPartyInfo(TrainerPlayerState->GetCurrentPokemonParty());
+	
+		TrainerPlayerState->OnPartyInfoUpdatedDelegate.AddLambda(
+			[this](const TArray<FPokemonInfo>& NewPartyInfo)
+			{
+				RefreshPartyInfo(NewPartyInfo);
+			}
+		);
+	}
+
 	RefreshInventory();
-
-	RebuildSelection();
-}
-
-void UTrainerQuickSlotComponent::RefreshParty(const TArray<APokemon_Parent*>& NewParty)
-{
-	CachedPokemonParty.Reset();
-
-	for (APokemon_Parent* Pokemon : NewParty)
-	{
-		CachedPokemonParty.Add(Pokemon);
-	}
-
-	if (PartyIndex >= CachedPokemonParty.Num())
-	{
-		PartyIndex = FMath::Max(0, CachedPokemonParty.Num() - 1);
-	}
-
 	RebuildSelection();
 }
 
@@ -73,6 +68,19 @@ void UTrainerQuickSlotComponent::RefreshInventory()
 	}
 
 	RebuildSelection();
+}
+
+void UTrainerQuickSlotComponent::RefreshPartyInfo(const TArray<FPokemonInfo>& NewPartyInfo)
+{
+	CachedPartyInfo = NewPartyInfo;
+
+	if (PartyIndex >= CachedPartyInfo.Num())
+	{
+		PartyIndex = FMath::Max(0, CachedPartyInfo.Num() - 1);
+	}
+
+	RebuildSelection();
+	OnQuickSlotSelectionChanged.Broadcast();
 }
 
 void UTrainerQuickSlotComponent::SwapSlotMode()
@@ -105,10 +113,10 @@ void UTrainerQuickSlotComponent::ShiftLeft()
 	switch (CurrentSlotMode)
 	{
 	case ESlotType::EST_PokemonParty:
-		if (CachedPokemonParty.Num() < 2)
+		if (CachedPartyInfo.Num() < 2)
 			return;
 
-		SetIndexLeft(PartyIndex, 0, CachedPokemonParty.Num() - 1);
+		SetIndexLeft(PartyIndex, 0, CachedPartyInfo.Num() - 1);
 		break;
 
 	case ESlotType::EST_Inventory:
@@ -117,12 +125,12 @@ void UTrainerQuickSlotComponent::ShiftLeft()
 
 		SetIndexLeft(InventoryIndex, 0, CachedThrowableContent.Num() - 1);
 		break;
+
 	default:
-	return;
+		return;
 	}
 
 	RebuildSelection();
-
 	OnQuickSlotSelectionChanged.Broadcast();
 }
 
@@ -131,10 +139,10 @@ void UTrainerQuickSlotComponent::ShiftRight()
 	switch (CurrentSlotMode)
 	{
 	case ESlotType::EST_PokemonParty:
-		if (CachedPokemonParty.Num() < 2)
+		if (CachedPartyInfo.Num() < 2)
 			return;
 
-		SetIndexRight(PartyIndex, 0, CachedPokemonParty.Num() - 1);
+		SetIndexRight(PartyIndex, 0, CachedPartyInfo.Num() - 1);
 		break;
 
 	case ESlotType::EST_Inventory:
@@ -143,8 +151,9 @@ void UTrainerQuickSlotComponent::ShiftRight()
 
 		SetIndexRight(InventoryIndex, 0, CachedThrowableContent.Num() - 1);
 		break;
+
 	default:
-	return;
+		return;
 	}
 
 	RebuildSelection();
@@ -164,7 +173,7 @@ void UTrainerQuickSlotComponent::RebuildSelection()
 		break;
 
 	default:
-		SelectedPokemon = nullptr;
+		bHasSelectedPokemonInfo = false;
 		SelectedThrowableItemID = NAME_None;
 		SelectedThrowableProjectileClass = nullptr;
 		break;
@@ -175,19 +184,27 @@ void UTrainerQuickSlotComponent::RebuildPokemonSelection()
 {
 	SelectedThrowableItemID = NAME_None;
 	SelectedThrowableProjectileClass = nullptr;
+	bHasSelectedPokemonInfo = false;
+	SelectedPokemonInfo = FPokemonInfo();
 
-	if (!CachedPokemonParty.IsValidIndex(PartyIndex))
+	if (!CachedPartyInfo.IsValidIndex(PartyIndex))
 	{
-		SelectedPokemon = nullptr;
 		return;
 	}
 
-	SelectedPokemon = CachedPokemonParty[PartyIndex];
+	SelectedPokemonInfo = CachedPartyInfo[PartyIndex];
+
+	if (SelectedPokemonInfo.PartyMode == EPartyStatus::EPS_Empty)
+	{
+		return;
+	}
 }
 
 void UTrainerQuickSlotComponent::RebuildInventorySelection()
 {
-	SelectedPokemon = nullptr;
+	bHasSelectedPokemonInfo = false;
+	SelectedPokemonInfo = FPokemonInfo();
+
 	SelectedThrowableItemID = NAME_None;
 	SelectedThrowableProjectileClass = nullptr;
 
@@ -220,10 +237,6 @@ void UTrainerQuickSlotComponent::RebuildInventorySelection()
 	SelectedThrowableProjectileClass = ItemInfo->ProjectileClass;
 }
 
-bool UTrainerQuickSlotComponent::HasSelectedPokemon() const
-{
-	return IsValid(SelectedPokemon);
-}
 
 bool UTrainerQuickSlotComponent::HasSelectedThrowableItem() const
 {

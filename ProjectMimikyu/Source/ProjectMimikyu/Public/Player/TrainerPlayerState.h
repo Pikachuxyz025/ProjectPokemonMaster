@@ -57,6 +57,16 @@ private:
 	bool bIsInCombat = false;
 public:
 
+	int32 GetPartyIndex() const { return PartyIndex; }
+
+	bool IsValidPartyIndex(int32 Index) const;
+	bool GetPokemonInfoAtPartyIndex(int32 Index, FPokemonInfo& OutPokemonInfo) const;
+	int32 GetPartySize() const { return CurrentPartyInfo.Num(); }
+
+	void SetPartyIndexClamped(int32 NewIndex);
+	void ShiftPartyIndexLeft();
+	void ShiftPartyIndexRight();
+
 	UFUNCTION(BlueprintCallable)
 	void SetPartyIndex(int32 NewIndex) { PartyIndex = NewIndex; }
 

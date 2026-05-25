@@ -269,7 +269,7 @@ void UTrainerOverlay::SetupPartyInfoFromQuickSlots()
 	if(!QuickSlotComponent)
 		return;
 
-	PokemonPartyInfo = QuickSlotComponent->GetCachedPokemonParty();
+	//PokemonPartyInfo = QuickSlotComponent->GetCachedPartyInfo();
 	CurrentSlotMode = QuickSlotComponent->GetCurrentSlotMode();
 	AllocatePokemonInfo();
 }

@@ -99,6 +99,8 @@ protected:
 	void CatchPokemon();
 	void ComeOnOut();
 
+	void ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd);
+
 	void SelectMove(int32 MoveIndex);
 	void ShowPokemonMoveset();
 	void RemovePokemonMoveset();
@@ -121,7 +123,7 @@ private:
 	void ServerRequestReturnCurrentPokemon();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestSendOutPokemon(FVector TraceStart, FVector TraceEnd);
+	void ServerRequestSendOutPokemon(int32 SelectedPartyIndex,FVector TraceStart, FVector TraceEnd);
 
 	UFUNCTION(Server, Reliable)
 	void ServerCallCommand(int32 MoveIndex, const FAimData& AimData);
@@ -146,7 +148,7 @@ private:
 	void ThrowThrowableProjectile (TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData);
 
 	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
-	void HandleSendOutPokemon(const FVector& TraceStart, const FVector& TraceEnd);
+	void HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, const FVector& TraceStart, const FVector& TraceEnd);
 
 	void AddToParty(APokemon_Parent* NewPokemon);
 	FPokemonInfo GetCurrentPokemonInfo();
