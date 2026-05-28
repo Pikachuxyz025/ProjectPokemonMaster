@@ -19,7 +19,7 @@ class APokemon_Parent;
 enum class ESlotType : uint8;
 
 // ********** Begin Class UTrainerOverlay **********************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execSetupInventoryInfo); \
 	DECLARE_FUNCTION(execSetupPartyInfo); \
 	DECLARE_FUNCTION(execSetCurrentPokemonUI); \
@@ -30,7 +30,7 @@ enum class ESlotType : uint8;
 struct Z_Construct_UClass_UTrainerOverlay_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerOverlay_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUTrainerOverlay(); \
 	friend struct ::Z_Construct_UClass_UTrainerOverlay_Statics; \
@@ -41,7 +41,7 @@ public: \
 	DECLARE_SERIALIZER(UTrainerOverlay)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UTrainerOverlay(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	/** Deleted move- and copy-constructors, should never be used */ \
@@ -53,13 +53,13 @@ public: \
 	NO_API virtual ~UTrainerOverlay();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_22_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_23_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_25_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_TrainerOverlay_h_26_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

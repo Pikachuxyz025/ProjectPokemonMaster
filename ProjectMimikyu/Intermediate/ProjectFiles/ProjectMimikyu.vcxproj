@@ -559,6 +559,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\TrainerOverlay.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\InventoryWidgetController.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonMenuWidgetController.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -678,6 +681,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TextValueSection.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerHUD.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\TrainerOverlay.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\InventoryWidgetController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonMenuWidgetController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonUIInfoWidgetController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonWidgetController.h"/>

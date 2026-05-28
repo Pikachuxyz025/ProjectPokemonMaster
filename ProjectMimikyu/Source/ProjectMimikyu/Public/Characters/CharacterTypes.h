@@ -706,18 +706,26 @@ struct FPokemonParty
 };
 
 USTRUCT(BlueprintType)
-struct FSlotInfo
+struct FInventorySlotInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	FName ItemName;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName ItemID = NAME_None;
 
-	UPROPERTY(EditAnywhere)
-	int32 Quantity=0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Quantity = 0;
 
-	UPROPERTY(EditAnywhere)
-	bool bIsThrowable = false;
+	bool IsEmpty() const
+	{
+		return ItemID.IsNone() || Quantity <= 0;
+	}
+
+	void ClearSlot()
+	{
+		ItemID = NAME_None;
+		Quantity = 0;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -744,17 +752,17 @@ struct FInventoryItemInfo :public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FText ItemName;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FText Description;
 
-	UPROPERTY(EditAnywhere)
-	UTexture2D* Thumbnail;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TObjectPtr<UTexture2D> Thumbnail=nullptr;
 
 	UPROPERTY(EditAnywhere)
-	int32 StackSize;
+	int32 MaxStackSize = 99;
 
 	UPROPERTY(EditAnywhere)
 	bool bIsThrowable;

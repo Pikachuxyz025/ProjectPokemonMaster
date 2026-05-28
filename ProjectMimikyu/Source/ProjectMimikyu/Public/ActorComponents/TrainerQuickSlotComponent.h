@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Characters/CharacterTypes.h"
+#include "InventorySystemComponent.h"
 #include "TrainerQuickSlotComponent.generated.h"
+
 
 class AProjectMimikyuCharacter;
 class APokemon_Parent;
@@ -51,13 +53,16 @@ private:
 	TArray<FPokemonInfo> CachedPartyInfo;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
-	TArray<FSlotInfo> CachedThrowableContent;
+	TArray<FInventoryDisplayInfo> CachedThrowableContent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
 	FPokemonInfo SelectedPokemonInfo;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
 	bool bHasSelectedPokemonInfo = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
+	FInventoryDisplayInfo SelectedThrowableInfo;
 
 	UPROPERTY(VisibleAnywhere, Category = "Quick Slots")
 	FName SelectedThrowableItemID = NAME_None;
@@ -93,7 +98,7 @@ public:
 	int32 GetInventoryIndex() const { return InventoryIndex; }
 
 	const TArray<FPokemonInfo>& GetCachedPartyInfo() const { return CachedPartyInfo; }
-	const TArray<FSlotInfo>& GetCachedThrowableContent() const { return CachedThrowableContent; }
+	const TArray<FInventoryDisplayInfo>& GetCachedThrowableContent() const { return CachedThrowableContent; }
 
 	bool HasSelectedPokemonInfo() const { return bHasSelectedPokemonInfo; }
 	const FPokemonInfo& GetSelectedPokemonInfo() const { return SelectedPokemonInfo; }

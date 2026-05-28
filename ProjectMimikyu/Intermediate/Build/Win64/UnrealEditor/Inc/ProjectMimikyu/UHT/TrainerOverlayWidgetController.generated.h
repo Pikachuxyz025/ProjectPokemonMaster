@@ -19,12 +19,12 @@ class APokemon_Parent;
 class UAbilitySystemComponent;
 enum class EDirectionPoint : uint8;
 enum class ESlotType : uint8;
+struct FInventoryDisplayInfo;
 struct FPokemonInfo;
 struct FPokemonUIInfo;
-struct FSlotInfo;
 
 // ********** Begin Delegate FOnQuickSlotModeUIChanged *********************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_14_DELEGATE \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_15_DELEGATE \
 PROJECTMIMIKYU_API void FOnQuickSlotModeUIChanged_DelegateWrapper(const FMulticastScriptDelegate& OnQuickSlotModeUIChanged, ESlotType NewMode);
 
 
@@ -32,7 +32,7 @@ PROJECTMIMIKYU_API void FOnQuickSlotModeUIChanged_DelegateWrapper(const FMultica
 
 // ********** Begin Delegate FOnInventoryQuickSlotChanged ******************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h_19_DELEGATE \
-PROJECTMIMIKYU_API void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FSlotInfo> const& ThrowableItems, int32 SelectedIndex, FName SelectedItemID);
+PROJECTMIMIKYU_API void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FInventoryDisplayInfo> const& ThrowableItems, int32 SelectedIndex);
 
 
 // ********** End Delegate FOnInventoryQuickSlotChanged ********************************************

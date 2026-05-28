@@ -49,6 +49,11 @@ void UTrainerQuickSlotComponent::InitializeQuickSlots(AProjectMimikyuCharacter* 
 		);
 	}
 
+	if (InventorySystem)
+	{
+		InventorySystem->OnInventoryUpdated.AddUniqueDynamic(this, &UTrainerQuickSlotComponent::RefreshInventory);
+	}
+
 	RefreshInventory();
 	RebuildSelection();
 }
@@ -59,7 +64,7 @@ void UTrainerQuickSlotComponent::RefreshInventory()
 
 	if (InventorySystem)
 	{
-		CachedThrowableContent = InventorySystem->GetThrowableContent();
+		CachedThrowableContent = InventorySystem->GetThrowableDisplayItems();
 	}
 
 	if (InventoryIndex >= CachedThrowableContent.Num())
@@ -68,6 +73,7 @@ void UTrainerQuickSlotComponent::RefreshInventory()
 	}
 
 	RebuildSelection();
+	OnQuickSlotSelectionChanged.Broadcast();
 }
 
 void UTrainerQuickSlotComponent::RefreshPartyInfo(const TArray<FPokemonInfo>& NewPartyInfo)
@@ -184,6 +190,8 @@ void UTrainerQuickSlotComponent::RebuildPokemonSelection()
 {
 	SelectedThrowableItemID = NAME_None;
 	SelectedThrowableProjectileClass = nullptr;
+	SelectedThrowableInfo = FInventoryDisplayInfo();
+
 	bHasSelectedPokemonInfo = false;
 	SelectedPokemonInfo = FPokemonInfo();
 
@@ -198,6 +206,8 @@ void UTrainerQuickSlotComponent::RebuildPokemonSelection()
 	{
 		return;
 	}
+
+	bHasSelectedPokemonInfo = true;
 }
 
 void UTrainerQuickSlotComponent::RebuildInventorySelection()
@@ -205,36 +215,25 @@ void UTrainerQuickSlotComponent::RebuildInventorySelection()
 	bHasSelectedPokemonInfo = false;
 	SelectedPokemonInfo = FPokemonInfo();
 
+	SelectedThrowableInfo = FInventoryDisplayInfo();
 	SelectedThrowableItemID = NAME_None;
 	SelectedThrowableProjectileClass = nullptr;
-
-	if (!InventorySystem)
-	{
-		return;
-	}
 
 	if (!CachedThrowableContent.IsValidIndex(InventoryIndex))
 	{
 		return;
 	}
 
-	const FSlotInfo& SelectedSlot = CachedThrowableContent[InventoryIndex];
+	const FInventoryDisplayInfo& SelectedItem = CachedThrowableContent[InventoryIndex];
 
-	if (SelectedSlot.ItemName.IsNone() || SelectedSlot.Quantity <= 0)
+	if (!SelectedItem.IsValid() || !SelectedItem.bIsThrowable||!SelectedItem.ProjectileClass)
 	{
 		return;
 	}
 
-	FInventoryItemInfo* ItemInfo = InventorySystem->GetInventoryItemInfo(SelectedSlot.ItemName);
-
-	if (!ItemInfo || !ItemInfo->bIsThrowable || !ItemInfo->ProjectileClass)
-	{
-		return;
-	}
-
-
-	SelectedThrowableItemID = SelectedSlot.ItemName;
-	SelectedThrowableProjectileClass = ItemInfo->ProjectileClass;
+	SelectedThrowableInfo = SelectedItem;
+	SelectedThrowableItemID = SelectedItem.ItemID;
+	SelectedThrowableProjectileClass = SelectedItem.ProjectileClass;
 }
 
 

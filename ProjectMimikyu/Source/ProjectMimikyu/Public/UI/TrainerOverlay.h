@@ -5,6 +5,7 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/PokemonUserWidget.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "Characters/CharacterTypes.h"
 #include "TrainerOverlay.generated.h"
 
@@ -109,7 +110,7 @@ private:
 
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<FSlotInfo> ThrowableContent;
+	TArray<FInventoryDisplayInfo> ThrowableContent;
 
 	UPROPERTY(EditAnywhere)
 	class UDataTable* ItemDataTable;

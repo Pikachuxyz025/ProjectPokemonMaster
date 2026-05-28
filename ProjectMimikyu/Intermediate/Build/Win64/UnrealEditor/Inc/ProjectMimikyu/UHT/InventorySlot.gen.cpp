@@ -6,16 +6,17 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "UI/InventorySlot.h"
+#include "ActorComponents/InventorySystemComponent.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compiled with !UE_WITH_CONSTINIT_OBJECT");
 void EmptyLinkFunctionForGeneratedCodeInventorySlot() {}
 
 // ********** Begin Cross Module References ********************************************************
-ENGINE_API UClass* Z_Construct_UClass_UDataTable_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySlot();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySlot_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySystemComponent_NoRegister();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryDisplayInfo();
 UMG_API UClass* Z_Construct_UClass_UImage_NoRegister();
 UMG_API UClass* Z_Construct_UClass_USizeBox_NoRegister();
 UMG_API UClass* Z_Construct_UClass_UTextBlock_NoRegister();
@@ -83,19 +84,11 @@ struct Z_Construct_UClass_UInventorySlot_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/InventorySlot.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ItemID_MetaData[] = {
-		{ "Category", "InventorySlot" },
-		{ "ModuleRelativePath", "Public/UI/InventorySlot.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Quantity_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DisplayInfo_MetaData[] = {
 		{ "Category", "InventorySlot" },
 		{ "ModuleRelativePath", "Public/UI/InventorySlot.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ContentIndex_MetaData[] = {
-		{ "Category", "InventorySlot" },
-		{ "ModuleRelativePath", "Public/UI/InventorySlot.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ItemDataTable_MetaData[] = {
 		{ "Category", "InventorySlot" },
 		{ "ModuleRelativePath", "Public/UI/InventorySlot.h" },
 	};
@@ -111,10 +104,8 @@ struct Z_Construct_UClass_UInventorySlot_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ArrowImage;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ItemQuantity;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_QuantityBox;
-	static const UECodeGen_Private::FNamePropertyParams NewProp_ItemID;
-	static const UECodeGen_Private::FIntPropertyParams NewProp_Quantity;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_DisplayInfo;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_ContentIndex;
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_ItemDataTable;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InventoryComponent;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UInventorySlot constinit property declarations *****************************
@@ -130,20 +121,16 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_ArrowImage = { "ArrowImage", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, ArrowImage), Z_Construct_UClass_UImage_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ArrowImage_MetaData), NewProp_ArrowImage_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemQuantity = { "ItemQuantity", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, ItemQuantity), Z_Construct_UClass_UTextBlock_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemQuantity_MetaData), NewProp_ItemQuantity_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_QuantityBox = { "QuantityBox", nullptr, (EPropertyFlags)0x0010000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, QuantityBox), Z_Construct_UClass_USizeBox_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_QuantityBox_MetaData), NewProp_QuantityBox_MetaData) };
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemID = { "ItemID", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, ItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemID_MetaData), NewProp_ItemID_MetaData) };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_Quantity = { "Quantity", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, Quantity), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Quantity_MetaData), NewProp_Quantity_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_DisplayInfo = { "DisplayInfo", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, DisplayInfo), Z_Construct_UScriptStruct_FInventoryDisplayInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DisplayInfo_MetaData), NewProp_DisplayInfo_MetaData) }; // 1866984579
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_ContentIndex = { "ContentIndex", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, ContentIndex), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ContentIndex_MetaData), NewProp_ContentIndex_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemDataTable = { "ItemDataTable", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, ItemDataTable), Z_Construct_UClass_UDataTable_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemDataTable_MetaData), NewProp_ItemDataTable_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UInventorySlot_Statics::NewProp_InventoryComponent = { "InventoryComponent", nullptr, (EPropertyFlags)0x0010000000080009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UInventorySlot, InventoryComponent), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventoryComponent_MetaData), NewProp_InventoryComponent_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UInventorySlot_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemImage,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ArrowImage,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemQuantity,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_QuantityBox,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemID,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_Quantity,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_DisplayInfo,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ContentIndex,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_ItemDataTable,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UInventorySlot_Statics::NewProp_InventoryComponent,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UInventorySlot_Statics::PropPointers) < 2048);
@@ -188,10 +175,10 @@ UInventorySlot::~UInventorySlot() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UInventorySlot, UInventorySlot::StaticClass, TEXT("UInventorySlot"), &Z_Registration_Info_UClass_UInventorySlot, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UInventorySlot), 1019789710U) },
+		{ Z_Construct_UClass_UInventorySlot, UInventorySlot::StaticClass, TEXT("UInventorySlot"), &Z_Registration_Info_UClass_UInventorySlot, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UInventorySlot), 407502582U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_1789226193{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_3198451240{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_InventorySlot_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

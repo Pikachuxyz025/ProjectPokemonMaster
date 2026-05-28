@@ -3,8 +3,8 @@
 
 #include "UI/InventorySlot.h"
 #include "Engine/DataTable.h"
-#include "Components/Image.h"
 #include "Components/SizeBox.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "UI/DD_InventorySlot.h"
@@ -13,35 +13,17 @@
 void UInventorySlot::PreCons()
 {
 	ArrowImage->SetVisibility(ESlateVisibility::Hidden);
-	if (!ItemDataTable)
-	{
-		QuantityBox->SetVisibility(ESlateVisibility::Hidden);
-		ItemImage->SetVisibility(ESlateVisibility::Hidden);
-		return;
-	}
-	FDataTableRowHandle ItemRow;
-	ItemRow.DataTable = ItemDataTable;
-	ItemRow.RowName = ItemID;
 
-	if (ItemRow.IsNull()||ItemID=="None")
+	if (!DisplayInfo.IsValid()||!DisplayInfo.Thumbnail)
 	{
 		QuantityBox->SetVisibility(ESlateVisibility::Hidden);
 		ItemImage->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
 
-	FString ContextString;
-	FInventoryItemInfo* ItemInfo = ItemRow.GetRow<FInventoryItemInfo>(ContextString);//ItemDataTable->FindRow<FInventoryItemItemInfo>(ItemID, ContextString, true);
+	ItemImage->SetBrushFromTexture(DisplayInfo.Thumbnail);
+	ItemQuantity->SetText(FText::AsNumber(DisplayInfo.Quantity));
 
-	if (!ItemInfo || !ItemInfo->Thumbnail)
-	{
-		QuantityBox->SetVisibility(ESlateVisibility::Hidden);
-		ItemImage->SetVisibility(ESlateVisibility::Hidden);
-		return;
-	}
-
-	ItemImage->SetBrushFromTexture(ItemInfo->Thumbnail);
-	ItemQuantity->SetText(FText::FromString(FString::FromInt(Quantity)));
 	QuantityBox->SetVisibility(ESlateVisibility::Visible);
 	ItemImage->SetVisibility(ESlateVisibility::Visible);
 }
@@ -50,7 +32,6 @@ void UInventorySlot::NativePreConstruct()
 {
 	PreCons();
 	Super::NativePreConstruct();
-
 }
 
 bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -63,9 +44,11 @@ bool UInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	return true;
 }
 
-void UInventorySlot::SetupData(FName ID, int32 NewQuantity, UInventorySystemComponent* NewInventoryComponent)
+void UInventorySlot::SetupData(const FInventoryDisplayInfo& InDisplayInfo, int32 InContentIndex, UInventorySystemComponent* NewInventoryComponent)
 {
-	ItemID = ID;
-	Quantity = NewQuantity;
+	DisplayInfo = InDisplayInfo;
+	ContentIndex = InContentIndex;
 	InventoryComponent = NewInventoryComponent;
+	PreCons();
 }
+

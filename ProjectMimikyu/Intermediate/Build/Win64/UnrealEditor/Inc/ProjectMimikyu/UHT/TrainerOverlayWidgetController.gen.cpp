@@ -6,6 +6,7 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "UI/WidgetController/TrainerOverlayWidgetController.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "Characters/CharacterTypes.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -34,9 +35,9 @@ PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnQui
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonAbilityConfigured__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonInfoSignature__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonUIInfoSignature__DelegateSignature();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryDisplayInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonUIInfo();
-PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
 
@@ -101,9 +102,8 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged_
 {
 	struct _Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms
 	{
-		TArray<FSlotInfo> ThrowableItems;
+		TArray<FInventoryDisplayInfo> ThrowableItems;
 		int32 SelectedIndex;
-		FName SelectedItemID;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -118,22 +118,19 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged_
 	static const UECodeGen_Private::FStructPropertyParams NewProp_ThrowableItems_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_ThrowableItems;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_SelectedIndex;
-	static const UECodeGen_Private::FNamePropertyParams NewProp_SelectedItemID;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Delegate FOnInventoryQuickSlotChanged constinit property declarations ************
 	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
 };
 
 // ********** Begin Delegate FOnInventoryQuickSlotChanged Property Definitions *********************
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems_Inner = { "ThrowableItems", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FSlotInfo, METADATA_PARAMS(0, nullptr) }; // 211375262
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems = { "ThrowableItems", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, ThrowableItems), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ThrowableItems_MetaData), NewProp_ThrowableItems_MetaData) }; // 211375262
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems_Inner = { "ThrowableItems", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FInventoryDisplayInfo, METADATA_PARAMS(0, nullptr) }; // 1866984579
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems = { "ThrowableItems", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, ThrowableItems), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ThrowableItems_MetaData), NewProp_ThrowableItems_MetaData) }; // 1866984579
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex = { "SelectedIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, SelectedIndex), METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedItemID = { "SelectedItemID", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms, SelectedItemID), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_ThrowableItems,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedIndex,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::NewProp_SelectedItemID,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature_Statics::PropPointers) < 2048);
 // ********** End Delegate FOnInventoryQuickSlotChanged Property Definitions ***********************
@@ -151,18 +148,16 @@ UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChan
 	}
 	return ReturnFunction;
 }
-void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FSlotInfo> const& ThrowableItems, int32 SelectedIndex, FName SelectedItemID)
+void FOnInventoryQuickSlotChanged_DelegateWrapper(const FMulticastScriptDelegate& OnInventoryQuickSlotChanged, TArray<FInventoryDisplayInfo> const& ThrowableItems, int32 SelectedIndex)
 {
 	struct _Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms
 	{
-		TArray<FSlotInfo> ThrowableItems;
+		TArray<FInventoryDisplayInfo> ThrowableItems;
 		int32 SelectedIndex;
-		FName SelectedItemID;
 	};
 	_Script_ProjectMimikyu_eventOnInventoryQuickSlotChanged_Parms Parms;
 	Parms.ThrowableItems=ThrowableItems;
 	Parms.SelectedIndex=SelectedIndex;
-	Parms.SelectedItemID=SelectedItemID;
 	OnInventoryQuickSlotChanged.ProcessMulticastDelegate<UObject>(&Parms);
 }
 // ********** End Delegate FOnInventoryQuickSlotChanged ********************************************
@@ -999,7 +994,7 @@ const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTr
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_KeyDirectionDelegate = { "KeyDirectionDelegate", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, KeyDirectionDelegate), Z_Construct_UDelegateFunction_ProjectMimikyu_OnKeyInputSignature__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_KeyDirectionDelegate_MetaData), NewProp_KeyDirectionDelegate_MetaData) }; // 3849497204
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_PokemonAbilityConfigured = { "PokemonAbilityConfigured", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, PokemonAbilityConfigured), Z_Construct_UDelegateFunction_ProjectMimikyu_PokemonAbilityConfigured__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonAbilityConfigured_MetaData), NewProp_PokemonAbilityConfigured_MetaData) }; // 118471024
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnQuickSlotModeChanged = { "OnQuickSlotModeChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnQuickSlotModeChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnQuickSlotModeUIChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnQuickSlotModeChanged_MetaData), NewProp_OnQuickSlotModeChanged_MetaData) }; // 1779850480
-const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnInventoryQuickSlotChanged = { "OnInventoryQuickSlotChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnInventoryQuickSlotChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnInventoryQuickSlotChanged_MetaData), NewProp_OnInventoryQuickSlotChanged_MetaData) }; // 1315744195
+const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnInventoryQuickSlotChanged = { "OnInventoryQuickSlotChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnInventoryQuickSlotChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnInventoryQuickSlotChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnInventoryQuickSlotChanged_MetaData), NewProp_OnInventoryQuickSlotChanged_MetaData) }; // 63401306
 const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_OnPokemonQuickSlotChanged = { "OnPokemonQuickSlotChanged", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, OnPokemonQuickSlotChanged), Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonQuickSlotChanged__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnPokemonQuickSlotChanged_MetaData), NewProp_OnPokemonQuickSlotChanged_MetaData) }; // 2340349211
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_BoundPokemonASC = { "BoundPokemonASC", nullptr, (EPropertyFlags)0x0124080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, BoundPokemonASC), Z_Construct_UClass_UAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BoundPokemonASC_MetaData), NewProp_BoundPokemonASC_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UTrainerOverlayWidgetController_Statics::NewProp_QuickSlotComponent = { "QuickSlotComponent", nullptr, (EPropertyFlags)0x0124080000080008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UTrainerOverlayWidgetController, QuickSlotComponent), Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_QuickSlotComponent_MetaData), NewProp_QuickSlotComponent_MetaData) };
@@ -1069,10 +1064,10 @@ UTrainerOverlayWidgetController::~UTrainerOverlayWidgetController() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 1294642518U) },
+		{ Z_Construct_UClass_UTrainerOverlayWidgetController, UTrainerOverlayWidgetController::StaticClass, TEXT("UTrainerOverlayWidgetController"), &Z_Registration_Info_UClass_UTrainerOverlayWidgetController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UTrainerOverlayWidgetController), 4144047328U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_973115187{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_477191888{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_WidgetController_TrainerOverlayWidgetController_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

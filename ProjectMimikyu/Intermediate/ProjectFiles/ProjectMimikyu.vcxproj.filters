@@ -422,6 +422,9 @@
     <Filter Include="Source\ProjectMimikyu\Private\UI\WidgetController">
       <UniqueIdentifier>{E0481A3C-60F9-3531-9825-C3FEFF75B9D4}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\InventoryWidgetController.cpp">
+      <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\PokemonMenuWidgetController.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
     </ClCompile>
@@ -830,6 +833,9 @@
     <Filter Include="Source\ProjectMimikyu\Public\UI\WidgetController">
       <UniqueIdentifier>{6C79313D-FA2B-3766-A3B6-6325FB79147D}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\InventoryWidgetController.h">
+      <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\PokemonMenuWidgetController.h">
       <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
     </ClInclude>

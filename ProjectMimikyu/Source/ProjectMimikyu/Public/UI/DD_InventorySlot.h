@@ -4,11 +4,9 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/DragDropOperation.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "DD_InventorySlot.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PROJECTMIMIKYU_API UDD_InventorySlot : public UDragDropOperation
 {
@@ -21,4 +19,7 @@ public:
 	class UInventorySystemComponent* InventoryComponent;
 
 	int32 ContentIndex = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	FInventoryDisplayInfo DraggedItemInfo;
 };

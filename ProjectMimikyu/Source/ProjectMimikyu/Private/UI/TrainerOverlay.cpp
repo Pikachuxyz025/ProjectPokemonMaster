@@ -160,8 +160,8 @@ void UTrainerOverlay::SetLeftRightImages(const int32 RightIndex, const int32 Lef
 
 void UTrainerOverlay::SetLeftRightInventoryImages(const int32 RightIndex, const int32 LeftIndex)
 {
-	FInventoryItemInfo* LeftItem = GetInventoryInfo(ThrowableContent[LeftIndex].ItemName);
-	FInventoryItemInfo* RightItem = GetInventoryInfo(ThrowableContent[RightIndex].ItemName);
+	FInventoryItemInfo* LeftItem = GetInventoryInfo(ThrowableContent[LeftIndex].ItemID);
+	FInventoryItemInfo* RightItem = GetInventoryInfo(ThrowableContent[RightIndex].ItemID);
 	
 	if (!RightItem)
 	{
@@ -308,7 +308,7 @@ void UTrainerOverlay::AllocateInventoryInfo()
 
 	if (ThrowableContent.IsValidIndex(InventoryIndex))
 	{
-		NewItem = GetInventoryInfo(ThrowableContent[InventoryIndex].ItemName);
+		NewItem = GetInventoryInfo(ThrowableContent[InventoryIndex].ItemID);
 		QuantityText = FText::AsNumber(ThrowableContent[InventoryIndex].Quantity);
 	}
 
@@ -324,7 +324,7 @@ void UTrainerOverlay::AllocateInventoryInfo()
 		return;
 	case 1:
 		InventoryIndex = 0;
-		NewItem = GetInventoryInfo(ThrowableContent[InventoryIndex].ItemName);
+		NewItem = GetInventoryInfo(ThrowableContent[InventoryIndex].ItemID);
 		QuantityText = FText::FromString(FString::Printf(TEXT("%d"), ThrowableContent[InventoryIndex].Quantity));
 
 		PokemonRightImage->SetBrushFromTexture(DefaultImage);
@@ -341,7 +341,7 @@ void UTrainerOverlay::AllocateInventoryInfo()
 		PokemonName->SetText(NewItem->ItemName);
 		PokemonLevel->SetText(QuantityText);
 
-		OwnerCharacter->SetCurrentThrowableItem(ThrowableContent[InventoryIndex].ItemName, NewItem->ProjectileClass);
+		OwnerCharacter->SetCurrentThrowableItem(ThrowableContent[InventoryIndex].ItemID, NewItem->ProjectileClass);
 	}
 	else
 	{
@@ -373,7 +373,7 @@ void UTrainerOverlay::SetupInventoryInfo()
 	UE_LOG(LogTemp, Display, TEXT("inventory info updated"));
 	if (InventorySystem)
 	{
-		ThrowableContent = InventorySystem->GetThrowableContent();
+		ThrowableContent = InventorySystem->GetThrowableDisplayItems();
 		CurrentSlotMode = ESlotType::EST_Inventory;
 		AllocateInventoryInfo();
 	}

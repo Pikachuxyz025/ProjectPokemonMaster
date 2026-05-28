@@ -191,39 +191,26 @@ void ATrainerController::HandleGameHasStarted()
 
 void ATrainerController::SwapUIMode()
 {
-	UE_LOG(LogTemp, Display, TEXT("Swap UI Mode"));
 	GetQuickSlotComponent()->SwapSlotMode();
-	SwapUIModeDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftLeft()
 {
 	GetQuickSlotComponent()->ShiftLeft();
-	ShiftLeftDelegate.Broadcast();
 }
 
 void ATrainerController::ShiftRight()
 {
 	GetQuickSlotComponent()->ShiftRight();
-	ShiftRightDelegate.Broadcast();
 }
 
 void ATrainerController::ShowCurrentPokemonMoveset()
 {
-	//UE_LOG(LogTemp, Display, TEXT("Pokemon Moveset"));
-	//if (TrainerHUD->TrainerOverlay)
-	//{
-	//	TrainerHUD->TrainerOverlay->CreateMovesetUI();
-	//}
 	ShowMoveSetDelegate.Broadcast();
 }
 
 void ATrainerController::RemoveCurrentPokemonMoveset()
 {
-	//if (TrainerHUD->TrainerOverlay)
-	//{
-	//	TrainerHUD->TrainerOverlay->RemoveMovesetUI();
-	//}
 	RemoveMoveSetDelegate.Broadcast();
 }
 

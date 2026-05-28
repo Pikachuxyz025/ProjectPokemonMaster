@@ -130,11 +130,6 @@ void AProjectMimikyuCharacter::BeginPlay()
 			TrainerController->HandleGameHasStarted();
 		}
 	}
-
-	if (InventorySystem && QuickSlotComponent)
-	{
-		InventorySystem->OnInventoryUpdated.AddDynamic(QuickSlotComponent, &UTrainerQuickSlotComponent::RefreshInventory);
-	}
 }
 
 void AProjectMimikyuCharacter::Tick(float DeltaTime)

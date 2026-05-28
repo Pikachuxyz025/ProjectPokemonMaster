@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UI/WidgetController/PokemonWidgetController.h"
 #include "Characters/CharacterTypes.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "TrainerOverlayWidgetController.generated.h"
 
 struct FPokemonUIInfo;
@@ -12,10 +13,9 @@ struct FPokemonInfo;
 class UTrainerQuickSlotComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotModeUIChanged, ESlotType, NewMode);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnInventoryQuickSlotChanged, 
-	const TArray<FSlotInfo>&, ThrowableItems,
-	int32, SelectedIndex, 
-	FName, SelectedItemID
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryQuickSlotChanged, 
+	const TArray<FInventoryDisplayInfo>&, ThrowableItems,
+	int32, SelectedIndex
 );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FOnPokemonQuickSlotChanged,

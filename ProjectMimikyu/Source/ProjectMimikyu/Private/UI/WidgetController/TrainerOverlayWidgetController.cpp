@@ -27,12 +27,13 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 		}
 	);
 
-	GetTPS()->OnPartyInfoUpdatedDelegate.AddLambda(
-		[this](TArray<FPokemonInfo> PokemonParty)
-		{
-			PokemonInfoDelegate.Broadcast(PokemonParty);
-		}
-	);
+	//GetTPS()->OnPartyInfoUpdatedDelegate.AddLambda(
+	//	[this](TArray<FPokemonInfo> PokemonParty)
+	//	{
+	//		PokemonInfoDelegate.Broadcast(PokemonParty);
+	//	}
+	//);
+
 	GetTPS()->OnPokemonActiveDelegate.AddLambda(
 		[](APokemon_Parent* ActivePokemon)
 		{
@@ -43,27 +44,6 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 		[this]()
 		{
 			PokemonActivatedDelegate.Broadcast();
-		}
-	);
-
-	GetTC()->ShiftLeftDelegate.AddLambda(
-		[this]()
-		{
-			ShiftUILeftDelegate.Broadcast();
-		}
-	);
-		
-	GetTC()->ShiftRightDelegate.AddLambda(
-		[this]()
-		{
-			ShiftUIRightDelegate.Broadcast();
-		}
-	);
-		
-	GetTC()->SwapUIModeDelegate.AddLambda(
-		[this]()
-		{
-			SwapSlotModesDelegate.Broadcast();
 		}
 	);
 
@@ -159,8 +139,6 @@ void UTrainerOverlayWidgetController::BroadcastQuickSlotState()
 
 	const ESlotType CurrentMode = QuickSlotComponent->GetCurrentSlotMode();
 
-	OnQuickSlotModeChanged.Broadcast(CurrentMode);
-
 	switch (CurrentMode)
 	{
 	case ESlotType::EST_PokemonParty:
@@ -175,8 +153,7 @@ void UTrainerOverlayWidgetController::BroadcastQuickSlotState()
 	case ESlotType::EST_Inventory:
 		OnInventoryQuickSlotChanged.Broadcast(
 			QuickSlotComponent->GetCachedThrowableContent(),
-			QuickSlotComponent->GetInventoryIndex(),
-			QuickSlotComponent->GetSelectedThrowableItemID()
+			QuickSlotComponent->GetInventoryIndex()
 		);
 		break;
 

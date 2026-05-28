@@ -4,11 +4,12 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Characters/CharacterTypes.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "InventorySlot.generated.h"
 
 class UImage;
 class UTextBlock;
+class USizeBox;
 /**
  * 
  */
@@ -29,19 +30,13 @@ public:
 	UTextBlock* ItemQuantity;
 
 	UPROPERTY(meta = (BindWidget))
-	class USizeBox* QuantityBox;
+ USizeBox* QuantityBox;
 
-	UPROPERTY(EditAnywhere)
-	FName ItemID;
-
-	UPROPERTY(EditAnywhere)
-	int32 Quantity;
+	UPROPERTY(BlueprintReadOnly)
+	FInventoryDisplayInfo DisplayInfo;
 	
 	UPROPERTY(EditAnywhere)
 	int32 ContentIndex;
-
-	UPROPERTY(EditAnywhere)
-	class UDataTable* ItemDataTable;
 
 	UPROPERTY(EditAnywhere)
 	class UInventorySystemComponent* InventoryComponent;
@@ -49,5 +44,5 @@ public:
 	void PreCons();
 	virtual void NativePreConstruct() override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
-	void SetupData(FName ID, int32 NewQuantity, UInventorySystemComponent* NewInventoryComponent);
+	void SetupData(const FInventoryDisplayInfo& InDisplayInfo, int32 InContentIndex, UInventorySystemComponent* NewInventoryComponent);
 };

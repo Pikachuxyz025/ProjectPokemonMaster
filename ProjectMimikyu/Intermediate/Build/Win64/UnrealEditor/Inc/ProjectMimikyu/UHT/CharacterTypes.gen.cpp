@@ -51,6 +51,7 @@ PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FEnvironmentDropPara
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagFloatPair();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FGameplayTagIntPair();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryItemInfo();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventorySlotInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonMoveChart();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonParty();
@@ -58,7 +59,6 @@ PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonTypeInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FPokemonUIInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FProjectileTagContainer();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSequentialShotParams();
-PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FTagCategoryMap();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FTypeChartMatchup();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
@@ -2626,90 +2626,78 @@ UScriptStruct* Z_Construct_UScriptStruct_FPokemonParty()
 }
 // ********** End ScriptStruct FPokemonParty *******************************************************
 
-// ********** Begin ScriptStruct FSlotInfo *********************************************************
-struct Z_Construct_UScriptStruct_FSlotInfo_Statics
+// ********** Begin ScriptStruct FInventorySlotInfo ************************************************
+struct Z_Construct_UScriptStruct_FInventorySlotInfo_Statics
 {
-	static inline consteval int32 GetStructSize() { return sizeof(FSlotInfo); }
-	static inline consteval int16 GetStructAlignment() { return alignof(FSlotInfo); }
+	static inline consteval int32 GetStructSize() { return sizeof(FInventorySlotInfo); }
+	static inline consteval int16 GetStructAlignment() { return alignof(FInventorySlotInfo); }
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ItemName_MetaData[] = {
-		{ "Category", "SlotInfo" },
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ItemID_MetaData[] = {
+		{ "Category", "InventorySlotInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Quantity_MetaData[] = {
-		{ "Category", "SlotInfo" },
-		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
-	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bIsThrowable_MetaData[] = {
-		{ "Category", "SlotInfo" },
+		{ "Category", "InventorySlotInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
 #endif // WITH_METADATA
 
-// ********** Begin ScriptStruct FSlotInfo constinit property declarations *************************
-	static const UECodeGen_Private::FNamePropertyParams NewProp_ItemName;
+// ********** Begin ScriptStruct FInventorySlotInfo constinit property declarations ****************
+	static const UECodeGen_Private::FNamePropertyParams NewProp_ItemID;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_Quantity;
-	static void NewProp_bIsThrowable_SetBit(void* Obj);
-	static const UECodeGen_Private::FBoolPropertyParams NewProp_bIsThrowable;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-// ********** End ScriptStruct FSlotInfo constinit property declarations ***************************
+// ********** End ScriptStruct FInventorySlotInfo constinit property declarations ******************
 	static void* NewStructOps()
 	{
-		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FSlotInfo>();
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FInventorySlotInfo>();
 	}
 	static const UECodeGen_Private::FStructParams StructParams;
-}; // struct Z_Construct_UScriptStruct_FSlotInfo_Statics
-static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FSlotInfo;
-class UScriptStruct* FSlotInfo::StaticStruct()
+}; // struct Z_Construct_UScriptStruct_FInventorySlotInfo_Statics
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FInventorySlotInfo;
+class UScriptStruct* FInventorySlotInfo::StaticStruct()
 {
-	if (!Z_Registration_Info_UScriptStruct_FSlotInfo.OuterSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FInventorySlotInfo.OuterSingleton)
 	{
-		Z_Registration_Info_UScriptStruct_FSlotInfo.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FSlotInfo, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("SlotInfo"));
+		Z_Registration_Info_UScriptStruct_FInventorySlotInfo.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FInventorySlotInfo, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("InventorySlotInfo"));
 	}
-	return Z_Registration_Info_UScriptStruct_FSlotInfo.OuterSingleton;
+	return Z_Registration_Info_UScriptStruct_FInventorySlotInfo.OuterSingleton;
 	}
 
-// ********** Begin ScriptStruct FSlotInfo Property Definitions ************************************
-const UECodeGen_Private::FNamePropertyParams Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_ItemName = { "ItemName", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FSlotInfo, ItemName), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemName_MetaData), NewProp_ItemName_MetaData) };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_Quantity = { "Quantity", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FSlotInfo, Quantity), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Quantity_MetaData), NewProp_Quantity_MetaData) };
-void Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_bIsThrowable_SetBit(void* Obj)
-{
-	((FSlotInfo*)Obj)->bIsThrowable = 1;
-}
-const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_bIsThrowable = { "bIsThrowable", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FSlotInfo), &Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_bIsThrowable_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bIsThrowable_MetaData), NewProp_bIsThrowable_MetaData) };
-const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FSlotInfo_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_ItemName,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_Quantity,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FSlotInfo_Statics::NewProp_bIsThrowable,
+// ********** Begin ScriptStruct FInventorySlotInfo Property Definitions ***************************
+const UECodeGen_Private::FNamePropertyParams Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::NewProp_ItemID = { "ItemID", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventorySlotInfo, ItemID), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemID_MetaData), NewProp_ItemID_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::NewProp_Quantity = { "Quantity", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventorySlotInfo, Quantity), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Quantity_MetaData), NewProp_Quantity_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::NewProp_ItemID,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::NewProp_Quantity,
 };
-static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FSlotInfo_Statics::PropPointers) < 2048);
-// ********** End ScriptStruct FSlotInfo Property Definitions **************************************
-const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FSlotInfo_Statics::StructParams = {
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::PropPointers) < 2048);
+// ********** End ScriptStruct FInventorySlotInfo Property Definitions *****************************
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::StructParams = {
 	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
 	nullptr,
 	&NewStructOps,
-	"SlotInfo",
-	Z_Construct_UScriptStruct_FSlotInfo_Statics::PropPointers,
-	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FSlotInfo_Statics::PropPointers),
-	sizeof(FSlotInfo),
-	alignof(FSlotInfo),
+	"InventorySlotInfo",
+	Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::PropPointers),
+	sizeof(FInventorySlotInfo),
+	alignof(FInventorySlotInfo),
 	RF_Public|RF_Transient|RF_MarkAsNative,
 	EStructFlags(0x00000001),
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FSlotInfo_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FSlotInfo_Statics::Struct_MetaDataParams)
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::Struct_MetaDataParams)
 };
-UScriptStruct* Z_Construct_UScriptStruct_FSlotInfo()
+UScriptStruct* Z_Construct_UScriptStruct_FInventorySlotInfo()
 {
-	if (!Z_Registration_Info_UScriptStruct_FSlotInfo.InnerSingleton)
+	if (!Z_Registration_Info_UScriptStruct_FInventorySlotInfo.InnerSingleton)
 	{
-		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FSlotInfo.InnerSingleton, Z_Construct_UScriptStruct_FSlotInfo_Statics::StructParams);
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FInventorySlotInfo.InnerSingleton, Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::StructParams);
 	}
-	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FSlotInfo.InnerSingleton);
+	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FInventorySlotInfo.InnerSingleton);
 }
-// ********** End ScriptStruct FSlotInfo ***********************************************************
+// ********** End ScriptStruct FInventorySlotInfo **************************************************
 
 // ********** Begin ScriptStruct FDamageInfo *******************************************************
 struct Z_Construct_UScriptStruct_FDamageInfo_Statics
@@ -2820,7 +2808,7 @@ struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics
 		{ "Category", "InventoryItemInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_StackSize_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MaxStackSize_MetaData[] = {
 		{ "Category", "InventoryItemInfo" },
 		{ "ModuleRelativePath", "Public/Characters/CharacterTypes.h" },
 	};
@@ -2840,7 +2828,7 @@ struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics
 	static const UECodeGen_Private::FTextPropertyParams NewProp_ItemName;
 	static const UECodeGen_Private::FTextPropertyParams NewProp_Description;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_Thumbnail;
-	static const UECodeGen_Private::FIntPropertyParams NewProp_StackSize;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_MaxStackSize;
 	static void NewProp_bIsThrowable_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bIsThrowable;
 	static const UECodeGen_Private::FClassPropertyParams NewProp_ProjectileClass;
@@ -2864,10 +2852,10 @@ class UScriptStruct* FInventoryItemInfo::StaticStruct()
 	}
 
 // ********** Begin ScriptStruct FInventoryItemInfo Property Definitions ***************************
-const UECodeGen_Private::FTextPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_ItemName = { "ItemName", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, ItemName), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemName_MetaData), NewProp_ItemName_MetaData) };
-const UECodeGen_Private::FTextPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Description = { "Description", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, Description), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Description_MetaData), NewProp_Description_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Thumbnail = { "Thumbnail", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, Thumbnail), Z_Construct_UClass_UTexture2D_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Thumbnail_MetaData), NewProp_Thumbnail_MetaData) };
-const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_StackSize = { "StackSize", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, StackSize), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_StackSize_MetaData), NewProp_StackSize_MetaData) };
+const UECodeGen_Private::FTextPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_ItemName = { "ItemName", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, ItemName), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ItemName_MetaData), NewProp_ItemName_MetaData) };
+const UECodeGen_Private::FTextPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Description = { "Description", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, Description), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Description_MetaData), NewProp_Description_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Thumbnail = { "Thumbnail", nullptr, (EPropertyFlags)0x0114000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, Thumbnail), Z_Construct_UClass_UTexture2D_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Thumbnail_MetaData), NewProp_Thumbnail_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_MaxStackSize = { "MaxStackSize", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FInventoryItemInfo, MaxStackSize), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MaxStackSize_MetaData), NewProp_MaxStackSize_MetaData) };
 void Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_bIsThrowable_SetBit(void* Obj)
 {
 	((FInventoryItemInfo*)Obj)->bIsThrowable = 1;
@@ -2878,7 +2866,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FI
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_ItemName,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Description,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_Thumbnail,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_StackSize,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_MaxStackSize,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_bIsThrowable,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewProp_ProjectileClass,
 };
@@ -2944,12 +2932,12 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FTagCategoryMap::StaticStruct, Z_Construct_UScriptStruct_FTagCategoryMap_Statics::NewStructOps, TEXT("TagCategoryMap"),&Z_Registration_Info_UScriptStruct_FTagCategoryMap, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FTagCategoryMap), 3977061561U) },
 		{ FSequentialShotParams::StaticStruct, Z_Construct_UScriptStruct_FSequentialShotParams_Statics::NewStructOps, TEXT("SequentialShotParams"),&Z_Registration_Info_UScriptStruct_FSequentialShotParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSequentialShotParams), 3770178490U) },
 		{ FPokemonParty::StaticStruct, Z_Construct_UScriptStruct_FPokemonParty_Statics::NewStructOps, TEXT("PokemonParty"),&Z_Registration_Info_UScriptStruct_FPokemonParty, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonParty), 1108444248U) },
-		{ FSlotInfo::StaticStruct, Z_Construct_UScriptStruct_FSlotInfo_Statics::NewStructOps, TEXT("SlotInfo"),&Z_Registration_Info_UScriptStruct_FSlotInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSlotInfo), 211375262U) },
+		{ FInventorySlotInfo::StaticStruct, Z_Construct_UScriptStruct_FInventorySlotInfo_Statics::NewStructOps, TEXT("InventorySlotInfo"),&Z_Registration_Info_UScriptStruct_FInventorySlotInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventorySlotInfo), 3008218128U) },
 		{ FDamageInfo::StaticStruct, Z_Construct_UScriptStruct_FDamageInfo_Statics::NewStructOps, TEXT("DamageInfo"),&Z_Registration_Info_UScriptStruct_FDamageInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FDamageInfo), 1099770743U) },
-		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"),&Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 4133680882U) },
+		{ FInventoryItemInfo::StaticStruct, Z_Construct_UScriptStruct_FInventoryItemInfo_Statics::NewStructOps, TEXT("InventoryItemInfo"),&Z_Registration_Info_UScriptStruct_FInventoryItemInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FInventoryItemInfo), 3987389547U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_1751252422{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_3715687273{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

@@ -7,14 +7,10 @@
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "Engine/DataTable.h"
 
-// Sets default values for this component's properties
-UInventorySystemComponent::UInventorySystemComponent()
-{
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+UInventorySystemComponent::UInventorySystemComponent()
+{	
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -23,129 +19,171 @@ void UInventorySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
 	Content.SetNum(InventorySize);
 }
 
-
-// Called every frame
 void UInventorySystemComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void UInventorySystemComponent::Interact(AItem* ItemToAdd)
 {
-	AItem* NewItem = ItemToAdd;
+	if(!ItemToAdd)
+	{
+		return;
+	}
 
-	FInventoryItemInfo* ItemInfo = NewItem->GetItemData()->GetInvetoryItemInfo();
+	UItemDataComponent* ItemData = ItemToAdd->GetItemData();
+	if (!ItemData)
+	{
+		return;
+	}
+
+	FInventoryItemInfo* ItemInfo = ItemData->GetInvetoryItemInfo();
 	
 	if (!ItemInfo)
 		return;
 
-	FName ItemID = NewItem->GetItemID();
-	int32 Quantity = NewItem->GetQuantity();
-	bool bIsThrowable = ItemInfo->bIsThrowable;
+	FName ItemID = ItemToAdd->GetItemID();
+	int32 Quantity = ItemToAdd->GetQuantity();
 
 
 	UE_LOG(LogTemp, Display, TEXT("Add Item: %s"),*ItemID.ToString());
 	UE_LOG(LogTemp, Display, TEXT("Item Quantity: %d"),Quantity);
 
-	if (AddToInventory(ItemID, Quantity, bIsThrowable))
+	if (AddToInventory(ItemID, Quantity))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Item added"));
+
 		if (OwnerCharacter)
 		{
 			OwnerCharacter->SetOverlappingItem(nullptr);
 		}
+
 		ItemToAdd->Destroy();
 		OnInventoryUpdated.Broadcast();
 	}
 }
 
 
-bool UInventorySystemComponent::AddToInventory(FName ItemID, int32 Quantity, bool bIsThrowable)
+bool UInventorySystemComponent::AddToInventory(FName ItemID, int32 Quantity)
 {
-	//int32 LocalQuantityRemaining = Quantity;
-	bool bHasFailed = false;
-
-	int32 NewIndex = -1;
-	if (FindSlot(ItemID, NewIndex))
+	if (ItemID.IsNone() || Quantity <= 0)
 	{
-		AddToStack(NewIndex, Quantity, ItemID,bIsThrowable);
+		return false;
 	}
-	else
-	{
 
-		if (CreateNewStack(ItemID, Quantity,bIsThrowable))
+	int32 QuantityRemaining = Quantity;
+
+	while (QuantityRemaining > 0)
+	{
+		int32 ExistingStackIndex = INDEX_NONE;
+
+		if (FindSlot(ItemID, ExistingStackIndex))
 		{
+			const int32 MaxStackSize = GetMaxStackSize(ItemID);
+			const int32 CurrentQuantity = Content[ExistingStackIndex].Quantity;
+			const int32 SpaceRemaining = MaxStackSize - CurrentQuantity;
+
+			if (SpaceRemaining <= 0)
+			{
+				break;
+			}
+
+			const int32 AmountToAdd = FMath::Min(SpaceRemaining, QuantityRemaining);
+			Content[ExistingStackIndex].Quantity += AmountToAdd;
+			QuantityRemaining -= AmountToAdd;
+
+			continue;
 		}
-		else
+		int32 EmptyIndex = INDEX_NONE;
+
+		if (!AnyEmptySlotAvailable(EmptyIndex))
 		{
-			bHasFailed = true;
+			break;
 		}
+
+		const int32 MaxStackSize = GetMaxStackSize(ItemID);
+		const int32 AmountToAdd = FMath::Min(MaxStackSize, QuantityRemaining);
+
+		FInventorySlotInfo NewSlot;
+		NewSlot.ItemID = ItemID;
+		NewSlot.Quantity = AmountToAdd;
+
+		Content[EmptyIndex] = NewSlot;
+		QuantityRemaining -= AmountToAdd;
 	}
-	return !bHasFailed;
+
+	const bool bAddedEverything = QuantityRemaining <= 0;
+
+	if (!bAddedEverything)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough space to add all items. %d items could not be added."), QuantityRemaining);
+	}
+
+	OnInventoryUpdated.Broadcast();
+
+	return bAddedEverything;
 }
 
 void UInventorySystemComponent::RemoveFromInventory()
 {
 }
 
-bool UInventorySystemComponent::CreateNewStack(FName ItemID, int32 Quantity, bool bIsThrowable)
+bool UInventorySystemComponent::CreateNewStack(FName ItemID, int32 Quantity)
 {
-	int32 EmptyStack = -1;
-	if (AnyEmptySlotAvailable(EmptyStack))
+	int32 EmptyStack = INDEX_NONE;
+
+	if (!AnyEmptySlotAvailable(EmptyStack))
 	{
-		FSlotInfo NewItemInfo;
-		NewItemInfo.ItemName = ItemID;
-		NewItemInfo.Quantity = Quantity;
-		NewItemInfo.bIsThrowable = bIsThrowable;
-		Content[EmptyStack] = NewItemInfo;
-		return true;
+		return false;
 	}
-	return false;
+	
+	FInventorySlotInfo NewItemInfo;
+	NewItemInfo.ItemID = ItemID;
+	NewItemInfo.Quantity = Quantity;
+	Content[EmptyStack] = NewItemInfo;
+
+	return true;
 }
 
 bool UInventorySystemComponent::AnyEmptySlotAvailable(int32& EmptyIndex)
 {
-	bool bIsEmptySlot=false;
-	EmptyIndex = -1;
+	EmptyIndex = INDEX_NONE;
+
 	for (int32 i = 0; i < Content.Num(); i++)
 	{
-		if (Content[i].Quantity == 0)
+		if (Content[i].IsEmpty())
 		{
-			bIsEmptySlot = true;
 			EmptyIndex = i;
-			break;
+			return true;
 		}
 	}
-	return bIsEmptySlot;
+
+	return false;
 }
 
-void UInventorySystemComponent::AddToStack(int32 Index, int32 Quantity,FName ItemID, bool bIsThrowable)
+void UInventorySystemComponent::AddToStack(int32 Index, int32 Quantity,FName ItemID)
 {	
-	if(Content.IsValidIndex(Index))
+	if (!Content.IsValidIndex(Index))
 	{
-		Content[Index].Quantity += Quantity;
+		return;
 	}
-	else
+
+	if(Content[Index].ItemID != ItemID)
 	{
-		FSlotInfo NewInfo;
-		NewInfo.ItemName = ItemID;
-		NewInfo.Quantity = Quantity;
-		NewInfo.bIsThrowable = bIsThrowable;
-		Content.Insert(NewInfo,Index);
+		return;
 	}
+
+	Content[Index].Quantity += Quantity;
 }
 
 bool UInventorySystemComponent::FindSlot(FName ItemID,int32& Index)
 {
 	for (int32 i = 0; i < Content.Num(); i++)
 	{
-		if (Content[i].ItemName == ItemID)
+		if (Content[i].ItemID == ItemID)
 		{
 			if (Content[i].Quantity < GetMaxStackSize(ItemID))
 			{
@@ -160,25 +198,59 @@ bool UInventorySystemComponent::FindSlot(FName ItemID,int32& Index)
 
 void UInventorySystemComponent::TransferSlot(int32 SourceIndex, UInventorySystemComponent* SourceInventory, int32 DestinationIndex)
 {
-	FSlotInfo SlotContent = SourceInventory->Content[SourceIndex];
-	if (DestinationIndex < 0)
-	{
 
-	}
-	else
+	if (!SourceInventory ||
+		!SourceInventory->Content.IsValidIndex(SourceIndex) ||
+		!Content.IsValidIndex(DestinationIndex))
 	{
-		if (SlotContent.ItemName == Content[DestinationIndex].ItemName)
-		{
-
-		}
-		else
-		{
-			SourceInventory->Content[SourceIndex] = Content[DestinationIndex];
-			Content[DestinationIndex] = SlotContent;
-			OnInventoryUpdated.Broadcast();
-		}
+		return;
 	}
 
+	FInventorySlotInfo& SourceSlot = SourceInventory->Content[SourceIndex];
+	FInventorySlotInfo& DestinationSlot = Content[DestinationIndex];
+
+	if (SourceSlot.IsEmpty())
+	{
+		return;
+	}
+
+	if (DestinationSlot.IsEmpty())
+	{
+		DestinationSlot = SourceSlot;
+		SourceSlot.ClearSlot();
+
+		SourceInventory->OnInventoryUpdated.Broadcast();
+		OnInventoryUpdated.Broadcast();
+		return;
+	}
+
+	if (SourceSlot.ItemID == DestinationSlot.ItemID)
+	{
+		const int32 MaxStackSize = GetMaxStackSize(DestinationSlot.ItemID);
+		const int32 SpaceRemaining = MaxStackSize - DestinationSlot.Quantity;
+
+		if (SpaceRemaining>0)
+		{
+			const int32 AmountToTransfer = FMath::Min(SpaceRemaining, SourceSlot.Quantity);
+
+			DestinationSlot.Quantity += AmountToTransfer;
+			SourceSlot.Quantity -= AmountToTransfer;
+
+			if (SourceSlot.Quantity <= 0)
+			{
+				SourceSlot.ClearSlot();
+			}
+		}
+
+		SourceInventory->OnInventoryUpdated.Broadcast();
+		OnInventoryUpdated.Broadcast();
+		return;
+	}
+
+	Swap(SourceSlot, DestinationSlot);
+
+	SourceInventory->OnInventoryUpdated.Broadcast();
+	OnInventoryUpdated.Broadcast();
 }
 
 bool UInventorySystemComponent::HasItem(FName ItemID, int32 RequiredQuantity) const
@@ -190,9 +262,9 @@ bool UInventorySystemComponent::HasItem(FName ItemID, int32 RequiredQuantity) co
 
 	int32 TotalQuantity = 0;
 
-	for (const FSlotInfo& SlotInfo : Content)
+	for (const FInventorySlotInfo& SlotInfo : Content)
 	{
-		if (SlotInfo.ItemName == ItemID)
+		if (SlotInfo.ItemID == ItemID)
 		{
 			TotalQuantity += SlotInfo.Quantity;
 
@@ -212,9 +284,9 @@ bool UInventorySystemComponent::TryConsumeItem(FName ItemID, int32 QuantityToCon
 		return false;
 	}
 
-	for (FSlotInfo& SlotInfo : Content)
+	for (FInventorySlotInfo& SlotInfo : Content)
 	{
-		if (SlotInfo.ItemName != ItemID)
+		if (SlotInfo.ItemID != ItemID)
 		{
 			continue;
 		}
@@ -228,9 +300,7 @@ bool UInventorySystemComponent::TryConsumeItem(FName ItemID, int32 QuantityToCon
 
 		if (SlotInfo.Quantity <= 0)
 		{
-			SlotInfo.ItemName = NAME_None;
-			SlotInfo.Quantity = 0;
-			SlotInfo.bIsThrowable = false;
+			SlotInfo.ClearSlot();
 		}
 
 		OnInventoryUpdated.Broadcast();
@@ -240,16 +310,16 @@ bool UInventorySystemComponent::TryConsumeItem(FName ItemID, int32 QuantityToCon
 	return false;
 }
 
-bool UInventorySystemComponent::GetSlotByItemID(FName ItemID, FSlotInfo& OutSlotInfo) const
+bool UInventorySystemComponent::GetSlotByItemID(FName ItemID, FInventorySlotInfo& OutSlotInfo) const
 {
 	if (ItemID.IsNone())
 	{
 		return false;
 	}
 
-	for (const FSlotInfo& SlotInfo : Content)
+	for (const FInventorySlotInfo& SlotInfo : Content)
 	{
-		if (SlotInfo.ItemName == ItemID && SlotInfo.Quantity > 0)
+		if (SlotInfo.ItemID == ItemID && SlotInfo.Quantity > 0)
 		{
 			OutSlotInfo = SlotInfo;
 			return true;
@@ -263,25 +333,51 @@ int32 UInventorySystemComponent::GetMaxStackSize(FName ItemID)
 {
 	FInventoryItemInfo* ItemInfo = GetInventoryItemInfo(ItemID);
 
-	if(ItemInfo)
+	if (!ItemInfo)
 	{
-		return ItemInfo->StackSize;
+		return 1;
 	}
 
-	return -1;
+	return FMath::Max(1, ItemInfo->MaxStackSize);
 }
 
-TArray<FSlotInfo> UInventorySystemComponent::GetThrowableContent()
+TArray<FInventoryDisplayInfo> UInventorySystemComponent::GetThrowableDisplayItems() const
 {
-	TArray<FSlotInfo> ThrowableContent;
-	for (FSlotInfo SlotInfo : Content)
+	TArray<FInventoryDisplayInfo> Results;
+
+	for (const FInventorySlotInfo& SlotInfo : Content)
 	{
-		if (SlotInfo.bIsThrowable)
+		FInventoryDisplayInfo DisplayInfo;
+
+		if (!BuildInventoryDisplayInfo(SlotInfo, DisplayInfo))
 		{
-			ThrowableContent.Add(SlotInfo);
+			continue;
+		}
+
+		if (DisplayInfo.bIsThrowable)
+		{
+			Results.Add(DisplayInfo);
 		}
 	}
-	return ThrowableContent;
+
+	return Results;
+}
+
+TArray<FInventoryDisplayInfo> UInventorySystemComponent::GetInventoryDisplayItems() const
+{
+	TArray<FInventoryDisplayInfo> Results;
+
+	for (const FInventorySlotInfo& SlotInfo : Content)
+	{
+		FInventoryDisplayInfo DisplayInfo;
+
+		if (BuildInventoryDisplayInfo(SlotInfo, DisplayInfo))
+		{
+			Results.Add(DisplayInfo);
+		}
+	}
+
+	return Results;
 }
 
 FInventoryItemInfo* UInventorySystemComponent::GetInventoryItemInfo(FName ItemID) const
@@ -298,3 +394,30 @@ FInventoryItemInfo* UInventorySystemComponent::GetInventoryItemInfo(FName ItemID
 	return ItemRow.GetRow<FInventoryItemInfo>(ItemContextString);
 }
 
+bool UInventorySystemComponent::BuildInventoryDisplayInfo(const FInventorySlotInfo& SlotInfo, FInventoryDisplayInfo& OutDisplayInfo) const
+{
+	OutDisplayInfo = FInventoryDisplayInfo();
+
+	if (SlotInfo.IsEmpty())
+	{
+		return false;
+	}
+
+	FInventoryItemInfo* ItemInfo = GetInventoryItemInfo(SlotInfo.ItemID);
+
+	if(!ItemInfo)
+	{
+		return false;
+	}
+
+	OutDisplayInfo.ItemID = SlotInfo.ItemID;
+	OutDisplayInfo.Quantity = SlotInfo.Quantity;
+	OutDisplayInfo.Description = ItemInfo->Description;
+	OutDisplayInfo.Thumbnail = ItemInfo->Thumbnail;
+	OutDisplayInfo.bIsThrowable = ItemInfo->bIsThrowable;
+	OutDisplayInfo.MaxStackSize = ItemInfo->MaxStackSize;
+	OutDisplayInfo.ProjectileClass = ItemInfo->ProjectileClass;
+	OutDisplayInfo.ItemName = ItemInfo->ItemName;
+
+	return true;
+}

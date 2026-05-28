@@ -138,19 +138,19 @@ struct Z_Construct_UScriptStruct_FPokemonParty_Statics;
 struct FPokemonParty;
 // ********** End ScriptStruct FPokemonParty *******************************************************
 
-// ********** Begin ScriptStruct FSlotInfo *********************************************************
-struct Z_Construct_UScriptStruct_FSlotInfo_Statics;
+// ********** Begin ScriptStruct FInventorySlotInfo ************************************************
+struct Z_Construct_UScriptStruct_FInventorySlotInfo_Statics;
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_711_GENERATED_BODY \
-	friend struct ::Z_Construct_UScriptStruct_FSlotInfo_Statics; \
+	friend struct ::Z_Construct_UScriptStruct_FInventorySlotInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
 
-struct FSlotInfo;
-// ********** End ScriptStruct FSlotInfo ***********************************************************
+struct FInventorySlotInfo;
+// ********** End ScriptStruct FInventorySlotInfo **************************************************
 
 // ********** Begin ScriptStruct FDamageInfo *******************************************************
 struct Z_Construct_UScriptStruct_FDamageInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_726_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_734_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FDamageInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -160,7 +160,7 @@ struct FDamageInfo;
 
 // ********** Begin ScriptStruct FInventoryItemInfo ************************************************
 struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_744_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_752_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FInventoryItemInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;

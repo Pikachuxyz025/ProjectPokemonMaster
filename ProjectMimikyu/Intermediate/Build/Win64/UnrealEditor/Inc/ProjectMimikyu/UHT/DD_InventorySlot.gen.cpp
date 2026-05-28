@@ -6,6 +6,7 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "UI/DD_InventorySlot.h"
+#include "ActorComponents/InventorySystemComponent.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compiled with !UE_WITH_CONSTINIT_OBJECT");
@@ -15,6 +16,7 @@ void EmptyLinkFunctionForGeneratedCodeDD_InventorySlot() {}
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UDD_InventorySlot();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UDD_InventorySlot_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UInventorySystemComponent_NoRegister();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FInventoryDisplayInfo();
 UMG_API UClass* Z_Construct_UClass_UDragDropOperation();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
@@ -53,9 +55,6 @@ struct Z_Construct_UClass_UDD_InventorySlot_Statics
 {
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
-#if !UE_BUILD_SHIPPING
-		{ "Comment", "/**\n * \n */" },
-#endif
 		{ "IncludePath", "UI/DD_InventorySlot.h" },
 		{ "ModuleRelativePath", "Public/UI/DD_InventorySlot.h" },
 	};
@@ -64,10 +63,15 @@ struct Z_Construct_UClass_UDD_InventorySlot_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/UI/DD_InventorySlot.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DraggedItemInfo_MetaData[] = {
+		{ "Category", "DD_InventorySlot" },
+		{ "ModuleRelativePath", "Public/UI/DD_InventorySlot.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UDD_InventorySlot constinit property declarations ************************
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InventoryComponent;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_DraggedItemInfo;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UDD_InventorySlot constinit property declarations **************************
 	static UObject* (*const DependentSingletons[])();
@@ -79,8 +83,10 @@ struct Z_Construct_UClass_UDD_InventorySlot_Statics
 
 // ********** Begin Class UDD_InventorySlot Property Definitions ***********************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UDD_InventorySlot_Statics::NewProp_InventoryComponent = { "InventoryComponent", nullptr, (EPropertyFlags)0x0010000000090009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UDD_InventorySlot, InventoryComponent), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventoryComponent_MetaData), NewProp_InventoryComponent_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UDD_InventorySlot_Statics::NewProp_DraggedItemInfo = { "DraggedItemInfo", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UDD_InventorySlot, DraggedItemInfo), Z_Construct_UScriptStruct_FInventoryDisplayInfo, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DraggedItemInfo_MetaData), NewProp_DraggedItemInfo_MetaData) }; // 1866984579
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UDD_InventorySlot_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UDD_InventorySlot_Statics::NewProp_InventoryComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UDD_InventorySlot_Statics::NewProp_DraggedItemInfo,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UDD_InventorySlot_Statics::PropPointers) < 2048);
 // ********** End Class UDD_InventorySlot Property Definitions *************************************
@@ -124,10 +130,10 @@ UDD_InventorySlot::~UDD_InventorySlot() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UDD_InventorySlot, UDD_InventorySlot::StaticClass, TEXT("UDD_InventorySlot"), &Z_Registration_Info_UClass_UDD_InventorySlot, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UDD_InventorySlot), 1146641965U) },
+		{ Z_Construct_UClass_UDD_InventorySlot, UDD_InventorySlot::StaticClass, TEXT("UDD_InventorySlot"), &Z_Registration_Info_UClass_UDD_InventorySlot, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UDD_InventorySlot), 2040076545U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_2663223279{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_794791048{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DD_InventorySlot_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

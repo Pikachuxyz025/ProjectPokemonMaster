@@ -10,16 +10,26 @@
 
 void UInventoryGrid::Inventory()
 {
-	if (InventoryComponent)
+	if (!InventoryComponent || !InventorySlotClass || !BoxGrid)
 	{
-		for (int32 i = 0; i < InventoryComponent->Content.Num(); i++)
+		return;
+	}
+	for (int32 i = 0; i < InventoryComponent->Content.Num(); i++)
+	{
+		const FInventorySlotInfo& SlotInfo = InventoryComponent->Content[i];
+
+		FInventoryDisplayInfo DisplayInfo;
+		InventoryComponent->BuildInventoryDisplayInfo(SlotInfo, DisplayInfo);
+
+		UInventorySlot* Widget = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotClass);
+
+		if(!Widget)
 		{
-			UInventorySlot* Widget = CreateWidget<UInventorySlot>(GetWorld(), InventorySlotClass);
-			FName ItemID = InventoryComponent->Content[i].ItemName;
-			int32 Quantity = InventoryComponent->Content[i].Quantity;
-			Widget->SetupData(ItemID, Quantity, InventoryComponent);
-			BoxGrid->AddChildToWrapBox(Widget);
+			continue;
 		}
+
+		Widget->SetupData(DisplayInfo, i, InventoryComponent);
+		BoxGrid->AddChildToWrapBox(Widget);
 	}
 }
 
