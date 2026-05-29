@@ -626,9 +626,8 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 		//OutHit.ImpactPoint.X, OutHit.ImpactPoint.Y, OutHit.ImpactPoint.Z
 	//);
 	// Draw line from owner character to crosshair hit location for debugging
-	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), OutHit.ImpactPoint, FColor::Blue, false, 1.f, 0, 1.f);
-	DrawDebugSphere(GetWorld(), OutHit.ImpactPoint, 10.f, 12, FColor::Blue
-		, false, 1.f);
+	//DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), OutHit.ImpactPoint, FColor::Blue, false, 1.f, 0, 1.f);
+	//DrawDebugSphere(GetWorld(), OutHit.ImpactPoint, 10.f, 12, FColor::Blue	, false, 1.f);
 	return true;
 }
 

@@ -3,18 +3,48 @@
 
 #include "UI/DragPreview.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 
-void UDragPreview::NativePreConstruct()
+void UDragPreview::NativeConstruct()
 {
-	FString ContextString;
-	FInventoryItemInfo* ItemInfo = ItemDataTable->FindRow<FInventoryItemInfo>(ItemID, ContextString, true);
-	if (!ItemInfo->Thumbnail)
+	Super::NativeConstruct();
+
+	RefreshPreview();
+
+}
+
+void UDragPreview::RefreshPreview()
+{
+	if (!DraggedItem)
 	{
-		//QuantityBox->SetVisibility(ESlateVisibility::Hidden);
-		DraggedItem->SetVisibility(ESlateVisibility::Hidden);
 		return;
 	}
 
-	DraggedItem->SetBrushFromTexture(ItemInfo->Thumbnail);
+	if(!DisplayInfo.IsValid() || !DisplayInfo.Thumbnail)
+	{
+		DraggedItem->SetVisibility(ESlateVisibility::Hidden);
 
+		if (QuantityText)
+		{
+			QuantityText->SetVisibility(ESlateVisibility::Hidden);
+		}
+		return;
+	}
+
+	DraggedItem->SetVisibility(ESlateVisibility::Visible);
+	DraggedItem->SetBrushFromTexture(DisplayInfo.Thumbnail);
+
+	if (QuantityText)
+	{
+		QuantityText->SetText(FText::AsNumber(DisplayInfo.Quantity));
+		QuantityText->SetVisibility(DisplayInfo.Quantity > 1
+			? ESlateVisibility::Visible
+			: ESlateVisibility::Hidden);
+	}
+}
+
+void UDragPreview::SetupPreview(const FInventoryDisplayInfo& InDisplayInfo)
+{
+	DisplayInfo = InDisplayInfo;
+	RefreshPreview();
 }

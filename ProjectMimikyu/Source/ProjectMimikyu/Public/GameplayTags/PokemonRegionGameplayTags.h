@@ -1,0 +1,64 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "NativeGameplayTags.h"
+
+
+namespace PokemonRegionTags
+{
+	// Root
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population)
+
+	// Test Regions
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_OpenWorldTest)
+
+	// Region Types
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Forest)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Cave)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Town)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_City)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Mountain)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Lake)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Route)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Region_Dungeon)
+
+	// Biomes
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Grassland)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Forest)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Wetland)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Mountain)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Cave)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Coastal)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Biome_Urban)
+
+	// Environment Features
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_TallGrass)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_Water)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_CaveInterior)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_Road)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_Town)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_ForestCanopy)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Environment_Ruins)
+
+	// Habitats
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Ground)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Water)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Air)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Cave)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Tree)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Habitat_Urban)
+
+	// Population
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_WildPokemon)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_Trainer)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_Civilian)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_Ambient)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_Quest)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Population_Unique)
+}

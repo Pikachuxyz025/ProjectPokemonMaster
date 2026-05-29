@@ -209,6 +209,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\PokemonStatInfoDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\RegionPopulationData.cpp">
+      <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\TagCategoryDataAsset.cpp">
       <Filter>Source\ProjectMimikyu\Private\DataAssets</Filter>
     </ClCompile>
@@ -259,6 +262,12 @@
     </Filter>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
       <Filter>Source\ProjectMimikyu\Private\GameModes</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\GameplayTags">
+      <UniqueIdentifier>{28C1B85F-8695-3CD4-9C58-E8E7D5141160}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonRegionGameplayTags.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Input">
       <UniqueIdentifier>{3E2D2E0E-4BB1-3592-879F-3A2EDA7A0DAB}</UniqueIdentifier>
@@ -436,6 +445,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\UI\WidgetController\TrainerOverlayWidgetController.cpp">
       <Filter>Source\ProjectMimikyu\Private\UI\WidgetController</Filter>
+    </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\World">
+      <UniqueIdentifier>{5C650847-95E6-33C6-B38A-580109395355}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\World\RegionVolume.cpp">
+      <Filter>Source\ProjectMimikyu\Private\World</Filter>
     </ClCompile>
     <None Include="..\..\Source\ProjectMimikyu\ProjectMimikyu.Build.cs">
       <Filter>Source\ProjectMimikyu</Filter>
@@ -617,6 +632,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonStatInfoDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\RegionPopulationData.h">
+      <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\TagCategoryDataAsset.h">
       <Filter>Source\ProjectMimikyu\Public\DataAssets</Filter>
     </ClInclude>
@@ -667,6 +685,12 @@
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h">
       <Filter>Source\ProjectMimikyu\Public\GameModes</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\GameplayTags">
+      <UniqueIdentifier>{D9622FD0-BA5F-3B95-AC65-97ECE0AFD0E0}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonRegionGameplayTags.h">
+      <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Input">
       <UniqueIdentifier>{71D546B3-B282-31E8-A216-AB48D2E46BBD}</UniqueIdentifier>
@@ -847,6 +871,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\UI\WidgetController\TrainerOverlayWidgetController.h">
       <Filter>Source\ProjectMimikyu\Public\UI\WidgetController</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\World">
+      <UniqueIdentifier>{9542DED4-47A0-322F-9901-A2735C7B9E93}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\World\RegionVolume.h">
+      <Filter>Source\ProjectMimikyu\Public\World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

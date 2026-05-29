@@ -17,6 +17,20 @@
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/WBP_TrainerOverlay.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/WBP_PokemonHUD.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/WBP_PokemonLevel.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/InventoryMenu/BWUI_InventorySlot.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/InventoryMenu/BWUI_DragPreview.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/InventoryMenu/BWUI_InventoryGrid.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/BP_ProjectMimikyuGameMode.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Items/BP_CollectableItem.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Widget/TrainerOverlay/BWUI_TrainerOverlay.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Data/DT_TypeChart.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Data/DT_ItemTable.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Data/DT_TagCategory.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/DT_TagCategory.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/DT_ItemTable.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/DT_TypeChart.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Data/World/DA_Region_OpenWorldTest.uasset",
+				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/__ExternalActors__/ThirdPerson/Maps/OpenWorldTestingMap/5/XN/BY81GHSTUSL5KE3BCS9XLX.uasset",
 				"C:/Users/1351d/OneDrive/Documents/GitHub/ProjectPokemonMaster/ProjectMimikyu/Content/Blueprints/Actor/BP_WorldLockOnReticle.uasset"
 			]
 		}

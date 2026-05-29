@@ -10,6 +10,7 @@ using namespace UP;
 class UImage;
 class UTextBlock;
 class USizeBox;
+class UDragPreview;
 /**
  * 
  */
@@ -17,7 +18,7 @@ UCLASS()
 class PROJECTMIMIKYU_API UInventorySlot : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 
 	UPROPERTY(meta = (BindWidget))
@@ -30,11 +31,14 @@ public:
 	UTextBlock* ItemQuantity;
 
 	UPROPERTY(meta = (BindWidget))
- USizeBox* QuantityBox;
+	USizeBox* QuantityBox;
 
 	UPROPERTY(BlueprintReadOnly)
 	FInventoryDisplayInfo DisplayInfo;
-	
+
+	UPROPERTY(EditDefaultsOnly,Category="Drag Drop")
+	TSubclassOf<UDragPreview> DragVisualClass;
+
 	UPROPERTY(EditAnywhere)
 	int32 ContentIndex;
 
@@ -44,5 +48,10 @@ public:
 	void PreCons();
 	virtual void NativePreConstruct() override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)override;
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual FReply NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
 	void SetupData(const FInventoryDisplayInfo& InDisplayInfo, int32 InContentIndex, UInventorySystemComponent* NewInventoryComponent);
 };

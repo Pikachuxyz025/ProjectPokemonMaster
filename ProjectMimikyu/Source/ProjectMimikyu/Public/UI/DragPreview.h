@@ -2,28 +2,37 @@
 
 #pragma once
 
+#pragma once
+
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Characters/CharacterTypes.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "DragPreview.generated.h"
 
-/**
- * 
- */
+class UImage;
+class UTextBlock;
+
 UCLASS()
 class PROJECTMIMIKYU_API UDragPreview : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
+	UFUNCTION(BlueprintCallable)
+	void SetupPreview(const FInventoryDisplayInfo& InDisplayInfo);
 
-	FName ItemID;
+protected:
+	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta=(BindWidget))
-	class UImage* DraggedItem;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> DraggedItem;
 
-	UPROPERTY(EditAnywhere)
-	class UDataTable* ItemDataTable;
+	UPROPERTY(meta = (BindWidgetOptional))
+	TObjectPtr<UTextBlock> QuantityText;
 
-	virtual void NativePreConstruct() override;
+private:
+	UPROPERTY()
+	FInventoryDisplayInfo DisplayInfo;
+
+	void RefreshPreview();
 };

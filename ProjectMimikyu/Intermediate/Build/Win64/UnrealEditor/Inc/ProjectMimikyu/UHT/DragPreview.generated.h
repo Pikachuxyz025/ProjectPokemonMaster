@@ -15,12 +15,17 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+struct FInventoryDisplayInfo;
 
 // ********** Begin Class UDragPreview *************************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execSetupPreview);
+
+
 struct Z_Construct_UClass_UDragPreview_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UDragPreview_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_16_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUDragPreview(); \
 	friend struct ::Z_Construct_UClass_UDragPreview_Statics; \
@@ -31,7 +36,7 @@ public: \
 	DECLARE_SERIALIZER(UDragPreview)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_16_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UDragPreview(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	/** Deleted move- and copy-constructors, should never be used */ \
@@ -43,12 +48,13 @@ public: \
 	NO_API virtual ~UDragPreview();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_13_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_16_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_15_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_16_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_16_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_DragPreview_h_18_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
