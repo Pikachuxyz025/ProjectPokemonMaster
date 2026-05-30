@@ -487,6 +487,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Subsystems\WorldPopulationSubsystem.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Tasks\BTTask_ActivateAbility.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -666,6 +669,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Subsystems\WorldPopulationSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChargingAttack.h"/>

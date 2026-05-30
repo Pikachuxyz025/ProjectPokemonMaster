@@ -341,6 +341,12 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
       <Filter>Source\ProjectMimikyu\Private</Filter>
     </ClCompile>
+    <Filter Include="Source\ProjectMimikyu\Private\Subsystems">
+      <UniqueIdentifier>{A748C690-36FA-30AD-B294-32B5898660D1}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Subsystems\WorldPopulationSubsystem.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Subsystems</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Tasks">
       <UniqueIdentifier>{85383F6C-FFAC-352E-807E-97F87D7ACFCD}</UniqueIdentifier>
     </Filter>
@@ -766,6 +772,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
+    </ClInclude>
+    <Filter Include="Source\ProjectMimikyu\Public\Subsystems">
+      <UniqueIdentifier>{A2E56CF3-1D58-3560-A026-F4373071B9B6}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Subsystems\WorldPopulationSubsystem.h">
+      <Filter>Source\ProjectMimikyu\Public\Subsystems</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Tasks">
       <UniqueIdentifier>{BDC99664-9DA6-349E-A9EF-D0650C5AA136}</UniqueIdentifier>

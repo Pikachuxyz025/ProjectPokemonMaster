@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "Subsystems/WorldPopulationSubsystem.h"
 #include "Engine/Engine.h"
 
 ARegionVolume::ARegionVolume()
@@ -58,11 +59,11 @@ void ARegionVolume::OnRegionBeginOverlap(
 
 	PrintEnterDebug(OtherActor);
 
-	// Later:
-	// if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
-	// {
-	//     PopulationSubsystem->NotifyActorEnteredRegion(OtherActor, this);
-	// }
+
+	 if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
+	 {
+	     PopulationSubsystem->NotifyActorEnteredRegion(OtherActor, this);
+	 }
 }
 
 void ARegionVolume::OnRegionEndOverlap(
@@ -79,11 +80,11 @@ void ARegionVolume::OnRegionEndOverlap(
 
 	PrintExitDebug(OtherActor);
 
-	// Later:
-	// if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
-	// {
-	//     PopulationSubsystem->NotifyActorExitedRegion(OtherActor, this);
-	// }
+
+	 if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
+	 {
+	     PopulationSubsystem->NotifyActorExitedRegion(OtherActor, this);
+	 }
 }
 
 bool ARegionVolume::IsValidRegionActor(AActor* OtherActor) const
