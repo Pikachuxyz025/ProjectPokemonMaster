@@ -548,6 +548,179 @@ DEFINE_FUNCTION(UWorldPopulationSubsystem::execCanSpawnWildPokemonInRegion)
 }
 // ********** End Class UWorldPopulationSubsystem Function CanSpawnWildPokemonInRegion *************
 
+// ********** Begin Class UWorldPopulationSubsystem Function DespawnAllPopulationActorsInRegion ****
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics
+{
+	struct WorldPopulationSubsystem_eventDespawnAllPopulationActorsInRegion_Parms
+	{
+		FGameplayTag RegionTag;
+		int32 ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population|Spawning" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function DespawnAllPopulationActorsInRegion constinit property declarations ****
+	static const UECodeGen_Private::FStructPropertyParams NewProp_RegionTag;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function DespawnAllPopulationActorsInRegion constinit property declarations ******
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function DespawnAllPopulationActorsInRegion Property Definitions ***************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::NewProp_RegionTag = { "RegionTag", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventDespawnAllPopulationActorsInRegion_Parms, RegionTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(0, nullptr) }; // 517357616
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventDespawnAllPopulationActorsInRegion_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::NewProp_RegionTag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::PropPointers) < 2048);
+// ********** End Function DespawnAllPopulationActorsInRegion Property Definitions *****************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "DespawnAllPopulationActorsInRegion", 	Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::WorldPopulationSubsystem_eventDespawnAllPopulationActorsInRegion_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::WorldPopulationSubsystem_eventDespawnAllPopulationActorsInRegion_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execDespawnAllPopulationActorsInRegion)
+{
+	P_GET_STRUCT(FGameplayTag,Z_Param_RegionTag);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(int32*)Z_Param__Result=P_THIS->DespawnAllPopulationActorsInRegion(Z_Param_RegionTag);
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function DespawnAllPopulationActorsInRegion ******
+
+// ********** Begin Class UWorldPopulationSubsystem Function DespawnPopulationActor ****************
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics
+{
+	struct WorldPopulationSubsystem_eventDespawnPopulationActor_Parms
+	{
+		AActor* ActorToDespawn;
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population|Spawning" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function DespawnPopulationActor constinit property declarations ****************
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ActorToDespawn;
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function DespawnPopulationActor constinit property declarations ******************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function DespawnPopulationActor Property Definitions ***************************
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ActorToDespawn = { "ActorToDespawn", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventDespawnPopulationActor_Parms, ActorToDespawn), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+void Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((WorldPopulationSubsystem_eventDespawnPopulationActor_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(WorldPopulationSubsystem_eventDespawnPopulationActor_Parms), &Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ActorToDespawn,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::PropPointers) < 2048);
+// ********** End Function DespawnPopulationActor Property Definitions *****************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "DespawnPopulationActor", 	Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::WorldPopulationSubsystem_eventDespawnPopulationActor_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::WorldPopulationSubsystem_eventDespawnPopulationActor_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execDespawnPopulationActor)
+{
+	P_GET_OBJECT(AActor,Z_Param_ActorToDespawn);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->DespawnPopulationActor(Z_Param_ActorToDespawn);
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function DespawnPopulationActor ******************
+
+// ********** Begin Class UWorldPopulationSubsystem Function DespawnPopulationActorsTooFarFromActor 
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics
+{
+	struct WorldPopulationSubsystem_eventDespawnPopulationActorsTooFarFromActor_Parms
+	{
+		AActor* ReferenceActor;
+		int32 ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population|Spawning" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function DespawnPopulationActorsTooFarFromActor constinit property declarations 
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReferenceActor;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function DespawnPopulationActorsTooFarFromActor constinit property declarations **
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function DespawnPopulationActorsTooFarFromActor Property Definitions ***********
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::NewProp_ReferenceActor = { "ReferenceActor", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventDespawnPopulationActorsTooFarFromActor_Parms, ReferenceActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventDespawnPopulationActorsTooFarFromActor_Parms, ReturnValue), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::NewProp_ReferenceActor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::PropPointers) < 2048);
+// ********** End Function DespawnPopulationActorsTooFarFromActor Property Definitions *************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "DespawnPopulationActorsTooFarFromActor", 	Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::WorldPopulationSubsystem_eventDespawnPopulationActorsTooFarFromActor_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::WorldPopulationSubsystem_eventDespawnPopulationActorsTooFarFromActor_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execDespawnPopulationActorsTooFarFromActor)
+{
+	P_GET_OBJECT(AActor,Z_Param_ReferenceActor);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(int32*)Z_Param__Result=P_THIS->DespawnPopulationActorsTooFarFromActor(Z_Param_ReferenceActor);
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function DespawnPopulationActorsTooFarFromActor **
+
 // ********** Begin Class UWorldPopulationSubsystem Function GetActiveRegionForActor ***************
 struct Z_Construct_UFunction_UWorldPopulationSubsystem_GetActiveRegionForActor_Statics
 {
@@ -741,6 +914,134 @@ DEFINE_FUNCTION(UWorldPopulationSubsystem::execHasActiveRegion)
 }
 // ********** End Class UWorldPopulationSubsystem Function HasActiveRegion *************************
 
+// ********** Begin Class UWorldPopulationSubsystem Function StartPopulationUpdateTimer ************
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function StartPopulationUpdateTimer constinit property declarations ************
+// ********** End Function StartPopulationUpdateTimer constinit property declarations **************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "StartPopulationUpdateTimer", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execStartPopulationUpdateTimer)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->StartPopulationUpdateTimer();
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function StartPopulationUpdateTimer **************
+
+// ********** Begin Class UWorldPopulationSubsystem Function StopPopulationUpdateTimer *************
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function StopPopulationUpdateTimer constinit property declarations *************
+// ********** End Function StopPopulationUpdateTimer constinit property declarations ***************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "StopPopulationUpdateTimer", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execStopPopulationUpdateTimer)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->StopPopulationUpdateTimer();
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function StopPopulationUpdateTimer ***************
+
+// ********** Begin Class UWorldPopulationSubsystem Function TrySpawnPlaceholderPokemonForActor ****
+struct Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics
+{
+	struct WorldPopulationSubsystem_eventTrySpawnPlaceholderPokemonForActor_Parms
+	{
+		AActor* RequestingActor;
+		AActor* ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "World Population|Spawning" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function TrySpawnPlaceholderPokemonForActor constinit property declarations ****
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_RequestingActor;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function TrySpawnPlaceholderPokemonForActor constinit property declarations ******
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function TrySpawnPlaceholderPokemonForActor Property Definitions ***************
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::NewProp_RequestingActor = { "RequestingActor", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventTrySpawnPlaceholderPokemonForActor_Parms, RequestingActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(WorldPopulationSubsystem_eventTrySpawnPlaceholderPokemonForActor_Parms, ReturnValue), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::NewProp_RequestingActor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::PropPointers) < 2048);
+// ********** End Function TrySpawnPlaceholderPokemonForActor Property Definitions *****************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UWorldPopulationSubsystem, nullptr, "TrySpawnPlaceholderPokemonForActor", 	Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::WorldPopulationSubsystem_eventTrySpawnPlaceholderPokemonForActor_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::Function_MetaDataParams), Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::WorldPopulationSubsystem_eventTrySpawnPlaceholderPokemonForActor_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UWorldPopulationSubsystem::execTrySpawnPlaceholderPokemonForActor)
+{
+	P_GET_OBJECT(AActor,Z_Param_RequestingActor);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(AActor**)Z_Param__Result=P_THIS->TrySpawnPlaceholderPokemonForActor(Z_Param_RequestingActor);
+	P_NATIVE_END;
+}
+// ********** End Class UWorldPopulationSubsystem Function TrySpawnPlaceholderPokemonForActor ******
+
 // ********** Begin Class UWorldPopulationSubsystem ************************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_UWorldPopulationSubsystem;
 UClass* UWorldPopulationSubsystem::GetPrivateStaticClass()
@@ -790,6 +1091,12 @@ struct Z_Construct_UClass_UWorldPopulationSubsystem_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_RegisteredPopulationActors_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PopulationUpdateInterval_MetaData[] = {
+		{ "Category", "World Population|Update" },
+		{ "ClampMin", "0.1" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+		{ "Units", "s" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UWorldPopulationSubsystem constinit property declarations ****************
@@ -799,24 +1106,37 @@ struct Z_Construct_UClass_UWorldPopulationSubsystem_Statics
 	static const UECodeGen_Private::FStructPropertyParams NewProp_RegisteredPopulationActors_ValueProp;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_RegisteredPopulationActors_Key_KeyProp;
 	static const UECodeGen_Private::FMapPropertyParams NewProp_RegisteredPopulationActors;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_PopulationUpdateInterval;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UWorldPopulationSubsystem constinit property declarations ******************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("CanSpawnCivilianInRegion"), .Pointer = &UWorldPopulationSubsystem::execCanSpawnCivilianInRegion },
 		{ .NameUTF8 = UTF8TEXT("CanSpawnTrainerInRegion"), .Pointer = &UWorldPopulationSubsystem::execCanSpawnTrainerInRegion },
 		{ .NameUTF8 = UTF8TEXT("CanSpawnWildPokemonInRegion"), .Pointer = &UWorldPopulationSubsystem::execCanSpawnWildPokemonInRegion },
+		{ .NameUTF8 = UTF8TEXT("DespawnAllPopulationActorsInRegion"), .Pointer = &UWorldPopulationSubsystem::execDespawnAllPopulationActorsInRegion },
+		{ .NameUTF8 = UTF8TEXT("DespawnPopulationActor"), .Pointer = &UWorldPopulationSubsystem::execDespawnPopulationActor },
+		{ .NameUTF8 = UTF8TEXT("DespawnPopulationActorsTooFarFromActor"), .Pointer = &UWorldPopulationSubsystem::execDespawnPopulationActorsTooFarFromActor },
 		{ .NameUTF8 = UTF8TEXT("GetActiveRegionForActor"), .Pointer = &UWorldPopulationSubsystem::execGetActiveRegionForActor },
 		{ .NameUTF8 = UTF8TEXT("GetRuntimePopulationStateForRegion"), .Pointer = &UWorldPopulationSubsystem::execGetRuntimePopulationStateForRegion },
 		{ .NameUTF8 = UTF8TEXT("HasActiveRegion"), .Pointer = &UWorldPopulationSubsystem::execHasActiveRegion },
+		{ .NameUTF8 = UTF8TEXT("StartPopulationUpdateTimer"), .Pointer = &UWorldPopulationSubsystem::execStartPopulationUpdateTimer },
+		{ .NameUTF8 = UTF8TEXT("StopPopulationUpdateTimer"), .Pointer = &UWorldPopulationSubsystem::execStopPopulationUpdateTimer },
+		{ .NameUTF8 = UTF8TEXT("TrySpawnPlaceholderPokemonForActor"), .Pointer = &UWorldPopulationSubsystem::execTrySpawnPlaceholderPokemonForActor },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_CanSpawnCivilianInRegion, "CanSpawnCivilianInRegion" }, // 1211119901
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_CanSpawnTrainerInRegion, "CanSpawnTrainerInRegion" }, // 21629349
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_CanSpawnWildPokemonInRegion, "CanSpawnWildPokemonInRegion" }, // 1945477604
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnAllPopulationActorsInRegion, "DespawnAllPopulationActorsInRegion" }, // 2432582733
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActor, "DespawnPopulationActor" }, // 411381885
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_DespawnPopulationActorsTooFarFromActor, "DespawnPopulationActorsTooFarFromActor" }, // 2129176263
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_GetActiveRegionForActor, "GetActiveRegionForActor" }, // 3763671329
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_GetRuntimePopulationStateForRegion, "GetRuntimePopulationStateForRegion" }, // 754156077
 		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_HasActiveRegion, "HasActiveRegion" }, // 2268144290
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_StartPopulationUpdateTimer, "StartPopulationUpdateTimer" }, // 1040273987
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_StopPopulationUpdateTimer, "StopPopulationUpdateTimer" }, // 1032835784
+		{ &Z_Construct_UFunction_UWorldPopulationSubsystem_TrySpawnPlaceholderPokemonForActor, "TrySpawnPlaceholderPokemonForActor" }, // 3394755085
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -832,6 +1152,7 @@ const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_UWorldPopulationS
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_ValueProp = { "RegisteredPopulationActors", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo, METADATA_PARAMS(0, nullptr) }; // 430957552
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_Key_KeyProp = { "RegisteredPopulationActors_Key", nullptr, (EPropertyFlags)0x0004000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors = { "RegisteredPopulationActors", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UWorldPopulationSubsystem, RegisteredPopulationActors), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RegisteredPopulationActors_MetaData), NewProp_RegisteredPopulationActors_MetaData) }; // 430957552
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_PopulationUpdateInterval = { "PopulationUpdateInterval", nullptr, (EPropertyFlags)0x0040000000010001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UWorldPopulationSubsystem, PopulationUpdateInterval), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PopulationUpdateInterval_MetaData), NewProp_PopulationUpdateInterval_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UWorldPopulationSubsystem_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_ValueProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_Key_KeyProp,
@@ -839,6 +1160,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UWorldPop
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_ValueProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_Key_KeyProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_PopulationUpdateInterval,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UWorldPopulationSubsystem_Statics::PropPointers) < 2048);
 // ********** End Class UWorldPopulationSubsystem Property Definitions *****************************
@@ -892,10 +1214,10 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FRuntimeRegionPopulationState::StaticStruct, Z_Construct_UScriptStruct_FRuntimeRegionPopulationState_Statics::NewStructOps, TEXT("RuntimeRegionPopulationState"),&Z_Registration_Info_UScriptStruct_FRuntimeRegionPopulationState, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRuntimeRegionPopulationState), 1077767949U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UWorldPopulationSubsystem, UWorldPopulationSubsystem::StaticClass, TEXT("UWorldPopulationSubsystem"), &Z_Registration_Info_UClass_UWorldPopulationSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UWorldPopulationSubsystem), 2302210986U) },
+		{ Z_Construct_UClass_UWorldPopulationSubsystem, UWorldPopulationSubsystem::StaticClass, TEXT("UWorldPopulationSubsystem"), &Z_Registration_Info_UClass_UWorldPopulationSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UWorldPopulationSubsystem), 1765619154U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_4083626480{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_2312593891{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

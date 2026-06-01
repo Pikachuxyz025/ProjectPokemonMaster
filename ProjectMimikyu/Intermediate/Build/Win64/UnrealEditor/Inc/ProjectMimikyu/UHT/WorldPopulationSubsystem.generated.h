@@ -52,6 +52,12 @@ struct FRuntimeRegionPopulationState;
 
 // ********** Begin Class UWorldPopulationSubsystem ************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execStopPopulationUpdateTimer); \
+	DECLARE_FUNCTION(execStartPopulationUpdateTimer); \
+	DECLARE_FUNCTION(execDespawnPopulationActorsTooFarFromActor); \
+	DECLARE_FUNCTION(execDespawnAllPopulationActorsInRegion); \
+	DECLARE_FUNCTION(execDespawnPopulationActor); \
+	DECLARE_FUNCTION(execTrySpawnPlaceholderPokemonForActor); \
 	DECLARE_FUNCTION(execCanSpawnCivilianInRegion); \
 	DECLARE_FUNCTION(execCanSpawnTrainerInRegion); \
 	DECLARE_FUNCTION(execCanSpawnWildPokemonInRegion); \

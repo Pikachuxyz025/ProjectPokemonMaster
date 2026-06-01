@@ -153,9 +153,27 @@ public:
 	UFUNCTION(BlueprintPure, Category = "World Population")
 	bool CanSpawnCivilianInRegion(FGameplayTag RegionTag) const;
 
+	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
+	AActor* TrySpawnPlaceholderPokemonForActor(AActor* RequestingActor);
+
+	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
+	bool DespawnPopulationActor(AActor* ActorToDespawn);
+
+	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")	
+	int32 DespawnAllPopulationActorsInRegion(FGameplayTag RegionTag);
+
+	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
+	int32 DespawnPopulationActorsTooFarFromActor(AActor* ReferenceActor);
+
+	UFUNCTION(BlueprintCallable, Category = "World Population")
+	void StartPopulationUpdateTimer();
+
+	UFUNCTION(BlueprintCallable, Category = "World Population")
+	void StopPopulationUpdateTimer();
 private:
 	void SetActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void ClearActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
+	void RunPopulationUpdate();
 
 	FGameplayTag ResolveRegionTagFromVolume(const ARegionVolume* RegionVolume) const;
 	URegionPopulationData* ResolveRegionDataFromVolume(const ARegionVolume* RegionVolume) const;
@@ -172,6 +190,11 @@ private:
 
 	void IncrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
 	void DecrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
+
+	bool GetSpawnContextForActor(AActor* RequestingActor,	FActiveRegionInfo& OutRegionInfo, 	FRuntimeRegionPopulationState& OutPopulationState) const;
+	bool FindPlaceholderSpawnTransform(AActor* RequestingActor, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
+
+	bool ShouldDespawnPopulationActorByDistance(const AActor* ReferenceActor, const AActor* PopulationActor, const URegionPopulationData* RegionData) const;
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;
@@ -179,4 +202,9 @@ private:
 
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FRegisteredPopulationActorInfo> RegisteredPopulationActors;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "World Population|Update", meta = (ClampMin = "0.1",Units = "s"))
+	float PopulationUpdateInterval = 2.0f;
+
+	FTimerHandle PopulationUpdateTimerHandle;
 };

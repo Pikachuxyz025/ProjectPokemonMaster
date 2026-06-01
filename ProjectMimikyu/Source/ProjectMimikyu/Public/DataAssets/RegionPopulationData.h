@@ -114,6 +114,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Region", meta = (MultiLine = true))
 	FText RegionDescription;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning|Prototype")
+	TSubclassOf<AActor> PlaceholderPokemonClass;
 public:
 	UFUNCTION(BlueprintPure, Category = "Region")
 	bool IsValidRegionData() const

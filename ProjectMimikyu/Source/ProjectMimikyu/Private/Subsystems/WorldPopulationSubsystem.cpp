@@ -11,10 +11,14 @@ void UWorldPopulationSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	UE_LOG(LogTemp, Warning, TEXT("[WorldPopulationSubsystem] Initialized for world: %s"), *GetNameSafe(GetWorld()));
+
+	StartPopulationUpdateTimer();
 }
 
 void UWorldPopulationSubsystem::Deinitialize()
 {
+	StopPopulationUpdateTimer();
+
 	ActiveRegionsByActor.Empty();
 	RuntimePopulationByRegion.Empty();
 	RegisteredPopulationActors.Empty();
@@ -155,6 +159,302 @@ bool UWorldPopulationSubsystem::CanSpawnCivilianInRegion(FGameplayTag RegionTag)
 	return FoundState->ActiveCivilianCount < RegionData->PopulationBudget.MaxActiveCivilians;
 }
 
+AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* RequestingActor)
+{
+	if (!RequestingActor)
+	{
+		return nullptr;
+	}
+
+	FActiveRegionInfo RegionInfo;
+	FRuntimeRegionPopulationState RuntimeState;
+
+	if (!GetSpawnContextForActor(RequestingActor, RegionInfo, RuntimeState))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon. No valid spawn context for %s."),
+			*GetNameSafe(RequestingActor)
+		);
+
+		return nullptr;
+	}
+
+	if (!CanSpawnWildPokemonInRegion(RegionInfo.RegionTag))
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. Region is at Pokemon budget."),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return nullptr;
+	}
+
+	URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
+	if (!RegionData)
+	{
+		return nullptr;
+	}
+
+	if (!RegionData->PlaceholderPokemonClass)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. PlaceholderPokemonClass is not assigned on %s."),
+			*RegionInfo.RegionTag.ToString(),
+			*GetNameSafe(RegionData)
+		);
+
+		return nullptr;
+	}
+
+	FTransform SpawnTransform;
+	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionData, SpawnTransform))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Could not find placeholder spawn transform for %s."),
+			*GetNameSafe(RequestingActor)
+		);
+
+		return nullptr;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = RequestingActor;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	AActor* SpawnedActor = World->SpawnActor<AActor>(
+		RegionData->PlaceholderPokemonClass,
+		SpawnTransform,
+		SpawnParams
+	);
+
+	if (!SpawnedActor)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] SpawnActor failed for placeholder Pokemon in %s."),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return nullptr;
+	}
+
+	RegisterSpawnedPokemon(
+		SpawnedActor,
+		RegionInfo.RegionTag,
+		false
+	);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Spawned placeholder Pokemon %s in %s."),
+		*GetNameSafe(SpawnedActor),
+		*RegionInfo.RegionTag.ToString()
+	);
+
+	return SpawnedActor;
+}
+
+bool UWorldPopulationSubsystem::DespawnPopulationActor(AActor* ActorToDespawn)
+{
+	if (!ActorToDespawn)
+	{
+		return false;
+	}
+
+	if (!RegisteredPopulationActors.Contains(ActorToDespawn))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Tried to despawn %s, but it is not registered as a population actor."),
+			*GetNameSafe(ActorToDespawn)
+		);
+
+		return false;
+	}
+
+	UnregisterPopulationActor(ActorToDespawn);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Destroying population actor %s."),
+		*GetNameSafe(ActorToDespawn)
+	);
+
+	ActorToDespawn->Destroy();
+
+	return true;
+}
+
+int32 UWorldPopulationSubsystem::DespawnAllPopulationActorsInRegion(FGameplayTag RegionTag)
+{
+	if(!RegionTag.IsValid())
+	{
+		return 0;
+	}
+
+	TArray<TObjectPtr<AActor>> ActorsToDespawn;
+
+	for (const TPair<TObjectPtr<AActor>, FRegisteredPopulationActorInfo>& Pair : RegisteredPopulationActors) 
+	{
+		const FRegisteredPopulationActorInfo& ActorInfo = Pair.Value;
+
+		if (ActorInfo.RegionTag == RegionTag&&Pair.Key)
+		{
+			ActorsToDespawn.Add(Pair.Key);
+		}
+	}
+
+	int32 DespawnedCount = 0;
+
+	for (AActor* ActorToDespawn : ActorsToDespawn)
+	{
+		if (DespawnPopulationActor(ActorToDespawn))
+		{
+			DespawnedCount++;
+		}
+	}
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Despawned %d population actors in region %s."),
+		DespawnedCount,
+		*RegionTag.ToString()
+	);
+
+	PrintPopulationBudgetForRegion(RegionTag);
+
+	return DespawnedCount;
+}
+
+int32 UWorldPopulationSubsystem::DespawnPopulationActorsTooFarFromActor(AActor* ReferenceActor)
+{
+	if(!ReferenceActor)
+	{
+		return 0;
+	}
+
+	FActiveRegionInfo RegionInfo;
+	if(!GetActiveRegionForActor(ReferenceActor, RegionInfo))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot despawn population actors around %s. No active region found."),
+			*GetNameSafe(ReferenceActor)
+		);
+		return 0;
+	}
+
+	if (!RegionInfo.RegionTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot despawn population actors around %s. Active region tag is invalid."),
+			*GetNameSafe(ReferenceActor)
+		);
+		return 0;
+	}
+
+	const URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
+	if(!RegionData)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot despawn population actors around %s. Active region data is invalid."),
+			*GetNameSafe(ReferenceActor)
+		);
+		return 0;
+	}
+
+	TArray<TObjectPtr<AActor>> ActorsToDespawn;
+
+	for (const TPair<TObjectPtr<AActor>, FRegisteredPopulationActorInfo>& Pair : RegisteredPopulationActors)
+	{
+		AActor* RegisteredActor = Pair.Key;
+		const FRegisteredPopulationActorInfo& ActorInfo = Pair.Value;
+
+		if (!RegisteredActor)
+		{
+			continue;
+		}
+
+		if (ActorInfo.RegionTag != RegionInfo.RegionTag)
+		{
+			continue;
+		}
+
+		if (ShouldDespawnPopulationActorByDistance(ReferenceActor, RegisteredActor, RegionData))
+		{
+			ActorsToDespawn.Add(RegisteredActor);
+		}
+	}
+
+	int32 DespawnedCount = 0;
+
+	for (AActor* ActorToDespawn : ActorsToDespawn)
+	{
+		if (DespawnPopulationActor(ActorToDespawn))
+		{
+			DespawnedCount++;
+		}
+	}
+
+	if (DespawnedCount > 0)
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Despawned %d population actors around %s in region %s."),
+			DespawnedCount,
+			*GetNameSafe(ReferenceActor),
+			*RegionInfo.RegionTag.ToString()
+		);
+		PrintPopulationBudgetForRegion(RegionInfo.RegionTag);
+	}
+
+	return DespawnedCount;
+}
+
+void UWorldPopulationSubsystem::StartPopulationUpdateTimer()
+{
+	UWorld* World = GetWorld();
+	if(!World)
+	{
+		return;
+	}
+
+	if (PopulationUpdateInterval <= 0.f)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot start population update timer. PopulationUpdateInterval is set to %.2f."), 
+			PopulationUpdateInterval
+		);
+		return;
+	}
+
+	World->GetTimerManager().SetTimer(
+		PopulationUpdateTimerHandle,
+		this,
+		&UWorldPopulationSubsystem::RunPopulationUpdate,
+		PopulationUpdateInterval,
+		true
+	);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Started population update timer with interval %.2f seconds."), 
+		PopulationUpdateInterval
+	);
+}
+
+void UWorldPopulationSubsystem::StopPopulationUpdateTimer()
+{
+	UWorld* World = GetWorld();
+	if(!World)
+	{
+		return;
+	}
+	World->GetTimerManager().ClearTimer(PopulationUpdateTimerHandle);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Stopped population update timer.")
+	);
+}
+
 void UWorldPopulationSubsystem::SetActiveRegion(AActor* Actor, ARegionVolume* RegionVolume)
 {
 	if (!Actor || !RegionVolume)
@@ -222,6 +522,40 @@ void UWorldPopulationSubsystem::ClearActiveRegion(AActor* Actor, ARegionVolume* 
 		*GetNameSafe(Actor),
 		*RegionString
 	);
+}
+
+void UWorldPopulationSubsystem::RunPopulationUpdate()
+{
+	if (ActiveRegionsByActor.Num() <= 0)
+	{
+		return;
+	}
+
+	if (RegisteredPopulationActors.Num() <= 0)
+	{
+		return;
+	}
+
+	int32 TotalDespawned = 0;
+
+	for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
+	{
+		AActor* ReferenceActor = Pair.Key;
+
+		if (!IsValid(ReferenceActor))
+		{
+			continue;
+		}
+		TotalDespawned += DespawnPopulationActorsTooFarFromActor(ReferenceActor);
+	}
+
+	if (TotalDespawned > 0)
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Population update despawned a total of %d actors across all regions."),
+			TotalDespawned
+		);
+	}
 }
 
 FGameplayTag UWorldPopulationSubsystem::ResolveRegionTagFromVolume(const ARegionVolume* RegionVolume) const
@@ -455,4 +789,109 @@ void UWorldPopulationSubsystem::DecrementPopulationCount(FRuntimeRegionPopulatio
 	default:
 		break;
 	}
+}
+
+bool UWorldPopulationSubsystem::GetSpawnContextForActor(
+	AActor* RequestingActor,
+	FActiveRegionInfo& OutRegionInfo,
+	FRuntimeRegionPopulationState& OutRuntimeState
+) const
+{
+	if (!RequestingActor)
+	{
+		return false;
+	}
+
+	if (!GetActiveRegionForActor(RequestingActor, OutRegionInfo))
+	{
+		return false;
+	}
+
+	if (!OutRegionInfo.RegionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (!OutRegionInfo.RegionPopulationData.IsValid())
+	{
+		return false;
+	}
+
+	if (!GetRuntimePopulationStateForRegion(OutRegionInfo.RegionTag, OutRuntimeState))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool UWorldPopulationSubsystem::FindPlaceholderSpawnTransform(
+	AActor* RequestingActor,
+	const URegionPopulationData* RegionData,
+	FTransform& OutSpawnTransform
+) const
+{
+	if (!RequestingActor || !RegionData)
+	{
+		return false;
+	}
+
+	const FVector Origin = RequestingActor->GetActorLocation();
+
+	const float MinDistance = RegionData->SpawnSettings.MinSpawnDistanceFromPlayer;
+	const float MaxDistance = RegionData->SpawnSettings.MaxSpawnDistanceFromPlayer;
+
+	if (MaxDistance <= MinDistance)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Invalid spawn distance range on %s. Min=%.2f Max=%.2f"),
+			*GetNameSafe(RegionData),
+			MinDistance,
+			MaxDistance
+		);
+
+		return false;
+	}
+
+	const float Distance = FMath::RandRange(MinDistance, MaxDistance);
+	const float AngleRadians = FMath::RandRange(0.0f, UE_TWO_PI);
+
+	const FVector Direction = FVector(
+		FMath::Cos(AngleRadians),
+		FMath::Sin(AngleRadians),
+		0.0f
+	);
+
+	FVector SpawnLocation = Origin + Direction * Distance;
+
+	// For the first pass, keep Z near the player.
+	// Later this should trace down to ground or use NavMesh projection.
+	SpawnLocation.Z = Origin.Z + 50.0f;
+
+	const FRotator SpawnRotation = Direction.Rotation();
+
+	OutSpawnTransform = FTransform(SpawnRotation, SpawnLocation);
+
+	return true;
+}
+
+bool UWorldPopulationSubsystem::ShouldDespawnPopulationActorByDistance(const AActor* ReferenceActor, const AActor* PopulationActor, const URegionPopulationData* RegionData) const
+{
+	if (!ReferenceActor || !PopulationActor || !RegionData)
+	{
+		return false;
+	}
+
+	const float DespawnDistance = RegionData->SpawnSettings.DespawnDistanceFromPlayer;
+
+	if (DespawnDistance <= 0.0f)
+	{
+		return false;
+	}
+
+	const float DistanceSquared = FVector::DistSquared(ReferenceActor->GetActorLocation(), PopulationActor->GetActorLocation());
+
+	const float DespawnDistanceSquared = FMath::Square(DespawnDistance);
+
+	return DistanceSquared >= DespawnDistanceSquared;
 }
