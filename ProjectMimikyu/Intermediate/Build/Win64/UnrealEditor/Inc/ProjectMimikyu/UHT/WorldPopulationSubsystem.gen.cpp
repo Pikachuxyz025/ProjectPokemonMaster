@@ -20,7 +20,9 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ARegionVolume_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_URegionPopulationData_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UWorldPopulationSubsystem();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UWorldPopulationSubsystem_NoRegister();
+PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FActiveRegionInfo();
+PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo();
 PROJECTMIMIKYU_API UScriptStruct* Z_Construct_UScriptStruct_FRuntimeRegionPopulationState();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
@@ -110,6 +112,157 @@ UScriptStruct* Z_Construct_UScriptStruct_FActiveRegionInfo()
 	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FActiveRegionInfo.InnerSingleton);
 }
 // ********** End ScriptStruct FActiveRegionInfo ***************************************************
+
+// ********** Begin Enum EPopulationActorType ******************************************************
+static FEnumRegistrationInfo Z_Registration_Info_UEnum_EPopulationActorType;
+static UEnum* EPopulationActorType_StaticEnum()
+{
+	if (!Z_Registration_Info_UEnum_EPopulationActorType.OuterSingleton)
+	{
+		Z_Registration_Info_UEnum_EPopulationActorType.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EPopulationActorType"));
+	}
+	return Z_Registration_Info_UEnum_EPopulationActorType.OuterSingleton;
+}
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPopulationActorType>()
+{
+	return EPopulationActorType_StaticEnum();
+}
+struct Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "Civilian.Name", "EPopulationActorType::Civilian" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+		{ "None.Name", "EPopulationActorType::None" },
+		{ "Trainer.Name", "EPopulationActorType::Trainer" },
+		{ "WildPokemon.Name", "EPopulationActorType::WildPokemon" },
+	};
+#endif // WITH_METADATA
+	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
+		{ "EPopulationActorType::None", (int64)EPopulationActorType::None },
+		{ "EPopulationActorType::WildPokemon", (int64)EPopulationActorType::WildPokemon },
+		{ "EPopulationActorType::Trainer", (int64)EPopulationActorType::Trainer },
+		{ "EPopulationActorType::Civilian", (int64)EPopulationActorType::Civilian },
+	};
+	static const UECodeGen_Private::FEnumParams EnumParams;
+}; // struct Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics 
+const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::EnumParams = {
+	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	"EPopulationActorType",
+	"EPopulationActorType",
+	Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::Enumerators,
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::Enumerators),
+	EEnumFlags::None,
+	(uint8)UEnum::ECppForm::EnumClass,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::Enum_MetaDataParams)
+};
+UEnum* Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType()
+{
+	if (!Z_Registration_Info_UEnum_EPopulationActorType.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EPopulationActorType.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType_Statics::EnumParams);
+	}
+	return Z_Registration_Info_UEnum_EPopulationActorType.InnerSingleton;
+}
+// ********** End Enum EPopulationActorType ********************************************************
+
+// ********** Begin ScriptStruct FRegisteredPopulationActorInfo ************************************
+struct Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics
+{
+	static inline consteval int32 GetStructSize() { return sizeof(FRegisteredPopulationActorInfo); }
+	static inline consteval int16 GetStructAlignment() { return alignof(FRegisteredPopulationActorInfo); }
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
+		{ "BlueprintType", "true" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Actor_MetaData[] = {
+		{ "Category", "RegisteredPopulationActorInfo" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_RegionTag_MetaData[] = {
+		{ "Category", "RegisteredPopulationActorInfo" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PopulationType_MetaData[] = {
+		{ "Category", "RegisteredPopulationActorInfo" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bCombatReady_MetaData[] = {
+		{ "Category", "RegisteredPopulationActorInfo" },
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin ScriptStruct FRegisteredPopulationActorInfo constinit property declarations ****
+	static const UECodeGen_Private::FWeakObjectPropertyParams NewProp_Actor;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_RegionTag;
+	static const UECodeGen_Private::FBytePropertyParams NewProp_PopulationType_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_PopulationType;
+	static void NewProp_bCombatReady_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bCombatReady;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End ScriptStruct FRegisteredPopulationActorInfo constinit property declarations ******
+	static void* NewStructOps()
+	{
+		return (UScriptStruct::ICppStructOps*)new UScriptStruct::TCppStructOps<FRegisteredPopulationActorInfo>();
+	}
+	static const UECodeGen_Private::FStructParams StructParams;
+}; // struct Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics
+static FStructRegistrationInfo Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo;
+class UScriptStruct* FRegisteredPopulationActorInfo::StaticStruct()
+{
+	if (!Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.OuterSingleton)
+	{
+		Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.OuterSingleton = GetStaticStruct(Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("RegisteredPopulationActorInfo"));
+	}
+	return Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.OuterSingleton;
+	}
+
+// ********** Begin ScriptStruct FRegisteredPopulationActorInfo Property Definitions ***************
+const UECodeGen_Private::FWeakObjectPropertyParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_Actor = { "Actor", nullptr, (EPropertyFlags)0x0014000000000014, UECodeGen_Private::EPropertyGenFlags::WeakObject, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegisteredPopulationActorInfo, Actor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Actor_MetaData), NewProp_Actor_MetaData) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_RegionTag = { "RegionTag", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegisteredPopulationActorInfo, RegionTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RegionTag_MetaData), NewProp_RegionTag_MetaData) }; // 517357616
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_PopulationType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_PopulationType = { "PopulationType", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegisteredPopulationActorInfo, PopulationType), Z_Construct_UEnum_ProjectMimikyu_EPopulationActorType, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PopulationType_MetaData), NewProp_PopulationType_MetaData) }; // 619235926
+void Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_bCombatReady_SetBit(void* Obj)
+{
+	((FRegisteredPopulationActorInfo*)Obj)->bCombatReady = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_bCombatReady = { "bCombatReady", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(FRegisteredPopulationActorInfo), &Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_bCombatReady_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bCombatReady_MetaData), NewProp_bCombatReady_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_Actor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_RegionTag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_PopulationType_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_PopulationType,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewProp_bCombatReady,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::PropPointers) < 2048);
+// ********** End ScriptStruct FRegisteredPopulationActorInfo Property Definitions *****************
+const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::StructParams = {
+	(UObject* (*)())Z_Construct_UPackage__Script_ProjectMimikyu,
+	nullptr,
+	&NewStructOps,
+	"RegisteredPopulationActorInfo",
+	Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::PropPointers,
+	UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::PropPointers),
+	sizeof(FRegisteredPopulationActorInfo),
+	alignof(FRegisteredPopulationActorInfo),
+	RF_Public|RF_Transient|RF_MarkAsNative,
+	EStructFlags(0x00000001),
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::Struct_MetaDataParams), Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::Struct_MetaDataParams)
+};
+UScriptStruct* Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo()
+{
+	if (!Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.InnerSingleton)
+	{
+		UECodeGen_Private::ConstructUScriptStruct(Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.InnerSingleton, Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::StructParams);
+	}
+	return CastChecked<UScriptStruct>(Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo.InnerSingleton);
+}
+// ********** End ScriptStruct FRegisteredPopulationActorInfo **************************************
 
 // ********** Begin ScriptStruct FRuntimeRegionPopulationState *************************************
 struct Z_Construct_UScriptStruct_FRuntimeRegionPopulationState_Statics
@@ -634,12 +787,18 @@ struct Z_Construct_UClass_UWorldPopulationSubsystem_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ActiveRegionsByActor_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_RegisteredPopulationActors_MetaData[] = {
+		{ "ModuleRelativePath", "Public/Subsystems/WorldPopulationSubsystem.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UWorldPopulationSubsystem constinit property declarations ****************
 	static const UECodeGen_Private::FStructPropertyParams NewProp_ActiveRegionsByActor_ValueProp;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ActiveRegionsByActor_Key_KeyProp;
 	static const UECodeGen_Private::FMapPropertyParams NewProp_ActiveRegionsByActor;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_RegisteredPopulationActors_ValueProp;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_RegisteredPopulationActors_Key_KeyProp;
+	static const UECodeGen_Private::FMapPropertyParams NewProp_RegisteredPopulationActors;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UWorldPopulationSubsystem constinit property declarations ******************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
@@ -670,10 +829,16 @@ struct Z_Construct_UClass_UWorldPopulationSubsystem_Statics
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_ValueProp = { "ActiveRegionsByActor", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, Z_Construct_UScriptStruct_FActiveRegionInfo, METADATA_PARAMS(0, nullptr) }; // 931129769
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_Key_KeyProp = { "ActiveRegionsByActor_Key", nullptr, (EPropertyFlags)0x0004000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor = { "ActiveRegionsByActor", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UWorldPopulationSubsystem, ActiveRegionsByActor), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActiveRegionsByActor_MetaData), NewProp_ActiveRegionsByActor_MetaData) }; // 931129769
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_ValueProp = { "RegisteredPopulationActors", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo, METADATA_PARAMS(0, nullptr) }; // 430957552
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_Key_KeyProp = { "RegisteredPopulationActors_Key", nullptr, (EPropertyFlags)0x0004000000000000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors = { "RegisteredPopulationActors", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UWorldPopulationSubsystem, RegisteredPopulationActors), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RegisteredPopulationActors_MetaData), NewProp_RegisteredPopulationActors_MetaData) }; // 430957552
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UWorldPopulationSubsystem_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_ValueProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor_Key_KeyProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_ActiveRegionsByActor,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_ValueProp,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors_Key_KeyProp,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UWorldPopulationSubsystem_Statics::NewProp_RegisteredPopulationActors,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UWorldPopulationSubsystem_Statics::PropPointers) < 2048);
 // ********** End Class UWorldPopulationSubsystem Property Definitions *****************************
@@ -718,19 +883,23 @@ UWorldPopulationSubsystem::~UWorldPopulationSubsystem() {}
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics
 {
+	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
+		{ EPopulationActorType_StaticEnum, TEXT("EPopulationActorType"), &Z_Registration_Info_UEnum_EPopulationActorType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 619235926U) },
+	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FActiveRegionInfo::StaticStruct, Z_Construct_UScriptStruct_FActiveRegionInfo_Statics::NewStructOps, TEXT("ActiveRegionInfo"),&Z_Registration_Info_UScriptStruct_FActiveRegionInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FActiveRegionInfo), 931129769U) },
+		{ FRegisteredPopulationActorInfo::StaticStruct, Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics::NewStructOps, TEXT("RegisteredPopulationActorInfo"),&Z_Registration_Info_UScriptStruct_FRegisteredPopulationActorInfo, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegisteredPopulationActorInfo), 430957552U) },
 		{ FRuntimeRegionPopulationState::StaticStruct, Z_Construct_UScriptStruct_FRuntimeRegionPopulationState_Statics::NewStructOps, TEXT("RuntimeRegionPopulationState"),&Z_Registration_Info_UScriptStruct_FRuntimeRegionPopulationState, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRuntimeRegionPopulationState), 1077767949U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UWorldPopulationSubsystem, UWorldPopulationSubsystem::StaticClass, TEXT("UWorldPopulationSubsystem"), &Z_Registration_Info_UClass_UWorldPopulationSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UWorldPopulationSubsystem), 2146401664U) },
+		{ Z_Construct_UClass_UWorldPopulationSubsystem, UWorldPopulationSubsystem::StaticClass, TEXT("UWorldPopulationSubsystem"), &Z_Registration_Info_UClass_UWorldPopulationSubsystem, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UWorldPopulationSubsystem), 2302210986U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_128465344{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_4083626480{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
-	nullptr, 0,
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h__Script_ProjectMimikyu_Statics::EnumInfo),
 };
 // ********** End Registration *********************************************************************
 

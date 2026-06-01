@@ -30,9 +30,19 @@ struct Z_Construct_UScriptStruct_FActiveRegionInfo_Statics;
 struct FActiveRegionInfo;
 // ********** End ScriptStruct FActiveRegionInfo ***************************************************
 
+// ********** Begin ScriptStruct FRegisteredPopulationActorInfo ************************************
+struct Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics;
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_51_GENERATED_BODY \
+	friend struct ::Z_Construct_UScriptStruct_FRegisteredPopulationActorInfo_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+struct FRegisteredPopulationActorInfo;
+// ********** End ScriptStruct FRegisteredPopulationActorInfo **************************************
+
 // ********** Begin ScriptStruct FRuntimeRegionPopulationState *************************************
 struct Z_Construct_UScriptStruct_FRuntimeRegionPopulationState_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_42_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_75_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FRuntimeRegionPopulationState_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -41,7 +51,7 @@ struct FRuntimeRegionPopulationState;
 // ********** End ScriptStruct FRuntimeRegionPopulationState ***************************************
 
 // ********** Begin Class UWorldPopulationSubsystem ************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execCanSpawnCivilianInRegion); \
 	DECLARE_FUNCTION(execCanSpawnTrainerInRegion); \
 	DECLARE_FUNCTION(execCanSpawnWildPokemonInRegion); \
@@ -53,7 +63,7 @@ struct FRuntimeRegionPopulationState;
 struct Z_Construct_UClass_UWorldPopulationSubsystem_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UWorldPopulationSubsystem_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUWorldPopulationSubsystem(); \
 	friend struct ::Z_Construct_UClass_UWorldPopulationSubsystem_Statics; \
@@ -64,7 +74,7 @@ public: \
 	DECLARE_SERIALIZER(UWorldPopulationSubsystem)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_ENHANCED_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API UWorldPopulationSubsystem(); \
 	/** Deleted move- and copy-constructors, should never be used */ \
@@ -76,13 +86,13 @@ public: \
 	NO_API virtual ~UWorldPopulationSubsystem();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_83_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_116_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_86_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h_119_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -93,5 +103,17 @@ class UWorldPopulationSubsystem;
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Subsystems_WorldPopulationSubsystem_h
+
+// ********** Begin Enum EPopulationActorType ******************************************************
+#define FOREACH_ENUM_EPOPULATIONACTORTYPE(op) \
+	op(EPopulationActorType::None) \
+	op(EPopulationActorType::WildPokemon) \
+	op(EPopulationActorType::Trainer) \
+	op(EPopulationActorType::Civilian) 
+
+enum class EPopulationActorType : uint8;
+template<> struct TIsUEnumClass<EPopulationActorType> { enum { Value = true }; };
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPopulationActorType>();
+// ********** End Enum EPopulationActorType ********************************************************
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

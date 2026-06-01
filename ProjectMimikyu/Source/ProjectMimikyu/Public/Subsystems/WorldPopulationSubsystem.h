@@ -36,6 +36,39 @@ public:
 	}
 };
 
+UENUM(BlueprintType)
+enum class EPopulationActorType : uint8
+{
+	None,
+	WildPokemon,
+	Trainer,
+	Civilian
+};
+
+USTRUCT(BlueprintType)
+struct FRegisteredPopulationActorInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	TWeakObjectPtr<AActor> Actor;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag RegionTag;
+
+	UPROPERTY(BlueprintReadOnly)
+	EPopulationActorType PopulationType = EPopulationActorType::None;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bCombatReady = false;
+
+	bool IsValid() const
+	{
+		return Actor.IsValid() && RegionTag.IsValid() && PopulationType != EPopulationActorType::None;
+	}
+};
+
 USTRUCT(BlueprintType)
 struct FRuntimeRegionPopulationState
 {
@@ -93,6 +126,15 @@ public:
 	void NotifyActorEnteredRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void NotifyActorExitedRegion(AActor* Actor, ARegionVolume* RegionVolume);
 
+	void RegisterSpawnedPokemon(AActor* SpawnedActor, FGameplayTag RegionTag, bool bIsCombatReady = false);
+	void UnregisterSpawnedPokemon(AActor* SpawnActor);
+
+	void RegisterSpawnedTrainer(AActor* SpawnedActor, FGameplayTag RegionTag);
+	void UnregisterSpawnedTrainer(AActor* SpawnActor);
+
+	void RegisterSpawnedCivilian(AActor* SpawnedActor, FGameplayTag RegionTag);
+	void UnregisterSpawnedCivilian(AActor* SpawnActor);
+
 	UFUNCTION(BlueprintPure, Category = "World Population")
 	bool GetActiveRegionForActor(AActor* Actor, FActiveRegionInfo& OutRegionInfo) const;
 
@@ -121,8 +163,20 @@ private:
 	FRuntimeRegionPopulationState& EnsureRuntimeStateForRegionTag(FGameplayTag RegionTag,URegionPopulationData* RegionPopulationData);
 
 	void PrintPopulationBudgetForRegion(FGameplayTag RegionTag) const;
+
+	bool CanRegisterActor(AActor* Actor, FGameplayTag RegionTag) const;
+
+	void RegisterPopulationActor(AActor* Actor, FGameplayTag RegionTag, EPopulationActorType PopulationType, bool bIsCombatReady);
+
+	void UnregisterPopulationActor(AActor* Actor);
+
+	void IncrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
+	void DecrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;
 	TMap<FGameplayTag, FRuntimeRegionPopulationState> RuntimePopulationByRegion;
+
+	UPROPERTY()
+	TMap<TObjectPtr<AActor>, FRegisteredPopulationActorInfo> RegisteredPopulationActors;
 };

@@ -17,6 +17,8 @@ void UWorldPopulationSubsystem::Deinitialize()
 {
 	ActiveRegionsByActor.Empty();
 	RuntimePopulationByRegion.Empty();
+	RegisteredPopulationActors.Empty();
+
 	UE_LOG(LogTemp, Log, TEXT("[WorldPopulationSubsystem] Deinitialized for world: %s"), *GetNameSafe(GetWorld()));
 
 	Super::Deinitialize();
@@ -40,6 +42,36 @@ void UWorldPopulationSubsystem::NotifyActorExitedRegion(AActor* Actor, ARegionVo
 	}
 
 	ClearActiveRegion(Actor, RegionVolume);
+}
+
+void UWorldPopulationSubsystem::RegisterSpawnedPokemon(AActor* SpawnedActor, FGameplayTag RegionTag, bool bIsCombatReady)
+{
+	RegisterPopulationActor(SpawnedActor, RegionTag, EPopulationActorType::WildPokemon, bIsCombatReady);
+}
+
+void UWorldPopulationSubsystem::UnregisterSpawnedPokemon(AActor* SpawnActor)
+{
+	UnregisterPopulationActor(SpawnActor);
+}
+
+void UWorldPopulationSubsystem::RegisterSpawnedTrainer(AActor* SpawnedActor, FGameplayTag RegionTag)
+{
+	RegisterPopulationActor(SpawnedActor, RegionTag, EPopulationActorType::Trainer, false);
+}
+
+void UWorldPopulationSubsystem::UnregisterSpawnedTrainer(AActor* SpawnActor)
+{
+	UnregisterPopulationActor(SpawnActor);
+}
+
+void UWorldPopulationSubsystem::RegisterSpawnedCivilian(AActor* SpawnedActor, FGameplayTag RegionTag)
+{
+	RegisterPopulationActor(SpawnedActor, RegionTag, EPopulationActorType::Civilian, false);
+}
+
+void UWorldPopulationSubsystem::UnregisterSpawnedCivilian(AActor* SpawnActor)
+{
+	UnregisterPopulationActor(SpawnActor);
 }
 
 bool UWorldPopulationSubsystem::GetActiveRegionForActor(AActor* Actor, FActiveRegionInfo& OutRegionInfo) const
@@ -275,4 +307,152 @@ void UWorldPopulationSubsystem::PrintPopulationBudgetForRegion(FGameplayTag Regi
 		CanSpawnTrainerInRegion(RegionTag) ? TEXT("True") : TEXT("False"),
 		CanSpawnCivilianInRegion(RegionTag) ? TEXT("True") : TEXT("False")
 	);
+}
+
+bool UWorldPopulationSubsystem::CanRegisterActor(AActor* Actor, FGameplayTag RegionTag) const
+{
+	if (!Actor)
+	{
+		return false;
+	}
+
+	if (!RegionTag.IsValid())
+	{
+		return false;
+	}
+
+	if (RegisteredPopulationActors.Contains(Actor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[WorldPopulationSubsystem] Actor %s is already registered as a population actor."), *GetNameSafe(Actor));
+		return false;
+	}
+	return true;
+}
+
+void UWorldPopulationSubsystem::RegisterPopulationActor(AActor* Actor, FGameplayTag RegionTag, EPopulationActorType PopulationType, bool bIsCombatReady)
+{
+	if (!CanRegisterActor(Actor, RegionTag))
+	{
+		return;
+	}
+
+	FRuntimeRegionPopulationState* RuntimeState = RuntimePopulationByRegion.Find(RegionTag);
+	if (!RuntimeState)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Tried to register %s in region %s, but no runtime region state exists."),
+			*GetNameSafe(Actor),
+			*RegionTag.ToString()
+		);
+
+		return;
+	}
+
+	FRegisteredPopulationActorInfo ActorInfo;
+	ActorInfo.Actor = Actor;
+	ActorInfo.RegionTag = RegionTag;
+	ActorInfo.PopulationType = PopulationType;
+	ActorInfo.bCombatReady = bIsCombatReady;
+
+	RegisteredPopulationActors.Add(Actor, ActorInfo);
+
+	IncrementPopulationCount(*RuntimeState, PopulationType, bIsCombatReady);
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Registered %s as %s in %s."),
+		*GetNameSafe(Actor),
+		*UEnum::GetValueAsString(PopulationType),
+		*RegionTag.ToString()
+	);
+
+	PrintPopulationBudgetForRegion(RegionTag);
+}
+
+void UWorldPopulationSubsystem::UnregisterPopulationActor(AActor* Actor)
+{
+	if (!Actor)
+	{
+		return;
+}
+
+	FRegisteredPopulationActorInfo ActorInfo;
+	if (!RegisteredPopulationActors.RemoveAndCopyValue(Actor, ActorInfo))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Tried to unregister %s, but it was not registered."),
+			*GetNameSafe(Actor)
+		);
+
+		return;
+	}
+
+	FRuntimeRegionPopulationState* RuntimeState = RuntimePopulationByRegion.Find(ActorInfo.RegionTag);
+	if (!RuntimeState)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Tried to unregister %s from region %s, but no runtime region state exists."),
+			*GetNameSafe(Actor),
+			*ActorInfo.RegionTag.ToString()
+		);
+		return;
+	}
+
+	DecrementPopulationCount(*RuntimeState, ActorInfo.PopulationType, ActorInfo.bCombatReady);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Unregistered %s from %s."),
+		*GetNameSafe(Actor),
+		*ActorInfo.RegionTag.ToString()
+	);
+
+	PrintPopulationBudgetForRegion(ActorInfo.RegionTag);
+}
+
+void UWorldPopulationSubsystem::IncrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady)
+{
+	switch (PopulationType)
+	{
+	case EPopulationActorType::WildPokemon:
+		RuntimeState.ActivePokemonCount++;
+
+		if (bCombatReady)
+		{
+			RuntimeState.CombatReadyPokemonCount++;
+		}
+
+		break;
+	case EPopulationActorType::Trainer:
+		RuntimeState.ActiveTrainerCount++;
+		break;
+	case EPopulationActorType::Civilian:
+		RuntimeState.ActiveCivilianCount++;
+		break;
+	default:
+		break;
+	}
+}
+
+void UWorldPopulationSubsystem::DecrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady)
+{
+	switch (PopulationType)
+	{
+	case EPopulationActorType::WildPokemon:
+		RuntimeState.ActivePokemonCount = FMath::Max(0, RuntimeState.ActivePokemonCount - 1);
+
+		if(bCombatReady)
+		{
+			RuntimeState.CombatReadyPokemonCount = FMath::Max(0, RuntimeState.CombatReadyPokemonCount - 1);
+		}
+		break;
+
+	case EPopulationActorType::Trainer:
+		RuntimeState.ActiveTrainerCount = FMath::Max(0, RuntimeState.ActiveTrainerCount - 1);
+		break;
+
+	case EPopulationActorType::Civilian:
+		RuntimeState.ActiveCivilianCount = FMath::Max(0, RuntimeState.ActiveCivilianCount - 1);
+		break;
+
+	default:
+		break;
+	}
 }
