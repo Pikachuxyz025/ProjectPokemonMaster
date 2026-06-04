@@ -67,7 +67,7 @@ struct FRuntimeRegionPopulationState;
 	DECLARE_FUNCTION(execDespawnPopulationActorsTooFarFromActor); \
 	DECLARE_FUNCTION(execDespawnAllPopulationActorsInRegion); \
 	DECLARE_FUNCTION(execDespawnPopulationActor); \
-	DECLARE_FUNCTION(execTrySpawnPlaceholderPokemonForActor); \
+	DECLARE_FUNCTION(execTrySpawnWildPokemonForActor); \
 	DECLARE_FUNCTION(execCanSpawnCivilianInRegion); \
 	DECLARE_FUNCTION(execCanSpawnTrainerInRegion); \
 	DECLARE_FUNCTION(execCanSpawnWildPokemonInRegion); \

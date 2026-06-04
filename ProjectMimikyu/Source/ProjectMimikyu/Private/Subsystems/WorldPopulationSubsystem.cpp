@@ -4,6 +4,7 @@
 #include "NavigationSystem.h"
 #include "CollisionShape.h"
 #include "World/RegionVolume.h"
+#include "GameplayTags/PokemonSpeciesGameplayTags.h"
 #include "DataAssets/RegionPopulationData.h"
 #include "Engine/World.h"
 
@@ -118,7 +119,7 @@ bool UWorldPopulationSubsystem::HasActiveRegion(AActor* Actor) const
 	return FoundInfo && FoundInfo->IsValid();
 }
 
-bool UWorldPopulationSubsystem::GetRuntimePopulationStateForRegion(FGameplayTag& RegionTag, FRuntimeRegionPopulationState& OutPopulationState) const
+bool UWorldPopulationSubsystem::GetRuntimePopulationStateForRegion(const FGameplayTag& RegionTag, FRuntimeRegionPopulationState& OutPopulationState) const
 {
 	if (!RegionTag.IsValid())
 	{
@@ -171,11 +172,11 @@ bool UWorldPopulationSubsystem::CanSpawnCivilianInRegion(FGameplayTag RegionTag)
 	return FoundState->ActiveCivilianCount < RegionData->PopulationBudget.MaxActiveCivilians;
 }
 
-AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* RequestingActor)
+int32 UWorldPopulationSubsystem::TrySpawnWildPokemonForActor(AActor* RequestingActor)
 {
 	if (!RequestingActor)
 	{
-		return nullptr;
+		return 0;
 	}
 
 	FActiveRegionInfo RegionInfo;
@@ -183,22 +184,12 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 
 	if (!GetSpawnContextForActor(RequestingActor, RegionInfo, PopulationState))
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon. No valid spawn context for %s."),
-			*GetNameSafe(RequestingActor)
-		);
-
-		return nullptr;
+		return 0;
 	}
 
 	if (!CanSpawnWildPokemonInRegion(RegionInfo.RegionTag))
 	{
-		UE_LOG(LogTemp, Log,
-			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. Region is at Pokemon budget."),
-			*RegionInfo.RegionTag.ToString()
-		);
-
-		return nullptr;
+		return 0;
 	}
 
 	FRegionPokemonSpawnEntry SelectedEntry;
@@ -208,59 +199,23 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. Failed to select spawn entry."),
 			*RegionInfo.RegionTag.ToString()
 		);
-		return nullptr;
+		return 0;
 	}
 	
-	FTransform SpawnTransform;
-	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionInfo.RegionPopulationData.Get(), SpawnTransform))
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[WorldPopulationSubsystem] Could not find placeholder spawn transform for %s."),
-			*GetNameSafe(RequestingActor)
-		);
-
-		return nullptr;
-	}
-
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return nullptr;
-	}
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride =
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
-	AActor* SpawnedActor = World->SpawnActor<AActor>(
-		SelectedEntry.ActorClass,
-		SpawnTransform,
-		SpawnParams
-	);
-
-	if (!SpawnedActor)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[WorldPopulationSubsystem] SpawnActor failed for placeholder Pokemon in %s."),
-			*RegionInfo.RegionTag.ToString()
-		);
-
-		return nullptr;
-	}
-
-	const bool bShouldBeCombatReady = SelectedEntry.bCanBeCombatReady && PopulationState.CombatReadyPokemonCount < RegionInfo.RegionPopulationData->PopulationBudget.MaxCombatReadyPokemon;
-	RegisterSpawnedPokemon(SpawnedActor, RegionInfo.RegionTag, bShouldBeCombatReady);
-
 	UE_LOG(LogTemp, Log,
-		TEXT("[WorldPopulationSubsystem] Spawned wild Pokemon entry %s | Species=%s | Region=%s | LevelRange=%d-%d."),
-		*GetNameSafe(SpawnedActor),
+		TEXT("[WorldPopulationSubsystem] Selected wild Pokemon entry | Species=%s | SpawnStyle=%s | Weight=%.2f | LevelRange=%d-%d"),
 		*SelectedEntry.SpeciesTag.ToString(),
-		*RegionInfo.RegionTag.ToString(),
+		*SelectedEntry.SpawnStyleTag.ToString(),
+		SelectedEntry.SpawnWeight,
 		SelectedEntry.MinLevel,
 		SelectedEntry.MaxLevel
 	);
 
-	return SpawnedActor;
+	return TrySpawnWildPokemonGroupForActor(
+		RequestingActor,
+		RegionInfo,
+		SelectedEntry
+	);
 }
 
 bool UWorldPopulationSubsystem::DespawnPopulationActor(AActor* ActorToDespawn)
@@ -570,7 +525,7 @@ void UWorldPopulationSubsystem::RunPopulationUpdate()
 	}
 
 	// 3. Spawn pass only for currently active regions
-	const int32 TotalSpawned = RunPlaceholderSpawnPass();
+	const int32 TotalSpawned = RunWildPokemonSpawnPass();
 
 	if (TotalSpawned > 0 || TotalDespawned > 0)
 	{
@@ -582,9 +537,9 @@ void UWorldPopulationSubsystem::RunPopulationUpdate()
 	}
 }
 
-int32 UWorldPopulationSubsystem::RunPlaceholderSpawnPass()
+int32 UWorldPopulationSubsystem::RunWildPokemonSpawnPass()
 {
-	if(ActiveRegionsByActor.Num() <= 0)
+	if (ActiveRegionsByActor.Num() <= 0)
 	{
 		return 0;
 	}
@@ -594,26 +549,24 @@ int32 UWorldPopulationSubsystem::RunPlaceholderSpawnPass()
 	for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
 	{
 		AActor* ReferenceActor = Pair.Key;
+
 		if (!IsValid(ReferenceActor))
 		{
 			continue;
 		}
-		if(!ShouldAttemptPlaceholderSpawnForActor(ReferenceActor))
+
+		if (!ShouldAttemptPlaceholderSpawnForActor(ReferenceActor))
 		{
 			continue;
 		}
 
-		AActor* SpawnedActor = TrySpawnPlaceholderPokemonForActor(ReferenceActor);
-		if (SpawnedActor)
-		{
-			SpawnedCount++;
-		}
+		SpawnedCount += TrySpawnWildPokemonForActor(ReferenceActor);
 	}
 
-	if(SpawnedCount > 0)
+	if (SpawnedCount > 0)
 	{
 		UE_LOG(LogTemp, Log,
-			TEXT("[WorldPopulationSubsystem] Placeholder spawn pass spawned a total of %d actors across all regions."),
+			TEXT("[WorldPopulationSubsystem] Wild Pokemon spawn pass spawned a total of %d actors across all regions."),
 			SpawnedCount
 		);
 	}
@@ -1338,4 +1291,242 @@ bool UWorldPopulationSubsystem::CanRegisterCombatReadyPokemonInRegion(FGameplayT
 	const URegionPopulationData* RegionData = RuntimeState->RegionPopulationData.Get();
 
 	return RuntimeState->CombatReadyPokemonCount < RegionData->PopulationBudget.MaxCombatReadyPokemon;
+}
+
+int32 UWorldPopulationSubsystem::GetSpawnCountForSpawnStyle(const FGameplayTag& SpawnStyleTag) const
+{
+	if (SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Pair)
+	{
+		return 2;
+	}
+
+	// Temporary fallback until group placement is implemented
+	return 1;
+}
+
+int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* RequestingActor, const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry)
+{
+	if (!RequestingActor)
+	{
+		return 0;
+	}
+
+	const URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
+	if (!RegionData)
+	{
+		return 0;
+	}
+
+	const int32 DesiredSpawnCount = GetSpawnCountForSpawnStyle(SelectedEntry.SpawnStyleTag);
+
+	FTransform AnchorSpawnTransform;
+	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionData, AnchorSpawnTransform))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Could not find anchor spawn transform for group spawn | Species=%s | SpawnStyle=%s | Region=%s."),
+			*SelectedEntry.SpeciesTag.ToString(),
+			*SelectedEntry.SpawnStyleTag.ToString(),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return 0;
+	}
+
+	int32 SpawnedCount = 0;
+	TArray<FVector> SpawnedGroupMemberLocations;
+
+	AActor* AnchorActor = SpawnWildPokemonFromEntry(RegionInfo, SelectedEntry, AnchorSpawnTransform);
+
+	if (!AnchorActor)
+	{
+		return 0;
+	}
+
+	SpawnedCount++;
+	SpawnedGroupMemberLocations.Add(AnchorSpawnTransform.GetLocation());
+
+	for (int32 MemberIndex = 1; MemberIndex < DesiredSpawnCount; ++MemberIndex)
+	{
+		FTransform MemberSpawnTransform;
+		if (!FindGroupMemberSpawnTransform(AnchorSpawnTransform.GetLocation(), SpawnedGroupMemberLocations, RegionData, MemberSpawnTransform))
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[WorldPopulationSubsystem] Could not find group member location | Species=%s | SpawnStyle=%s | Region=%s | SpawnedSoFar=%d/%d."),
+				*SelectedEntry.SpeciesTag.ToString(),
+				*SelectedEntry.SpawnStyleTag.ToString(),
+				*RegionInfo.RegionTag.ToString(),
+				SpawnedCount,
+				DesiredSpawnCount
+			);
+
+			break;
+		}
+
+		AActor* SpawnedMemberActor = SpawnWildPokemonFromEntry(RegionInfo, SelectedEntry, MemberSpawnTransform);
+		if (!SpawnedMemberActor)
+		{
+			break;
+		}
+
+		SpawnedCount++;
+		SpawnedGroupMemberLocations.Add(MemberSpawnTransform.GetLocation());
+	}
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Group spawn complete | Species=%s | SpawnStyle=%s | Region=%s | Spawned=%d/%d."),
+		*SelectedEntry.SpeciesTag.ToString(),
+		*SelectedEntry.SpawnStyleTag.ToString(),
+		*RegionInfo.RegionTag.ToString(),
+		SpawnedCount,
+		DesiredSpawnCount
+	);
+
+	return SpawnedCount;
+}
+
+AActor* UWorldPopulationSubsystem::SpawnWildPokemonFromEntry(const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry, const FTransform& SpawnTransform)
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	if (!SelectedEntry.ActorClass)
+	{
+		return nullptr;
+	}
+
+	FRuntimeRegionPopulationState PopulationState;
+	if (!GetRuntimePopulationStateForRegion(RegionInfo.RegionTag, PopulationState))
+	{
+		return nullptr;
+	}
+
+	const URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
+	if (!RegionData)
+	{
+		return nullptr;
+	}
+
+	if (PopulationState.ActivePokemonCount >= RegionData->PopulationBudget.MaxActivePokemon)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Cannot spawn Pokemon from entry %s in region %s. Active Pokemon count is at or above budget."),
+			*GetNameSafe(SelectedEntry.ActorClass),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return nullptr;
+	}
+
+	const bool bShouldBeCombatReady =
+		SelectedEntry.bCanBeCombatReady &&
+		PopulationState.CombatReadyPokemonCount < RegionData->PopulationBudget.MaxCombatReadyPokemon;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	AActor* SpawnedActor = World->SpawnActor<AActor>(
+		SelectedEntry.ActorClass,
+		SpawnTransform,
+		SpawnParams
+	);
+
+	if (!SpawnedActor)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Failed to spawn wild Pokemon entry | Species=%s | SpawnStyle=%s | Region=%s."),
+			*SelectedEntry.SpeciesTag.ToString(),
+			*SelectedEntry.SpawnStyleTag.ToString(),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return nullptr;
+	}
+
+	RegisterSpawnedPokemon(SpawnedActor, RegionInfo.RegionTag, bShouldBeCombatReady);
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Spawned wild Pokemon entry %s | Species=%s | SpawnStyle=%s | Region=%s | CombatReady=%s | LevelRange=%d-%d."),
+		*GetNameSafe(SpawnedActor),
+		*SelectedEntry.SpeciesTag.ToString(),
+		*SelectedEntry.SpawnStyleTag.ToString(),
+		*RegionInfo.RegionTag.ToString(),
+		bShouldBeCombatReady ? TEXT("true") : TEXT("false"),
+		SelectedEntry.MinLevel,
+		SelectedEntry.MaxLevel
+	);
+
+	return SpawnedActor;
+}
+
+bool UWorldPopulationSubsystem::FindGroupMemberSpawnTransform(const FVector& AnchorLocation, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const
+{
+	if (!RegionData)
+	{
+		return false;
+	}
+
+	const float GroupRadius = RegionData->SpawnSettings.GroupSpawnRadius;
+	const float MinSpacing = RegionData->SpawnSettings.GroupMemberSpacing;
+	const int32 MaxAttempts = RegionData->SpawnSettings.MaxGroupMemberPlacementAttempts;
+
+	for (int32 AttemptIndex = 0; AttemptIndex < MaxAttempts; ++AttemptIndex)
+	{
+		const float RandomAngle = FMath::RandRange(0.0f, 360.0f);
+		const float RandomDistance = FMath::RandRange(0.0f, GroupRadius);
+
+		const FVector Direction = FVector(
+			FMath::Cos(FMath::DegreesToRadians(RandomAngle)),
+			FMath::Sin(FMath::DegreesToRadians(RandomAngle)),
+			0.0f
+		);
+
+		const FVector RawCandidateLocation = AnchorLocation + Direction * RandomDistance;
+
+		FVector ProjectedLocation = RawCandidateLocation;
+
+		if (RegionData->SpawnSettings.bRequireNavMesh)
+		{
+			if (!ProjectSpawnLocationToNavMesh(RawCandidateLocation, ProjectedLocation))
+			{
+				continue;
+			}
+		}
+
+		if (!IsFarEnoughFromExistingGroupMembers(ProjectedLocation, ExistingGroupLocations, MinSpacing))
+		{
+			continue;
+		}
+
+		if (!IsSpawnLocationClear(ProjectedLocation, 80.0f, 100.0f)) // check radius and half height based on capsule collider
+		{
+			continue;
+		}
+
+		const float SpawnZOffset = 100.0f;
+		const FVector SpawnLocation = ProjectedLocation + FVector(0.0f, 0.0f, SpawnZOffset);
+		const FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		OutSpawnTransform = FTransform(SpawnRotation, SpawnLocation);
+		return true;
+	}
+
+	return false;
+}
+bool UWorldPopulationSubsystem::IsFarEnoughFromExistingGroupMembers(const FVector& CandidateLocation, const TArray<FVector>& ExistingGroupLocations, float MinSpacing) const
+{
+	const float MinSpacingSquared = FMath::Square(MinSpacing);
+
+	for (const FVector& ExistingLocation : ExistingGroupLocations)
+	{
+		if (FVector::DistSquared(CandidateLocation, ExistingLocation) < MinSpacingSquared)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

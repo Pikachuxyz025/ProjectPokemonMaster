@@ -67,6 +67,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Validation", meta = (ClampMin = "1"))
 	int32 MaxSpawnAttemptsPerCycle = 10;
 
+	// Radius around the first vali spawn point where group members may be placed.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning", meta = (ClampMin = "0.0", Units = "cm"))
+	float GroupSpawnRadius = 600.0f;
+
+	// Mimimum spacing between members of the same spawned group.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning", meta = (ClampMin = "0.0", Units = "cm"))
+	float GroupMemberSpacing = 250.0f;
+
+	// Number of attempts to find each additional group member location.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning", meta = (ClampMin = "1"))
+	int32 MaxGroupMemberPlacementAttempts = 8;
+
 	// Whether spawn points should require NavMesh.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Validation")
 	bool bRequireNavMesh = true;
@@ -151,6 +163,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Region", meta = (MultiLine = true))
 	FText RegionDescription;
 
+	// List of potential wild Pokemon spawn entries for this region.
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "World Population|Wild Pokemon")
 	TArray<FRegionPokemonSpawnEntry> WildPokemonSpawnEntries;
 

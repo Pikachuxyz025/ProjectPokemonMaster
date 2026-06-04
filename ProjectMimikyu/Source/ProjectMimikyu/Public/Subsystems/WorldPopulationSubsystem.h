@@ -157,7 +157,7 @@ public:
 	bool HasActiveRegion(AActor* Actor) const;
 
 	UFUNCTION(BlueprintPure, Category = "World Population")
-	bool GetRuntimePopulationStateForRegion(FGameplayTag& RegionTag, FRuntimeRegionPopulationState& OutPopulationState) const;
+	bool GetRuntimePopulationStateForRegion(const FGameplayTag& RegionTag, FRuntimeRegionPopulationState& OutPopulationState) const;
 
 	UFUNCTION(BlueprintPure, Category = "World Population")
 	bool CanSpawnWildPokemonInRegion(FGameplayTag RegionTag) const;
@@ -169,7 +169,7 @@ public:
 	bool CanSpawnCivilianInRegion(FGameplayTag RegionTag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
-	AActor* TrySpawnPlaceholderPokemonForActor(AActor* RequestingActor);
+	int32 TrySpawnWildPokemonForActor(AActor* RequestingActor);
 
 	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
 	bool DespawnPopulationActor(AActor* ActorToDespawn);
@@ -189,7 +189,7 @@ private:
 	void SetActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void ClearActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void RunPopulationUpdate();
-	int32 RunPlaceholderSpawnPass();
+	int32 RunWildPokemonSpawnPass();
 
 	FGameplayTag ResolveRegionTagFromVolume(const ARegionVolume* RegionVolume) const;
 	URegionPopulationData* ResolveRegionDataFromVolume(const ARegionVolume* RegionVolume) const;
@@ -217,12 +217,25 @@ private:
 	int32 DespawnPopulationActorsInInactiveRegions();
 
 	FPopulationSpawnCandidate FindValidSpawnLocationForActor(AActor* ReferenceActor, const URegionPopulationData* RegionData) const;
+
 	bool IsSpawnLocationFarEnoughFromActor(const FVector& CandidateLocation, const AActor* ReferenceActor, const URegionPopulationData* RegionData) const;
 	bool ProjectSpawnLocationToNavMesh(const FVector& CandidateLocation, FVector& OutProjectedLocation) const;
+
 	bool IsSpawnLocationClear(const FVector& CandidateLocation, float CheckRadius, float CheckHalfHeight) const;
 	bool IsSpawnLocationOutOfLineOfSight(const FVector& CandidateLocation, const AActor* ReferenceActor) const;
+
 	bool SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const;
 	bool CanRegisterCombatReadyPokemonInRegion(FGameplayTag RegionTag) const;
+
+	int32 GetSpawnCountForSpawnStyle(const FGameplayTag& SpawnStyleTag) const;
+
+	int32 TrySpawnWildPokemonGroupForActor(AActor* RequestingActor, const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry);
+
+	AActor* SpawnWildPokemonFromEntry(const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry, const FTransform& SpawnTransform);
+
+	bool FindGroupMemberSpawnTransform(const FVector& AnchorLocation, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
+
+	bool IsFarEnoughFromExistingGroupMembers(const FVector& CandidateLocation, const TArray<FVector>& ExistingGroupLocations, float MinSpacing) const;
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;
