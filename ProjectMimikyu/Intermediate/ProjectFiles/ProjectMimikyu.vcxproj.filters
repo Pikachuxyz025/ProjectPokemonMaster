@@ -269,6 +269,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonRegionGameplayTags.cpp">
       <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonSpeciesGameplayTags.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
+    </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Input">
       <UniqueIdentifier>{3E2D2E0E-4BB1-3592-879F-3A2EDA7A0DAB}</UniqueIdentifier>
     </Filter>
@@ -696,6 +699,9 @@
       <UniqueIdentifier>{D9622FD0-BA5F-3B95-AC65-97ECE0AFD0E0}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonRegionGameplayTags.h">
+      <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonSpeciesGameplayTags.h">
       <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Input">

@@ -81,22 +81,25 @@ struct FRegionPokemonSpawnEntry
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	TSubclassOf<AActor> ActorClass = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (Categories = "Species"))
 	FGameplayTag SpeciesTag;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (Categories = "SpawnStyle"))
+	FGameplayTag SpawnStyleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (Categories = "Environment"))
 	FGameplayTagContainer RequiredEnvironmentTags;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (ClampMin = "0.0"))
 	float SpawnWeight = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (ClampMin = "1"))
 	int32 MinLevel = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (ClampMin = "1"))
 	int32 MaxLevel = 5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
@@ -104,7 +107,9 @@ struct FRegionPokemonSpawnEntry
 
 	bool IsValid() const
 	{
-		return ActorClass != nullptr && SpawnWeight > 0.0f;
+		return ActorClass != nullptr
+			&& SpeciesTag.IsValid()
+			&& SpawnWeight > 0.0f;
 	}
 };
 
@@ -145,9 +150,6 @@ public:
 	// Designer-facing description of what this region is meant to represent.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Region", meta = (MultiLine = true))
 	FText RegionDescription;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning|Prototype")
-	TSubclassOf<AActor> PlaceholderPokemonClass;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "World Population|Wild Pokemon")
 	TArray<FRegionPokemonSpawnEntry> WildPokemonSpawnEntries;

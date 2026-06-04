@@ -427,6 +427,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonRegionGameplayTags.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonSpeciesGameplayTags.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Input\MyInputTriggerComboAction.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -648,6 +651,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Subsystems\ThreatFieldSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonRegionGameplayTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonSpeciesGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\MyInputTriggerComboAction.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\PokemonInputComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Interfaces\CraftableInterface.h"/>

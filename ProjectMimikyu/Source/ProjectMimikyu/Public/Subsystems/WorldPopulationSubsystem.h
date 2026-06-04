@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameplayTagContainer.h"
+#include "DataAssets/RegionPopulationData.h"
 #include "WorldPopulationSubsystem.generated.h"
 
 class ARegionVolume;
-class URegionPopulationData;
 
 /**
  * FActiveRegionInfo
@@ -222,6 +222,7 @@ private:
 	bool IsSpawnLocationClear(const FVector& CandidateLocation, float CheckRadius, float CheckHalfHeight) const;
 	bool IsSpawnLocationOutOfLineOfSight(const FVector& CandidateLocation, const AActor* ReferenceActor) const;
 	bool SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const;
+	bool CanRegisterCombatReadyPokemonInRegion(FGameplayTag RegionTag) const;
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;

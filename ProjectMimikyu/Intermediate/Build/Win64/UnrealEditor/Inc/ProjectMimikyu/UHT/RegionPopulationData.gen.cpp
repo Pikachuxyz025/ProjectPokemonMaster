@@ -337,10 +337,17 @@ struct Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SpeciesTag_MetaData[] = {
+		{ "Categories", "Species" },
+		{ "Category", "Spawn" },
+		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SpawnStyleTag_MetaData[] = {
+		{ "Categories", "SpawnStyle" },
 		{ "Category", "Spawn" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_RequiredEnvironmentTags_MetaData[] = {
+		{ "Categories", "Environment" },
 		{ "Category", "Spawn" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
@@ -351,10 +358,12 @@ struct Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MinLevel_MetaData[] = {
 		{ "Category", "Spawn" },
+		{ "ClampMin", "1" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MaxLevel_MetaData[] = {
 		{ "Category", "Spawn" },
+		{ "ClampMin", "1" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bCanBeCombatReady_MetaData[] = {
@@ -366,6 +375,7 @@ struct Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics
 // ********** Begin ScriptStruct FRegionPokemonSpawnEntry constinit property declarations **********
 	static const UECodeGen_Private::FClassPropertyParams NewProp_ActorClass;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_SpeciesTag;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_SpawnStyleTag;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_RequiredEnvironmentTags;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_SpawnWeight;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MinLevel;
@@ -393,6 +403,7 @@ class UScriptStruct* FRegionPokemonSpawnEntry::StaticStruct()
 // ********** Begin ScriptStruct FRegionPokemonSpawnEntry Property Definitions *********************
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_ActorClass = { "ActorClass", nullptr, (EPropertyFlags)0x0014000000000015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, ActorClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActorClass_MetaData), NewProp_ActorClass_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpeciesTag = { "SpeciesTag", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, SpeciesTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpeciesTag_MetaData), NewProp_SpeciesTag_MetaData) }; // 517357616
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnStyleTag = { "SpawnStyleTag", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, SpawnStyleTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnStyleTag_MetaData), NewProp_SpawnStyleTag_MetaData) }; // 517357616
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_RequiredEnvironmentTags = { "RequiredEnvironmentTags", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, RequiredEnvironmentTags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RequiredEnvironmentTags_MetaData), NewProp_RequiredEnvironmentTags_MetaData) }; // 3438578166
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnWeight = { "SpawnWeight", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, SpawnWeight), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnWeight_MetaData), NewProp_SpawnWeight_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinLevel = { "MinLevel", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, MinLevel), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MinLevel_MetaData), NewProp_MinLevel_MetaData) };
@@ -405,6 +416,7 @@ const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FRegionPo
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_ActorClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpeciesTag,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnStyleTag,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_RequiredEnvironmentTags,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnWeight,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinLevel,
@@ -651,10 +663,6 @@ struct Z_Construct_UClass_URegionPopulationData_Statics
 		{ "ToolTip", "Designer-facing description of what this region is meant to represent." },
 #endif
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PlaceholderPokemonClass_MetaData[] = {
-		{ "Category", "Spawning|Prototype" },
-		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
-	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WildPokemonSpawnEntries_MetaData[] = {
 		{ "Category", "World Population|Wild Pokemon" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
@@ -668,7 +676,6 @@ struct Z_Construct_UClass_URegionPopulationData_Statics
 	static const UECodeGen_Private::FStructPropertyParams NewProp_PopulationBudget;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_SpawnSettings;
 	static const UECodeGen_Private::FTextPropertyParams NewProp_RegionDescription;
-	static const UECodeGen_Private::FClassPropertyParams NewProp_PlaceholderPokemonClass;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_WildPokemonSpawnEntries_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_WildPokemonSpawnEntries;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
@@ -696,9 +703,8 @@ const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulat
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_PopulationBudget = { "PopulationBudget", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, PopulationBudget), Z_Construct_UScriptStruct_FRegionPopulationBudget, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PopulationBudget_MetaData), NewProp_PopulationBudget_MetaData) }; // 815603554
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_SpawnSettings = { "SpawnSettings", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, SpawnSettings), Z_Construct_UScriptStruct_FRegionSpawnSettings, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnSettings_MetaData), NewProp_SpawnSettings_MetaData) }; // 1154855977
 const UECodeGen_Private::FTextPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_RegionDescription = { "RegionDescription", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, RegionDescription), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RegionDescription_MetaData), NewProp_RegionDescription_MetaData) };
-const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_PlaceholderPokemonClass = { "PlaceholderPokemonClass", nullptr, (EPropertyFlags)0x0014000000000015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, PlaceholderPokemonClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PlaceholderPokemonClass_MetaData), NewProp_PlaceholderPokemonClass_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries_Inner = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry, METADATA_PARAMS(0, nullptr) }; // 3177702172
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, WildPokemonSpawnEntries), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WildPokemonSpawnEntries_MetaData), NewProp_WildPokemonSpawnEntries_MetaData) }; // 3177702172
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries_Inner = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry, METADATA_PARAMS(0, nullptr) }; // 592709682
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, WildPokemonSpawnEntries), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WildPokemonSpawnEntries_MetaData), NewProp_WildPokemonSpawnEntries_MetaData) }; // 592709682
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_URegionPopulationData_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_RegionTag,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_BiomeTags,
@@ -706,7 +712,6 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_URegionPo
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_PopulationBudget,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_SpawnSettings,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_RegionDescription,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_PlaceholderPokemonClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries,
 };
@@ -756,13 +761,13 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FRegionPopulationBudget::StaticStruct, Z_Construct_UScriptStruct_FRegionPopulationBudget_Statics::NewStructOps, TEXT("RegionPopulationBudget"),&Z_Registration_Info_UScriptStruct_FRegionPopulationBudget, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPopulationBudget), 815603554U) },
 		{ FRegionSpawnSettings::StaticStruct, Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewStructOps, TEXT("RegionSpawnSettings"),&Z_Registration_Info_UScriptStruct_FRegionSpawnSettings, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionSpawnSettings), 1154855977U) },
-		{ FRegionPokemonSpawnEntry::StaticStruct, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewStructOps, TEXT("RegionPokemonSpawnEntry"),&Z_Registration_Info_UScriptStruct_FRegionPokemonSpawnEntry, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPokemonSpawnEntry), 3177702172U) },
+		{ FRegionPokemonSpawnEntry::StaticStruct, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewStructOps, TEXT("RegionPokemonSpawnEntry"),&Z_Registration_Info_UScriptStruct_FRegionPokemonSpawnEntry, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPokemonSpawnEntry), 592709682U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_URegionPopulationData, URegionPopulationData::StaticClass, TEXT("URegionPopulationData"), &Z_Registration_Info_UClass_URegionPopulationData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URegionPopulationData), 3164082771U) },
+		{ Z_Construct_UClass_URegionPopulationData, URegionPopulationData::StaticClass, TEXT("URegionPopulationData"), &Z_Registration_Info_UClass_URegionPopulationData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URegionPopulationData), 1916418537U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_2992215733{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_4207148396{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

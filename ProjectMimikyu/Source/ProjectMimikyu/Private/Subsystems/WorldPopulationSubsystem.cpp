@@ -179,9 +179,9 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 	}
 
 	FActiveRegionInfo RegionInfo;
-	FRuntimeRegionPopulationState RuntimeState;
+	FRuntimeRegionPopulationState PopulationState;
 
-	if (!GetSpawnContextForActor(RequestingActor, RegionInfo, RuntimeState))
+	if (!GetSpawnContextForActor(RequestingActor, RegionInfo, PopulationState))
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon. No valid spawn context for %s."),
@@ -201,25 +201,18 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 		return nullptr;
 	}
 
-	URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
-	if (!RegionData)
-	{
-		return nullptr;
-	}
-
-	if (!RegionData->PlaceholderPokemonClass)
+	FRegionPokemonSpawnEntry SelectedEntry;
+	if(!SelectWildPokemonSpawnEntry(RegionInfo, SelectedEntry))
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. PlaceholderPokemonClass is not assigned on %s."),
-			*RegionInfo.RegionTag.ToString(),
-			*GetNameSafe(RegionData)
+			TEXT("[WorldPopulationSubsystem] Cannot spawn placeholder Pokemon in %s. Failed to select spawn entry."),
+			*RegionInfo.RegionTag.ToString()
 		);
-
 		return nullptr;
 	}
-
+	
 	FTransform SpawnTransform;
-	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionData, SpawnTransform))
+	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionInfo.RegionPopulationData.Get(), SpawnTransform))
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[WorldPopulationSubsystem] Could not find placeholder spawn transform for %s."),
@@ -236,17 +229,11 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 	}
 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = RequestingActor;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	UE_LOG(LogTemp, Log,
-		TEXT("[WorldPopulationSubsystem] Placeholder spawn transform for %s | Location=%s"),
-		*GetNameSafe(RequestingActor),
-		*SpawnTransform.GetLocation().ToString()
-	);
+	SpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 	AActor* SpawnedActor = World->SpawnActor<AActor>(
-		RegionData->PlaceholderPokemonClass,
+		SelectedEntry.ActorClass,
 		SpawnTransform,
 		SpawnParams
 	);
@@ -261,16 +248,16 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 		return nullptr;
 	}
 
-	RegisterSpawnedPokemon(
-		SpawnedActor,
-		RegionInfo.RegionTag,
-		false
-	);
+	const bool bShouldBeCombatReady = SelectedEntry.bCanBeCombatReady && PopulationState.CombatReadyPokemonCount < RegionInfo.RegionPopulationData->PopulationBudget.MaxCombatReadyPokemon;
+	RegisterSpawnedPokemon(SpawnedActor, RegionInfo.RegionTag, bShouldBeCombatReady);
 
 	UE_LOG(LogTemp, Log,
-		TEXT("[WorldPopulationSubsystem] Spawned placeholder Pokemon %s in %s."),
+		TEXT("[WorldPopulationSubsystem] Spawned wild Pokemon entry %s | Species=%s | Region=%s | LevelRange=%d-%d."),
 		*GetNameSafe(SpawnedActor),
-		*RegionInfo.RegionTag.ToString()
+		*SelectedEntry.SpeciesTag.ToString(),
+		*RegionInfo.RegionTag.ToString(),
+		SelectedEntry.MinLevel,
+		SelectedEntry.MaxLevel
 	);
 
 	return SpawnedActor;
@@ -1338,4 +1325,17 @@ bool UWorldPopulationSubsystem::SelectWildPokemonSpawnEntry(const FActiveRegionI
 	
 	OutEntry = *ValidEntries.Last();
 	return true;
+}
+
+bool UWorldPopulationSubsystem::CanRegisterCombatReadyPokemonInRegion(FGameplayTag RegionTag) const
+{
+	const FRuntimeRegionPopulationState* RuntimeState = RuntimePopulationByRegion.Find(RegionTag);
+	if (!RuntimeState || !RuntimeState->RegionPopulationData.IsValid())
+	{
+		return false;
+	}
+
+	const URegionPopulationData* RegionData = RuntimeState->RegionPopulationData.Get();
+
+	return RuntimeState->CombatReadyPokemonCount < RegionData->PopulationBudget.MaxCombatReadyPokemon;
 }
