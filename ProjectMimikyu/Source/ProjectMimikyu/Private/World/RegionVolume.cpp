@@ -63,7 +63,6 @@ void ARegionVolume::OnRegionBeginOverlap(
 	 if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
 	 {
 	     PopulationSubsystem->NotifyActorEnteredRegion(OtherActor, this);
-		 PopulationSubsystem->TrySpawnPlaceholderPokemonForActor(OtherActor);
 	 }
 }
 
@@ -84,7 +83,7 @@ void ARegionVolume::OnRegionEndOverlap(
 
 	if (UWorldPopulationSubsystem* PopulationSubsystem = GetWorld()->GetSubsystem<UWorldPopulationSubsystem>())
 	{
-		PopulationSubsystem->DespawnPopulationActorsTooFarFromActor(OtherActor);
+		PopulationSubsystem->NotifyActorExitedRegion(OtherActor, this);
 	}	
 }
 

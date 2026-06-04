@@ -45,6 +45,21 @@ enum class EPopulationActorType : uint8
 	Civilian
 };
 
+USTRUCT()
+struct FPopulationSpawnCandidate
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector Location = FVector::ZeroVector;
+
+	UPROPERTY()
+	bool bIsValid = false;
+
+	UPROPERTY()
+	FString FailureReason;
+};
+
 USTRUCT(BlueprintType)
 struct FRegisteredPopulationActorInfo
 {
@@ -117,11 +132,11 @@ UCLASS()
 class PROJECTMIMIKYU_API UWorldPopulationSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
-
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 public:
 	void NotifyActorEnteredRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void NotifyActorExitedRegion(AActor* Actor, ARegionVolume* RegionVolume);
@@ -159,7 +174,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
 	bool DespawnPopulationActor(AActor* ActorToDespawn);
 
-	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")	
+	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
 	int32 DespawnAllPopulationActorsInRegion(FGameplayTag RegionTag);
 
 	UFUNCTION(BlueprintCallable, Category = "World Population|Spawning")
@@ -174,11 +189,12 @@ private:
 	void SetActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void ClearActiveRegion(AActor* Actor, ARegionVolume* RegionVolume);
 	void RunPopulationUpdate();
+	int32 RunPlaceholderSpawnPass();
 
 	FGameplayTag ResolveRegionTagFromVolume(const ARegionVolume* RegionVolume) const;
 	URegionPopulationData* ResolveRegionDataFromVolume(const ARegionVolume* RegionVolume) const;
 
-	FRuntimeRegionPopulationState& EnsureRuntimeStateForRegionTag(FGameplayTag RegionTag,URegionPopulationData* RegionPopulationData);
+	FRuntimeRegionPopulationState& EnsureRuntimeStateForRegionTag(FGameplayTag RegionTag, URegionPopulationData* RegionPopulationData);
 
 	void PrintPopulationBudgetForRegion(FGameplayTag RegionTag) const;
 
@@ -191,10 +207,21 @@ private:
 	void IncrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
 	void DecrementPopulationCount(FRuntimeRegionPopulationState& RuntimeState, EPopulationActorType PopulationType, bool bCombatReady);
 
-	bool GetSpawnContextForActor(AActor* RequestingActor,	FActiveRegionInfo& OutRegionInfo, 	FRuntimeRegionPopulationState& OutPopulationState) const;
+	bool GetSpawnContextForActor(AActor* RequestingActor, FActiveRegionInfo& OutRegionInfo, FRuntimeRegionPopulationState& OutPopulationState) const;
 	bool FindPlaceholderSpawnTransform(AActor* RequestingActor, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
 
 	bool ShouldDespawnPopulationActorByDistance(const AActor* ReferenceActor, const AActor* PopulationActor, const URegionPopulationData* RegionData) const;
+	bool ShouldAttemptPlaceholderSpawnForActor(AActor* ReferenceActor);
+
+	bool IsRegionRelevantToAnyActiveActor(FGameplayTag RegionTag) const;
+	int32 DespawnPopulationActorsInInactiveRegions();
+
+	FPopulationSpawnCandidate FindValidSpawnLocationForActor(AActor* ReferenceActor, const URegionPopulationData* RegionData) const;
+	bool IsSpawnLocationFarEnoughFromActor(const FVector& CandidateLocation, const AActor* ReferenceActor, const URegionPopulationData* RegionData) const;
+	bool ProjectSpawnLocationToNavMesh(const FVector& CandidateLocation, FVector& OutProjectedLocation) const;
+	bool IsSpawnLocationClear(const FVector& CandidateLocation, float CheckRadius, float CheckHalfHeight) const;
+	bool IsSpawnLocationOutOfLineOfSight(const FVector& CandidateLocation, const AActor* ReferenceActor) const;
+	bool SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const;
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;
@@ -202,8 +229,8 @@ private:
 
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FRegisteredPopulationActorInfo> RegisteredPopulationActors;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "World Population|Update", meta = (ClampMin = "0.1",Units = "s"))
+
+	UPROPERTY(EditDefaultsOnly, Category = "World Population|Update", meta = (ClampMin = "0.1", Units = "s"))
 	float PopulationUpdateInterval = 2.0f;
 
 	FTimerHandle PopulationUpdateTimerHandle;

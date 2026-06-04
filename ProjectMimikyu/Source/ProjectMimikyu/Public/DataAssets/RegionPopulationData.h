@@ -76,6 +76,38 @@ public:
 	bool bAvoidPlayerLineOfSight = true;
 };
 
+USTRUCT(BlueprintType)
+struct FRegionPokemonSpawnEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Spawn")
+	TSubclassOf<AActor> ActorClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="Spawn")
+	FGameplayTag SpeciesTag;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	FGameplayTagContainer RequiredEnvironmentTags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (ClampMin = "0.0"))
+	float SpawnWeight = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	int32 MinLevel = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	int32 MaxLevel = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
+	bool bCanBeCombatReady = true;
+
+	bool IsValid() const
+	{
+		return ActorClass != nullptr && SpawnWeight > 0.0f;
+	}
+};
+
 /**
  * URegionPopulationData
  *
@@ -116,6 +148,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning|Prototype")
 	TSubclassOf<AActor> PlaceholderPokemonClass;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "World Population|Wild Pokemon")
+	TArray<FRegionPokemonSpawnEntry> WildPokemonSpawnEntries;
+
 public:
 	UFUNCTION(BlueprintPure, Category = "Region")
 	bool IsValidRegionData() const

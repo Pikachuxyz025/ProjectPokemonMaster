@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Subsystems/WorldPopulationSubsystem.h"
-
+#include "NavigationSystem.h"
+#include "CollisionShape.h"
 #include "World/RegionVolume.h"
 #include "DataAssets/RegionPopulationData.h"
 #include "Engine/World.h"
@@ -26,6 +27,17 @@ void UWorldPopulationSubsystem::Deinitialize()
 	UE_LOG(LogTemp, Log, TEXT("[WorldPopulationSubsystem] Deinitialized for world: %s"), *GetNameSafe(GetWorld()));
 
 	Super::Deinitialize();
+}
+
+bool UWorldPopulationSubsystem::ShouldCreateSubsystem(UObject* Outer) const
+{
+	const UWorld* World = Cast<UWorld>(Outer);
+	if(!World)
+	{
+		return false;
+	}
+
+	return World->IsGameWorld();
 }
 
 void UWorldPopulationSubsystem::NotifyActorEnteredRegion(AActor* Actor, ARegionVolume* RegionVolume)
@@ -225,7 +237,13 @@ AActor* UWorldPopulationSubsystem::TrySpawnPlaceholderPokemonForActor(AActor* Re
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = RequestingActor;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Placeholder spawn transform for %s | Location=%s"),
+		*GetNameSafe(RequestingActor),
+		*SpawnTransform.GetLocation().ToString()
+	);
 
 	AActor* SpawnedActor = World->SpawnActor<AActor>(
 		RegionData->PlaceholderPokemonClass,
@@ -526,27 +544,34 @@ void UWorldPopulationSubsystem::ClearActiveRegion(AActor* Actor, ARegionVolume* 
 
 void UWorldPopulationSubsystem::RunPopulationUpdate()
 {
-	if (ActiveRegionsByActor.Num() <= 0)
-	{
-		return;
-	}
-
-	if (RegisteredPopulationActors.Num() <= 0)
-	{
-		return;
-	}
+	UE_LOG(LogTemp, Log,
+		TEXT("[WorldPopulationSubsystem] Running population update. Active regions: %d, Registered population actors: %d."),
+		ActiveRegionsByActor.Num(),
+		RegisteredPopulationActors.Num()
+	);
 
 	int32 TotalDespawned = 0;
 
-	for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
+	// 1. Distance despawn for active regions
+	if (RegisteredPopulationActors.Num() > 0)
 	{
-		AActor* ReferenceActor = Pair.Key;
-
-		if (!IsValid(ReferenceActor))
+		for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
 		{
-			continue;
+			AActor* ReferenceActor = Pair.Key;
+
+			if (!IsValid(ReferenceActor))
+			{
+				continue;
+			}
+
+			TotalDespawned += DespawnPopulationActorsTooFarFromActor(ReferenceActor);
 		}
-		TotalDespawned += DespawnPopulationActorsTooFarFromActor(ReferenceActor);
+	}
+
+	// 2. Hard cleanup for regions that no active actor cares about anymore
+	if (RegisteredPopulationActors.Num() > 0)
+	{
+		TotalDespawned += DespawnPopulationActorsInInactiveRegions();
 	}
 
 	if (TotalDespawned > 0)
@@ -556,6 +581,57 @@ void UWorldPopulationSubsystem::RunPopulationUpdate()
 			TotalDespawned
 		);
 	}
+
+	// 3. Spawn pass only for currently active regions
+	const int32 TotalSpawned = RunPlaceholderSpawnPass();
+
+	if (TotalSpawned > 0 || TotalDespawned > 0)
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Population update completed. Spawned=%d Despawned=%d."),
+			TotalSpawned,
+			TotalDespawned
+		);
+	}
+}
+
+int32 UWorldPopulationSubsystem::RunPlaceholderSpawnPass()
+{
+	if(ActiveRegionsByActor.Num() <= 0)
+	{
+		return 0;
+	}
+
+	int32 SpawnedCount = 0;
+
+	for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
+	{
+		AActor* ReferenceActor = Pair.Key;
+		if (!IsValid(ReferenceActor))
+		{
+			continue;
+		}
+		if(!ShouldAttemptPlaceholderSpawnForActor(ReferenceActor))
+		{
+			continue;
+		}
+
+		AActor* SpawnedActor = TrySpawnPlaceholderPokemonForActor(ReferenceActor);
+		if (SpawnedActor)
+		{
+			SpawnedCount++;
+		}
+	}
+
+	if(SpawnedCount > 0)
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Placeholder spawn pass spawned a total of %d actors across all regions."),
+			SpawnedCount
+		);
+	}
+
+	return SpawnedCount;
 }
 
 FGameplayTag UWorldPopulationSubsystem::ResolveRegionTagFromVolume(const ARegionVolume* RegionVolume) const
@@ -853,22 +929,29 @@ bool UWorldPopulationSubsystem::FindPlaceholderSpawnTransform(
 		return false;
 	}
 
-	const float Distance = FMath::RandRange(MinDistance, MaxDistance);
-	const float AngleRadians = FMath::RandRange(0.0f, UE_TWO_PI);
-
-	const FVector Direction = FVector(
-		FMath::Cos(AngleRadians),
-		FMath::Sin(AngleRadians),
-		0.0f
+	const FPopulationSpawnCandidate SpawnCandidate = FindValidSpawnLocationForActor(
+		RequestingActor,
+		RegionData
 	);
 
-	FVector SpawnLocation = Origin + Direction * Distance;
+	if (!SpawnCandidate.bIsValid)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[WorldPopulationSubsystem] Failed to find valid spawn location for %s in %s. Reason: %s"),
+			*GetNameSafe(RequestingActor),
+			*RegionData->RegionTag.ToString(),
+			*SpawnCandidate.FailureReason
+		);
 
-	// For the first pass, keep Z near the player.
-	// Later this should trace down to ground or use NavMesh projection.
-	SpawnLocation.Z = Origin.Z + 50.0f;
+		return false;
+	}
 
-	const FRotator SpawnRotation = Direction.Rotation();
+	const FVector GroundLocation = SpawnCandidate.Location;
+
+	const float SpawnZOffset = 100.0f;
+	const FVector SpawnLocation = GroundLocation + FVector(0.0f, 0.0f, SpawnZOffset);
+
+	const FRotator SpawnRotation = FRotator::ZeroRotator;
 
 	OutSpawnTransform = FTransform(SpawnRotation, SpawnLocation);
 
@@ -894,4 +977,365 @@ bool UWorldPopulationSubsystem::ShouldDespawnPopulationActorByDistance(const AAc
 	const float DespawnDistanceSquared = FMath::Square(DespawnDistance);
 
 	return DistanceSquared >= DespawnDistanceSquared;
+}
+
+bool UWorldPopulationSubsystem::ShouldAttemptPlaceholderSpawnForActor(AActor* ReferenceActor)
+{
+	if (!ReferenceActor)
+	{
+		return false;
+	}
+
+	FActiveRegionInfo RegionInfo;
+	if(!GetActiveRegionForActor(ReferenceActor,RegionInfo))
+	{
+		return false;
+	}
+
+	if(!RegionInfo.RegionTag.IsValid())
+	{
+		return false;
+	}
+
+	if(!RegionInfo.RegionPopulationData.IsValid())
+	{
+		return false;
+	}
+
+	return CanSpawnWildPokemonInRegion(RegionInfo.RegionTag);
+}
+
+bool UWorldPopulationSubsystem::IsRegionRelevantToAnyActiveActor(FGameplayTag RegionTag) const
+{
+	if(!RegionTag.IsValid())
+	{
+		return false;
+	}
+
+	for (const TPair<TObjectPtr<AActor>, FActiveRegionInfo>& Pair : ActiveRegionsByActor)
+	{
+		const AActor* ActiveActor = Pair.Key;
+		const FActiveRegionInfo& ActiveRegionInfo = Pair.Value;
+
+		if(!IsValid(ActiveActor))
+		{
+			continue;
+		}
+
+		if(ActiveRegionInfo.RegionTag == RegionTag)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+int32 UWorldPopulationSubsystem::DespawnPopulationActorsInInactiveRegions()
+{
+	if (RegisteredPopulationActors.Num() <= 0)
+	{
+		return 0;
+	}
+
+	TSet<FGameplayTag> RegionsWithPopulation;
+	
+	for (const TPair<TObjectPtr<AActor>, FRegisteredPopulationActorInfo>& Pair : RegisteredPopulationActors)
+	{
+		const FRegisteredPopulationActorInfo& ActorInfo = Pair.Value;
+
+		if (!ActorInfo.RegionTag.IsValid())
+		{
+			continue;
+		}
+
+		RegionsWithPopulation.Add(ActorInfo.RegionTag);
+	}
+
+	int32 TotalDespawned = 0;
+
+	for (const FGameplayTag& RegionTag : RegionsWithPopulation)
+	{
+		if(IsRegionRelevantToAnyActiveActor(RegionTag))
+		{
+			continue;
+		}
+
+		const int32 DespawnedInRegion = DespawnAllPopulationActorsInRegion(RegionTag);
+		TotalDespawned += DespawnedInRegion;
+
+		if (DespawnedInRegion > 0)
+		{
+			UE_LOG(LogTemp, Log,
+				TEXT("[WorldPopulationSubsystem] Despawned %d population actors in region %s because it is no longer relevant to any active actor."),
+				DespawnedInRegion,
+				*RegionTag.ToString()
+			);
+		}
+	}
+
+	return TotalDespawned;
+}
+
+FPopulationSpawnCandidate UWorldPopulationSubsystem::FindValidSpawnLocationForActor(AActor* ReferenceActor, const URegionPopulationData* RegionData) const
+{
+	FPopulationSpawnCandidate Result;
+
+	if (!ReferenceActor || !RegionData)
+	{
+		Result.FailureReason = TEXT("Missing ReferenceActor or RegionData.");
+		return Result;
+	}
+
+	const int32 MaxAttempts = RegionData->SpawnSettings.MaxSpawnAttemptsPerCycle;
+
+	for (int32 AttemptIndex = 0; AttemptIndex < MaxAttempts; ++AttemptIndex)
+	{
+		const FVector Origin = ReferenceActor->GetActorLocation();
+
+		const float RandomAngle = FMath::RandRange(0.0f, 360.0f);
+		const float RandomDistance = FMath::RandRange(
+			RegionData->SpawnSettings.MinSpawnDistanceFromPlayer,
+			RegionData->SpawnSettings.MaxSpawnDistanceFromPlayer
+		);
+
+		const FVector Direction = FVector(
+			FMath::Cos(FMath::DegreesToRadians(RandomAngle)),
+			FMath::Sin(FMath::DegreesToRadians(RandomAngle)),
+			0.0f
+		);
+
+		const FVector RawCandidate = Origin + Direction * RandomDistance;
+
+		if (!IsSpawnLocationFarEnoughFromActor(RawCandidate, ReferenceActor, RegionData))
+		{
+			Result.FailureReason = TEXT("Candidate failed distance validation.");
+			continue;
+		}
+
+		FVector ProjectedLocation;
+		if (RegionData->SpawnSettings.bRequireNavMesh)
+		{
+			if (!ProjectSpawnLocationToNavMesh(RawCandidate, ProjectedLocation))
+			{
+				Result.FailureReason = TEXT("Candidate failed NavMesh projection.");
+				continue;
+			}
+		}
+		else
+		{
+			ProjectedLocation = RawCandidate;
+		}
+
+		if (!IsSpawnLocationClear(ProjectedLocation, 80.0f, 100.0f))
+		{
+			Result.FailureReason = TEXT("Candidate failed collision clearance.");
+			continue;
+		}
+
+		if (RegionData->SpawnSettings.bAvoidPlayerLineOfSight)
+		{
+			if (!IsSpawnLocationOutOfLineOfSight(ProjectedLocation, ReferenceActor))
+			{
+				Result.FailureReason = TEXT("Candidate was in line of sight.");
+				continue;
+			}
+		}
+
+		Result.Location = ProjectedLocation;
+		Result.bIsValid = true;
+		Result.FailureReason = TEXT("Valid.");
+		return Result;
+	}
+
+	return Result;
+}
+
+bool UWorldPopulationSubsystem::IsSpawnLocationFarEnoughFromActor(const FVector& CandidateLocation, const AActor* ReferenceActor, const URegionPopulationData* RegionData) const
+{
+	if (!ReferenceActor || !RegionData)
+	{
+		return false;
+	}
+
+	const float DistanceSquared = FVector::DistSquared(
+		CandidateLocation,
+		ReferenceActor->GetActorLocation()
+	);
+
+	const float MinDistanceSquared = FMath::Square(
+		RegionData->SpawnSettings.MinSpawnDistanceFromPlayer
+	);
+
+	const float MaxDistanceSquared = FMath::Square(
+		RegionData->SpawnSettings.MaxSpawnDistanceFromPlayer
+	);
+
+	return DistanceSquared >= MinDistanceSquared
+		&& DistanceSquared <= MaxDistanceSquared;
+}
+
+bool UWorldPopulationSubsystem::ProjectSpawnLocationToNavMesh(const FVector& CandidateLocation, FVector& OutProjectedLocation) const
+{
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	const UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
+	if (!NavSystem)
+	{
+		return false;
+	}
+
+	FNavLocation ProjectedLocation;
+
+	const FVector QueryExtent(500.0f, 500.0f, 1000.0f);
+
+	const bool bProjected = NavSystem->ProjectPointToNavigation(
+		CandidateLocation,
+		ProjectedLocation,
+		QueryExtent
+	);
+
+	if (!bProjected)
+	{
+		return false;
+	}
+
+	OutProjectedLocation = ProjectedLocation.Location;
+	return true;
+}
+
+bool UWorldPopulationSubsystem::IsSpawnLocationClear(const FVector& CandidateLocation, float CheckRadius, float CheckHalfHeight) const
+{
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	const FVector CollisionTestLocation =
+		CandidateLocation + FVector(0.0f, 0.0f, CheckHalfHeight);
+
+	const FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(
+		CheckRadius,
+		CheckHalfHeight
+	);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.bTraceComplex = false;
+
+	const bool bBlocked = World->OverlapBlockingTestByChannel(
+		CollisionTestLocation,
+		FQuat::Identity,
+		ECC_Pawn,
+		CapsuleShape,
+		QueryParams
+	);
+
+#if ENABLE_DRAW_DEBUG
+	DrawDebugCapsule(
+		World,
+		CollisionTestLocation,
+		CheckHalfHeight,
+		CheckRadius,
+		FQuat::Identity,
+		bBlocked ? FColor::Red : FColor::Green,
+		false,
+		2.0f
+	);
+#endif
+
+	return !bBlocked;
+}
+
+bool UWorldPopulationSubsystem::IsSpawnLocationOutOfLineOfSight(const FVector& CandidateLocation, const AActor* ReferenceActor) const
+{
+	const UWorld* World = GetWorld();
+	if (!World || !ReferenceActor)
+	{
+		return false;
+	}
+
+	const FVector Start = ReferenceActor->GetActorLocation() + FVector(0.0f, 0.0f, 80.0f);
+	const FVector End = CandidateLocation + FVector(0.0f, 0.0f, 80.0f);
+
+	FHitResult HitResult;
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(ReferenceActor);
+	QueryParams.bTraceComplex = false;
+
+	const bool bHit = World->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility,
+		QueryParams
+	);
+
+	// If the trace hits something before reaching the candidate, the spawn point is hidden.
+	return bHit;
+}
+
+bool UWorldPopulationSubsystem::SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const
+{
+	const URegionPopulationData* RegionData = RegionInfo.RegionPopulationData.Get();
+	if(!RegionData)
+	{
+		return false;
+	}
+
+	if (RegionData->WildPokemonSpawnEntries.Num() <= 0)
+	{
+		return false;
+	}
+
+	TArray<const FRegionPokemonSpawnEntry*> ValidEntries;
+	float TotalWeight = 0.0f;
+
+	for(const FRegionPokemonSpawnEntry& Entry : RegionData->WildPokemonSpawnEntries)
+	{
+		if (!Entry.IsValid())
+		{
+			continue;
+		}
+
+		// If an entry requires environment tags, the region must have all of them
+		if (!RegionData->EnvironmentTags.HasAll(Entry.RequiredEnvironmentTags))
+		{
+			continue;
+		}
+
+		ValidEntries.Add(&Entry);
+		TotalWeight += Entry.SpawnWeight;
+	}
+
+	if(ValidEntries.Num() <= 0 || TotalWeight <= 0.0f)
+	{
+		return false;
+	}
+
+	float Roll = FMath::FRandRange(0.0f, TotalWeight);
+
+	for (const FRegionPokemonSpawnEntry* Entry : ValidEntries)
+	{
+		if (!Entry->IsValid())
+		{
+			continue;
+		}
+
+		Roll -= Entry->SpawnWeight;
+
+		if (Roll <= 0.0f)
+		{
+			OutEntry = *Entry;
+			return true;
+		}
+	}
+	
+	OutEntry = *ValidEntries.Last();
+	return true;
 }
