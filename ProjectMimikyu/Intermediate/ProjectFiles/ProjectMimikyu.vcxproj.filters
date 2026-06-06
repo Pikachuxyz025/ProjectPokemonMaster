@@ -152,6 +152,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonNavigationComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
@@ -266,6 +269,15 @@
     <Filter Include="Source\ProjectMimikyu\Private\GameplayTags">
       <UniqueIdentifier>{28C1B85F-8695-3CD4-9C58-E8E7D5141160}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonAITags.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonDebugTags.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonGameplayTags.cpp">
+      <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonRegionGameplayTags.cpp">
       <Filter>Source\ProjectMimikyu\Private\GameplayTags</Filter>
     </ClCompile>
@@ -338,11 +350,11 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
       <Filter>Source\ProjectMimikyu\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonDebugTags.cpp">
-      <Filter>Source\ProjectMimikyu\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
-      <Filter>Source\ProjectMimikyu\Private</Filter>
+    <Filter Include="Source\ProjectMimikyu\Private\StructureTypes">
+      <UniqueIdentifier>{EE660D41-2670-3A0F-AE31-F20DF99579A3}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\StructureTypes\PokemonAITypes.cpp">
+      <Filter>Source\ProjectMimikyu\Private\StructureTypes</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Subsystems">
       <UniqueIdentifier>{A748C690-36FA-30AD-B294-32B5898660D1}</UniqueIdentifier>
@@ -578,6 +590,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonNavigationComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
@@ -698,6 +713,15 @@
     <Filter Include="Source\ProjectMimikyu\Public\GameplayTags">
       <UniqueIdentifier>{D9622FD0-BA5F-3B95-AC65-97ECE0AFD0E0}</UniqueIdentifier>
     </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonAITags.h">
+      <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonDebugTags.h">
+      <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonGameplayTags.h">
+      <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonRegionGameplayTags.h">
       <Filter>Source\ProjectMimikyu\Public\GameplayTags</Filter>
     </ClInclude>
@@ -770,14 +794,14 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTags.h">
-      <Filter>Source\ProjectMimikyu\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h">
-      <Filter>Source\ProjectMimikyu\Public</Filter>
+    <Filter Include="Source\ProjectMimikyu\Public\StructureTypes">
+      <UniqueIdentifier>{FACD61E2-EA28-3D2A-A4CC-990A7D48614E}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\StructureTypes\PokemonAITypes.h">
+      <Filter>Source\ProjectMimikyu\Public\StructureTypes</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Subsystems">
       <UniqueIdentifier>{A2E56CF3-1D58-3560-A026-F4373071B9B6}</UniqueIdentifier>

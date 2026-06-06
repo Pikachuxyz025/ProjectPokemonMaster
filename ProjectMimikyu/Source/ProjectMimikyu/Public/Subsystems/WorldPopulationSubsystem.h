@@ -227,9 +227,9 @@ private:
 	bool SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const;
 	bool CanRegisterCombatReadyPokemonInRegion(FGameplayTag RegionTag) const;
 
-	int32 GetSpawnCountForSpawnStyle(const FRegionPokemonSpawnEntry& SelectedEntry,const FActiveRegionInfo& RegionInfo) const;
+	int32 GetDesiredSpawnCountForEntry(const FRegionPokemonSpawnEntry& SelectedEntry,const FActiveRegionInfo& RegionInfo) const;
 
-	int32 GetRemainingWild
+	int32 GetRemainingWildPokemonBudget(FGameplayTag RegionTag) const;
 
 	int32 TrySpawnWildPokemonGroupForActor(AActor* RequestingActor, const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry);
 

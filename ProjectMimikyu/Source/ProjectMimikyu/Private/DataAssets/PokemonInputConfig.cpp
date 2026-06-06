@@ -2,7 +2,7 @@
 
 
 #include "DataAssets/PokemonInputConfig.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 
 const UInputAction* UPokemonInputConfig::FindAbilityInputActionForIndex(const int32 Index, bool bLogNotFound) const
 {

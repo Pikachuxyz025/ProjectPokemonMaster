@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Characters/CharacterTypes.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include <PokemonAbilityTypes.h>
 #include "PokemonAbilitySystemLibrary.generated.h"
 

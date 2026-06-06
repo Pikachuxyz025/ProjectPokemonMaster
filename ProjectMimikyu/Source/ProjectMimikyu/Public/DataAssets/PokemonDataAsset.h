@@ -5,7 +5,7 @@ using namespace UP;
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "Characters/CharacterTypes.h"
 #include "PokemonDataAsset.generated.h"
 

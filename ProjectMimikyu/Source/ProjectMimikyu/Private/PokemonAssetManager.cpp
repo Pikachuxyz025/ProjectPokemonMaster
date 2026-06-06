@@ -2,7 +2,7 @@
 
 
 #include "PokemonAssetManager.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 
 UPokemonAssetManager& UPokemonAssetManager::Get()
 {

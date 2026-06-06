@@ -2,7 +2,7 @@
 
 #include "GameModes/ProjectMimikyuGameMode.h"
 #include "Characters/ProjectMimikyuCharacter.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "UObject/ConstructorHelpers.h"
 
 AProjectMimikyuGameMode::AProjectMimikyuGameMode()

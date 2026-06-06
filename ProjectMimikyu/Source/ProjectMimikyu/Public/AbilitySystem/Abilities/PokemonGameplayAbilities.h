@@ -6,7 +6,7 @@ using namespace UP;
 #include "Abilities/GameplayAbility.h"
 #include "PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "PokemonGameplayAbilities.generated.h"
 
 USTRUCT(BlueprintType)

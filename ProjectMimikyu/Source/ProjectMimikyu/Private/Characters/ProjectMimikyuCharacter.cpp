@@ -25,9 +25,9 @@
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
 #include "Items/PokeBall.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
-#include "PokemonDebugTags.h"
+#include "GameplayTags/PokemonDebugTags.h"
 #include <Kismet/GameplayStatics.h>
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 

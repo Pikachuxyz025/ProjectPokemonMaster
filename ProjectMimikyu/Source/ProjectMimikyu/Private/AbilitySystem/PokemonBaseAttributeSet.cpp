@@ -8,7 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 #include <AbilitySystemBlueprintLibrary.h>
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 
 UPokemonBaseAttributeSet::UPokemonBaseAttributeSet()
 {

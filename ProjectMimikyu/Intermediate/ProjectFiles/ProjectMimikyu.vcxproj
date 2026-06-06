@@ -346,6 +346,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonNavigationComponent.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -424,6 +427,15 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameModes\ProjectMimikyuGameMode.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonAITags.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonDebugTags.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonGameplayTags.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\GameplayTags\PokemonRegionGameplayTags.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -484,10 +496,7 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonDebugTags.cpp">
-      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonGameplayTags.cpp">
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\StructureTypes\PokemonAITypes.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Subsystems\WorldPopulationSubsystem.cpp">
@@ -622,6 +631,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonBrainComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonNavigationComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerQuickSlotComponent.h"/>
@@ -650,6 +660,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Generators\EnvQueryGenerator_ImpactPattern.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Subsystems\ThreatFieldSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameModes\ProjectMimikyuGameMode.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonAITags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonDebugTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonRegionGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\GameplayTags\PokemonSpeciesGameplayTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Input\MyInputTriggerComboAction.h"/>
@@ -670,9 +683,8 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAbilityTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTags.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonGameplayTags.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\StructureTypes\PokemonAITypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Subsystems\WorldPopulationSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h"/>

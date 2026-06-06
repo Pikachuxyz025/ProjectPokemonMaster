@@ -3,7 +3,7 @@
 
 #include "AbilitySystem/MMC/MMC_HealthCalculation.h"
 #include "Interfaces/PokemonCombatInterface.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 
 float UMMC_HealthCalculation::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {

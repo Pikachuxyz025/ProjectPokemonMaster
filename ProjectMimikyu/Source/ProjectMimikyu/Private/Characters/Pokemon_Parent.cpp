@@ -17,7 +17,7 @@
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Net/UnrealNetwork.h"
 #include "Debugging/PokemonDebugLibrary.h"
-#include "PokemonDebugTags.h"
+#include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 

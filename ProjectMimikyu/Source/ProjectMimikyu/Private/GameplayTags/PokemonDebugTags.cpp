@@ -1,7 +1,7 @@
 
 
 
-#include "PokemonDebugTags.h"
+#include "GameplayTags/PokemonDebugTags.h"
 
 namespace PokemonDebugTags
 {

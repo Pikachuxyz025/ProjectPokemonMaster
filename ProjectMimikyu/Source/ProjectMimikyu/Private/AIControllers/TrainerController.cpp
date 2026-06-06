@@ -10,7 +10,7 @@
 #include "Debugging/PokemonDebugWorldSubsystem.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
-#include "PokemonDebugTags.h"
+#include "GameplayTags/PokemonDebugTags.h"
 #include "Debugging/PokemonDebugLog.h"
 
 

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "GameplayTagsManager.h"
 
 FPokemonGameplayTags FPokemonGameplayTags::GameplayTags;

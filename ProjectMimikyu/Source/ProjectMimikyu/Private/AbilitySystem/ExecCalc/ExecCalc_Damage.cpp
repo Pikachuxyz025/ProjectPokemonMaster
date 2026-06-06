@@ -7,7 +7,7 @@
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystemComponent.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 struct PokemonDamageStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Defense); // Creates an FProperty and a FGameplayEffectAttributeCatureDefinition for us

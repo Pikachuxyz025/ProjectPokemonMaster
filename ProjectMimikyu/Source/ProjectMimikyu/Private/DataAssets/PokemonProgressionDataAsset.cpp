@@ -2,7 +2,7 @@
 
 
 #include "DataAssets/PokemonProgressionDataAsset.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 
 int32 UPokemonProgressionDataAsset::GetExperienceAtLevel(const FGameplayTag& XPType, int32 Level) const
 {

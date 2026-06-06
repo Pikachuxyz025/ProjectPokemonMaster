@@ -7,7 +7,7 @@
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "Engine/DataTable.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "DataAssets/PokemonDataAsset.h"
 
 void UPokemonMenuWidgetController::BroadcastInitialValues()

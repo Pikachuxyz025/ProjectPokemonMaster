@@ -1290,15 +1290,51 @@ bool UWorldPopulationSubsystem::CanRegisterCombatReadyPokemonInRegion(FGameplayT
 	return RuntimeState->CombatReadyPokemonCount < RegionData->PopulationBudget.MaxCombatReadyPokemon;
 }
 
-int32 UWorldPopulationSubsystem::GetSpawnCountForSpawnStyle(const FRegionPokemonSpawnEntry& SelectedEntry, const FActiveRegionInfo& RegionInfo) const
+int32 UWorldPopulationSubsystem::GetDesiredSpawnCountForEntry(const FRegionPokemonSpawnEntry& SelectedEntry, const FActiveRegionInfo& RegionInfo) const
 {
-	if (SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Pair)
+	const int32 SafeMinGroupSize = FMath::Max(1, SelectedEntry.MinGroupSize);
+	const int32 SafeMaxGroupSize = FMath::Max(SafeMinGroupSize, SelectedEntry.MaxGroupSize);
+
+	int32 DesiredSpawnCount = FMath::RandRange(SafeMinGroupSize, SafeMaxGroupSize);
+
+	// Safety fallback by style
+	// This prevents accidental Solo entries from spawning multiple actors
+	// unless the data explicitly asks for it
+	if(SelectedEntry.SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Solo)
 	{
-		return 2;
+		DesiredSpawnCount = 1;
+	}
+	else if (SelectedEntry.SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Pair)
+	{
+		DesiredSpawnCount = 2;
+	}
+	else if(SelectedEntry.SpawnStyleTag==PokemonSpawnStyleTags::SpawnStyle_StaticEncounter)
+	{
+		DesiredSpawnCount = 1;
 	}
 
-	// Temporary fallback until group placement is implemented
-	return 1;
+	const int32 RemainingBudget = GetRemainingWildPokemonBudget(RegionInfo.RegionTag);
+	return FMath::Clamp(DesiredSpawnCount,0, RemainingBudget);
+}
+
+int32 UWorldPopulationSubsystem::GetRemainingWildPokemonBudget(FGameplayTag RegionTag) const
+{
+	const FRuntimeRegionPopulationState* RuntimeState = RuntimePopulationByRegion.Find(RegionTag);
+
+	if (!RuntimeState)
+	{
+		return 0;
+	}
+
+	const URegionPopulationData* RegionData = RuntimeState->RegionPopulationData.Get();
+	if(!RegionData)
+	{
+		return 0;
+	}
+
+	const int32 RemainingBudget = RegionData->PopulationBudget.MaxActivePokemon - RuntimeState->ActivePokemonCount;
+
+	return FMath::Max(0, RemainingBudget);
 }
 
 int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* RequestingActor, const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry)
@@ -1314,7 +1350,19 @@ int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* Reques
 		return 0;
 	}
 
-	const int32 DesiredSpawnCount = GetSpawnCountForSpawnStyle(SelectedEntry.SpawnStyleTag);
+	const int32 DesiredSpawnCount = GetDesiredSpawnCountForEntry(SelectedEntry, RegionInfo);
+
+	if (DesiredSpawnCount <= 0)
+	{
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Group spawn skipped because no wild Pokemon budget remains | Species=%s | SpawnStyle=%s | Region=%s."),
+			*SelectedEntry.SpeciesTag.ToString(),
+			*SelectedEntry.SpawnStyleTag.ToString(),
+			*RegionInfo.RegionTag.ToString()
+		);
+
+		return 0;
+	}
 
 	FTransform AnchorSpawnTransform;
 	if (!FindPlaceholderSpawnTransform(RequestingActor, RegionData, AnchorSpawnTransform))
@@ -1414,12 +1462,13 @@ int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* Reques
 	}
 
 	UE_LOG(LogTemp, Log,
-		TEXT("[WorldPopulationSubsystem] Group spawn complete | Species=%s | SpawnStyle=%s | Region=%s | Spawned=%d/%d."),
+		TEXT("[WorldPopulationSubsystem] Group spawn size selected | Species=%s | SpawnStyle=%s | Region=%s | DesiredCount=%d | EntryRange=%d-%d."),
 		*SelectedEntry.SpeciesTag.ToString(),
 		*SelectedEntry.SpawnStyleTag.ToString(),
 		*RegionInfo.RegionTag.ToString(),
-		SpawnedCount,
-		DesiredSpawnCount
+		DesiredSpawnCount,
+		SelectedEntry.MinGroupSize,
+		SelectedEntry.MaxGroupSize
 	);
 
 	return SpawnedCount;

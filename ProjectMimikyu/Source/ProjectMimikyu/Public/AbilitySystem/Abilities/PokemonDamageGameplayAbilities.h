@@ -6,7 +6,7 @@ using namespace UP;
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
 
 /**

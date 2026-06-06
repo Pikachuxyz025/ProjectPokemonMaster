@@ -2,7 +2,7 @@
 using namespace UP;
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "Items/Projectile.h"
 #include "CharacterTypes.generated.h"
 

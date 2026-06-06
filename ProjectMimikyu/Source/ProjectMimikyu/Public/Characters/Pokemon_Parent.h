@@ -9,7 +9,7 @@
 #include "Interfaces/PokemonCombatInterface.h"
 #include "Interfaces/TargetableInterface.h"
 #include "AbilitySystemInterface.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "GameplayTagContainer.h"
 #include "Pokemon_Parent.generated.h"
 

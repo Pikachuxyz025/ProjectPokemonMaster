@@ -3,9 +3,9 @@
 
 #include "ActorComponents/PokemonBrainComponent.h"
 #include "Characters/Pokemon_Parent.h"
-#include "PokemonGameplayTags.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
-#include "PokemonDebugTags.h"
+#include "GameplayTags/PokemonDebugTags.h"
 #include "DataAssets/PokemonAICombatBrainConfig.h"
 #include "AIControllers/PokemonAIController.h"
 
