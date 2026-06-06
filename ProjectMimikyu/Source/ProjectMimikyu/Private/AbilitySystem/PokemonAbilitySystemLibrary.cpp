@@ -10,7 +10,7 @@
 #include "UI/WidgetController/PokemonMenuWidgetController.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "Player/TrainerPlayerState.h"
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "UI/TrainerHUD.h"
 #include <AbilitySystemBlueprintLibrary.h>
 #include "Engine/OverlapResult.h"

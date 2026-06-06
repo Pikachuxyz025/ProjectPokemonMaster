@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "PokemonDebugTypes.h"
+#include "Debugging/PokemonDebugTypes.h"
 #include "GameplayTagContainer.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -45,7 +45,7 @@ struct Z_Construct_UEnum_ProjectMimikyu_EPokemonDebugOutputMode_Statics
 		{ "Log.Name", "EPokemonDebugOutputMode::Log" },
 		{ "LogAndScreen.DisplayName", "Log And Screen" },
 		{ "LogAndScreen.Name", "EPokemonDebugOutputMode::LogAndScreen" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 		{ "None.DisplayName", "None" },
 		{ "None.Name", "EPokemonDebugOutputMode::None" },
 		{ "OnScreen.DisplayName", "On Screen" },
@@ -105,7 +105,7 @@ struct Z_Construct_UEnum_ProjectMimikyu_EPokemonDebugVerbosity_Statics
 		{ "BlueprintType", "true" },
 		{ "Detailed.DisplayName", "Detailed" },
 		{ "Detailed.Name", "EPokemonDebugVerbosity::Detailed" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 		{ "Verbose.DisplayName", "Verbose" },
 		{ "Verbose.Name", "EPokemonDebugVerbosity::Verbose" },
 	};
@@ -147,32 +147,32 @@ struct Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CategoryTag_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Message_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SourceObject_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 		{ "NativeConstTemplateArg", "" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TimeStampInSeconds_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Color_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Verbosity_MetaData[] = {
 		{ "Category", "PokemonDebugMessage" },
-		{ "ModuleRelativePath", "Public/PokemonDebugTypes.h" },
+		{ "ModuleRelativePath", "Public/Debugging/PokemonDebugTypes.h" },
 	};
 #endif // WITH_METADATA
 
@@ -209,7 +209,7 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UScriptStruct_FPokemo
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_TimeStampInSeconds = { "TimeStampInSeconds", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonDebugMessage, TimeStampInSeconds), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TimeStampInSeconds_MetaData), NewProp_TimeStampInSeconds_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_Color = { "Color", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonDebugMessage, Color), Z_Construct_UScriptStruct_FColor, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Color_MetaData), NewProp_Color_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_Verbosity_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_Verbosity = { "Verbosity", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonDebugMessage, Verbosity), Z_Construct_UEnum_ProjectMimikyu_EPokemonDebugVerbosity, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Verbosity_MetaData), NewProp_Verbosity_MetaData) }; // 3016341990
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_Verbosity = { "Verbosity", nullptr, (EPropertyFlags)0x0010000000000014, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FPokemonDebugMessage, Verbosity), Z_Construct_UEnum_ProjectMimikyu_EPokemonDebugVerbosity, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Verbosity_MetaData), NewProp_Verbosity_MetaData) }; // 1101544836
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_CategoryTag,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewProp_Message,
@@ -245,21 +245,21 @@ UScriptStruct* Z_Construct_UScriptStruct_FPokemonDebugMessage()
 // ********** End ScriptStruct FPokemonDebugMessage ************************************************
 
 // ********** Begin Registration *******************************************************************
-struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
-		{ EPokemonDebugOutputMode_StaticEnum, TEXT("EPokemonDebugOutputMode"), &Z_Registration_Info_UEnum_EPokemonDebugOutputMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 343017423U) },
-		{ EPokemonDebugVerbosity_StaticEnum, TEXT("EPokemonDebugVerbosity"), &Z_Registration_Info_UEnum_EPokemonDebugVerbosity, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3016341990U) },
+		{ EPokemonDebugOutputMode_StaticEnum, TEXT("EPokemonDebugOutputMode"), &Z_Registration_Info_UEnum_EPokemonDebugOutputMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 212858980U) },
+		{ EPokemonDebugVerbosity_StaticEnum, TEXT("EPokemonDebugVerbosity"), &Z_Registration_Info_UEnum_EPokemonDebugVerbosity, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1101544836U) },
 	};
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FPokemonDebugMessage::StaticStruct, Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewStructOps, TEXT("PokemonDebugMessage"),&Z_Registration_Info_UScriptStruct_FPokemonDebugMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonDebugMessage), 1821803622U) },
+		{ FPokemonDebugMessage::StaticStruct, Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics::NewStructOps, TEXT("PokemonDebugMessage"),&Z_Registration_Info_UScriptStruct_FPokemonDebugMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonDebugMessage), 3217748962U) },
 	};
-}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_1407045357{
+}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics 
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_2196089283{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::EnumInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h__Script_ProjectMimikyu_Statics::EnumInfo),
 };
 // ********** End Registration *********************************************************************
 

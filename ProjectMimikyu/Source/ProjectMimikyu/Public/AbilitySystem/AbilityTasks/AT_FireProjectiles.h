@@ -7,7 +7,7 @@
 #include "Characters/CharacterTypes.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "AbilitySystem/Abilities/ProjectileAbility.h"
-#include <PokemonAbilityTypes.h>
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include <EQS/Subsystems/ThreatFieldSubsystem.h>
 #include "AT_FireProjectiles.generated.h"
 

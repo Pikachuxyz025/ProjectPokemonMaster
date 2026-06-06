@@ -4,7 +4,7 @@ using namespace UP;
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "PokemonGameplayAbilities.generated.h"

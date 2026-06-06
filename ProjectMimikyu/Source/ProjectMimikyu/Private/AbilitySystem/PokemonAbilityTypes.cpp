@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 
 bool FPokemonGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
 {

@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "StructureTypes/PokemonAITypes.h"
+#include "AIControllers/PokemonAITypes.h"
 #include "GameplayTagContainer.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -28,43 +28,43 @@ struct Z_Construct_UScriptStruct_FAgentNavigationRequest_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_IntentTag_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PreferredMovementMode_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetLocation_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetActor_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DesiredDistance_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AcceptableRadius_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Urgency_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bAllowSpecialTraversal_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bAllowGASMovementAbilities_MetaData[] = {
 		{ "Category", "AgentNavigationRequest" },
-		{ "ModuleRelativePath", "Public/StructureTypes/PokemonAITypes.h" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAITypes.h" },
 	};
 #endif // WITH_METADATA
 
@@ -153,16 +153,16 @@ UScriptStruct* Z_Construct_UScriptStruct_FAgentNavigationRequest()
 // ********** End ScriptStruct FAgentNavigationRequest *********************************************
 
 // ********** Begin Registration *******************************************************************
-struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_StructureTypes_PokemonAITypes_h__Script_ProjectMimikyu_Statics
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAITypes_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FAgentNavigationRequest::StaticStruct, Z_Construct_UScriptStruct_FAgentNavigationRequest_Statics::NewStructOps, TEXT("AgentNavigationRequest"),&Z_Registration_Info_UScriptStruct_FAgentNavigationRequest, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAgentNavigationRequest), 130284133U) },
+		{ FAgentNavigationRequest::StaticStruct, Z_Construct_UScriptStruct_FAgentNavigationRequest_Statics::NewStructOps, TEXT("AgentNavigationRequest"),&Z_Registration_Info_UScriptStruct_FAgentNavigationRequest, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FAgentNavigationRequest), 948006626U) },
 	};
-}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_StructureTypes_PokemonAITypes_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_StructureTypes_PokemonAITypes_h__Script_ProjectMimikyu_2615675797{
+}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAITypes_h__Script_ProjectMimikyu_Statics 
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAITypes_h__Script_ProjectMimikyu_2646498073{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_StructureTypes_PokemonAITypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_StructureTypes_PokemonAITypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAITypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAITypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	nullptr, 0,
 };
 // ********** End Registration *********************************************************************

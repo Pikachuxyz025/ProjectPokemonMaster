@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "GameplayTagContainer.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -33,77 +33,77 @@ struct Z_Construct_UScriptStruct_FDamageEffectParams_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WorldContextObject_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DamageGameplayEffectClass_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_SourceAbilitySystemComponent_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
 		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TargetAbilitySystemComponent_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
 		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_BasedDamage_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AbilityLevel_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DamageType_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TypeMultiplier_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffChance_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffDuration_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffFrequency_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffDamage_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DeathImpulseMagnitude_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackForceMagnitude_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackChance_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DeathImpulse_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackForce_MetaData[] = {
 		{ "Category", "DamageEffectParams" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 #endif // WITH_METADATA
 
@@ -213,34 +213,34 @@ struct Z_Construct_UScriptStruct_FPokemonGameplayEffectContext_Statics
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Struct_MetaDataParams[] = {
 		{ "BlueprintType", "true" },
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bIsBlockedHit_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bIsCriticalHit_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bIsSuccessfulDebuff_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffDamage_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffDuration_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DebuffFrequency_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DeathImpulse_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_KnockbackForce_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_TypeMultiplier_MetaData[] = {
-		{ "ModuleRelativePath", "Public/PokemonAbilityTypes.h" },
+		{ "ModuleRelativePath", "Public/AbilitySystem/PokemonAbilityTypes.h" },
 	};
 #endif // WITH_METADATA
 
@@ -335,17 +335,17 @@ UScriptStruct* Z_Construct_UScriptStruct_FPokemonGameplayEffectContext()
 // ********** End ScriptStruct FPokemonGameplayEffectContext ***************************************
 
 // ********** Begin Registration *******************************************************************
-struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics
+struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
-		{ FDamageEffectParams::StaticStruct, Z_Construct_UScriptStruct_FDamageEffectParams_Statics::NewStructOps, TEXT("DamageEffectParams"),&Z_Registration_Info_UScriptStruct_FDamageEffectParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FDamageEffectParams), 1458391438U) },
-		{ FPokemonGameplayEffectContext::StaticStruct, Z_Construct_UScriptStruct_FPokemonGameplayEffectContext_Statics::NewStructOps, TEXT("PokemonGameplayEffectContext"),&Z_Registration_Info_UScriptStruct_FPokemonGameplayEffectContext, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonGameplayEffectContext), 166496929U) },
+		{ FDamageEffectParams::StaticStruct, Z_Construct_UScriptStruct_FDamageEffectParams_Statics::NewStructOps, TEXT("DamageEffectParams"),&Z_Registration_Info_UScriptStruct_FDamageEffectParams, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FDamageEffectParams), 3309313018U) },
+		{ FPokemonGameplayEffectContext::StaticStruct, Z_Construct_UScriptStruct_FPokemonGameplayEffectContext_Statics::NewStructOps, TEXT("PokemonGameplayEffectContext"),&Z_Registration_Info_UScriptStruct_FPokemonGameplayEffectContext, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FPokemonGameplayEffectContext), 2193926232U) },
 	};
-}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h__Script_ProjectMimikyu_3744763322{
+}; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics 
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h__Script_ProjectMimikyu_511753691{
 	TEXT("/Script/ProjectMimikyu"),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
+	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
 	nullptr, 0,
 };
 // ********** End Registration *********************************************************************

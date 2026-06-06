@@ -4,7 +4,7 @@
 	DO NOT modify this manually! Edit the corresponding .h files instead!
 ===========================================================================*/
 
-// IWYU pragma: private, include "PokemonDebugTypes.h"
+// IWYU pragma: private, include "Debugging/PokemonDebugTypes.h"
 
 #ifdef PROJECTMIMIKYU_PokemonDebugTypes_generated_h
 #error "PokemonDebugTypes.generated.h already included, missing '#pragma once' in PokemonDebugTypes.h"
@@ -18,7 +18,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 // ********** Begin ScriptStruct FPokemonDebugMessage **********************************************
 struct Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h_28_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h_28_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonDebugMessage_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -27,7 +27,7 @@ struct FPokemonDebugMessage;
 // ********** End ScriptStruct FPokemonDebugMessage ************************************************
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonDebugTypes_h
+#define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Debugging_PokemonDebugTypes_h
 
 // ********** Begin Enum EPokemonDebugOutputMode ***************************************************
 #define FOREACH_ENUM_EPOKEMONDEBUGOUTPUTMODE(op) \

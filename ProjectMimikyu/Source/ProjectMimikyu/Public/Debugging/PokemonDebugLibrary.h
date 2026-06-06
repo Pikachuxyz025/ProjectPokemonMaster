@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GameplayTagContainer.h"
-#include "PokemonDebugTypes.h"
+#include "Debugging/PokemonDebugTypes.h"
 #include "PokemonDebugLibrary.generated.h"
 
 class AActor;

@@ -2,7 +2,7 @@
 
 
 #include "AbilitySystem/PokemonAbilitySystemGlobals.h"
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 
 FGameplayEffectContext* UPokemonAbilitySystemGlobals::AllocGameplayEffectContext() const
 {

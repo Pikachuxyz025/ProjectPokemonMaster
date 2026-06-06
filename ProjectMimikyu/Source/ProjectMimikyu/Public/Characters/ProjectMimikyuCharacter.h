@@ -8,7 +8,7 @@
 #include "Interfaces/PlayerInterface.h"
 #include "ActorComponents/TargetingType.h"
 #include "GameplayTagContainer.h"
-#include "CharacterTypes.h"
+#include "Characters/CharacterTypes.h"
 #include "ProjectMimikyuCharacter.generated.h"
 
 class USpringArmComponent;

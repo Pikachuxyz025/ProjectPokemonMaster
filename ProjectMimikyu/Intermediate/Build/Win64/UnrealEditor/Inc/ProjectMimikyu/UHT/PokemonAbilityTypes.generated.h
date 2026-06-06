@@ -4,7 +4,7 @@
 	DO NOT modify this manually! Edit the corresponding .h files instead!
 ===========================================================================*/
 
-// IWYU pragma: private, include "PokemonAbilityTypes.h"
+// IWYU pragma: private, include "AbilitySystem/PokemonAbilityTypes.h"
 
 #ifdef PROJECTMIMIKYU_PokemonAbilityTypes_generated_h
 #error "PokemonAbilityTypes.generated.h already included, missing '#pragma once' in PokemonAbilityTypes.h"
@@ -18,7 +18,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 // ********** Begin ScriptStruct FDamageEffectParams ***********************************************
 struct Z_Construct_UScriptStruct_FDamageEffectParams_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h_14_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h_14_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FDamageEffectParams_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -28,7 +28,7 @@ struct FDamageEffectParams;
 
 // ********** Begin ScriptStruct FPokemonGameplayEffectContext *************************************
 struct Z_Construct_UScriptStruct_FPokemonGameplayEffectContext_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h_72_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h_72_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonGameplayEffectContext_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FGameplayEffectContext Super;
@@ -38,6 +38,6 @@ struct FPokemonGameplayEffectContext;
 // ********** End ScriptStruct FPokemonGameplayEffectContext ***************************************
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_PokemonAbilityTypes_h
+#define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilityTypes_h
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

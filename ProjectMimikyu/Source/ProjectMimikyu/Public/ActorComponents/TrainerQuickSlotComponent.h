@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Characters/CharacterTypes.h"
-#include "InventorySystemComponent.h"
+#include "ActorComponents/InventorySystemComponent.h"
 #include "TrainerQuickSlotComponent.generated.h"
 
 

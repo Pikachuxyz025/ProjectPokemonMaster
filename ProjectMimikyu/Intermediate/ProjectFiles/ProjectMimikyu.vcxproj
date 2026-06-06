@@ -322,6 +322,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemLibrary.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilityTypes.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonBaseAttributeSet.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -490,13 +493,7 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Player\TrainerPlayerState.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAbilityTypes.cpp">
-      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
-      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\StructureTypes\PokemonAITypes.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Subsystems\WorldPopulationSubsystem.cpp">
@@ -623,6 +620,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemGlobals.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemLibrary.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilityTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonProjectileTagLibrary.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\DamageSystemComponent.h"/>
@@ -637,6 +635,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerQuickSlotComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Actors\LockOnReticleActor.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAITypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h"/>
@@ -654,6 +653,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataTables\TypeDataTable.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLibrary.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLog.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugWorldSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_AreaCenter.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\EQS\Context\EnvQueryContext_ThreatImpacts.h"/>
@@ -681,10 +681,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\Projectile.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\ProjectileAttack.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAbilityTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\StructureTypes\PokemonAITypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Subsystems\WorldPopulationSubsystem.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ActivateAbility.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Tasks\BTTask_ChangeMovementSpeed.h"/>

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PokemonAbilityTypes.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Items/Projectile.h"
 #include "AbilitySystem/Abilities/ProjectileAbility.h"
 #include <GameplayEffectTypes.h>

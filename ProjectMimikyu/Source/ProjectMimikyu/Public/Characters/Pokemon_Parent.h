@@ -3,7 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "CharacterTypes.h"
+#include "Characters/CharacterTypes.h"
 #include "GameplayEffectTypes.h"
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/PokemonCombatInterface.h"

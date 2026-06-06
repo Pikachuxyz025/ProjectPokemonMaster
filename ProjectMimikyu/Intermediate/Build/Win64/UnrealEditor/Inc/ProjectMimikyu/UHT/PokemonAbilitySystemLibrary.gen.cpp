@@ -6,10 +6,10 @@
 
 #include "UObject/GeneratedCppIncludes.h"
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
-#include "PokemonAbilityTypes.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compiled with !UE_WITH_CONSTINIT_OBJECT");
@@ -129,7 +129,7 @@ struct Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Stat
 };
 
 // ********** Begin Function ApplyDamageEffect Property Definitions ********************************
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Statics::NewProp_DamageEffectParams = { "DamageEffectParams", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventApplyDamageEffect_Parms, DamageEffectParams), Z_Construct_UScriptStruct_FDamageEffectParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DamageEffectParams_MetaData), NewProp_DamageEffectParams_MetaData) }; // 1458391438
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Statics::NewProp_DamageEffectParams = { "DamageEffectParams", nullptr, (EPropertyFlags)0x0010008008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventApplyDamageEffect_Parms, DamageEffectParams), Z_Construct_UScriptStruct_FDamageEffectParams, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DamageEffectParams_MetaData), NewProp_DamageEffectParams_MetaData) }; // 3309313018
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAbilitySystemLibrary_eventApplyDamageEffect_Parms, ReturnValue), Z_Construct_UScriptStruct_FGameplayEffectContextHandle, METADATA_PARAMS(0, nullptr) }; // 1132930901
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect_Statics::NewProp_DamageEffectParams,
@@ -1913,7 +1913,7 @@ struct Z_Construct_UClass_UPokemonAbilitySystemLibrary_Statics
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ActivateAbilityByTag, "ActivateAbilityByTag" }, // 764655069
-		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect, "ApplyDamageEffect" }, // 2331745183
+		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_ApplyDamageEffect, "ApplyDamageEffect" }, // 3753289383
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetCurrentXPPercentage, "GetCurrentXPPercentage" }, // 2340037961
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetDamageType, "GetDamageType" }, // 1589065481
 		{ &Z_Construct_UFunction_UPokemonAbilitySystemLibrary_GetDeathImpulse, "GetDeathImpulse" }, // 198539479
@@ -1990,10 +1990,10 @@ UPokemonAbilitySystemLibrary::~UPokemonAbilitySystemLibrary() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 1989411516U) },
+		{ Z_Construct_UClass_UPokemonAbilitySystemLibrary, UPokemonAbilitySystemLibrary::StaticClass, TEXT("UPokemonAbilitySystemLibrary"), &Z_Registration_Info_UClass_UPokemonAbilitySystemLibrary, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonAbilitySystemLibrary), 1416503430U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_2920963257{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_3710695254{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AbilitySystem_PokemonAbilitySystemLibrary_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

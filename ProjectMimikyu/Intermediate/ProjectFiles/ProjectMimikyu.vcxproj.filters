@@ -125,6 +125,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilitySystemLibrary.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonAbilityTypes.cpp">
+      <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\AbilitySystem\PokemonBaseAttributeSet.cpp">
       <Filter>Source\ProjectMimikyu\Private\AbilitySystem</Filter>
     </ClCompile>
@@ -344,17 +347,8 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Player\TrainerPlayerState.cpp">
       <Filter>Source\ProjectMimikyu\Private\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAbilityTypes.cpp">
-      <Filter>Source\ProjectMimikyu\Private</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\PokemonAssetManager.cpp">
       <Filter>Source\ProjectMimikyu\Private</Filter>
-    </ClCompile>
-    <Filter Include="Source\ProjectMimikyu\Private\StructureTypes">
-      <UniqueIdentifier>{EE660D41-2670-3A0F-AE31-F20DF99579A3}</UniqueIdentifier>
-    </Filter>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\StructureTypes\PokemonAITypes.cpp">
-      <Filter>Source\ProjectMimikyu\Private\StructureTypes</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Subsystems">
       <UniqueIdentifier>{A748C690-36FA-30AD-B294-32B5898660D1}</UniqueIdentifier>
@@ -563,6 +557,9 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilitySystemLibrary.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonAbilityTypes.h">
+      <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AbilitySystem\PokemonBaseAttributeSet.h">
       <Filter>Source\ProjectMimikyu\Public\AbilitySystem</Filter>
     </ClInclude>
@@ -612,6 +609,9 @@
       <UniqueIdentifier>{B6BFAE92-5830-35BB-AF35-2E40F5D5C2EF}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h">
+      <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAITypes.h">
       <Filter>Source\ProjectMimikyu\Public\AIControllers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerAIController.h">
@@ -675,6 +675,9 @@
       <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugLog.h">
+      <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugTypes.h">
       <Filter>Source\ProjectMimikyu\Public\Debugging</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Debugging\PokemonDebugWorldSubsystem.h">
@@ -788,20 +791,8 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Player\TrainerPlayerState.h">
       <Filter>Source\ProjectMimikyu\Public\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAbilityTypes.h">
-      <Filter>Source\ProjectMimikyu\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonAssetManager.h">
       <Filter>Source\ProjectMimikyu\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\PokemonDebugTypes.h">
-      <Filter>Source\ProjectMimikyu\Public</Filter>
-    </ClInclude>
-    <Filter Include="Source\ProjectMimikyu\Public\StructureTypes">
-      <UniqueIdentifier>{FACD61E2-EA28-3D2A-A4CC-990A7D48614E}</UniqueIdentifier>
-    </Filter>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\StructureTypes\PokemonAITypes.h">
-      <Filter>Source\ProjectMimikyu\Public\StructureTypes</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Subsystems">
       <UniqueIdentifier>{A2E56CF3-1D58-3560-A026-F4373071B9B6}</UniqueIdentifier>

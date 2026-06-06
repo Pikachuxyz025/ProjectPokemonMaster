@@ -6,7 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Characters/CharacterTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
-#include <PokemonAbilityTypes.h>
+#include "AbilitySystem/PokemonAbilityTypes.h"
 #include "PokemonAbilitySystemLibrary.generated.h"
 
 class UPokemonAbilitySystemComponent;

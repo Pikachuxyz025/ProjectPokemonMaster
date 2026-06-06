@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "GameplayTagContainer.h"
-#include "PokemonDebugTypes.h"
+#include "Debugging/PokemonDebugTypes.h"
 #include "PokemonDebugWorldSubsystem.generated.h"
 
 UCLASS()
