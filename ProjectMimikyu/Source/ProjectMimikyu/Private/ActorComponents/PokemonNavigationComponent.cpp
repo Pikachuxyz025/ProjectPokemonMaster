@@ -379,6 +379,11 @@ bool UPokemonNavigationComponent::GetTargetLocation(FVector& OutLocation) const
 
 void UPokemonNavigationComponent::DebugFollowTarget(AActor* TargetActor)
 {
+	if(!TargetActor)
+	{
+		return;
+	}
+
 	FAgentNavigationRequest Request;
 	Request.IntentTag = PokemonAITags::NavIntent_Follow;
 	Request.TargetActor = TargetActor;
@@ -405,6 +410,11 @@ void UPokemonNavigationComponent::DebugApproachTarget(AActor* TargetActor)
 
 void UPokemonNavigationComponent::DebugFleeFromTarget(AActor* TargetActor)
 {
+	if(!TargetActor)
+	{
+		return;
+	}
+
 	FAgentNavigationRequest Request;
 	Request.IntentTag = PokemonAITags::NavIntent_Flee;
 	Request.TargetActor = TargetActor;
