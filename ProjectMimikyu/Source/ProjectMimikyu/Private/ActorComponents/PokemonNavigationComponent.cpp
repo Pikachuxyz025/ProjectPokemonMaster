@@ -385,11 +385,22 @@ void UPokemonNavigationComponent::DebugFollowTarget(AActor* TargetActor)
 	Request.DesiredDistance = FollowDistance;
 	Request.AcceptableRadius = 150.f;
 
-	RequestMoveToActor(TargetActor, Request.DesiredDistance);
+	SetNavigationIntent(Request);
 }
 
 void UPokemonNavigationComponent::DebugApproachTarget(AActor* TargetActor)
 {
+	if (!TargetActor)
+	{
+		return;
+	}
+
+	FAgentNavigationRequest Request;
+	Request.IntentTag = PokemonAITags::NavIntent_Approach;
+	Request.TargetActor = TargetActor;
+	Request.AcceptableRadius = DefaultAcceptableRadius;
+
+	SetNavigationIntent(Request);
 }
 
 void UPokemonNavigationComponent::DebugFleeFromTarget(AActor* TargetActor)
@@ -400,7 +411,7 @@ void UPokemonNavigationComponent::DebugFleeFromTarget(AActor* TargetActor)
 	Request.DesiredDistance = FleeDistance;
 	Request.AcceptableRadius = 150.f;
 
-	RequestMoveToLocation(GetFleeLocationFromTarget(TargetActor->GetActorLocation()), Request.AcceptableRadius);
+	SetNavigationIntent(Request);
 }
 
 FVector UPokemonNavigationComponent::GetFleeLocationFromTarget(const FVector& ThreatLocation) const

@@ -40,12 +40,11 @@ namespace PokemonAITags
 	// Movement Modes / Locomotion Capabilities
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Ground);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Flying);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Hovering);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Swimming);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Perching);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Aggressive);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Predator);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Defensive);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Loyal);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Burrowing);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Leaping);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Hovering);
 
 	// Behavioral Profiles
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Behavior_Timid);

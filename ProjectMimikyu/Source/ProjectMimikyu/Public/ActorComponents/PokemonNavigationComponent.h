@@ -8,6 +8,8 @@
 #include "GameplayTagContainer.h"
 #include "PokemonNavigationComponent.generated.h"
 
+class AAIController;
+class APawn;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
