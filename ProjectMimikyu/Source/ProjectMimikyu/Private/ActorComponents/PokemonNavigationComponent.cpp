@@ -433,7 +433,7 @@ FVector UPokemonNavigationComponent::GetFleeLocationFromTarget(const FVector& Th
 
 	if (AwayDirection.IsNearlyZero())
 	{
-		AwayDirection = OwnerPawn->GetActorForwardVector() * -1.f;
+		AwayDirection = OwnerPawn ? OwnerPawn->GetActorForwardVector() * -1.f : FVector::BackwardVector;
 	}
 
 	AwayDirection.Normalize();
