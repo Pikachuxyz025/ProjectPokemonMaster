@@ -79,6 +79,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning", meta = (ClampMin = "1"))
 	int32 MaxGroupMemberPlacementAttempts = 8;
 
+	// Preferred side distance for Pair-style group members.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning|Pair", meta = (ClampMin = "0.0", Units = "cm"))
+	float PairSideOffsetDistance = 300.0f;
+
+	// Preferred backward distance for Pair-style group members.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Group Spawning|Pair", meta = (ClampMin = "0.0", Units = "cm"))
+	float PairBackOffsetDistance = 150.0f;
+
 	// Whether spawn points should require NavMesh.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Validation")
 	bool bRequireNavMesh = true;
@@ -114,6 +122,17 @@ struct FRegionPokemonSpawnEntry
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn", meta = (ClampMin = "1"))
 	int32 MaxLevel = 5;
 
+	// Minimum number of actors this entry wants to spawn when selected.
+	// For Solo/Pair this is usually 1 or 2.
+	// For Swarm/Herd/Flock/etc. this can be higher.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn|Group", meta = (ClampMin = "1"))
+	int32 MinGroupSize = 1;
+
+	// Maximum number of actors this entry wants to spawn when selected.
+	// If lower than MinGroupSize, code should treat it as MinGroupSize.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn|Group", meta = (ClampMin = "1"))
+	int32 MaxGroupSize = 1;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn")
 	bool bCanBeCombatReady = true;
 
@@ -121,7 +140,9 @@ struct FRegionPokemonSpawnEntry
 	{
 		return ActorClass != nullptr
 			&& SpeciesTag.IsValid()
-			&& SpawnWeight > 0.0f;
+			&& SpawnWeight > 0.0f
+			&& MinGroupSize >= 1
+			&& MaxGroupSize >= 1;
 	}
 };
 

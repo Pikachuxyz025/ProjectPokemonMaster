@@ -227,7 +227,9 @@ private:
 	bool SelectWildPokemonSpawnEntry(const FActiveRegionInfo& RegionInfo, FRegionPokemonSpawnEntry& OutEntry) const;
 	bool CanRegisterCombatReadyPokemonInRegion(FGameplayTag RegionTag) const;
 
-	int32 GetSpawnCountForSpawnStyle(const FGameplayTag& SpawnStyleTag) const;
+	int32 GetSpawnCountForSpawnStyle(const FRegionPokemonSpawnEntry& SelectedEntry,const FActiveRegionInfo& RegionInfo) const;
+
+	int32 GetRemainingWild
 
 	int32 TrySpawnWildPokemonGroupForActor(AActor* RequestingActor, const FActiveRegionInfo& RegionInfo, const FRegionPokemonSpawnEntry& SelectedEntry);
 
@@ -236,6 +238,10 @@ private:
 	bool FindGroupMemberSpawnTransform(const FVector& AnchorLocation, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
 
 	bool IsFarEnoughFromExistingGroupMembers(const FVector& CandidateLocation, const TArray<FVector>& ExistingGroupLocations, float MinSpacing) const;
+
+	bool FindPairSpawnTransform(const FVector& AnchorLocation, const AActor* RequestingActor,const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
+
+	bool TryBuildGroupMemberTransformFromLocation(const FVector& CandidateGroundLocation, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const;
 private:
 	UPROPERTY()
 	TMap<TObjectPtr<AActor>, FActiveRegionInfo> ActiveRegionsByActor;

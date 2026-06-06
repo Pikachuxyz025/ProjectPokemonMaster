@@ -841,11 +841,7 @@ bool UWorldPopulationSubsystem::GetSpawnContextForActor(
 	return true;
 }
 
-bool UWorldPopulationSubsystem::FindPlaceholderSpawnTransform(
-	AActor* RequestingActor,
-	const URegionPopulationData* RegionData,
-	FTransform& OutSpawnTransform
-) const
+bool UWorldPopulationSubsystem::FindPlaceholderSpawnTransform(AActor* RequestingActor,	const URegionPopulationData* RegionData,	FTransform& OutSpawnTransform) const
 {
 	if (!RequestingActor || !RegionData)
 	{
@@ -1016,6 +1012,7 @@ int32 UWorldPopulationSubsystem::DespawnPopulationActorsInInactiveRegions()
 
 	return TotalDespawned;
 }
+
 
 FPopulationSpawnCandidate UWorldPopulationSubsystem::FindValidSpawnLocationForActor(AActor* ReferenceActor, const URegionPopulationData* RegionData) const
 {
@@ -1293,7 +1290,7 @@ bool UWorldPopulationSubsystem::CanRegisterCombatReadyPokemonInRegion(FGameplayT
 	return RuntimeState->CombatReadyPokemonCount < RegionData->PopulationBudget.MaxCombatReadyPokemon;
 }
 
-int32 UWorldPopulationSubsystem::GetSpawnCountForSpawnStyle(const FGameplayTag& SpawnStyleTag) const
+int32 UWorldPopulationSubsystem::GetSpawnCountForSpawnStyle(const FRegionPokemonSpawnEntry& SelectedEntry, const FActiveRegionInfo& RegionInfo) const
 {
 	if (SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Pair)
 	{
@@ -1348,7 +1345,42 @@ int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* Reques
 	for (int32 MemberIndex = 1; MemberIndex < DesiredSpawnCount; ++MemberIndex)
 	{
 		FTransform MemberSpawnTransform;
-		if (!FindGroupMemberSpawnTransform(AnchorSpawnTransform.GetLocation(), SpawnedGroupMemberLocations, RegionData, MemberSpawnTransform))
+		bool bFoundMemberTransform = false;
+
+		if(!CanSpawnWildPokemonInRegion(RegionInfo.RegionTag))
+		{
+			UE_LOG(LogTemp, Log,
+				TEXT("[WorldPopulationSubsystem] Group spawn stopped early because wild Pokemon budget is full | Species=%s | SpawnStyle=%s | Region=%s | SpawnedSoFar=%d/%d."),
+				*SelectedEntry.SpeciesTag.ToString(),
+				*SelectedEntry.SpawnStyleTag.ToString(),
+				*RegionInfo.RegionTag.ToString(),
+				SpawnedCount,
+				DesiredSpawnCount
+			);
+			break;
+		}
+
+		if (SelectedEntry.SpawnStyleTag == PokemonSpawnStyleTags::SpawnStyle_Pair)
+		{
+			bFoundMemberTransform = FindPairSpawnTransform(
+				AnchorSpawnTransform.GetLocation(),
+				RequestingActor,
+				SpawnedGroupMemberLocations,
+				RegionData,
+				MemberSpawnTransform
+			);
+		}
+		else
+		{
+			bFoundMemberTransform = FindGroupMemberSpawnTransform(
+				AnchorSpawnTransform.GetLocation(),
+				SpawnedGroupMemberLocations,
+				RegionData,
+				MemberSpawnTransform
+			);
+		}
+
+		if (!bFoundMemberTransform)
 		{
 			UE_LOG(LogTemp, Warning,
 				TEXT("[WorldPopulationSubsystem] Could not find group member location | Species=%s | SpawnStyle=%s | Region=%s | SpawnedSoFar=%d/%d."),
@@ -1370,6 +1402,15 @@ int32 UWorldPopulationSubsystem::TrySpawnWildPokemonGroupForActor(AActor* Reques
 
 		SpawnedCount++;
 		SpawnedGroupMemberLocations.Add(MemberSpawnTransform.GetLocation());
+
+		UE_LOG(LogTemp, Log,
+			TEXT("[WorldPopulationSubsystem] Group member spawned | Species=%s | SpawnStyle=%s | Member=%d/%d | Location=%s."),
+			*SelectedEntry.SpeciesTag.ToString(),
+			*SelectedEntry.SpawnStyleTag.ToString(),
+			SpawnedCount,
+			DesiredSpawnCount,
+			*MemberSpawnTransform.GetLocation().ToString()
+		);
 	}
 
 	UE_LOG(LogTemp, Log,
@@ -1528,5 +1569,113 @@ bool UWorldPopulationSubsystem::IsFarEnoughFromExistingGroupMembers(const FVecto
 		}
 	}
 
+	return true;
+}
+
+bool UWorldPopulationSubsystem::FindPairSpawnTransform(const FVector& AnchorLocation, const AActor* RequestingActor, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const
+{
+	if (!RequestingActor || !RegionData)
+	{
+		return false;
+	}
+
+	const FVector PlayerLocation = RequestingActor->GetActorLocation();
+
+	FVector ForwardFromPlayerToAnchor = AnchorLocation - PlayerLocation;
+	ForwardFromPlayerToAnchor.Z = 0.0f;
+
+	if (!ForwardFromPlayerToAnchor.Normalize())
+	{
+		ForwardFromPlayerToAnchor = FVector::ForwardVector;
+	}
+
+	const FVector RightVector = FVector::CrossProduct(FVector::UpVector, ForwardFromPlayerToAnchor).GetSafeNormal();
+	const FVector BackVector = -ForwardFromPlayerToAnchor;
+
+	const float SideDistance = RegionData->SpawnSettings.PairSideOffsetDistance;
+	const float BackDistance = RegionData->SpawnSettings.PairBackOffsetDistance;
+
+	TArray<FVector> CandidateLocations;
+
+	// Preferred pair positions.
+	CandidateLocations.Add(AnchorLocation + RightVector * SideDistance);
+	CandidateLocations.Add(AnchorLocation - RightVector * SideDistance);
+
+	// Slightly behind the anchor so the pair does not look like a perfect horizontal line.
+	CandidateLocations.Add(AnchorLocation + RightVector * SideDistance + BackVector * BackDistance);
+	CandidateLocations.Add(AnchorLocation - RightVector * SideDistance + BackVector * BackDistance);
+
+	// Slightly forward as a backup.
+	CandidateLocations.Add(AnchorLocation + RightVector * SideDistance - BackVector * BackDistance);
+	CandidateLocations.Add(AnchorLocation - RightVector * SideDistance - BackVector * BackDistance);
+
+	for (const FVector& CandidateLocation : CandidateLocations)
+	{
+		if (TryBuildGroupMemberTransformFromLocation(
+			CandidateLocation,
+			ExistingGroupLocations,
+			RegionData,
+			OutSpawnTransform
+		))
+		{
+			UE_LOG(LogTemp, Log,
+				TEXT("[WorldPopulationSubsystem] Pair placement succeeded | Anchor=%s | Member=%s | Distance=%.1f."),
+				*AnchorLocation.ToString(),
+				*OutSpawnTransform.GetLocation().ToString(),
+				FVector::Dist2D(AnchorLocation, OutSpawnTransform.GetLocation())
+			);
+			return true;
+		}
+	}
+
+	// Final fallback: existing random nearby placement.
+	UE_LOG(LogTemp, Warning,
+		TEXT("[WorldPopulationSubsystem] Pair placement preferred candidates failed. Falling back to random group placement."));
+
+	return FindGroupMemberSpawnTransform(
+		AnchorLocation,
+		ExistingGroupLocations,
+		RegionData,
+		OutSpawnTransform
+	);
+}
+
+bool UWorldPopulationSubsystem::TryBuildGroupMemberTransformFromLocation(const FVector& CandidateGroundLocation, const TArray<FVector>& ExistingGroupLocations, const URegionPopulationData* RegionData, FTransform& OutSpawnTransform) const
+{
+	if (!RegionData)
+	{
+		return false;
+	}
+
+	FVector ProjectedLocation = CandidateGroundLocation;
+
+	if (RegionData->SpawnSettings.bRequireNavMesh)
+	{
+		if (!ProjectSpawnLocationToNavMesh(CandidateGroundLocation, ProjectedLocation))
+		{
+			return false;
+		}
+	}
+
+	if (!IsFarEnoughFromExistingGroupMembers(
+		ProjectedLocation,
+		ExistingGroupLocations,
+		RegionData->SpawnSettings.GroupMemberSpacing
+	))
+	{
+		return false;
+	}
+
+	// Prototype values for placeholder capsule.
+	// Later this should come from species data or actor class data.
+	if (!IsSpawnLocationClear(ProjectedLocation, 80.0f, 100.0f))
+	{
+		return false;
+	}
+
+	const FVector SpawnLocation = ProjectedLocation + FVector(0.0f, 0.0f, 100.0f);
+	const FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	OutSpawnTransform = FTransform(SpawnRotation, SpawnLocation);
 	return true;
 }

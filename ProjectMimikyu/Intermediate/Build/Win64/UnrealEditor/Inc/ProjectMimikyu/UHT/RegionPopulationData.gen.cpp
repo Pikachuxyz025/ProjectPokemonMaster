@@ -257,6 +257,30 @@ struct Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics
 		{ "ToolTip", "Number of attempts to find each additional group member location." },
 #endif
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PairSideOffsetDistance_MetaData[] = {
+		{ "Category", "Group Spawning|Pair" },
+		{ "ClampMin", "0.0" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Preferred side distance for Pair-style group members.\n" },
+#endif
+		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Preferred side distance for Pair-style group members." },
+#endif
+		{ "Units", "cm" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PairBackOffsetDistance_MetaData[] = {
+		{ "Category", "Group Spawning|Pair" },
+		{ "ClampMin", "0.0" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Preferred backward distance for Pair-style group members.\n" },
+#endif
+		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Preferred backward distance for Pair-style group members." },
+#endif
+		{ "Units", "cm" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bRequireNavMesh_MetaData[] = {
 		{ "Category", "Validation" },
 #if !UE_BUILD_SHIPPING
@@ -288,6 +312,8 @@ struct Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_GroupSpawnRadius;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_GroupMemberSpacing;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MaxGroupMemberPlacementAttempts;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_PairSideOffsetDistance;
+	static const UECodeGen_Private::FFloatPropertyParams NewProp_PairBackOffsetDistance;
 	static void NewProp_bRequireNavMesh_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bRequireNavMesh;
 	static void NewProp_bAvoidPlayerLineOfSight_SetBit(void* Obj);
@@ -319,6 +345,8 @@ const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionSpa
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_GroupSpawnRadius = { "GroupSpawnRadius", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionSpawnSettings, GroupSpawnRadius), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_GroupSpawnRadius_MetaData), NewProp_GroupSpawnRadius_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_GroupMemberSpacing = { "GroupMemberSpacing", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionSpawnSettings, GroupMemberSpacing), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_GroupMemberSpacing_MetaData), NewProp_GroupMemberSpacing_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_MaxGroupMemberPlacementAttempts = { "MaxGroupMemberPlacementAttempts", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionSpawnSettings, MaxGroupMemberPlacementAttempts), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MaxGroupMemberPlacementAttempts_MetaData), NewProp_MaxGroupMemberPlacementAttempts_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_PairSideOffsetDistance = { "PairSideOffsetDistance", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionSpawnSettings, PairSideOffsetDistance), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PairSideOffsetDistance_MetaData), NewProp_PairSideOffsetDistance_MetaData) };
+const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_PairBackOffsetDistance = { "PairBackOffsetDistance", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionSpawnSettings, PairBackOffsetDistance), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PairBackOffsetDistance_MetaData), NewProp_PairBackOffsetDistance_MetaData) };
 void Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_bRequireNavMesh_SetBit(void* Obj)
 {
 	((FRegionSpawnSettings*)Obj)->bRequireNavMesh = 1;
@@ -338,6 +366,8 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FR
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_GroupSpawnRadius,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_GroupMemberSpacing,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_MaxGroupMemberPlacementAttempts,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_PairSideOffsetDistance,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_PairBackOffsetDistance,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_bRequireNavMesh,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewProp_bAvoidPlayerLineOfSight,
 };
@@ -410,6 +440,28 @@ struct Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics
 		{ "ClampMin", "1" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MinGroupSize_MetaData[] = {
+		{ "Category", "Spawn|Group" },
+		{ "ClampMin", "1" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Minimum number of actors this entry wants to spawn when selected.\n// For Solo/Pair this is usually 1 or 2.\n// For Swarm/Herd/Flock/etc. this can be higher.\n" },
+#endif
+		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Minimum number of actors this entry wants to spawn when selected.\nFor Solo/Pair this is usually 1 or 2.\nFor Swarm/Herd/Flock/etc. this can be higher." },
+#endif
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MaxGroupSize_MetaData[] = {
+		{ "Category", "Spawn|Group" },
+		{ "ClampMin", "1" },
+#if !UE_BUILD_SHIPPING
+		{ "Comment", "// Maximum number of actors this entry wants to spawn when selected.\n// If lower than MinGroupSize, code should treat it as MinGroupSize.\n" },
+#endif
+		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
+#if !UE_BUILD_SHIPPING
+		{ "ToolTip", "Maximum number of actors this entry wants to spawn when selected.\nIf lower than MinGroupSize, code should treat it as MinGroupSize." },
+#endif
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bCanBeCombatReady_MetaData[] = {
 		{ "Category", "Spawn" },
 		{ "ModuleRelativePath", "Public/DataAssets/RegionPopulationData.h" },
@@ -424,6 +476,8 @@ struct Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_SpawnWeight;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MinLevel;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MaxLevel;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_MinGroupSize;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_MaxGroupSize;
 	static void NewProp_bCanBeCombatReady_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bCanBeCombatReady;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
@@ -452,6 +506,8 @@ const UECodeGen_Private::FStructPropertyParams Z_Construct_UScriptStruct_FRegion
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnWeight = { "SpawnWeight", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, SpawnWeight), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnWeight_MetaData), NewProp_SpawnWeight_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinLevel = { "MinLevel", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, MinLevel), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MinLevel_MetaData), NewProp_MinLevel_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MaxLevel = { "MaxLevel", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, MaxLevel), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MaxLevel_MetaData), NewProp_MaxLevel_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinGroupSize = { "MinGroupSize", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, MinGroupSize), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MinGroupSize_MetaData), NewProp_MinGroupSize_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MaxGroupSize = { "MaxGroupSize", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(FRegionPokemonSpawnEntry, MaxGroupSize), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MaxGroupSize_MetaData), NewProp_MaxGroupSize_MetaData) };
 void Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_bCanBeCombatReady_SetBit(void* Obj)
 {
 	((FRegionPokemonSpawnEntry*)Obj)->bCanBeCombatReady = 1;
@@ -465,6 +521,8 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FR
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_SpawnWeight,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinLevel,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MaxLevel,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MinGroupSize,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_MaxGroupSize,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewProp_bCanBeCombatReady,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::PropPointers) < 2048);
@@ -751,10 +809,10 @@ const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulat
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_BiomeTags = { "BiomeTags", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, BiomeTags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BiomeTags_MetaData), NewProp_BiomeTags_MetaData) }; // 3438578166
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_EnvironmentTags = { "EnvironmentTags", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, EnvironmentTags), Z_Construct_UScriptStruct_FGameplayTagContainer, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_EnvironmentTags_MetaData), NewProp_EnvironmentTags_MetaData) }; // 3438578166
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_PopulationBudget = { "PopulationBudget", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, PopulationBudget), Z_Construct_UScriptStruct_FRegionPopulationBudget, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PopulationBudget_MetaData), NewProp_PopulationBudget_MetaData) }; // 815603554
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_SpawnSettings = { "SpawnSettings", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, SpawnSettings), Z_Construct_UScriptStruct_FRegionSpawnSettings, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnSettings_MetaData), NewProp_SpawnSettings_MetaData) }; // 3482919078
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_SpawnSettings = { "SpawnSettings", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, SpawnSettings), Z_Construct_UScriptStruct_FRegionSpawnSettings, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnSettings_MetaData), NewProp_SpawnSettings_MetaData) }; // 947030929
 const UECodeGen_Private::FTextPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_RegionDescription = { "RegionDescription", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Text, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, RegionDescription), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RegionDescription_MetaData), NewProp_RegionDescription_MetaData) };
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries_Inner = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry, METADATA_PARAMS(0, nullptr) }; // 592709682
-const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, WildPokemonSpawnEntries), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WildPokemonSpawnEntries_MetaData), NewProp_WildPokemonSpawnEntries_MetaData) }; // 592709682
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries_Inner = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry, METADATA_PARAMS(0, nullptr) }; // 3778192645
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_URegionPopulationData_Statics::NewProp_WildPokemonSpawnEntries = { "WildPokemonSpawnEntries", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(URegionPopulationData, WildPokemonSpawnEntries), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WildPokemonSpawnEntries_MetaData), NewProp_WildPokemonSpawnEntries_MetaData) }; // 3778192645
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_URegionPopulationData_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_RegionTag,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_URegionPopulationData_Statics::NewProp_BiomeTags,
@@ -810,14 +868,14 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 {
 	static constexpr FStructRegisterCompiledInInfo ScriptStructInfo[] = {
 		{ FRegionPopulationBudget::StaticStruct, Z_Construct_UScriptStruct_FRegionPopulationBudget_Statics::NewStructOps, TEXT("RegionPopulationBudget"),&Z_Registration_Info_UScriptStruct_FRegionPopulationBudget, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPopulationBudget), 815603554U) },
-		{ FRegionSpawnSettings::StaticStruct, Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewStructOps, TEXT("RegionSpawnSettings"),&Z_Registration_Info_UScriptStruct_FRegionSpawnSettings, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionSpawnSettings), 3482919078U) },
-		{ FRegionPokemonSpawnEntry::StaticStruct, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewStructOps, TEXT("RegionPokemonSpawnEntry"),&Z_Registration_Info_UScriptStruct_FRegionPokemonSpawnEntry, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPokemonSpawnEntry), 592709682U) },
+		{ FRegionSpawnSettings::StaticStruct, Z_Construct_UScriptStruct_FRegionSpawnSettings_Statics::NewStructOps, TEXT("RegionSpawnSettings"),&Z_Registration_Info_UScriptStruct_FRegionSpawnSettings, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionSpawnSettings), 947030929U) },
+		{ FRegionPokemonSpawnEntry::StaticStruct, Z_Construct_UScriptStruct_FRegionPokemonSpawnEntry_Statics::NewStructOps, TEXT("RegionPokemonSpawnEntry"),&Z_Registration_Info_UScriptStruct_FRegionPokemonSpawnEntry, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FRegionPokemonSpawnEntry), 3778192645U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_URegionPopulationData, URegionPopulationData::StaticClass, TEXT("URegionPopulationData"), &Z_Registration_Info_UClass_URegionPopulationData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URegionPopulationData), 3761406116U) },
+		{ Z_Construct_UClass_URegionPopulationData, URegionPopulationData::StaticClass, TEXT("URegionPopulationData"), &Z_Registration_Info_UClass_URegionPopulationData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(URegionPopulationData), 1078333632U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_2175484432{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_3448512330{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_DataAssets_RegionPopulationData_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),
