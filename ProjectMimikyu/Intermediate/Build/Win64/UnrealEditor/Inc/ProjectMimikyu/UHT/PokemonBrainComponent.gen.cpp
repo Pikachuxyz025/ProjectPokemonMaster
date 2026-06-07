@@ -21,6 +21,7 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAbilitySystemComponent_NoR
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonAICombatBrainConfig_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBrainComponent();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBrainComponent_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonNavigationComponent_NoRegister();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
 
@@ -193,6 +194,10 @@ struct Z_Construct_UClass_UPokemonBrainComponent_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/ActorComponents/PokemonBrainComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CachedNavigationComponent_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonBrainComponent.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bBrainActive_MetaData[] = {
 		{ "Category", "Brain|Runtime" },
 		{ "ModuleRelativePath", "Public/ActorComponents/PokemonBrainComponent.h" },
@@ -218,6 +223,10 @@ struct Z_Construct_UClass_UPokemonBrainComponent_Statics
 		{ "Category", "Brain|Runtime" },
 		{ "ModuleRelativePath", "Public/ActorComponents/PokemonBrainComponent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_bEnableNavigationIntentOutput_MetaData[] = {
+		{ "Category", "Brain|Navigation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonBrainComponent.h" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Class UPokemonBrainComponent constinit property declarations *******************
@@ -225,6 +234,7 @@ struct Z_Construct_UClass_UPokemonBrainComponent_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_OwningPokemonController;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_ControlledPokemon;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_CachedPokemonASC;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_CachedNavigationComponent;
 	static void NewProp_bBrainActive_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bBrainActive;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_NextThinkTime;
@@ -233,6 +243,8 @@ struct Z_Construct_UClass_UPokemonBrainComponent_Statics
 	static void NewProp_bUrgentInterruptedRequested_SetBit(void* Obj);
 	static const UECodeGen_Private::FBoolPropertyParams NewProp_bUrgentInterruptedRequested;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_DesiredCombatMode;
+	static void NewProp_bEnableNavigationIntentOutput_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_bEnableNavigationIntentOutput;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Class UPokemonBrainComponent constinit property declarations *********************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
@@ -256,6 +268,7 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonBrainC
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_OwningPokemonController = { "OwningPokemonController", nullptr, (EPropertyFlags)0x0124080000002000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBrainComponent, OwningPokemonController), Z_Construct_UClass_APokemonAIController_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwningPokemonController_MetaData), NewProp_OwningPokemonController_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_ControlledPokemon = { "ControlledPokemon", nullptr, (EPropertyFlags)0x0124080000002000, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBrainComponent, ControlledPokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ControlledPokemon_MetaData), NewProp_ControlledPokemon_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_CachedPokemonASC = { "CachedPokemonASC", nullptr, (EPropertyFlags)0x0124080000082008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBrainComponent, CachedPokemonASC), Z_Construct_UClass_UPokemonAbilitySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedPokemonASC_MetaData), NewProp_CachedPokemonASC_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_CachedNavigationComponent = { "CachedNavigationComponent", nullptr, (EPropertyFlags)0x0124080000082008, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBrainComponent, CachedNavigationComponent), Z_Construct_UClass_UPokemonNavigationComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CachedNavigationComponent_MetaData), NewProp_CachedNavigationComponent_MetaData) };
 void Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bBrainActive_SetBit(void* Obj)
 {
 	((UPokemonBrainComponent*)Obj)->bBrainActive = 1;
@@ -270,17 +283,24 @@ void Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bUrgentInterrupt
 }
 const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bUrgentInterruptedRequested = { "bUrgentInterruptedRequested", nullptr, (EPropertyFlags)0x0020080000020815, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(UPokemonBrainComponent), &Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bUrgentInterruptedRequested_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bUrgentInterruptedRequested_MetaData), NewProp_bUrgentInterruptedRequested_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_DesiredCombatMode = { "DesiredCombatMode", nullptr, (EPropertyFlags)0x0020080000020015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonBrainComponent, DesiredCombatMode), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DesiredCombatMode_MetaData), NewProp_DesiredCombatMode_MetaData) }; // 517357616
+void Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bEnableNavigationIntentOutput_SetBit(void* Obj)
+{
+	((UPokemonBrainComponent*)Obj)->bEnableNavigationIntentOutput = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bEnableNavigationIntentOutput = { "bEnableNavigationIntentOutput", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(UPokemonBrainComponent), &Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bEnableNavigationIntentOutput_SetBit, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_bEnableNavigationIntentOutput_MetaData), NewProp_bEnableNavigationIntentOutput_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonBrainComponent_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_BrainConfig,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_OwningPokemonController,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_ControlledPokemon,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_CachedPokemonASC,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_CachedNavigationComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bBrainActive,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_NextThinkTime,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_CommitUntilTime,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_LastDecisionTime,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bUrgentInterruptedRequested,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_DesiredCombatMode,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UPokemonBrainComponent_Statics::NewProp_bEnableNavigationIntentOutput,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UPokemonBrainComponent_Statics::PropPointers) < 2048);
 // ********** End Class UPokemonBrainComponent Property Definitions ********************************
@@ -325,10 +345,10 @@ UPokemonBrainComponent::~UPokemonBrainComponent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonBrainComponent, UPokemonBrainComponent::StaticClass, TEXT("UPokemonBrainComponent"), &Z_Registration_Info_UClass_UPokemonBrainComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBrainComponent), 624682827U) },
+		{ Z_Construct_UClass_UPokemonBrainComponent, UPokemonBrainComponent::StaticClass, TEXT("UPokemonBrainComponent"), &Z_Registration_Info_UClass_UPokemonBrainComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonBrainComponent), 2055199852U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_4090082960{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_494828018{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonBrainComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

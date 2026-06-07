@@ -6,8 +6,10 @@
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
+#include "GameplayTags/PokemonAITags.h"
 #include "DataAssets/PokemonAICombatBrainConfig.h"
 #include "AIControllers/PokemonAIController.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
 
 static FString PokemonStateToString(EPokemonState State)
 {
@@ -127,7 +129,8 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bBrainActive)return;
+	if (!bBrainActive)
+		return;
 
 	const float Now = GetCurrentWorldTime();
 
@@ -176,6 +179,7 @@ void UPokemonBrainComponent::CacheReferences()
 	if (ControlledPokemon)
 	{
 		CachedPokemonASC = ControlledPokemon->GetPokemonASC();
+		CachedNavigationComponent = ControlledPokemon->FindComponentByClass<UPokemonNavigationComponent>();
 	}
 }
 
@@ -206,6 +210,9 @@ void UPokemonBrainComponent::RunThink()
 	const FGameplayTag NewDesiredCombatMode = DetermineDesiredCombatMode(HPPercent, bHasTarget);
 	SetDesiredCombatMode(NewDesiredCombatMode);
 
+	if(bEnableNavigationIntentOutput)
+	UpdateNavigationIntent();
+
 	const EPokemonState CurrentState = OwningPokemonController->GetPokemonState();
 	const FString PokemonStateString = PokemonStateToString(CurrentState);
 
@@ -218,18 +225,6 @@ void UPokemonBrainComponent::RunThink()
 	ClearUrgentInterrupt();
 
 	UPokemonDebugLibrary::PrintMessage(ControlledPokemon, PokemonDebugTags::AI, TEXT("AI thinking. This should only be seen it there is no observer object or if this is the observer object"),EPokemonDebugOutputMode::LogAndScreen);
-	//UE_LOG(LogTemp, Warning,
-	//	TEXT("[Brain] RunThink | Time=%.2f | DeltaSinceLast=%.2f | NextThink=%.2f | CommitUntil=%.2f | State=%s | Mode=%s | Target=%s | Controller=%s | Pawn=%s | HP=%.2f%%"),
-	//	Now,
-	//	DeltaSinceLast,
-	//	NextThinkTime,
-	//	CommitUntilTime,
-	//	*PokemonStateString,
-	//	*DesiredCombatMode.ToString(),
-	//	*GetNameSafe(CurrentTarget),
-	//	*GetNameSafe(OwningPokemonController),
-	//	*GetNameSafe(ControlledPokemon),
-	//	HPPercent * 100.f);
 }
 
 void UPokemonBrainComponent::DebugLogState() const
@@ -269,6 +264,98 @@ float UPokemonBrainComponent::GetHPPercent() const
 bool UPokemonBrainComponent::HasCombatTarget() const
 {
 	return OwningPokemonController && OwningPokemonController->GetCombatTarget() != nullptr;
+}
+
+void UPokemonBrainComponent::UpdateNavigationIntent()
+{
+	if (!CachedNavigationComponent || !OwningPokemonController)
+		return;
+
+	AActor* TargetActor = OwningPokemonController->GetCombatTarget();
+
+	const FPokemonGameplayTags OldTags = FPokemonGameplayTags::Get();
+
+	if (!TargetActor)
+	{
+		RequestIdleNavigation();
+		return;
+	}
+
+	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Engage)
+	{
+		RequestEngageNavigation(TargetActor);
+	}
+
+	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Flee)
+	{
+		RequestFleeNavigation(TargetActor);
+	}
+
+	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Defensive)
+	{
+		RequestDefensiveNavigation(TargetActor);
+	}
+
+	RequestIdleNavigation();
+}
+
+void UPokemonBrainComponent::RequestIdleNavigation()
+{
+	if (!CachedNavigationComponent)
+		return;
+
+	CachedNavigationComponent->ClearNavigationIntent();
+}
+
+void UPokemonBrainComponent::RequestEngageNavigation(AActor* TargetActor)
+{
+	if (!CachedNavigationComponent || !TargetActor)
+	{
+		return;
+	}
+
+	FAgentNavigationRequest Request;
+	Request.IntentTag = PokemonAITags::NavIntent_Approach;
+	Request.TargetActor = TargetActor;
+	Request.DesiredDistance = 450.f;
+	Request.AcceptableRadius = 250.f;
+	Request.Urgency = 0.6f;
+
+	CachedNavigationComponent->SetNavigationIntent(Request);
+}
+
+void UPokemonBrainComponent::RequestDefensiveNavigation(AActor* TargetActor)
+{
+	if (!CachedNavigationComponent || !TargetActor)
+	{
+		return;
+	}
+
+	FAgentNavigationRequest Request;
+	Request.IntentTag = PokemonAITags::NavIntent_Combat_KeepDistance;
+	Request.TargetActor = TargetActor;
+	Request.DesiredDistance = 800.f;
+	Request.AcceptableRadius = 150.f;
+	Request.Urgency = 0.5f;
+
+	CachedNavigationComponent->SetNavigationIntent(Request);
+}
+
+void UPokemonBrainComponent::RequestFleeNavigation(AActor* TargetActor)
+{
+	if (!CachedNavigationComponent || !TargetActor)
+	{
+		return;
+	}
+
+	FAgentNavigationRequest Request;
+	Request.IntentTag = PokemonAITags::NavIntent_Flee;
+	Request.TargetActor = TargetActor;
+	Request.DesiredDistance = 1000.f;
+	Request.AcceptableRadius = 150.f;
+	Request.Urgency = 1.f;
+
+	CachedNavigationComponent->SetNavigationIntent(Request);
 }
 
 FGameplayTag UPokemonBrainComponent::DetermineDesiredCombatMode(float HPPercent, bool bHasTarget) const

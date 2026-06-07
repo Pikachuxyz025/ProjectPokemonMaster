@@ -32,6 +32,7 @@ struct FPokemonTypeInfo;
 class UBehaviorTree;
 class APokemonAIController;
 struct FPropertyChangedEvent;
+class UPokemonNavigationComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -252,6 +253,9 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	class UMovesetComponent* MovesetComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UPokemonNavigationComponent> NavigationComponent;
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);

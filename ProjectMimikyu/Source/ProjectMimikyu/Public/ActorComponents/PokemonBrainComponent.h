@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-using namespace UP;
 #pragma once
 
 #include "CoreMinimal.h"
@@ -20,7 +19,7 @@ class UPokemonAICombatBrainConfig;
 class APokemonAIController;
 class APokemon_Parent;
 class UPokemonAbilitySystemComponent;
-
+class UPokemonNavigationComponent;
 // This script should be responsible for knowing when the AI is allowed to think
 // Reading a bit of info form the controlled pawn/controller 
 // Making a small/simple decision
@@ -61,6 +60,9 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UPokemonAbilitySystemComponent> CachedPokemonASC;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UPokemonNavigationComponent> CachedNavigationComponent;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Brain|Runtime")
 	bool bBrainActive = false;
 
@@ -79,6 +81,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Brain|Runtime", meta = (Categories = "AI.Decision"))
 	FGameplayTag DesiredCombatMode;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Brain|Navigation")
+	bool bEnableNavigationIntentOutput = true;
+
 protected:
 
 	bool CanThink() const;
@@ -95,6 +100,12 @@ protected:
 	float GetRandomCommitTime() const;
 	float GetHPPercent() const;
 	bool HasCombatTarget() const;
+
+	void UpdateNavigationIntent();
+	void RequestIdleNavigation();
+	void RequestEngageNavigation(AActor* TargetActor);
+	void RequestDefensiveNavigation(AActor* TargetActor);
+	void RequestFleeNavigation(AActor* TargetActor);
 
 	FGameplayTag DetermineDesiredCombatMode(float HPPercent,bool bHasTarget) const;
 

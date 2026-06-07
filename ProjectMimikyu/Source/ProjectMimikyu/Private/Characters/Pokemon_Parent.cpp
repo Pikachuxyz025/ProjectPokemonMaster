@@ -20,6 +20,7 @@
 #include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
 
 APokemon_Parent::APokemon_Parent()
 {
@@ -33,6 +34,7 @@ APokemon_Parent::APokemon_Parent()
 	MovesetComponent = CreateDefaultSubobject<UMovesetComponent>(TEXT("Moveset Component"));
 	IncapacitationComponent = CreateDefaultSubobject<UPokemonIncapacitationComponent>(TEXT("Incapacitation Component"));
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
+		NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
