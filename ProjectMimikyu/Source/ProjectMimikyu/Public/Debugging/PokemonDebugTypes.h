@@ -43,5 +43,5 @@ struct FPokemonDebugMessage
 	FColor Color = FColor::White;
 
 	UPROPERTY(BlueprintReadOnly)
-	EPokemonDebugVerbosity Verbosity;
+	EPokemonDebugVerbosity Verbosity= EPokemonDebugVerbosity::Basic;
 };

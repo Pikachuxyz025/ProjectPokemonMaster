@@ -109,10 +109,13 @@ void UPokemonBrainComponent::InitializeBrain(APokemonAIController* InPokemonCont
 	OwningPokemonController = InPokemonController;
 	CacheReferences();
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] InitializeBrain | Controller=%s | Pawn=%s | Config=%s"),
-		*GetNameSafe(OwningPokemonController),
-		*GetNameSafe(ControlledPokemon),
-		*GetNameSafe(BrainConfig));
+	UPokemonDebugLibrary::SetCategoryEnabled(ControlledPokemon, PokemonDebugTags::AI, true);
+	UPokemonDebugLibrary::PrintMessage(
+		ControlledPokemon,
+		PokemonDebugTags::AI,
+		FString::Printf(TEXT("Brain initialized with Controller=%s"),
+			*GetNameSafe(OwningPokemonController)),
+		EPokemonDebugOutputMode::LogAndScreen);
 }
 
 void UPokemonBrainComponent::SetBrainConfig(UPokemonAICombatBrainConfig* NewConfig)
@@ -139,6 +142,7 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("[Brain] TickComponent | Thinking now | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
 	RunThink();
 }
 
@@ -179,7 +183,7 @@ void UPokemonBrainComponent::CacheReferences()
 	if (ControlledPokemon)
 	{
 		CachedPokemonASC = ControlledPokemon->GetPokemonASC();
-		CachedNavigationComponent = ControlledPokemon->FindComponentByClass<UPokemonNavigationComponent>();
+		CachedNavigationComponent = ControlledPokemon->GetNavigationComponent();
 	}
 }
 
@@ -211,7 +215,14 @@ void UPokemonBrainComponent::RunThink()
 	SetDesiredCombatMode(NewDesiredCombatMode);
 
 	if(bEnableNavigationIntentOutput)
-	UpdateNavigationIntent();
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | DesiredCombatMode=%s | HPPercent=%.2f | HasTarget=%s | DeltaSinceLast=%.2f"),
+			*NewDesiredCombatMode.ToString(),
+			HPPercent,
+			bHasTarget ? TEXT("True") : TEXT("False"),
+			DeltaSinceLast);
+		UpdateNavigationIntent();
+	}
 
 	const EPokemonState CurrentState = OwningPokemonController->GetPokemonState();
 	const FString PokemonStateString = PokemonStateToString(CurrentState);
@@ -269,11 +280,22 @@ bool UPokemonBrainComponent::HasCombatTarget() const
 void UPokemonBrainComponent::UpdateNavigationIntent()
 {
 	if (!CachedNavigationComponent || !OwningPokemonController)
+	{
 		return;
+	}
 
 	AActor* TargetActor = OwningPokemonController->GetCombatTarget();
 
-	const FPokemonGameplayTags OldTags = FPokemonGameplayTags::Get();
+	const FPokemonGameplayTags& OldTags = FPokemonGameplayTags::Get();
+
+	UPokemonDebugLibrary::PrintMessage(
+		ControlledPokemon,
+		PokemonDebugTags::AI,
+		FString::Printf(TEXT("Updating Navigation Intent | DesiredCombatMode=%s | TargetActor=%s"),
+			*DesiredCombatMode.ToString(),
+			*GetNameSafe(TargetActor)),
+		EPokemonDebugOutputMode::Log
+	);
 
 	if (!TargetActor)
 	{
@@ -284,17 +306,21 @@ void UPokemonBrainComponent::UpdateNavigationIntent()
 	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Engage)
 	{
 		RequestEngageNavigation(TargetActor);
+		return;
 	}
 
 	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Flee)
 	{
 		RequestFleeNavigation(TargetActor);
+		return;
 	}
 
 	if (DesiredCombatMode == OldTags.AI_Decision_Combat_Defensive)
 	{
 		RequestDefensiveNavigation(TargetActor);
+		return;
 	}
+
 
 	RequestIdleNavigation();
 }

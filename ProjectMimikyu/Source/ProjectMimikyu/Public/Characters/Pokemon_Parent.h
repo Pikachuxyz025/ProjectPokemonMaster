@@ -438,6 +438,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UPokemonBaseAttributeSet* GetPokemonAS();
 
+	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
+
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() { return DodgeDirection; }
 
