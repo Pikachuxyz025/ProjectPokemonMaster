@@ -271,11 +271,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
 
-
-	bool bIsCharging = false;
-
-	bool bIsDodging = false;
-
 	void CombatReady(AActor* Target);
 
 	void SetPokemonStartup(const FPokemonInfo SetupInfo);
@@ -369,8 +364,6 @@ protected:
 	UFUNCTION()
 	void GetReadyForCombat(const FHitResult& CombatHitResult);
 
-	FVector DodgeDirection = FVector::ZeroVector;
-
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	EGenderType Gender = EGenderType::EGT_None;
 
@@ -382,11 +375,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Stats")
 	int32 CurrentXP = 0; 
-
-	UPROPERTY(VisibleAnywhere)
-	bool bIsUsingMove = false;
-
-	FTimerHandle ChargeTimer;
 #pragma endregion
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -436,9 +424,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	APokemonAIController* GetPokemonController();
 
-	FORCEINLINE bool GetIsCommandActive() const;
-	FORCEINLINE bool GetIsDodging() const;
-	FORCEINLINE bool GetIsUsingMove() const;
+	bool GetIsCommandActive() const;
+	bool GetIsDodging() const;
+	bool GetIsUsingMove() const;
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FORCEINLINE bool HasTrainer() { return CurrentTrainer != nullptr; }

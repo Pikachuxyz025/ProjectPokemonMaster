@@ -90,19 +90,21 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 		return false;
 	}
 
-	if (!Pokemon->MovesetComponent)
+	UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
+
+	if (!MovesetComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("TryCallCommand failed: MovesetComponent is null."));
 		return false;
 	}
 
-	if (!Pokemon->MovesetComponent->CurrentPokemonMoves.IsValidIndex(MoveIndex))
+	if (!MovesetComponent->CurrentPokemonMoves.IsValidIndex(MoveIndex))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TryCallCommand failed: Invalid move index %d."), MoveIndex);
 		return false;
 	}
 
-	UPokemonMoveDataAsset* SelectedMove = Pokemon->MovesetComponent->CurrentPokemonMoves[MoveIndex];
+	UPokemonMoveDataAsset* SelectedMove = MovesetComponent->CurrentPokemonMoves[MoveIndex];
 	if (!SelectedMove)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TryCallCommand failed: Move at index %d is null."), MoveIndex);

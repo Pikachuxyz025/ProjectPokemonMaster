@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "TrainerThrowableComponent.generated.h"
 
+class ATrainerCharacter;
+class AProjectile;
+struct FAimData;
 
 UCLASS(ClassGroup = (Trainer), meta = (BlueprintSpawnableComponent))
 class PROJECTMIMIKYU_API UTrainerThrowableComponent : public UActorComponent

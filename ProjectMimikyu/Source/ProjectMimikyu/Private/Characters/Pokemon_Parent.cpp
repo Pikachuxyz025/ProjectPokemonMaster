@@ -536,7 +536,7 @@ void APokemon_Parent::ClearTrainerBindings()
 	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CurrentTrainer))
 	{
 		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
-}
+	}
 }
 
 void APokemon_Parent::ApplyPokemonKnockback(const FVector& KnockbackVelocity, bool bCanCauseFaint, bool bForceRagdoll)
