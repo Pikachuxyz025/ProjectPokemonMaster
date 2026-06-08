@@ -369,7 +369,7 @@ protected:
 #pragma region Stats
 
 	UFUNCTION()
-	void GetReadyForCombat(AActor* Target);
+	void GetReadyForCombat(const FHitResult& CombatHitResult);
 
 	FVector DodgeDirection = FVector::ZeroVector;
 

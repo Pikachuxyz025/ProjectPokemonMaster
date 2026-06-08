@@ -379,7 +379,7 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\Pokemon_Parent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\ProjectMimikyuCharacter.cpp">
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\TrainerCharacter.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\DataAssets\EffortLevelBaseDataAsset.cpp">
@@ -648,7 +648,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\TrainerController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\Pokemon_Parent.h"/>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\ProjectMimikyuCharacter.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\TrainerCharacter.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Command\PokemonCommandTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\EffortLevelBaseDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonAICombatBrainConfig.h"/>

@@ -8,7 +8,7 @@
 #include "Input/PokemonInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Debugging/PokemonDebugWorldSubsystem.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "Debugging/PokemonDebugLog.h"
@@ -135,11 +135,11 @@ void ATrainerController::DisplayPlayerMenu()
 	UE_LOG(LogTemp, Display, TEXT("Menu Added"));
 }
 
-AProjectMimikyuCharacter* ATrainerController::GetTrainerCharacter() 
+ATrainerCharacter* ATrainerController::GetTrainerCharacter() 
 {
 	if (!TrainerCharacter)
 	{
-		TrainerCharacter = Cast<AProjectMimikyuCharacter>(GetPawn());
+		TrainerCharacter = Cast<ATrainerCharacter>(GetPawn());
 	}
 
 	return TrainerCharacter;
@@ -149,7 +149,7 @@ UTrainerQuickSlotComponent* ATrainerController::GetQuickSlotComponent()
 {
 	if(!QuickSlotComponent)
 	{
-		if (AProjectMimikyuCharacter* TCharacter = GetTrainerCharacter())
+		if (ATrainerCharacter* TCharacter = GetTrainerCharacter())
 		{
 			QuickSlotComponent = TCharacter->GetQuickSlotComponent();
 		}

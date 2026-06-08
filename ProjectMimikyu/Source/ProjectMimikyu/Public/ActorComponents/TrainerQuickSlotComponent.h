@@ -9,7 +9,7 @@
 #include "TrainerQuickSlotComponent.generated.h"
 
 
-class AProjectMimikyuCharacter;
+class ATrainerCharacter;
 class APokemon_Parent;
 class AProjectile;
 class UInventorySystemComponent;
@@ -32,7 +32,7 @@ protected:
 private:
 
 	UPROPERTY()
-	TObjectPtr<AProjectMimikyuCharacter> OwnerCharacter;
+	TObjectPtr<ATrainerCharacter> OwnerCharacter;
 
 	UPROPERTY()
 	TObjectPtr<ATrainerPlayerState> TrainerPlayerState;
@@ -79,7 +79,7 @@ public:
 
 public:	
 
-	void InitializeQuickSlots(AProjectMimikyuCharacter* InOwnerCharacter);
+	void InitializeQuickSlots(ATrainerCharacter* InOwnerCharacter);
 
 	UFUNCTION()
 	void RefreshInventory();

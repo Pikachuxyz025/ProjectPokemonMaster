@@ -4,7 +4,7 @@
 #include "Items/Item.h"
 #include "ActorComponents/ItemDataComponent.h"
 #include "Components/SphereComponent.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 
 // Sets default values
 AItem::AItem()
@@ -26,7 +26,7 @@ AItem::AItem()
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AProjectMimikyuCharacter* TrainerCharacter = Cast<AProjectMimikyuCharacter>(OtherActor);
+	ATrainerCharacter* TrainerCharacter = Cast<ATrainerCharacter>(OtherActor);
 	if (TrainerCharacter)
 	{
 		TrainerCharacter->SetOverlappingItem(this);
@@ -35,7 +35,7 @@ void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AProjectMimikyuCharacter* TrainerCharacter = Cast<AProjectMimikyuCharacter>(OtherActor);
+	ATrainerCharacter* TrainerCharacter = Cast<ATrainerCharacter>(OtherActor);
 	if (TrainerCharacter)
 	{
 		TrainerCharacter->SetOverlappingItem(nullptr);

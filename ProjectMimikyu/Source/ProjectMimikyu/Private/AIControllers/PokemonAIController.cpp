@@ -4,7 +4,7 @@
 #include "AIControllers/PokemonAIController.h"
 #include "GameplayBehaviorsBlueprintFunctionLibrary.h"
 #include "Characters/Pokemon_Parent.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -242,7 +242,7 @@ void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 
 	if(CombatTarget)
 	{
-		if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CombatTarget))
+		if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CombatTarget))
 		{
 			return;
 		}

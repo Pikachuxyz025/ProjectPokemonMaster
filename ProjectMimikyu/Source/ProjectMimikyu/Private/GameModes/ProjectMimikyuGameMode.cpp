@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameModes/ProjectMimikyuGameMode.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "UObject/ConstructorHelpers.h"
 

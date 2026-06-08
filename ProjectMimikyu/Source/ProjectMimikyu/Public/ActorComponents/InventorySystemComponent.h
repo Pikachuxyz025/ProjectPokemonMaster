@@ -53,13 +53,13 @@ class PROJECTMIMIKYU_API UInventorySystemComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventorySystemComponent();
-	friend class AProjectMimikyuCharacter;
+	friend class ATrainerCharacter;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	UPROPERTY(	)
-	class AProjectMimikyuCharacter* OwnerCharacter;
+	class ATrainerCharacter* OwnerCharacter;
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

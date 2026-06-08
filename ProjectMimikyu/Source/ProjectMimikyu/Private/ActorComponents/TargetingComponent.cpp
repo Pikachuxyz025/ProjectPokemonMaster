@@ -4,7 +4,7 @@
 #include "ActorComponents/TargetingComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/TargetableInterface.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "Actors/LockOnReticleActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/TrainerHUD.h"

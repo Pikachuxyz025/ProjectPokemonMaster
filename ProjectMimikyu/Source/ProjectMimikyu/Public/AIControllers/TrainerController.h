@@ -12,7 +12,7 @@ class UPokemonInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-class AProjectMimikyuCharacter;
+class ATrainerCharacter;
 class UTrainerQuickSlotComponent;
 
 DECLARE_MULTICAST_DELEGATE(FOnEventCaller);
@@ -64,7 +64,7 @@ protected:
 	TObjectPtr<UPokemonInputConfig> InputConfig;
 
 	UPROPERTY()
-	TObjectPtr<AProjectMimikyuCharacter> TrainerCharacter;
+	TObjectPtr<ATrainerCharacter> TrainerCharacter;
 
 	UPROPERTY()
 	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
@@ -91,7 +91,7 @@ protected:
 
 	public:
 
-	AProjectMimikyuCharacter* GetTrainerCharacter();
+	ATrainerCharacter* GetTrainerCharacter();
 	UTrainerQuickSlotComponent* GetQuickSlotComponent();
 
 public:

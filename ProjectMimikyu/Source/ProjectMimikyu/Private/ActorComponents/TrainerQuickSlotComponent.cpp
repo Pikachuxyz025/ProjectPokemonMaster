@@ -2,7 +2,7 @@
 
 
 #include "ActorComponents/TrainerQuickSlotComponent.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Characters/Pokemon_Parent.h"
@@ -16,7 +16,7 @@ void UTrainerQuickSlotComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerCharacter = Cast<AProjectMimikyuCharacter>(GetOwner());
+	OwnerCharacter = Cast<ATrainerCharacter>(GetOwner());
 
 	if (OwnerCharacter)
 	{
@@ -24,7 +24,7 @@ void UTrainerQuickSlotComponent::BeginPlay()
 	}
 }
 
-void UTrainerQuickSlotComponent::InitializeQuickSlots(AProjectMimikyuCharacter* InOwnerCharacter)
+void UTrainerQuickSlotComponent::InitializeQuickSlots(ATrainerCharacter* InOwnerCharacter)
 {
 	OwnerCharacter = InOwnerCharacter;
 

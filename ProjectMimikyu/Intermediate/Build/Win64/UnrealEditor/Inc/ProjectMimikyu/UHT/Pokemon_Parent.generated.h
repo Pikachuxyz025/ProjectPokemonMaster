@@ -23,6 +23,7 @@ class UMaterialInstanceDynamic;
 class UPokemonAbilitySystemComponent;
 class UPokemonBaseAttributeSet;
 enum class EMovementSpeed : uint8;
+struct FHitResult;
 struct FPokemonCommandTarget;
 struct FPokemonUIInfo;
 

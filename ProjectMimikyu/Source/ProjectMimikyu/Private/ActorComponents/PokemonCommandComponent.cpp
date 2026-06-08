@@ -1,7 +1,7 @@
 
 
 
-#include "PokemonCommandComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
 
 
 // Sets default values for this component's properties

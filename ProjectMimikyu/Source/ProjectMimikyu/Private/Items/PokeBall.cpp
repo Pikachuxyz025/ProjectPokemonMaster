@@ -4,7 +4,7 @@
 #include "Items/PokeBall.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Characters/Pokemon_Parent.h"
-#include <Characters/ProjectMimikyuCharacter.h>
+#include <Characters/TrainerCharacter.h>
 #include "Components/SphereComponent.h"
 
 
@@ -74,7 +74,7 @@ void APokeBall::HandlePokemonContact(AActor* OtherActor)
 		return;
 	}
 
-	AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(GetOwner());
+	ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(GetOwner());
 	if (!IsValid(Trainer))
 	{
 		return;

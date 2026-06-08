@@ -4,7 +4,7 @@
 #include "ActorComponents/InventorySystemComponent.h"
 #include "Items/Item.h"
 #include "ActorComponents/ItemDataComponent.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "Engine/DataTable.h"
 
 

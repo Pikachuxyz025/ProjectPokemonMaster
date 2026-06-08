@@ -3,7 +3,7 @@
 #include "Characters/Pokemon_Parent.h"
 #include "BrainComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "AIControllers/PokemonAIController.h"
@@ -483,7 +483,7 @@ void APokemon_Parent::MulticastPlayReturnEffects_Implementation()
 
 void APokemon_Parent::ClearTrainerBindings()
 {
-	if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer))
+	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CurrentTrainer))
 	{
 		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
 }
@@ -935,7 +935,7 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 	CurrentTrainer = NewTrainer;
 
 	
-	if (AProjectMimikyuCharacter* Trainer = Cast<AProjectMimikyuCharacter>(CurrentTrainer))
+	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CurrentTrainer))
 	{
 		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
 		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);

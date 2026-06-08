@@ -3,7 +3,7 @@
 
 #include "UI/TrainerOverlay.h"
 #include "UI/PokemonMoveList.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
@@ -20,7 +20,7 @@ void UTrainerOverlay::NativeConstruct()
 	Super::NativeConstruct();
 	UE_LOG(LogTemp, Display, TEXT("Constructing Trainer Overlay"));
 
-	OwnerCharacter = Cast<AProjectMimikyuCharacter>(GetOwningPlayerPawn());
+	OwnerCharacter = Cast<ATrainerCharacter>(GetOwningPlayerPawn());
 
 	if (OwnerCharacter)
 		UE_LOG(LogTemp, Display, TEXT("The character is real!"));

@@ -194,7 +194,7 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\Pokemon_Parent.cpp">
       <Filter>Source\ProjectMimikyu\Private\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\ProjectMimikyuCharacter.cpp">
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Characters\TrainerCharacter.cpp">
       <Filter>Source\ProjectMimikyu\Private\Characters</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\DataAssets">
@@ -641,7 +641,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\Pokemon_Parent.h">
       <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\ProjectMimikyuCharacter.h">
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\TrainerCharacter.h">
       <Filter>Source\ProjectMimikyu\Public\Characters</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Command">

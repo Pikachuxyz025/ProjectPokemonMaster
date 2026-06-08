@@ -1,5 +1,5 @@
 #include "UI/WidgetController/InventoryWidgetController.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "AIControllers/TrainerController.h"
 
@@ -13,7 +13,7 @@ void UInventoryWidgetController::BindCallbacksToDependencies()
 {
 	Super::BindCallbacksToDependencies();
 
-	AProjectMimikyuCharacter* TrainerCharacter = Cast<AProjectMimikyuCharacter>(GetTC()->GetPawn());
+	ATrainerCharacter* TrainerCharacter = Cast<ATrainerCharacter>(GetTC()->GetPawn());
 
 	if (!TrainerCharacter)
 	{

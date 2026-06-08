@@ -13,7 +13,7 @@ void EmptyLinkFunctionForGeneratedCodePokemonUserWidget() {}
 
 // ********** Begin Cross Module References ********************************************************
 COREUOBJECT_API UClass* Z_Construct_UClass_UObject_NoRegister();
-PROJECTMIMIKYU_API UClass* Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_ATrainerCharacter_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonUserWidget();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonUserWidget_NoRegister();
 UMG_API UClass* Z_Construct_UClass_USizeBox_NoRegister();
@@ -241,7 +241,7 @@ struct Z_Construct_UClass_UPokemonUserWidget_Statics
 
 // ********** Begin Class UPokemonUserWidget Property Definitions **********************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonUserWidget_Statics::NewProp_WidgetController = { "WidgetController", nullptr, (EPropertyFlags)0x0114000000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonUserWidget, WidgetController), Z_Construct_UClass_UObject_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WidgetController_MetaData), NewProp_WidgetController_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonUserWidget_Statics::NewProp_OwnerCharacter = { "OwnerCharacter", nullptr, (EPropertyFlags)0x0114000000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonUserWidget, OwnerCharacter), Z_Construct_UClass_AProjectMimikyuCharacter_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwnerCharacter_MetaData), NewProp_OwnerCharacter_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokemonUserWidget_Statics::NewProp_OwnerCharacter = { "OwnerCharacter", nullptr, (EPropertyFlags)0x0114000000000014, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonUserWidget, OwnerCharacter), Z_Construct_UClass_ATrainerCharacter_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwnerCharacter_MetaData), NewProp_OwnerCharacter_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPokemonUserWidget_Statics::NewProp_BoxWidth = { "BoxWidth", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonUserWidget, BoxWidth), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BoxWidth_MetaData), NewProp_BoxWidth_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPokemonUserWidget_Statics::NewProp_BoxHeight = { "BoxHeight", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokemonUserWidget, BoxHeight), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_BoxHeight_MetaData), NewProp_BoxHeight_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UPokemonUserWidget_Statics::PropPointers[] = {
@@ -294,10 +294,10 @@ UPokemonUserWidget::~UPokemonUserWidget() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonUserWidget, UPokemonUserWidget::StaticClass, TEXT("UPokemonUserWidget"), &Z_Registration_Info_UClass_UPokemonUserWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonUserWidget), 219848533U) },
+		{ Z_Construct_UClass_UPokemonUserWidget, UPokemonUserWidget::StaticClass, TEXT("UPokemonUserWidget"), &Z_Registration_Info_UClass_UPokemonUserWidget, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonUserWidget), 878700641U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_3582650176{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_600967646{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_UI_PokemonUserWidget_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

@@ -7,7 +7,7 @@ using namespace UP;
 #include "PokemonUserWidget.generated.h"
 
 class USizeBox;
-class AProjectMimikyuCharacter;
+class ATrainerCharacter;
 
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonUserWidget : public UUserWidget
@@ -23,7 +23,7 @@ public:
 	TObjectPtr<UObject> WidgetController;
 
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<AProjectMimikyuCharacter> OwnerCharacter;
+	TObjectPtr<ATrainerCharacter> OwnerCharacter;
 protected:
 
 	UFUNCTION(BlueprintImplementableEvent)

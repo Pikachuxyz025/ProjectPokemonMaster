@@ -9,7 +9,7 @@ using namespace UP;
 #include "PlayerInventoryMenuOverlay.generated.h"
 
 class APokemon_Parent;
-class AProjectMimikyuCharacter;
+class ATrainerCharacter;
 class UInventoryGrid;
 struct FPokemonInfo;
 UCLASS()
@@ -23,7 +23,7 @@ public:
 	 UInventoryGrid* InventoryGrid;
 
 	UPROPERTY(EditAnywhere)
- AProjectMimikyuCharacter* PlayerCharacter;
+ ATrainerCharacter* PlayerCharacter;
 
 	virtual void AddMouseCursor() override;
 	virtual void RemoveMouseCursor() override;

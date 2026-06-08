@@ -3,7 +3,7 @@
 
 #include "UI/WidgetController/TrainerOverlayWidgetController.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
-#include "Characters/ProjectMimikyuCharacter.h"
+#include "Characters/TrainerCharacter.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
@@ -54,7 +54,7 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 		}
 	);
 
-	if(AProjectMimikyuCharacter* TrainerCharacter=Cast<AProjectMimikyuCharacter>(GetTC()->GetPawn()))
+	if(ATrainerCharacter* TrainerCharacter=Cast<ATrainerCharacter>(GetTC()->GetPawn()))
 	{
 		QuickSlotComponent = TrainerCharacter->GetQuickSlotComponent();
 		if (QuickSlotComponent)
