@@ -1933,10 +1933,6 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 		{ "Category", "Pokemon_Parent" },
 		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentCommandTarget_MetaData[] = {
-		{ "Category", "Pokemon|Command" },
-		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
-	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MultiplierMap_MetaData[] = {
 		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
 	};
@@ -2043,7 +2039,6 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 	static const UECodeGen_Private::FBytePropertyParams NewProp_PokemonStatus_Underlying;
 	static const UECodeGen_Private::FEnumPropertyParams NewProp_PokemonStatus;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_SpawnPointTag;
-	static const UECodeGen_Private::FStructPropertyParams NewProp_CurrentCommandTarget;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MultiplierMap_ValueProp;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_MultiplierMap_Key_KeyProp;
 	static const UECodeGen_Private::FMapPropertyParams NewProp_MultiplierMap;
@@ -2190,7 +2185,6 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokemon_Paren
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_PokemonStatus_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_PokemonStatus = { "PokemonStatus", nullptr, (EPropertyFlags)0x0010000000020021, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, PokemonStatus), Z_Construct_UEnum_ProjectMimikyu_EPokemonStatus, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokemonStatus_MetaData), NewProp_PokemonStatus_MetaData) }; // 1292692463
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_SpawnPointTag = { "SpawnPointTag", nullptr, (EPropertyFlags)0x0010000000010001, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, SpawnPointTag), Z_Construct_UScriptStruct_FGameplayTag, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SpawnPointTag_MetaData), NewProp_SpawnPointTag_MetaData) }; // 517357616
-const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_CurrentCommandTarget = { "CurrentCommandTarget", nullptr, (EPropertyFlags)0x0010008000020015, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, CurrentCommandTarget), Z_Construct_UScriptStruct_FPokemonCommandTarget, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentCommandTarget_MetaData), NewProp_CurrentCommandTarget_MetaData) }; // 1298194729
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap_ValueProp = { "MultiplierMap", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 1, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap_Key_KeyProp = { "MultiplierMap_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap = { "MultiplierMap", nullptr, (EPropertyFlags)0x0020080000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, MultiplierMap), EMapPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MultiplierMap_MetaData), NewProp_MultiplierMap_MetaData) };
@@ -2251,7 +2245,6 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_APokemon_
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_PokemonStatus_Underlying,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_PokemonStatus,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_SpawnPointTag,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_CurrentCommandTarget,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap_ValueProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap_Key_KeyProp,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_MultiplierMap,
@@ -2346,10 +2339,10 @@ APokemon_Parent::~APokemon_Parent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 3304946423U) },
+		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 2269873271U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_3218801789{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_1100365906{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

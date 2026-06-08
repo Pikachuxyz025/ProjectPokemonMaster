@@ -275,9 +275,6 @@ public:
 
 	void SetPokemonStartup(const FPokemonInfo SetupInfo);
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Pokemon|Command")
-	FPokemonCommandTarget CurrentCommandTarget;
-
 	UFUNCTION(BlueprintCallable,Category = "Pokemon|Command")
 	void SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget);
 
