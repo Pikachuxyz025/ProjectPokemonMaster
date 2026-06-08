@@ -364,6 +364,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TrainerQuickSlotComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TrainerThrowableComponent.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Actors\LockOnReticleActor.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -641,6 +644,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerQuickSlotComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerThrowableComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Actors\LockOnReticleActor.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAIController.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\AIControllers\PokemonAITypes.h"/>
