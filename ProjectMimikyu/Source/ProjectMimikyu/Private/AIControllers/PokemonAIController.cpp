@@ -113,8 +113,8 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 
 	if (ControlledPokemon->SpawnPointTag.MatchesTagExact(FPokemonGameplayTags::Get().SpawnPoint_ComeOnOut))
 	{
-		SetTrainer(ControlledPokemon->CurrentTrainer);
-		SetPokemonStatus(ControlledPokemon->PokemonStatus);
+		SetTrainer(ControlledPokemon->GetCurrentTrainer());
+		SetPokemonStatus(ControlledPokemon->GetPokemonStatus());
 	}
 
 	if (PokemonBrainComponent)

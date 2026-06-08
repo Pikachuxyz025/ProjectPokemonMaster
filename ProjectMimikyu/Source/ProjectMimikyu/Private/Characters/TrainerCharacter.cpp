@@ -161,7 +161,7 @@ void ATrainerCharacter::ServerBroadcastTarget_Implementation(const FHitResult& C
 void ATrainerCharacter::ServerAddToCurrentParty_Implementation(AActor* AddedActor)
 {
 	APokemon_Parent* CaughtPokemon = Cast<APokemon_Parent>(AddedActor);
-	CaughtPokemon->bIsCaught = true;
+	CaughtPokemon->SetIsCaught(true);
 	//APokemonAIController* PokemonController = CaughtPokemon->GetPokemonController();
 	CaughtPokemon->SetPokemonTrainer(this);
 
@@ -192,7 +192,7 @@ void ATrainerCharacter::ServerRequestReturnCurrentPokemon_Implementation()
 		return;
 	}
 
-	if (CurrentPokemon->CurrentTrainer != this)
+	if (CurrentPokemon->IsOwnedByTrainer(this))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerRequestReturnCurrentPokemon failed: Current Pokemon does not belong to this trainer."));
 		return;
@@ -303,7 +303,7 @@ void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APo
 		return;
 	}
 
-	if (TargetPokemon->bIsCaught)
+	if (TargetPokemon->GetIsCaught())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerRequestCatchPokemonWithPokeball failed: Target Pokemon is already caught."));
 		return;
@@ -337,7 +337,7 @@ bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVect
 		return false;
 	}
 
-	if (HitPokemon->bIsCaught)
+	if (HitPokemon->GetIsCaught())
 	{
 		UE_LOG(LogTemp, Display, TEXT("Line Trace hit a Pokemon that is already caught"));
 		return false;

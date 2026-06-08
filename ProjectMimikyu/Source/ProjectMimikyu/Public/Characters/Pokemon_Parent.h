@@ -35,6 +35,7 @@ class APokemonAIController;
 struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
 class UPokemonCommandComponent;
+class UPokemonOwnershipComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -174,6 +175,28 @@ virtual	void AttackEnded();
 #pragma endregion
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Ownership")
+	void SetIsCaught(bool bNewIsCaught);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Ownership")
+	bool GetIsCaught() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Ownership")
+	AActor* GetCurrentTrainer() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Ownership")
+	EPokemonStatus GetPokemonStatus() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Ownership")
+	bool IsOwnedByTrainer(const AActor* TrainerActor) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool HasTrainer() const;
+
+	void BindTrainerTargetDelegate(AActor* TrainerActor);
+	void UnbindTrainerTargetDelegate(AActor* TrainerActor);
+
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()
 	void PrepareForFieldRemoval();
@@ -261,12 +284,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
-
-	UPROPERTY(VisibleAnywhere,Replicated)
-	class AActor* CurrentTrainer;
-
-	UPROPERTY(VisibleAnywhere,Replicated)
-	EPokemonStatus PokemonStatus = EPokemonStatus::EPS_Wild;
 
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
@@ -380,6 +397,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonCommandComponent> CommandComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonOwnershipComponent> OwnershipComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -407,9 +427,6 @@ protected:
 public:
 	FPokemonInfo GetPokemonInfo();
 
-	UPROPERTY(Replicated)
-	bool bIsCaught = false;
-
 	UFUNCTION(BlueprintCallable)
 	void SetIsDodging(bool Dodging);
 
@@ -424,9 +441,6 @@ public:
 	bool GetIsCommandActive() const;
 	bool GetIsDodging() const;
 	bool GetIsUsingMove() const;
-	
-	UFUNCTION(BlueprintCallable,BlueprintPure)
-	FORCEINLINE bool HasTrainer() { return CurrentTrainer != nullptr; }
 
 	ENatureType GetNature() { return Nature; }
 

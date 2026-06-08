@@ -23,6 +23,7 @@ class UMaterialInstanceDynamic;
 class UPokemonAbilitySystemComponent;
 class UPokemonBaseAttributeSet;
 enum class EMovementSpeed : uint8;
+enum class EPokemonStatus : uint8;
 struct FHitResult;
 struct FPokemonCommandTarget;
 struct FPokemonUIInfo;
@@ -49,14 +50,13 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
 // ********** End Delegate FOnCharging *************************************************************
 
 // ********** Begin Class APokemon_Parent **********************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_RPC_WRAPPERS_NO_PURE_DECLS \
 	virtual void MulticastPlayReturnEffects_Implementation(); \
 	DECLARE_FUNCTION(execGetDodgeDirection); \
 	DECLARE_FUNCTION(execGetPokemonAS); \
 	DECLARE_FUNCTION(execGetPokemonASC); \
 	DECLARE_FUNCTION(execGetAttributeSet); \
 	DECLARE_FUNCTION(execGetAbilitySystemComponent); \
-	DECLARE_FUNCTION(execHasTrainer); \
 	DECLARE_FUNCTION(execGetPokemonController); \
 	DECLARE_FUNCTION(execGetPokemonUIInfo); \
 	DECLARE_FUNCTION(execSetIsDodging); \
@@ -81,15 +81,21 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
 	DECLARE_FUNCTION(execEnterFaintedState); \
 	DECLARE_FUNCTION(execMulticastPlayReturnEffects); \
 	DECLARE_FUNCTION(execPrepareForFieldRemoval); \
+	DECLARE_FUNCTION(execHasTrainer); \
+	DECLARE_FUNCTION(execIsOwnedByTrainer); \
+	DECLARE_FUNCTION(execGetPokemonStatus); \
+	DECLARE_FUNCTION(execGetCurrentTrainer); \
+	DECLARE_FUNCTION(execGetIsCaught); \
+	DECLARE_FUNCTION(execSetIsCaught); \
 	DECLARE_FUNCTION(execOnRep_StartupPokemonInfo); \
 	DECLARE_FUNCTION(execAttackEnded);
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_CALLBACK_WRAPPERS
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_CALLBACK_WRAPPERS
 struct Z_Construct_UClass_APokemon_Parent_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokemon_Parent_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAPokemon_Parent(); \
 	friend struct ::Z_Construct_UClass_APokemon_Parent_Statics; \
@@ -104,14 +110,11 @@ public: \
 		NETFIELD_REP_START=(uint16)((int32)Super::ENetFields_Private::NETFIELD_REP_END + (int32)1), \
 		bSpawnedFromPartyStartup=NETFIELD_REP_START, \
 		StartupPokemonInfo, \
-		CurrentTrainer, \
-		PokemonStatus, \
-		bIsCaught, \
-		NETFIELD_REP_END=bIsCaught	}; \
+		NETFIELD_REP_END=StartupPokemonInfo	}; \
 	DECLARE_VALIDATE_GENERATED_REP_ENUMS(NO_API)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_ENHANCED_CONSTRUCTORS \
 	/** Deleted move- and copy-constructors, should never be used */ \
 	APokemon_Parent(APokemon_Parent&&) = delete; \
 	APokemon_Parent(const APokemon_Parent&) = delete; \
@@ -121,14 +124,14 @@ public: \
 	NO_API virtual ~APokemon_Parent();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_39_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_40_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_CALLBACK_WRAPPERS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_42_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_CALLBACK_WRAPPERS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h_43_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

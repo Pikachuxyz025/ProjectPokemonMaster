@@ -9,7 +9,12 @@
 #include "AIControllers/PokemonAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/PlayerInterface.h"
+
 #include "ActorComponents/MovesetComponent.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
+#include "ActorComponents/PokemonOwnershipComponent.h"
+
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
@@ -20,8 +25,7 @@
 #include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
-#include "ActorComponents/PokemonNavigationComponent.h"
-#include "ActorComponents/PokemonCommandComponent.h"
+
 
 APokemon_Parent::APokemon_Parent()
 {
@@ -37,9 +41,13 @@ APokemon_Parent::APokemon_Parent()
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
 	NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
 	CommandComponent = CreateDefaultSubobject<UPokemonCommandComponent>(TEXT("Command Component"));
+	OwnershipComponent = CreateDefaultSubobject<UPokemonOwnershipComponent>(TEXT("Ownership Component"));
+	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
+
+
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
+
 
 	GetMesh()->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
@@ -100,7 +108,7 @@ void APokemon_Parent::AddPokemonAbilities()
 
 		// Passive Event Check Should be active only if the pokemon has a player trainer 
 		// We'll Keep at just trainer for now
-		if(CurrentTrainer)
+		if(HasTrainer())
 		{
 			GetPokemonASC()->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 		}
@@ -312,11 +320,6 @@ void APokemon_Parent::PossessedBy(AController* NewController)
 void APokemon_Parent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APokemon_Parent, CurrentTrainer);
-	DOREPLIFETIME(APokemon_Parent, PokemonStatus);
-	DOREPLIFETIME(APokemon_Parent, bIsCaught);
-
 }
 
 UAbilitySystemComponent* APokemon_Parent::GetAbilitySystemComponent() const
@@ -454,6 +457,56 @@ void APokemon_Parent::OnRep_StartupPokemonInfo()
 }
 
 
+void APokemon_Parent::SetIsCaught(bool bNewIsCaught)
+{
+	if (OwnershipComponent)
+	{
+		OwnershipComponent->SetIsCaught(bNewIsCaught);
+	}
+}
+
+bool APokemon_Parent::GetIsCaught() const
+{
+	return OwnershipComponent && OwnershipComponent->IsCaught();
+}
+
+AActor* APokemon_Parent::GetCurrentTrainer() const
+{
+	return OwnershipComponent ? OwnershipComponent->GetCurrentTrainer() : nullptr;
+}
+
+EPokemonStatus APokemon_Parent::GetPokemonStatus() const
+{
+	return OwnershipComponent ? OwnershipComponent->GetPokemonStatus() : EPokemonStatus::EPS_Wild;
+}
+
+bool APokemon_Parent::IsOwnedByTrainer(const AActor* TrainerActor) const
+{
+	return OwnershipComponent && OwnershipComponent->IsOwnedByTrainer(TrainerActor);
+}
+
+bool APokemon_Parent::HasTrainer() const
+{
+	return OwnershipComponent && OwnershipComponent->HasTrainer();
+}
+
+void APokemon_Parent::BindTrainerTargetDelegate(AActor* TrainerActor)
+{
+	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(TrainerActor))
+	{
+		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
+		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
+	}
+}
+
+void APokemon_Parent::UnbindTrainerTargetDelegate(AActor* TrainerActor)
+{
+	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(TrainerActor))
+	{
+		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
+	}
+}
+
 void APokemon_Parent::PrepareForFieldRemoval()
 {
 	if (!HasAuthority())
@@ -533,9 +586,9 @@ void APokemon_Parent::MulticastPlayReturnEffects_Implementation()
 
 void APokemon_Parent::ClearTrainerBindings()
 {
-	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CurrentTrainer))
+	if (OwnershipComponent)
 	{
-		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
+		OwnershipComponent->ClearTrainerBindings();
 	}
 }
 
@@ -842,9 +895,11 @@ int32 APokemon_Parent::GetExperienceAtLevel(int32 Level)
 
 void APokemon_Parent::UpdatePokemonInfoInParty_Implementation()
 {
-	if (CurrentTrainer && CurrentTrainer->Implements<UPlayerInterface>())
+	AActor* Trainer = GetCurrentTrainer();
+
+	if (Trainer && Trainer->Implements<UPlayerInterface>())
 	{
-		IPlayerInterface::Execute_UpdatePokemonInfoInParty(CurrentTrainer, this);
+		IPlayerInterface::Execute_UpdatePokemonInfoInParty(Trainer, this);
 	}
 }
 
@@ -960,16 +1015,10 @@ UPokemonBaseAttributeSet* APokemon_Parent::GetPokemonAS()
 
 void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 {
-	CurrentTrainer = NewTrainer;
-
-	
-	if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CurrentTrainer))
+	if (OwnershipComponent)
 	{
-		Trainer->OnTargetRegistered.RemoveDynamic(this, &APokemon_Parent::GetReadyForCombat);
-		Trainer->OnTargetRegistered.AddDynamic(this, &APokemon_Parent::GetReadyForCombat);
+		OwnershipComponent->SetPokemonTrainer(NewTrainer);
 	}
-
-	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
 }
 
 

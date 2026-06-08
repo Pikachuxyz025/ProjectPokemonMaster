@@ -161,6 +161,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonNavigationComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonOwnershipComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetableComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
@@ -600,6 +603,9 @@
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonNavigationComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonOwnershipComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetableComponent.h">
