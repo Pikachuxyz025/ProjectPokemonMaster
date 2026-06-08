@@ -15,8 +15,27 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class UPokemonMoveDataAsset;
+struct FPokemonCommandTarget;
 
 // ********** Begin Class UPokemonCommandComponent *************************************************
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execGetDodgeDirection); \
+	DECLARE_FUNCTION(execIsUsingMove); \
+	DECLARE_FUNCTION(execIsDodging); \
+	DECLARE_FUNCTION(execSetIsDodging); \
+	DECLARE_FUNCTION(execIsCommandActive); \
+	DECLARE_FUNCTION(execGetActiveMove); \
+	DECLARE_FUNCTION(execClearActiveMove); \
+	DECLARE_FUNCTION(execSelectRandomMove); \
+	DECLARE_FUNCTION(execEndDodge); \
+	DECLARE_FUNCTION(execDodge); \
+	DECLARE_FUNCTION(execClearCommandTarget); \
+	DECLARE_FUNCTION(execSetCommandTarget); \
+	DECLARE_FUNCTION(execAttackEnded); \
+	DECLARE_FUNCTION(execTryCallCommand);
+
+
 struct Z_Construct_UClass_UPokemonCommandComponent_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonCommandComponent_NoRegister();
 
@@ -32,14 +51,12 @@ public: \
 
 
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_ENHANCED_CONSTRUCTORS \
-	/** Standard constructor, called after all reflected properties have been initialized */ \
-	NO_API UPokemonCommandComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); \
 	/** Deleted move- and copy-constructors, should never be used */ \
 	UPokemonCommandComponent(UPokemonCommandComponent&&) = delete; \
 	UPokemonCommandComponent(const UPokemonCommandComponent&) = delete; \
 	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, UPokemonCommandComponent); \
 	DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(UPokemonCommandComponent); \
-	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(UPokemonCommandComponent) \
+	DEFINE_DEFAULT_CONSTRUCTOR_CALL(UPokemonCommandComponent) \
 	NO_API virtual ~UPokemonCommandComponent();
 
 
@@ -47,6 +64,7 @@ public: \
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_RPC_WRAPPERS_NO_PURE_DECLS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_INCLASS_NO_PURE_DECLS \
 	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonCommandComponent_h_16_ENHANCED_CONSTRUCTORS \
 private: \

@@ -1,4 +1,4 @@
-
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,43 +13,86 @@ class UPokemonMoveDataAsset;
 UCLASS(ClassGroup = (Pokemon), meta = (BlueprintSpawnableComponent))
 class PROJECTMIMIKYU_API UPokemonCommandComponent : public UActorComponent
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    void Initialize(APokemon_Parent* InOwnerPokemon);
+	UPokemonCommandComponent();
 
-    bool TryCallCommand(int32 MoveIndex);
-    void AttackEnded();
+protected:
+	virtual void BeginPlay() override;
 
-    void SetCommandTarget(const FPokemonCommandTarget& NewTarget);
-    void ClearCommandTarget();
-    const FPokemonCommandTarget& GetCommandTarget() const;
+public:
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	bool TryCallCommand(int32 MoveIndex);
 
-    FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
-    void SetCommandTargetFromHit(const FHitResult& Hit);
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void AttackEnded();
 
-    void Dodge(const FVector& NewDodgeDirection);
-    void EndDodge();
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget);
 
-    UPokemonMoveDataAsset* GetActiveMove() const { return ActivePokemonMove; }
-    bool IsCommandActive() const { return ActivePokemonMove != nullptr; }
-    bool IsDodging() const { return bIsDodging; }
-    bool IsUsingMove() const { return bIsUsingMove; }
-    FVector GetDodgeDirection() const { return DodgeDirection; }
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void ClearCommandTarget();
+
+	const FPokemonCommandTarget& GetCommandTarget() const { return CurrentCommandTarget; }
+
+	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
+	void SetCommandTargetFromHit(const FHitResult& Hit);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void Dodge(const FVector& NewDodgeDirection);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void EndDodge();
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void SelectRandomMove();
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void ClearActiveMove();
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	UPokemonMoveDataAsset* GetActiveMove() const { return ActivePokemonMove; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	bool IsCommandActive() const { return ActivePokemonMove != nullptr; }
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void SetIsDodging(bool bNewDodging) { bIsDodging = bNewDodging; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	bool IsDodging() const { return bIsDodging; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	bool IsUsingMove() const { return bIsUsingMove; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	FVector GetDodgeDirection() const { return DodgeDirection; }
 
 private:
-    UPROPERTY()
-    TObjectPtr<APokemon_Parent> OwnerPokemon;
+	APokemon_Parent* GetOwnerPokemon() const;
 
-    UPROPERTY(VisibleAnywhere, Category = "Pokemon|Command")
-    TObjectPtr<UPokemonMoveDataAsset> ActivePokemonMove = nullptr;
+private:
+	UPROPERTY()
+	TObjectPtr<APokemon_Parent> OwnerPokemon;
 
-    UPROPERTY(VisibleAnywhere, Category = "Pokemon|Command")
-    FPokemonCommandTarget CurrentCommandTarget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPokemonMoveDataAsset> ActivePokemonMove = nullptr;
 
-    bool bIsCharging = false;
-    bool bIsDodging = false;
-    bool bIsUsingMove = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	FPokemonCommandTarget CurrentCommandTarget;
 
-    FVector DodgeDirection = FVector::ZeroVector;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	bool bIsCharging = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	bool bIsDodging = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	bool bIsUsingMove = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	FVector DodgeDirection = FVector::ZeroVector;
+
+	FTimerHandle ChargeTimer;
 };

@@ -34,6 +34,7 @@ class UBehaviorTree;
 class APokemonAIController;
 struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
+class UPokemonCommandComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -267,9 +268,6 @@ public:
 	UPROPERTY(VisibleAnywhere,Replicated)
 	EPokemonStatus PokemonStatus = EPokemonStatus::EPS_Wild;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UPokemonMoveDataAsset* ActivePokemonMove = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, meta = (Categories = "SpawnPoint"))
 	FGameplayTag SpawnPointTag;
 
@@ -394,6 +392,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonIncapacitationComponent> IncapacitationComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonCommandComponent> CommandComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -425,7 +426,7 @@ public:
 	bool bIsCaught = false;
 
 	UFUNCTION(BlueprintCallable)
-	void SetIsDodging(bool Dodging) { bIsDodging = Dodging; }
+	void SetIsDodging(bool Dodging);
 
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() { return AIBehaviorTree; }
 
@@ -435,9 +436,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	APokemonAIController* GetPokemonController();
 
-	FORCEINLINE bool GetIsCommandActive() { return ActivePokemonMove != nullptr; }
-	FORCEINLINE bool GetIsDodging() { return bIsDodging; }
-	FORCEINLINE bool GetIsUsingMove() { return bIsUsingMove; }
+	FORCEINLINE bool GetIsCommandActive() const;
+	FORCEINLINE bool GetIsDodging() const;
+	FORCEINLINE bool GetIsUsingMove() const;
 	
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FORCEINLINE bool HasTrainer() { return CurrentTrainer != nullptr; }
@@ -457,8 +458,10 @@ public:
 
 	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
 
+	UMovesetComponent* GetMovesetComponent() const { return MovesetComponent; }
+
 	UFUNCTION(BlueprintCallable,BlueprintPure)
-	FVector GetDodgeDirection() { return DodgeDirection; }
+	FVector GetDodgeDirection() const;
 
 	void SetPokemonTrainer(AActor* NewTrainer);
 	void CallCommand(int32 MoveIndex);

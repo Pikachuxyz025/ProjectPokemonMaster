@@ -21,6 +21,7 @@
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
 
 APokemon_Parent::APokemon_Parent()
 {
@@ -34,13 +35,14 @@ APokemon_Parent::APokemon_Parent()
 	MovesetComponent = CreateDefaultSubobject<UMovesetComponent>(TEXT("Moveset Component"));
 	IncapacitationComponent = CreateDefaultSubobject<UPokemonIncapacitationComponent>(TEXT("Incapacitation Component"));
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
-		NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
+	NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
+	CommandComponent = CreateDefaultSubobject<UPokemonCommandComponent>(TEXT("Command Component"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
 
-	GetMesh()->SetCollisionResponseToChannel(ECC_Melee,ECollisionResponse::ECR_Overlap);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Camera,ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
@@ -149,59 +151,120 @@ void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
 
+#pragma region Pokemon Command Component
+
 void APokemon_Parent::SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget)
 {
-	CurrentCommandTarget = NewCommandTarget;
+	if(CommandComponent)
+	{
+		CommandComponent->SetCommandTarget(NewCommandTarget);
+	}
 }
 
 void APokemon_Parent::ClearCommandTarget()
 {
-	CurrentCommandTarget.Clear();
+	if (CommandComponent)
+	{
+		CommandComponent->ClearCommandTarget();
+	}
 }
 
 const FPokemonCommandTarget& APokemon_Parent::GetCommandTarget() const
 {
-	return CurrentCommandTarget;
+	check(CommandComponent);
+	return CommandComponent->GetCommandTarget();
 }
 
 FPokemonCommandTarget APokemon_Parent::BuildCommandTargetFromHit(const FHitResult& Hit)
 {
-	FPokemonCommandTarget Result;
-
-	Result.bHasHitResult = Hit.bBlockingHit;
-	Result.HitResult = Hit;
-	Result.TargetLocation = Hit.ImpactPoint;
-	Result.ImpactNormal = Hit.ImpactNormal;
-	Result.TargetActor = Hit.GetActor();
-
-	if (!Hit.bBlockingHit)
+	if(CommandComponent)
 	{
-		Result.TargetType = EPokemonCommandTargetType::None;
-		return Result;
+		return CommandComponent->BuildCommandTargetFromHit(Hit);
 	}
-
-	AActor* HitActor = Hit.GetActor();
-	if (!HitActor)
-	{
-		Result.TargetType = EPokemonCommandTargetType::Location;
-		return Result;
-	}
-
-	if (APokemon_Parent* HitPokemon = Cast<APokemon_Parent>(HitActor))
-	{
-		Result.TargetType = EPokemonCommandTargetType::EnemyPokemon;
-		return Result;
-	}
-
-	Result.TargetType = EPokemonCommandTargetType::Environment;
-	return Result;
+	return FPokemonCommandTarget();
 }
 
 void APokemon_Parent::SetCommandTargetFromHit(const FHitResult& Hit)
 {
-	FPokemonCommandTarget NewTarget = BuildCommandTargetFromHit(Hit);
-	SetCommandTarget(NewTarget);
+	if (CommandComponent)
+	{
+		CommandComponent->SetCommandTargetFromHit(Hit);
+	}
 }
+
+void APokemon_Parent::AttackEnded()
+{
+	if (CommandComponent)
+	{
+		CommandComponent->AttackEnded();
+	}
+}
+
+void APokemon_Parent::CallCommand(int32 MoveIndex)
+{
+	if (CommandComponent)
+	{
+		CommandComponent->TryCallCommand(MoveIndex);
+	}
+}
+
+void APokemon_Parent::SetIsDodging(bool Dodging)
+{
+	if (CommandComponent)
+	{
+		CommandComponent->SetIsDodging(Dodging);
+	}
+}
+
+bool APokemon_Parent::GetIsCommandActive() const
+{
+	return CommandComponent && CommandComponent->IsCommandActive();
+}
+
+bool APokemon_Parent::GetIsDodging() const
+{
+	return CommandComponent && CommandComponent->IsDodging();
+}
+
+bool APokemon_Parent::GetIsUsingMove() const
+{
+	return CommandComponent && CommandComponent->IsUsingMove();
+}
+
+FVector APokemon_Parent::GetDodgeDirection() const
+{
+	return CommandComponent ? CommandComponent->GetDodgeDirection() : FVector::ZeroVector;
+}
+
+void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
+{
+	if (CommandComponent)
+	{
+		CommandComponent->Dodge(NewDodgeDirection);
+	}
+}
+
+void APokemon_Parent::EndDodge()
+{
+	if (CommandComponent)
+	{
+		CommandComponent->EndDodge();
+	}
+}
+
+void APokemon_Parent::SelectRandomMove()
+{
+	if (CommandComponent)
+	{
+		CommandComponent->SelectRandomMove();
+	}
+}
+
+UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
+{
+	return CommandComponent ? CommandComponent->GetActiveMove() : nullptr;
+}
+#pragma endregion
 
 FPokemonInfo APokemon_Parent::SetupPokemonInfo()
 {
@@ -390,25 +453,6 @@ void APokemon_Parent::OnRep_StartupPokemonInfo()
 	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
 
-void APokemon_Parent::AttackEnded()
-{
-	if (GetCapsuleComponent()->OnComponentHit.IsBound())
-		GetCapsuleComponent()->OnComponentHit.Clear();
-	if (bIsCharging)
-	{
-		bIsCharging = false;
-		GetCharacterMovement()->StopMovementImmediately();
-		GetCapsuleComponent()->SetSimulatePhysics(false);
-		
-	}
-
-	ActivePokemonMove = nullptr;
-	UE_LOG(LogTemp, Display, TEXT("Attack Ended"));
-	GetPokemonController()->SetBlackboardCurrentMove(ActivePokemonMove);
-	SetMovementSpeed(EMovementSpeed::EMS_Running);
-
-	OnAttackEnd.Broadcast();
-}
 
 void APokemon_Parent::PrepareForFieldRemoval()
 {
@@ -446,7 +490,10 @@ void APokemon_Parent::PrepareForFieldRemoval()
 	}
 
 	// Stop Combat State
-	ActivePokemonMove = nullptr;
+	if (CommandComponent)
+	{
+		CommandComponent->ClearActiveMove();
+	}
 	ClearTrainerBindings();
 }
 
@@ -460,7 +507,10 @@ void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
 	bIsDead = true;
 
 	// Stop Combat Logic
-	ActivePokemonMove = nullptr;
+	if(CommandComponent)
+	{
+		CommandComponent->ClearActiveMove();
+	}
 
 	// Stop movement
 	if (GetCharacterMovement())
@@ -654,7 +704,7 @@ void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed, float Mo
 		NewSpeed = GetRunningSpeed();
 		break;
 	case EMovementSpeed::EMS_Engaging:
-		if (ActivePokemonMove)
+		if (GetPokemonActiveMove())
 			NewSpeed = GetEngagedSpeed(MoveMultiplier);
 		else
 			NewSpeed = GetEngagedSpeed();
@@ -736,10 +786,6 @@ FPokemonTypeInfo APokemon_Parent::GetPokemonElementalTypes()
 	return NewTypeInfo;
 }
 
-UPokemonMoveDataAsset* APokemon_Parent::GetPokemonActiveMove()
-{
-	return ActivePokemonMove;
-}
 
 int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
 {
@@ -898,24 +944,6 @@ float APokemon_Parent::GetTargetPriorityScore_Implementation() const
 	return 0.0f;
 }
 
-void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
-{
-	DodgeDirection = NewDodgeDirection;
-	PokemonController->SetBlackboardActionState(EMoveAction::EMA_Dodging);
-}
-
-void APokemon_Parent::EndDodge()
-{
-	PokemonController->SetBlackboardActionState(EMoveAction::EMA_None);
-	OnDodgeEnd.Broadcast();
-}
-
-void APokemon_Parent::SelectRandomMove()
-{
-	int32 RandonIndex = FMath::RandRange(0, 3);
-	CallCommand(RandonIndex);
-}
-
 UPokemonAbilitySystemComponent* APokemon_Parent::GetPokemonASC()
 {
 	if (!PokemonASC)
@@ -943,54 +971,7 @@ void APokemon_Parent::SetPokemonTrainer(AActor* NewTrainer)
 
 	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
 }
-void APokemon_Parent::CallCommand(int32 MoveIndex)
-{
-	if (GetIsCommandActive())
-	{
-		UE_LOG(LogTemp, Verbose, TEXT("CallCommand ignored: command already active."));
-		return;
-	}
-	if (!MovesetComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CallCommand failed: MovesetComponent is null."));
-		return;
-	}
-	if (!MovesetComponent->CurrentPokemonMoves.IsValidIndex(MoveIndex))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CallCommand failed: Invalid move index %d."), MoveIndex);
-		return;
-	}
 
-	UPokemonMoveDataAsset* SelectedMove = MovesetComponent->CurrentPokemonMoves[MoveIndex];
-	if (!SelectedMove)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CallCommand failed: Move at index %d is null."), MoveIndex);
-		return;
-	}
-	UPokemonAbilitySystemComponent* PASC = GetPokemonASC();
-	if (!PASC)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CallCommand failed: PokemonASC is null."));
-		return;
-	}
-
-	const FGameplayTag MoveCooldownTag = SelectedMove->CooldownTag;
-	if (PASC->HasMatchingGameplayTag(MoveCooldownTag))
-	{
-		UE_LOG(LogTemp, Display, TEXT("Move '%s' is in cooldown."), *SelectedMove->MoveName.ToString());
-		return;
-	}
-	ActivePokemonMove = SelectedMove;
-
-	if (PokemonController)
-	{
-		PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CallCommand warning: PokemonController is null."));
-	}
-}
 
 #pragma region Damage Component
 
