@@ -18,6 +18,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class AActor;
 class APokemon_Parent;
 struct FAimData;
+struct FHitResult;
 
 // ********** Begin Delegate FOnPartyUpdated *******************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_33_DELEGATE \
@@ -28,7 +29,7 @@ PROJECTMIMIKYU_API void FOnPartyUpdated_DelegateWrapper(const FMulticastScriptDe
 
 // ********** Begin Delegate FOnTargetRegistered ***************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_35_DELEGATE \
-PROJECTMIMIKYU_API void FOnTargetRegistered_DelegateWrapper(const FMulticastScriptDelegate& OnTargetRegistered, AActor* CombatTarget);
+PROJECTMIMIKYU_API void FOnTargetRegistered_DelegateWrapper(const FMulticastScriptDelegate& OnTargetRegistered, FHitResult CombatHitResult);
 
 
 // ********** End Delegate FOnTargetRegistered *****************************************************
@@ -44,7 +45,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h_41_RPC_WRAPPERS_NO_PURE_DECLS \
 	virtual void ServerThrowSelectedPokemon_Implementation(int32 SelectedPartyIndex, FAimData const& AimData); \
 	virtual void ServerThrowSelectedInventoryItem_Implementation(FName ItemID, FAimData const& AimData); \
-	virtual void ServerBroadcastTarget_Implementation(AActor* Target); \
+	virtual void ServerBroadcastTarget_Implementation(FHitResult const& CombatHitResult); \
 	virtual void ServerAddToCurrentParty_Implementation(AActor* AddedActor); \
 	virtual void ServerCallCommand_Implementation(int32 MoveIndex, FAimData const& AimData); \
 	virtual void ServerRequestReturnCurrentPokemon_Implementation(); \

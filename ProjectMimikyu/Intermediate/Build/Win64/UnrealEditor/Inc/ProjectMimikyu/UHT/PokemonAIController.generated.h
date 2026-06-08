@@ -19,7 +19,8 @@ class AActor;
 
 // ********** Begin Class APokemonAIController *****************************************************
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h_21_RPC_WRAPPERS_NO_PURE_DECLS \
-	DECLARE_FUNCTION(execGetCombatTarget);
+	DECLARE_FUNCTION(execGetCombatTarget); \
+	DECLARE_FUNCTION(execClearCombatTarget);
 
 
 struct Z_Construct_UClass_APokemonAIController_Statics;

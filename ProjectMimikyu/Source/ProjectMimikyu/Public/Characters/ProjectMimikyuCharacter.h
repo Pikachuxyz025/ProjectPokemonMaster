@@ -32,7 +32,7 @@ class UTrainerQuickSlotComponent;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPokemonHealthUpdated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,AActor*,CombatTarget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,FHitResult,CombatHitResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
 UCLASS(config = Game)
@@ -132,7 +132,7 @@ private:
 	void ServerAddToCurrentParty(AActor* AddedActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerBroadcastTarget(AActor* Target);
+	void ServerBroadcastTarget(const FHitResult& CombatHitResult);
 
 	UFUNCTION(Server, Reliable)
 	void ServerThrowSelectedInventoryItem(FName ItemID, const FAimData& AimData);

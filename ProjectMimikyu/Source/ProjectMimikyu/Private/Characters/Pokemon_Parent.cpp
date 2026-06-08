@@ -149,6 +149,60 @@ void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 	SpawnPointTag = GameplayTags.SpawnPoint_ComeOnOut;
 }
 
+void APokemon_Parent::SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget)
+{
+	CurrentCommandTarget = NewCommandTarget;
+}
+
+void APokemon_Parent::ClearCommandTarget()
+{
+	CurrentCommandTarget.Clear();
+}
+
+const FPokemonCommandTarget& APokemon_Parent::GetCommandTarget() const
+{
+	return CurrentCommandTarget;
+}
+
+FPokemonCommandTarget APokemon_Parent::BuildCommandTargetFromHit(const FHitResult& Hit)
+{
+	FPokemonCommandTarget Result;
+
+	Result.bHasHitResult = Hit.bBlockingHit;
+	Result.HitResult = Hit;
+	Result.TargetLocation = Hit.ImpactPoint;
+	Result.ImpactNormal = Hit.ImpactNormal;
+	Result.TargetActor = Hit.GetActor();
+
+	if (!Hit.bBlockingHit)
+	{
+		Result.TargetType = EPokemonCommandTargetType::None;
+		return Result;
+	}
+
+	AActor* HitActor = Hit.GetActor();
+	if (!HitActor)
+	{
+		Result.TargetType = EPokemonCommandTargetType::Location;
+		return Result;
+	}
+
+	if (APokemon_Parent* HitPokemon = Cast<APokemon_Parent>(HitActor))
+	{
+		Result.TargetType = EPokemonCommandTargetType::EnemyPokemon;
+		return Result;
+	}
+
+	Result.TargetType = EPokemonCommandTargetType::Environment;
+	return Result;
+}
+
+void APokemon_Parent::SetCommandTargetFromHit(const FHitResult& Hit)
+{
+	FPokemonCommandTarget NewTarget = BuildCommandTargetFromHit(Hit);
+	SetCommandTarget(NewTarget);
+}
+
 FPokemonInfo APokemon_Parent::SetupPokemonInfo()
 {
 	FPokemonInfo NewInfo;
@@ -699,10 +753,10 @@ void APokemon_Parent::CombatReady(AActor* Target)
 	PokemonController->SetCombatTarget(Target);
 }
 
-void APokemon_Parent::GetReadyForCombat(AActor* Target)
+void APokemon_Parent::GetReadyForCombat(const FHitResult& CombatHitResult)
 {
-	APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(Target);
-	PokemonController->SetCombatTarget(Target);
+	APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(CombatHitResult.GetActor());
+	PokemonController->SetCombatTarget(PokemonTarget);
 	ApplyEffectToSelf(StaminaRecoveryEffect, 1.f);
 	if (PokemonTarget)
 	{

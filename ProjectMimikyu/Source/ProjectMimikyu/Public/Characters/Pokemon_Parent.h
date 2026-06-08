@@ -11,6 +11,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "GameplayTagContainer.h"
+#include "Command/PokemonCommandTypes.h"
 #include "Pokemon_Parent.generated.h"
 
 
@@ -280,6 +281,22 @@ public:
 	void CombatReady(AActor* Target);
 
 	void SetPokemonStartup(const FPokemonInfo SetupInfo);
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Pokemon|Command")
+	FPokemonCommandTarget CurrentCommandTarget;
+
+	UFUNCTION(BlueprintCallable,Category = "Pokemon|Command")
+	void SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void ClearCommandTarget();
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	const FPokemonCommandTarget& GetCommandTarget() const;
+
+	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit);
+
+	void SetCommandTargetFromHit(const FHitResult& Hit);
 protected:
 
 #pragma region Damage Component

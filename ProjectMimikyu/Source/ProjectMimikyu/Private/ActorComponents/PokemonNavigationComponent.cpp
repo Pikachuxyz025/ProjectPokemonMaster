@@ -40,6 +40,15 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
 
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[PokemonNav] SetNavigationIntent | Owner=%s | Intent=%s | Target=%s | DesiredDistance=%.1f | AcceptableRadius=%.1f"),
+		*GetNameSafe(GetOwner()),
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*GetNameSafe(CurrentNavigationRequest.TargetActor.Get()),
+		CurrentNavigationRequest.DesiredDistance,
+		CurrentNavigationRequest.AcceptableRadius
+	);
 }
 
 void UPokemonNavigationComponent::ClearNavigationIntent()
@@ -356,6 +365,14 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 
 	const FPathFollowingRequestResult Result =
 		CachedAIController->MoveTo(MoveRequest);
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[PokemonNav] MoveToActor | Owner=%s | Target=%s | Radius=%.1f | Result=%s"),
+		*GetNameSafe(GetOwner()),
+		*GetNameSafe(TargetActor),
+		AcceptableRadius,
+		*UEnum::GetValueAsString(Result.Code)
+	);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }

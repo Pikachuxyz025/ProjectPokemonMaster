@@ -7,6 +7,7 @@
 #include "UObject/GeneratedCppIncludes.h"
 #include "Characters/ProjectMimikyuCharacter.h"
 #include "ActorComponents/TargetingType.h"
+#include "Engine/HitResult.h"
 #include "InputCoreTypes.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -20,6 +21,7 @@ ENGINE_API UClass* Z_Construct_UClass_AActor_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_ACharacter();
 ENGINE_API UClass* Z_Construct_UClass_UCameraComponent_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_USpringArmComponent_NoRegister();
+ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FHitResult();
 ENHANCEDINPUT_API UClass* Z_Construct_UClass_UEnhancedInputLocalPlayerSubsystem_NoRegister();
 ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputAction_NoRegister();
 ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputMappingContext_NoRegister();
@@ -107,7 +109,7 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__Delegate
 {
 	struct _Script_ProjectMimikyu_eventOnTargetRegistered_Parms
 	{
-		AActor* CombatTarget;
+		FHitResult CombatHitResult;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -122,16 +124,16 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__Delegate
 #endif // WITH_METADATA
 
 // ********** Begin Delegate FOnTargetRegistered constinit property declarations *******************
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_CombatTarget;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CombatHitResult;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Delegate FOnTargetRegistered constinit property declarations *********************
 	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
 };
 
 // ********** Begin Delegate FOnTargetRegistered Property Definitions ******************************
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::NewProp_CombatTarget = { "CombatTarget", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnTargetRegistered_Parms, CombatTarget), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::NewProp_CombatHitResult = { "CombatHitResult", nullptr, (EPropertyFlags)0x0010008000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventOnTargetRegistered_Parms, CombatHitResult), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(0, nullptr) }; // 222120718
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::NewProp_CombatTarget,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::NewProp_CombatHitResult,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature_Statics::PropPointers) < 2048);
 // ********** End Delegate FOnTargetRegistered Property Definitions ********************************
@@ -149,14 +151,14 @@ UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__Dele
 	}
 	return ReturnFunction;
 }
-void FOnTargetRegistered_DelegateWrapper(const FMulticastScriptDelegate& OnTargetRegistered, AActor* CombatTarget)
+void FOnTargetRegistered_DelegateWrapper(const FMulticastScriptDelegate& OnTargetRegistered, FHitResult CombatHitResult)
 {
 	struct _Script_ProjectMimikyu_eventOnTargetRegistered_Parms
 	{
-		AActor* CombatTarget;
+		FHitResult CombatHitResult;
 	};
 	_Script_ProjectMimikyu_eventOnTargetRegistered_Parms Parms;
-	Parms.CombatTarget=CombatTarget;
+	Parms.CombatHitResult=CombatHitResult;
 	OnTargetRegistered.ProcessMulticastDelegate<UObject>(&Parms);
 }
 // ********** End Delegate FOnTargetRegistered *****************************************************
@@ -361,13 +363,13 @@ DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerAddToCurrentParty)
 // ********** Begin Class AProjectMimikyuCharacter Function ServerBroadcastTarget ******************
 struct ProjectMimikyuCharacter_eventServerBroadcastTarget_Parms
 {
-	AActor* Target;
+	FHitResult CombatHitResult;
 };
 static FName NAME_AProjectMimikyuCharacter_ServerBroadcastTarget = FName(TEXT("ServerBroadcastTarget"));
-void AProjectMimikyuCharacter::ServerBroadcastTarget(AActor* Target)
+void AProjectMimikyuCharacter::ServerBroadcastTarget(FHitResult const& CombatHitResult)
 {
 	ProjectMimikyuCharacter_eventServerBroadcastTarget_Parms Parms;
-	Parms.Target=Target;
+	Parms.CombatHitResult=CombatHitResult;
 	UFunction* Func = FindFunctionChecked(NAME_AProjectMimikyuCharacter_ServerBroadcastTarget);
 	ProcessEvent(Func,&Parms);
 }
@@ -377,19 +379,22 @@ struct Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Stat
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
 		{ "ModuleRelativePath", "Public/Characters/ProjectMimikyuCharacter.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CombatHitResult_MetaData[] = {
+		{ "NativeConst", "" },
+	};
 #endif // WITH_METADATA
 
 // ********** Begin Function ServerBroadcastTarget constinit property declarations *****************
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_Target;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_CombatHitResult;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Function ServerBroadcastTarget constinit property declarations *******************
 	static const UECodeGen_Private::FFunctionParams FuncParams;
 };
 
 // ********** Begin Function ServerBroadcastTarget Property Definitions ****************************
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::NewProp_Target = { "Target", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerBroadcastTarget_Parms, Target), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::NewProp_CombatHitResult = { "CombatHitResult", nullptr, (EPropertyFlags)0x0010008008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ProjectMimikyuCharacter_eventServerBroadcastTarget_Parms, CombatHitResult), Z_Construct_UScriptStruct_FHitResult, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CombatHitResult_MetaData), NewProp_CombatHitResult_MetaData) }; // 222120718
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::PropPointers[] = {
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::NewProp_Target,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::NewProp_CombatHitResult,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget_Statics::PropPointers) < 2048);
 // ********** End Function ServerBroadcastTarget Property Definitions ******************************
@@ -409,10 +414,10 @@ UFunction* Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget(
 }
 DEFINE_FUNCTION(AProjectMimikyuCharacter::execServerBroadcastTarget)
 {
-	P_GET_OBJECT(AActor,Z_Param_Target);
+	P_GET_STRUCT(FHitResult,Z_Param_CombatHitResult);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->ServerBroadcastTarget_Implementation(Z_Param_Target);
+	P_THIS->ServerBroadcastTarget_Implementation(Z_Param_CombatHitResult);
 	P_NATIVE_END;
 }
 // ********** End Class AProjectMimikyuCharacter Function ServerBroadcastTarget ********************
@@ -1296,7 +1301,7 @@ struct Z_Construct_UClass_AProjectMimikyuCharacter_Statics
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_GetCurrentPokemon, "GetCurrentPokemon" }, // 3605605730
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_OnRep_CurrentPokemon, "OnRep_CurrentPokemon" }, // 2993332916
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerAddToCurrentParty, "ServerAddToCurrentParty" }, // 3024493065
-		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 3792485875
+		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 748066562
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerCallCommand, "ServerCallCommand" }, // 1971618389
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemon, "ServerRequestCatchPokemon" }, // 3515487993
 		{ &Z_Construct_UFunction_AProjectMimikyuCharacter_ServerRequestCatchPokemonWithPokeball, "ServerRequestCatchPokemonWithPokeball" }, // 4181395451
@@ -1492,10 +1497,10 @@ AProjectMimikyuCharacter::~AProjectMimikyuCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 522081670U) },
+		{ Z_Construct_UClass_AProjectMimikyuCharacter, AProjectMimikyuCharacter::StaticClass, TEXT("AProjectMimikyuCharacter"), &Z_Registration_Info_UClass_AProjectMimikyuCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AProjectMimikyuCharacter), 2213910551U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_2601142878{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_375788639{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_ProjectMimikyuCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

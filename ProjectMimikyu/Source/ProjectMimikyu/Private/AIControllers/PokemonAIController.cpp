@@ -53,6 +53,16 @@ void APokemonAIController::SetPokemonStatus(EPokemonStatus NewPokemonStatus)
 	GetBlackboardComponent()->SetValueAsEnum(PokemonStatusKeyName, (uint8)NewPokemonStatus);
 }
 
+void APokemonAIController::ClearCombatTarget()
+{
+	CombatTarget = nullptr;
+
+	if (UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
+	{
+		BlackboardComp->ClearValue(CombatTargetKeyName);
+	}
+}
+
 void APokemonAIController::SetBlackboardTrainer()
 {
 	//if (!Blackboard)

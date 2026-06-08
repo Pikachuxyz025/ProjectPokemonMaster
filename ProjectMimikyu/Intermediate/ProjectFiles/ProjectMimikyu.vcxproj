@@ -346,10 +346,16 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonBrainComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonCommandComponent.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonNavigationComponent.cpp">
+      <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetableComponent.cpp">
       <AdditionalIncludeDirectories>$(ClCompile_AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\TargetingComponent.cpp">
@@ -628,8 +634,10 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\ItemDataComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonBrainComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonCommandComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonNavigationComponent.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetableComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingComponent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TargetingType.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\TrainerQuickSlotComponent.h"/>
@@ -641,6 +649,7 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\CharacterTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\Pokemon_Parent.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Characters\ProjectMimikyuCharacter.h"/>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Command\PokemonCommandTypes.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\EffortLevelBaseDataAsset.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonAICombatBrainConfig.h"/>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\DataAssets\PokemonDataAsset.h"/>

@@ -154,9 +154,9 @@ void AProjectMimikyuCharacter::ServerSetPokemon_Implementation(APokemon_Parent* 
 	CurrentPokemon = LeadPokemon;
 }
 
-void AProjectMimikyuCharacter::ServerBroadcastTarget_Implementation(AActor* Target)
+void AProjectMimikyuCharacter::ServerBroadcastTarget_Implementation(const FHitResult& CombatHitResult)
 {
-	OnTargetRegistered.Broadcast(Target);
+	OnTargetRegistered.Broadcast(CombatHitResult);
 }
 
 void AProjectMimikyuCharacter::ServerAddToCurrentParty_Implementation(AActor* AddedActor)
@@ -951,6 +951,6 @@ void AProjectMimikyuCharacter::TargetAndEngage()
 		UE_LOG(LogTemp, Display, TEXT("Hit something"));
 		EngagedTarget = OutHit.GetActor();
 		GetTPS()->SetTrainerIsInCombat(EngagedTarget);
-		ServerBroadcastTarget(EngagedTarget);
+		ServerBroadcastTarget(OutHit);
 	}
 }

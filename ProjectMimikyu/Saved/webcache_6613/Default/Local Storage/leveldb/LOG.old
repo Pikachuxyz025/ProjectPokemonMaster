@@ -1,3 +1,14 @@
-2026/06/06-21:48:24.545 67ec Reusing MANIFEST C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
-2026/06/06-21:48:24.555 67ec Recovering log #75
-2026/06/06-21:48:24.562 67ec Reusing old log C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/000075.log 
+2026/06/06-21:54:57.959 59e4 Reusing MANIFEST C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
+2026/06/06-21:54:57.964 59e4 Recovering log #75
+2026/06/06-21:54:57.964 59e4 Level-0 table #77: started
+2026/06/06-21:54:57.980 59e4 Level-0 table #77: 80368 bytes OK
+2026/06/06-21:54:57.984 59e4 Delete type=0 #75
+2026/06/06-21:54:57.985 734 Compacting 4@0 + 1@1 files
+2026/06/06-21:54:57.993 734 Generated table #79@0: 7 keys, 27395 bytes
+2026/06/06-21:54:57.994 734 Compacted 4@0 + 1@1 files => 27395 bytes
+2026/06/06-21:54:57.995 734 compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/06/06-21:54:57.996 734 Delete type=2 #66
+2026/06/06-21:54:57.996 734 Delete type=2 #68
+2026/06/06-21:54:57.996 734 Delete type=2 #71
+2026/06/06-21:54:57.996 734 Delete type=2 #74
+2026/06/06-21:54:57.996 734 Delete type=2 #77

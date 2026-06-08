@@ -50,10 +50,10 @@ protected:
 	TObjectPtr<class UAISenseConfig_Hearing> HearingSense = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
-	AActor* CombatTarget;
+	TObjectPtr<AActor> CombatTarget;
 
 	UPROPERTY(VisibleAnywhere)
-	AActor* TrainerToFollow;
+	TObjectPtr<AActor> TrainerToFollow;
 
 	//UPROPERTY(VisibleAnywhere)
 	//FGameplayTag CurrentStateTag;
@@ -85,7 +85,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Key Names")
 	FName CombatTargetKeyName = FName("CombatTarget");
 
-
+	UFUNCTION(BlueprintCallable,Category = "Pokemon|AI|Targeting")
+	void ClearCombatTarget();
 
 	void SetBlackboardTrainer();
 	void SetBlackboardASC();
