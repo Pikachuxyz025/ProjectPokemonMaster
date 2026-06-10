@@ -36,6 +36,7 @@ struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
 class UPokemonCommandComponent;
 class UPokemonOwnershipComponent;
+class UPokemonFieldPresenceComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -201,9 +202,6 @@ public:
 	UFUNCTION()
 	void PrepareForFieldRemoval();
 
-	UFUNCTION(NetMulticast,Reliable)
-	void MulticastPlayReturnEffects();
-
 	void ClearTrainerBindings();
 	#pragma endregion
 
@@ -267,6 +265,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Elim")
 	TObjectPtr<UMaterialInstance> ReturnMaterialInstance;
 
+	void ClearActiveCommandState();
 
 	void Dodge(const FVector NewDodgeDirection);
 
@@ -399,6 +398,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonOwnershipComponent> OwnershipComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonFieldPresenceComponent> FieldPresenceComponent;
 
 	FPokemonInfo SetupPokemonInfo();
 

@@ -43,6 +43,7 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonBaseAttributeSet_NoRegiste
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonCombatInterface_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonCommandComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonDataAsset_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonFieldPresenceComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonIncapacitationComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonNavigationComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonOwnershipComponent_NoRegister();
@@ -1590,47 +1591,6 @@ DEFINE_FUNCTION(APokemon_Parent::execIsPokemonProne)
 }
 // ********** End Class APokemon_Parent Function IsPokemonProne ************************************
 
-// ********** Begin Class APokemon_Parent Function MulticastPlayReturnEffects **********************
-static FName NAME_APokemon_Parent_MulticastPlayReturnEffects = FName(TEXT("MulticastPlayReturnEffects"));
-void APokemon_Parent::MulticastPlayReturnEffects()
-{
-	UFunction* Func = FindFunctionChecked(NAME_APokemon_Parent_MulticastPlayReturnEffects);
-	ProcessEvent(Func,NULL);
-}
-struct Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
-	};
-#endif // WITH_METADATA
-
-// ********** Begin Function MulticastPlayReturnEffects constinit property declarations ************
-// ********** End Function MulticastPlayReturnEffects constinit property declarations **************
-	static const UECodeGen_Private::FFunctionParams FuncParams;
-};
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_APokemon_Parent, nullptr, "MulticastPlayReturnEffects", 	nullptr, 
-	0, 
-0,
-RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00024CC0, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects_Statics::Function_MetaDataParams)},  };
-UFunction* Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects()
-{
-	static UFunction* ReturnFunction = nullptr;
-	if (!ReturnFunction)
-	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects_Statics::FuncParams);
-	}
-	return ReturnFunction;
-}
-DEFINE_FUNCTION(APokemon_Parent::execMulticastPlayReturnEffects)
-{
-	P_FINISH;
-	P_NATIVE_BEGIN;
-	P_THIS->MulticastPlayReturnEffects_Implementation();
-	P_NATIVE_END;
-}
-// ********** End Class APokemon_Parent Function MulticastPlayReturnEffects ************************
-
 // ********** Begin Class APokemon_Parent Function OnRep_StartupPokemonInfo ************************
 struct Z_Construct_UFunction_APokemon_Parent_OnRep_StartupPokemonInfo_Statics
 {
@@ -2255,6 +2215,11 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_FieldPresenceComponent_MetaData[] = {
+		{ "Category", "Components" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_WalkingSpeed_MetaData[] = {
 		{ "Category", "Combat" },
 		{ "ModuleRelativePath", "Public/Characters/Pokemon_Parent.h" },
@@ -2333,6 +2298,7 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IncapacitationComponent;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_CommandComponent;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_OwnershipComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_FieldPresenceComponent;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_WalkingSpeed;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_RunningSpeed;
 	static const UECodeGen_Private::FNamePropertyParams NewProp_ProjectileSocketName;
@@ -2372,7 +2338,6 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 		{ .NameUTF8 = UTF8TEXT("IsOwnedByTrainer"), .Pointer = &APokemon_Parent::execIsOwnedByTrainer },
 		{ .NameUTF8 = UTF8TEXT("IsPokemonFaintedProne"), .Pointer = &APokemon_Parent::execIsPokemonFaintedProne },
 		{ .NameUTF8 = UTF8TEXT("IsPokemonProne"), .Pointer = &APokemon_Parent::execIsPokemonProne },
-		{ .NameUTF8 = UTF8TEXT("MulticastPlayReturnEffects"), .Pointer = &APokemon_Parent::execMulticastPlayReturnEffects },
 		{ .NameUTF8 = UTF8TEXT("OnRep_StartupPokemonInfo"), .Pointer = &APokemon_Parent::execOnRep_StartupPokemonInfo },
 		{ .NameUTF8 = UTF8TEXT("PrepareForFieldRemoval"), .Pointer = &APokemon_Parent::execPrepareForFieldRemoval },
 		{ .NameUTF8 = UTF8TEXT("SelectRandomMove"), .Pointer = &APokemon_Parent::execSelectRandomMove },
@@ -2412,7 +2377,6 @@ struct Z_Construct_UClass_APokemon_Parent_Statics
 		{ &Z_Construct_UFunction_APokemon_Parent_IsOwnedByTrainer, "IsOwnedByTrainer" }, // 3817422985
 		{ &Z_Construct_UFunction_APokemon_Parent_IsPokemonFaintedProne, "IsPokemonFaintedProne" }, // 4170150779
 		{ &Z_Construct_UFunction_APokemon_Parent_IsPokemonProne, "IsPokemonProne" }, // 127710511
-		{ &Z_Construct_UFunction_APokemon_Parent_MulticastPlayReturnEffects, "MulticastPlayReturnEffects" }, // 2452750425
 		{ &Z_Construct_UFunction_APokemon_Parent_OnRep_StartupPokemonInfo, "OnRep_StartupPokemonInfo" }, // 1461422383
 		{ &Z_Construct_UFunction_APokemon_Parent_PrepareForFieldRemoval, "PrepareForFieldRemoval" }, // 3010003046
 		{ &Z_Construct_UFunction_APokemon_Parent_SelectRandomMove, "SelectRandomMove" }, // 2827749720
@@ -2485,6 +2449,7 @@ const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_APokemon_Parent_S
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_IncapacitationComponent = { "IncapacitationComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, IncapacitationComponent), Z_Construct_UClass_UPokemonIncapacitationComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IncapacitationComponent_MetaData), NewProp_IncapacitationComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_CommandComponent = { "CommandComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, CommandComponent), Z_Construct_UClass_UPokemonCommandComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CommandComponent_MetaData), NewProp_CommandComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_OwnershipComponent = { "OwnershipComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, OwnershipComponent), Z_Construct_UClass_UPokemonOwnershipComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OwnershipComponent_MetaData), NewProp_OwnershipComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_FieldPresenceComponent = { "FieldPresenceComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, FieldPresenceComponent), Z_Construct_UClass_UPokemonFieldPresenceComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_FieldPresenceComponent_MetaData), NewProp_FieldPresenceComponent_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_WalkingSpeed = { "WalkingSpeed", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, WalkingSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_WalkingSpeed_MetaData), NewProp_WalkingSpeed_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_RunningSpeed = { "RunningSpeed", nullptr, (EPropertyFlags)0x0020080000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, RunningSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_RunningSpeed_MetaData), NewProp_RunningSpeed_MetaData) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_APokemon_Parent_Statics::NewProp_ProjectileSocketName = { "ProjectileSocketName", nullptr, (EPropertyFlags)0x0020080000010001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokemon_Parent, ProjectileSocketName), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ProjectileSocketName_MetaData), NewProp_ProjectileSocketName_MetaData) };
@@ -2538,6 +2503,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_APokemon_
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_IncapacitationComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_CommandComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_OwnershipComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_FieldPresenceComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_WalkingSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_RunningSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APokemon_Parent_Statics::NewProp_ProjectileSocketName,
@@ -2606,10 +2572,10 @@ APokemon_Parent::~APokemon_Parent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 3455932159U) },
+		{ Z_Construct_UClass_APokemon_Parent, APokemon_Parent::StaticClass, TEXT("APokemon_Parent"), &Z_Registration_Info_UClass_APokemon_Parent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemon_Parent), 997284797U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_3177188024{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_2807929525{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_Pokemon_Parent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

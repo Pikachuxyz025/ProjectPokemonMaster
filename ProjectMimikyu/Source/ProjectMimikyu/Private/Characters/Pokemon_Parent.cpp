@@ -14,6 +14,7 @@
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonOwnershipComponent.h"
+#include "ActorComponents/PokemonFieldPresenceComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -43,6 +44,7 @@ APokemon_Parent::APokemon_Parent()
 	CommandComponent = CreateDefaultSubobject<UPokemonCommandComponent>(TEXT("Command Component"));
 	OwnershipComponent = CreateDefaultSubobject<UPokemonOwnershipComponent>(TEXT("Ownership Component"));
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
+	FieldPresenceComponent = CreateDefaultSubobject<UPokemonFieldPresenceComponent>("Field Presence Component");
 
 
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -242,6 +244,14 @@ bool APokemon_Parent::GetIsUsingMove() const
 FVector APokemon_Parent::GetDodgeDirection() const
 {
 	return CommandComponent ? CommandComponent->GetDodgeDirection() : FVector::ZeroVector;
+}
+
+void APokemon_Parent::ClearActiveCommandState()
+{
+	if (CommandComponent)
+	{
+		CommandComponent->ClearActiveMove();
+	}
 }
 
 void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
@@ -509,45 +519,10 @@ void APokemon_Parent::UnbindTrainerTargetDelegate(AActor* TrainerActor)
 
 void APokemon_Parent::PrepareForFieldRemoval()
 {
-	if (!HasAuthority())
+	if (FieldPresenceComponent)
 	{
-		return;
+		FieldPresenceComponent->PrepareForFieldRemoval();
 	}
-
-	// Stop AI/Brain first
-	if (PokemonController)
-	{
-		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
-		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned to ball / caught")));
-		PokemonController->StopMovement();
-	}
-
-	// Stop movement
-	if (GetCharacterMovement())
-	{
-		GetCharacterMovement()->StopMovementImmediately();
-		GetCharacterMovement()->DisableMovement();
-	}
-
-	// Disable gameplay interaction
-	SetActorEnableCollision(false);
-
-	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
-	{
-		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-
-	if (USkeletalMeshComponent* MeshComp = GetMesh())
-	{
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-
-	// Stop Combat State
-	if (CommandComponent)
-	{
-		CommandComponent->ClearActiveMove();
-	}
-	ClearTrainerBindings();
 }
 
 void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
@@ -579,10 +554,6 @@ void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
 	}
 }
 
-void APokemon_Parent::MulticastPlayReturnEffects_Implementation()
-{
-	Dissolve();
-}
 
 void APokemon_Parent::ClearTrainerBindings()
 {
@@ -716,15 +687,10 @@ bool APokemon_Parent::CanInteractWhileFainted() const
 
 void APokemon_Parent::Return()
 {
-	if (!HasAuthority())
+	if (FieldPresenceComponent)
 	{
-		return;
+		FieldPresenceComponent->ReturnToFieldStorage();
 	}
-
-	MulticastPlayReturnEffects();
-
-	// Delay the actual return to allow effects to play out
-	SetLifeSpan(1.f);
 }
 
 void APokemon_Parent::Dissolve()

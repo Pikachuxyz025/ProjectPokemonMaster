@@ -155,6 +155,9 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonCommandComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonFieldPresenceComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonIncapacitationComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
@@ -597,6 +600,9 @@
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonCommandComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonFieldPresenceComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonIncapacitationComponent.h">
