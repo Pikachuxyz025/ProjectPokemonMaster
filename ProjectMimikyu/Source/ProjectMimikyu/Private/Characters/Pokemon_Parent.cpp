@@ -15,6 +15,7 @@
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonOwnershipComponent.h"
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
+#include "ActorComponents/PokemonCombatSocketComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -45,6 +46,7 @@ APokemon_Parent::APokemon_Parent()
 	OwnershipComponent = CreateDefaultSubobject<UPokemonOwnershipComponent>(TEXT("Ownership Component"));
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
 	FieldPresenceComponent = CreateDefaultSubobject<UPokemonFieldPresenceComponent>("Field Presence Component");
+	CombatSocketComponent = CreateDefaultSubobject<UPokemonCombatSocketComponent>("Combat Socket Component");
 
 
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -770,26 +772,11 @@ int32 APokemon_Parent::GetELBValue(const FGameplayTag& StatTag)
 
 FVector APokemon_Parent::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	FGameplayTagContainer CombatSocketTagContainer;
-	CombatSocketTagContainer.AddTag(GameplayTags.CombatSocket_Melee);
-	CombatSocketTagContainer.AddTag(GameplayTags.CombatSocket_Projectile);
-	CombatSocketTagContainer.AddTag(GameplayTags.CombatSocket_Melee_RightHand);
-	CombatSocketTagContainer.AddTag(GameplayTags.CombatSocket_Melee_LeftHand);
-	CombatSocketTagContainer.AddTag(GameplayTags.CombatSocket_Melee_Tail);
-
-	TMap<FGameplayTag, FName> CombatSocketTagToNames =
+	if (CombatSocketComponent)
 	{
-		{GameplayTags.CombatSocket_Melee,MeleeSocketName},
-		{GameplayTags.CombatSocket_Projectile,ProjectileSocketName},
-		{GameplayTags.CombatSocket_Melee_RightHand,RightHandSocketName},
-		{GameplayTags.CombatSocket_Melee_LeftHand,LeftHandSocketName},
-		{GameplayTags.CombatSocket_Melee_Tail,TailSocketName}
-	};
-
-	if (CombatSocketTagContainer.HasTagExact(MontageTag))
-		return GetMesh()->GetSocketLocation(CombatSocketTagToNames[MontageTag]);
-
-	return FVector();
+		return CombatSocketComponent->GetCombatSocketLocation(MontageTag);
+	}
+	return FVector::ZeroVector;
 }
 
 float APokemon_Parent::GetTypeMatchup(EElementalType AttackingType)

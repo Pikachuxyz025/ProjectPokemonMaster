@@ -8,9 +8,18 @@
 #include "Characters/CharacterTypes.h"
 #include "PokeBall.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EPokeballUseMode :uint8
+{
+	None UMETA(DisplayName = "None"),
+	Capture UMETA(DisplayName = "Capture"),
+	Summon UMETA(DisplayName = "Summon")
+};
+
+class UPokeballCaptureComponent;
+class UPokeballSummonComponent;
+class UProjectileMovementComponent;
+
 UCLASS()
 class PROJECTMIMIKYU_API APokeBall : public AProjectile
 {
@@ -19,9 +28,26 @@ class PROJECTMIMIKYU_API APokeBall : public AProjectile
 public:
 	APokeBall();
 
+	UFUNCTION(BlueprintCallable,Category="Pokeball")
+	void InitializeForCapture(AActor* InSourceActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokeball")
+	void InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation);
+
+	UProjectileMovementComponent* GetProjectileMovementComponent() const { return ProjectileMovementComponent; }
+
 protected:
 
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokeball|Components")
+	TObjectPtr<UPokeballCaptureComponent> CaptureComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokeball|Components")
+	TObjectPtr<UPokeballSummonComponent> SummonComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokeball|Mode")
+	EPokeballUseMode ActiveUseMode = EPokeballUseMode::None;
 
 	UFUNCTION()
 	void OnPokeballStop(const FHitResult& ImpactResult);

@@ -37,6 +37,7 @@ class UPokemonNavigationComponent;
 class UPokemonCommandComponent;
 class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
+class UPokemonCombatSocketComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -402,6 +403,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonFieldPresenceComponent> FieldPresenceComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonCombatSocketComponent> CombatSocketComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -414,17 +418,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectRandomMove();
-
-	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
-	FName ProjectileSocketName;
-	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
-	FName MeleeSocketName;
-	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
-	FName TailSocketName;
-	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
-	FName LeftHandSocketName;
-	UPROPERTY(EditDefaultsOnly, Category = "Combat Socket")
-	FName RightHandSocketName;
 
 public:
 	FPokemonInfo GetPokemonInfo();

@@ -637,7 +637,11 @@ void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> Projec
 		return;
 	}
 
-	Projectile->SetOwner(this);
+	// If projectile is a Pokeball, initialize it for the capture component
+	if (APokeBall* Pokeball = Cast<APokeBall>(Projectile))
+	{
+		Pokeball->InitializeForCapture(this);
+	}
 
 	// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
 	Projectile->LaunchProjectile(LaunchVelocity);

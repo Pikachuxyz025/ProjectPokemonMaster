@@ -149,7 +149,19 @@
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\MovesetComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokeballCaptureComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokeballCaptureComponent.h">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokeballSummonComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonBrainComponent.cpp">
+      <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonCombatSocketComponent.cpp">
       <Filter>Source\ProjectMimikyu\Private\ActorComponents</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\ActorComponents\PokemonCommandComponent.cpp">
@@ -354,6 +366,9 @@
       <Filter>Source\ProjectMimikyu\Private\Items</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\ProjectileAttack.cpp">
+      <Filter>Source\ProjectMimikyu\Private\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProjectMimikyu\Private\Items\SummonEnergyProjectile.cpp">
       <Filter>Source\ProjectMimikyu\Private\Items</Filter>
     </ClCompile>
     <Filter Include="Source\ProjectMimikyu\Private\Player">
@@ -596,7 +611,13 @@
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\MovesetComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokeballSummonComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonBrainComponent.h">
+      <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonCombatSocketComponent.h">
       <Filter>Source\ProjectMimikyu\Public\ActorComponents</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\ActorComponents\PokemonCommandComponent.h">
@@ -819,6 +840,9 @@
       <Filter>Source\ProjectMimikyu\Public\Items</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\ProjectileAttack.h">
+      <Filter>Source\ProjectMimikyu\Public\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProjectMimikyu\Public\Items\SummonEnergyProjectile.h">
       <Filter>Source\ProjectMimikyu\Public\Items</Filter>
     </ClInclude>
     <Filter Include="Source\ProjectMimikyu\Public\Player">
