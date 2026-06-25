@@ -10,6 +10,7 @@ class UPokemonMoveDataAsset;
 class UPokemonDataAsset;
 class APokemon_Parent;
 class UEnvQuery;
+class APokeBall;
 
 #pragma region Enums
 UENUM(BlueprintType)
@@ -505,6 +506,9 @@ struct FPokemonInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPokeballType CapturedBallType = EPokeballType::EPT_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APokeBall> CapturedBallClass;
 
 	UPROPERTY(BlueprintReadOnly)
 	FPokemonUIInfo CurrentUiInfo;

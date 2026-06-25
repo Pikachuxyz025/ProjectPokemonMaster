@@ -10,6 +10,7 @@
 class APokemon_Parent;
 struct FPokemonInfo;
 class UPokemonMoveDataAsset;
+class APokeBall;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPartyUpdatedSignature, TArray<APokemon_Parent*> /*PokemonParty*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPokemonActivationSignature, APokemon_Parent* /*ActivePokemon*/);
@@ -27,7 +28,7 @@ public:
 	FOnPartyInfoUpdatedSignature OnPartyInfoUpdatedDelegate;
 	FOnEventCaller PokemonActiveInCombat;
 
-	void AddToParty(APokemon_Parent* NewPokemon);
+	void AddToParty(APokemon_Parent* NewPokemon, TSubclassOf<APokeBall> PokeballClass);
 	TArray<FPokemonInfo> GetCurrentPokemonParty() { return CurrentPartyInfo; }
 	
 	UFUNCTION()

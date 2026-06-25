@@ -16,7 +16,9 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class AActor;
+class APokeBall;
 class APokemon_Parent;
+class UClass;
 struct FAimData;
 struct FHitResult;
 
@@ -51,7 +53,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	virtual void ServerRequestReturnCurrentPokemon_Implementation(); \
 	virtual void ServerRequestCatchPokemon_Implementation(FVector TraceStart, FVector TraceEnd); \
 	virtual void ServerSetPokemon_Implementation(APokemon_Parent* LeadPokemon); \
-	virtual void ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon); \
+	virtual void ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon, TSubclassOf<APokeBall> PokeballClass); \
 	DECLARE_FUNCTION(execOnRep_CurrentPokemon); \
 	DECLARE_FUNCTION(execHandlePokeballSummonLanded); \
 	DECLARE_FUNCTION(execServerThrowSelectedPokemon); \

@@ -177,7 +177,7 @@ void ATrainerCharacter::ServerRequestCatchPokemon_Implementation(FVector TraceSt
 		UE_LOG(LogTemp, Display, TEXT("No catch target found"));
 		return;
 	}
-	HandleCatchPokemon(TargetPokemon);
+	HandleCatchPokemon(TargetPokemon,PokeballProjectileClass);
 }
 
 void ATrainerCharacter::ServerRequestReturnCurrentPokemon_Implementation()
@@ -298,7 +298,7 @@ void ATrainerCharacter::UpdateAimZoom(float DeltaTime)
 	}
 }
 
-void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon)
+void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon, TSubclassOf<APokeBall> PokeballClass)
 {
 	if(!HasAuthority() || !IsValid(TargetPokemon))
 	{
@@ -311,7 +311,7 @@ void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APo
 		return;
 	}
 
-	HandleCatchPokemon(TargetPokemon);
+	HandleCatchPokemon(TargetPokemon, PokeballClass);
 }
 
 void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 SelectedPartyIndex, const FAimData& AimData)
@@ -344,7 +344,7 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 	// TODO: Replace this with PokemonOut.CaptureBallType once that exist
 	const EPokeballType CaptureBallType = EPokeballType::EPT_None;
 
-	ThrowPokeballForSummon(PokeballProjectileClass, AimData, SelectedPartyIndex);
+	ThrowPokeballForSummon(PokemonOut.CapturedBallClass, AimData, SelectedPartyIndex);
 
 }
 
@@ -378,7 +378,7 @@ bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVect
 	return true;
 }
 
-void ATrainerCharacter::HandleCatchPokemon(APokemon_Parent* CaughtPokemon)
+void ATrainerCharacter::HandleCatchPokemon(APokemon_Parent* CaughtPokemon, TSubclassOf<APokeBall> PokeballClass)
 {
 	if (!HasAuthority() || !IsValid(CaughtPokemon))
 	{
@@ -393,7 +393,7 @@ void ATrainerCharacter::HandleCatchPokemon(APokemon_Parent* CaughtPokemon)
 	}
 
 	// Save into party/state first
-	TPS->AddToParty(CaughtPokemon);
+	TPS->AddToParty(CaughtPokemon, PokeballClass);
 
 	// If this was somehow the field pokemon , make sure to clear it out and update the HUD
 	if (CurrentPokemon == CaughtPokemon)
@@ -424,11 +424,6 @@ void ATrainerCharacter::CatchPokemon()
 	const FVector TraceStart = GetActorLocation();
 	const FVector TraceEnd = TraceStart + (FollowCamera->GetForwardVector() * CatchingDistance);
 	ServerRequestCatchPokemon(TraceStart, TraceEnd);
-}
-
-void ATrainerCharacter::AddToParty(APokemon_Parent* NewPokemon)
-{
-	GetTPS()->AddToParty(NewPokemon);
 }
 
 void ATrainerCharacter::ShowPokemonMoveset()

@@ -73,7 +73,7 @@ public:
 	}
 
 	UFUNCTION(Server, Reliable)
-	void ServerRequestCatchPokemonWithPokeball(APokemon_Parent* TargetPokemon);
+	void ServerRequestCatchPokemonWithPokeball(APokemon_Parent* TargetPokemon, TSubclassOf<APokeBall> PokeballClass);
 
 protected:
 	// Unreal lifecycle
@@ -142,7 +142,7 @@ private:
 
 	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
-	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon);
+	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon, TSubclassOf<APokeBall> PokeballClass);
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
 	void ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, const FPokeballThrowRequest& ThrowRequest);
@@ -158,7 +158,6 @@ private:
 	void HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal);
 	void HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex, const FTransform& SpawnTransform);
 
-	void AddToParty(APokemon_Parent* NewPokemon);
 	FPokemonInfo GetCurrentPokemonInfo();
 	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
 

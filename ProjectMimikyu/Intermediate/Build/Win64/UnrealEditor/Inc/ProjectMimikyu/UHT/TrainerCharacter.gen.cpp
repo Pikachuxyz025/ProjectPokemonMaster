@@ -9,6 +9,7 @@
 #include "ActorComponents/TargetingType.h"
 #include "Engine/HitResult.h"
 #include "InputCoreTypes.h"
+#include "UObject/Class.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 static_assert(!UE_WITH_CONSTINIT_UOBJECT, "This generated code can only be compiled with !UE_WITH_CONSTINIT_OBJECT");
@@ -623,12 +624,14 @@ DEFINE_FUNCTION(ATrainerCharacter::execServerRequestCatchPokemon)
 struct TrainerCharacter_eventServerRequestCatchPokemonWithPokeball_Parms
 {
 	APokemon_Parent* TargetPokemon;
+	TSubclassOf<APokeBall> PokeballClass;
 };
 static FName NAME_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball = FName(TEXT("ServerRequestCatchPokemonWithPokeball"));
-void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball(APokemon_Parent* TargetPokemon)
+void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball(APokemon_Parent* TargetPokemon, TSubclassOf<APokeBall> PokeballClass)
 {
 	TrainerCharacter_eventServerRequestCatchPokemonWithPokeball_Parms Parms;
 	Parms.TargetPokemon=TargetPokemon;
+	Parms.PokeballClass=PokeballClass;
 	UFunction* Func = FindFunctionChecked(NAME_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball);
 	ProcessEvent(Func,&Parms);
 }
@@ -642,6 +645,7 @@ struct Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPoke
 
 // ********** Begin Function ServerRequestCatchPokemonWithPokeball constinit property declarations *
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetPokemon;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_PokeballClass;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Function ServerRequestCatchPokemonWithPokeball constinit property declarations ***
 	static const UECodeGen_Private::FFunctionParams FuncParams;
@@ -649,8 +653,10 @@ struct Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPoke
 
 // ********** Begin Function ServerRequestCatchPokemonWithPokeball Property Definitions ************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::NewProp_TargetPokemon = { "TargetPokemon", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerCharacter_eventServerRequestCatchPokemonWithPokeball_Parms, TargetPokemon), Z_Construct_UClass_APokemon_Parent_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::NewProp_PokeballClass = { "PokeballClass", nullptr, (EPropertyFlags)0x0014000000000080, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerCharacter_eventServerRequestCatchPokemonWithPokeball_Parms, PokeballClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_APokeBall_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::NewProp_TargetPokemon,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::NewProp_PokeballClass,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball_Statics::PropPointers) < 2048);
 // ********** End Function ServerRequestCatchPokemonWithPokeball Property Definitions **************
@@ -671,9 +677,10 @@ UFunction* Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWith
 DEFINE_FUNCTION(ATrainerCharacter::execServerRequestCatchPokemonWithPokeball)
 {
 	P_GET_OBJECT(APokemon_Parent,Z_Param_TargetPokemon);
+	P_GET_OBJECT(UClass,Z_Param_PokeballClass);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->ServerRequestCatchPokemonWithPokeball_Implementation(Z_Param_TargetPokemon);
+	P_THIS->ServerRequestCatchPokemonWithPokeball_Implementation(Z_Param_TargetPokemon,Z_Param_PokeballClass);
 	P_NATIVE_END;
 }
 // ********** End Class ATrainerCharacter Function ServerRequestCatchPokemonWithPokeball ***********
@@ -1370,7 +1377,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 2464932512
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerCallCommand, "ServerCallCommand" }, // 1830088177
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemon, "ServerRequestCatchPokemon" }, // 3730811691
-		{ &Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball, "ServerRequestCatchPokemonWithPokeball" }, // 864465606
+		{ &Z_Construct_UFunction_ATrainerCharacter_ServerRequestCatchPokemonWithPokeball, "ServerRequestCatchPokemonWithPokeball" }, // 3245632038
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerRequestReturnCurrentPokemon, "ServerRequestReturnCurrentPokemon" }, // 2446699117
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerRequestSendOutPokemon, "ServerRequestSendOutPokemon" }, // 240482225
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerSetPokemon, "ServerSetPokemon" }, // 2500298137
@@ -1563,10 +1570,10 @@ ATrainerCharacter::~ATrainerCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 2105956724U) },
+		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 1359461534U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_2862343140{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_1144487828{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

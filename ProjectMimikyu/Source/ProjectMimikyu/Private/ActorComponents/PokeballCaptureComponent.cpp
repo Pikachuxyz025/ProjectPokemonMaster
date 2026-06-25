@@ -43,5 +43,5 @@ void UPokeballCaptureComponent::HandlePokemonContact(AActor* OtherActor)
 		return;
 	}
 
-	Trainer->ServerRequestCatchPokemonWithPokeball(HitPokemon);
+	Trainer->ServerRequestCatchPokemonWithPokeball(HitPokemon, OwningPokeBall->GetClass());
 }

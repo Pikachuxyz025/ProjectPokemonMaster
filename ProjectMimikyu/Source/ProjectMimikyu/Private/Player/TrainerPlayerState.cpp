@@ -23,7 +23,7 @@ void ATrainerPlayerState::OnRep_CurrentPartyInfo()
 	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
 }
 
-void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
+void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon, TSubclassOf<APokeBall> PokeballClass)
 {
 	if (!HasAuthority() || !IsValid(NewPokemon))
 	{
@@ -33,6 +33,7 @@ void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon)
 	if (CurrentPartyInfo.Num() < 6)
 	{
 		FPokemonInfo PokemonInfo = NewPokemon->GetPokemonInfo();
+		PokemonInfo.CapturedBallClass = PokeballClass;
 		PokemonInfo.PartyMode = EPartyStatus::EPS_Ready;
 		CurrentPartyInfo.Add(PokemonInfo);
 
