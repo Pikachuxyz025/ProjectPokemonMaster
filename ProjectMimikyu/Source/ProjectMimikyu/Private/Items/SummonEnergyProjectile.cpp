@@ -64,8 +64,7 @@ void ASummonEnergyProjectile::InitSummonEnergy(const FVector& InTargetLocation, 
     const FVector StartLocation = GetActorLocation();
     FVector LaunchDirection = (TargetLocation - StartLocation).GetSafeNormal();
 
-    // Adds a small upward arc so the energy looks like it launches/falls,
-    // instead of traveling as a flat laser beam.
+
     LaunchDirection = (LaunchDirection + FVector::UpVector * ArcLiftStrength).GetSafeNormal();
 
     ProjectileMovement->Velocity = LaunchDirection * LaunchSpeed;
@@ -109,6 +108,7 @@ void ASummonEnergyProjectile::HandleHit(
         );
     }
 
+	UE_LOG(LogTemp, Log, TEXT("[SummonEnergyProjectile] Landed at location: %s, normal: %s"), *LandingLocation.ToString(), *LandingNormal.ToString());
     OnSummonEnergyLanded.Broadcast(LandingLocation, LandingNormal);
 
     SetLifeSpan(LifeAfterLanding);

@@ -71,6 +71,38 @@ void UPokeballSummonComponent::OpenPokeBall()
 		return;
 	}
 
+	FVector EnergyLandingTarget = TargetLocation;
+	if (UWorld* World = OwningPokeBall->GetWorld())
+	{
+		const FVector TraceStart = OwningPokeBall->GetActorLocation();
+		const FVector TraceEnd = TraceStart - FVector::UpVector * 5000.f;
+
+		FHitResult GroundHit;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(OwningPokeBall);
+
+		if (AActor* SourceActorPtr = SourceActor.Get())
+		{
+			Params.AddIgnoredActor(SourceActorPtr);
+		}
+
+		if (World->LineTraceSingleByChannel(
+			GroundHit,
+			TraceStart,
+			TraceEnd,
+			ECC_Visibility,
+			Params
+
+		))
+		{
+			EnergyLandingTarget = GroundHit.ImpactPoint;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[PokeballSummonComponent] Failed to find ground for energy landing target."));
+		}
+	}
+
 	bHasOpened = true;
 	SetComponentTickEnabled(false);
 
@@ -118,12 +150,10 @@ void UPokeballSummonComponent::OpenPokeBall()
 
 		if (EnergyProjectile)
 		{
-			EnergyProjectile->OnSummonEnergyLanded.AddDynamic(
-				this,
-				&UPokeballSummonComponent::HandleSummonEnergyLanded
-			);
+			UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] Spawned SummonEnergyProjectile at location: %s"), *OwningPokeBall->GetActorLocation().ToString());
+			EnergyProjectile->OnSummonEnergyLanded.AddDynamic(this, &UPokeballSummonComponent::HandleSummonEnergyLanded);
 
-			EnergyProjectile->InitSummonEnergy(TargetLocation, SourceActorPtr);
+			EnergyProjectile->InitSummonEnergy(EnergyLandingTarget, SourceActorPtr);
 		}
 	}
 
@@ -132,5 +162,6 @@ void UPokeballSummonComponent::OpenPokeBall()
 
 void UPokeballSummonComponent::HandleSummonEnergyLanded(FVector LandingLocation, FVector LandingNormal)
 {
+	UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] Summon energy landed at location: %s, normal: %s"), *LandingLocation.ToString(), *LandingNormal.ToString());
 	OnPokeBallSummonLanded.Broadcast(LandingLocation, LandingNormal, PartySlotIndex);
 }

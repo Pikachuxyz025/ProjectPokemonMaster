@@ -881,6 +881,7 @@ bool ATrainerCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart,
 
 void ATrainerCharacter::HandlePokeballSummonLanded(FVector LandingLocation, FVector LandingNormal, int32 PartySlotIndex)
 {
+	UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandlePokeballSummonLanded: PartySlotIndex=%d, LandingLocation=%s, LandingNormal=%s"), PartySlotIndex, *LandingLocation.ToString(), *LandingNormal.ToString());
 	HandleSendOutPokemonAtLanding(PartySlotIndex, LandingLocation, LandingNormal);
 }
 
@@ -974,6 +975,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, 
 	SpawnTransform.SetLocation(SpawnLocation);
 	SpawnTransform.SetRotation(SpawnRotation.Quaternion());
 
+	UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtLanding: PartySlotIndex=%d, SpawnLocation=%s, SpawnRotation=%s"), SelectedPartyIndex, *SpawnLocation.ToString(), *SpawnRotation.ToString());
 	HandleSendOutPokemonAtTransform(SelectedPartyIndex, SpawnTransform);
 }
 
@@ -992,7 +994,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 	ATrainerPlayerState* TPS = GetTPS();
 	if (!TPS || TPS->IsCurrentPartyEmpty() || CurrentPokemon)
 	{
-		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: No Pokemon To Throw"));
 		return;
 	}
 
@@ -1000,23 +1002,23 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 
 	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
 	{
-		UE_LOG(LogTemp, Display, TEXT("Invalid Party Index"));
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Invalid Party Index"));
 		return;
 	}
 
 	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Pokemon Not Ready"));
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Pokemon Not Ready"));
 		return;
 	}
 
 	if (!PokemonOut.StoredPokemonDataAsset || !PokemonOut.StoredPokemonDataAsset->StoredPokemonClass)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Invalid Pokemon Data Asset"));
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Invalid Pokemon Data Asset"));
 		return;
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("Create Pokemon here!"));
+	UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Create Pokemon here!"));
 
 	APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
 		(
@@ -1029,7 +1031,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 
 	if (!IChooseYou)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Failed to spawn Pokemon"));
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Failed to spawn Pokemon"));
 		return;
 	}
 

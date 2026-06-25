@@ -109,7 +109,7 @@ void UPokemonBrainComponent::InitializeBrain(APokemonAIController* InPokemonCont
 	OwningPokemonController = InPokemonController;
 	CacheReferences();
 
-	UPokemonDebugLibrary::SetCategoryEnabled(ControlledPokemon, PokemonDebugTags::AI, true);
+	UPokemonDebugLibrary::SetCategoryEnabled(ControlledPokemon, PokemonDebugTags::AI, false);
 	UPokemonDebugLibrary::PrintMessage(
 		ControlledPokemon,
 		PokemonDebugTags::AI,
@@ -142,7 +142,7 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] TickComponent | Thinking now | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+	//UE_LOG(LogTemp, Warning, TEXT("[Brain] TickComponent | Thinking now | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
 	RunThink();
 }
 
