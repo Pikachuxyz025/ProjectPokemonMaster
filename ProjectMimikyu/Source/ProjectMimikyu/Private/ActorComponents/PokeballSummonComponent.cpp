@@ -150,18 +150,20 @@ void UPokeballSummonComponent::OpenPokeBall()
 
 		if (EnergyProjectile)
 		{
-			UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] Spawned SummonEnergyProjectile at location: %s"), *OwningPokeBall->GetActorLocation().ToString());
+			UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] OpenPokeBall: Spawned SummonEnergyProjectile at location: %s"), *OwningPokeBall->GetActorLocation().ToString());
 			EnergyProjectile->OnSummonEnergyLanded.AddDynamic(this, &UPokeballSummonComponent::HandleSummonEnergyLanded);
 
 			EnergyProjectile->InitSummonEnergy(EnergyLandingTarget, SourceActorPtr);
+			UE_LOG(LogTemp, Display, TEXT("[PokeballSummonComponent] OpenPokeBall: Bound energy landed delegate. Pokeball=%s Energy=%s PartySlotIndex=%d"), *GetNameSafe(OwningPokeBall), *GetNameSafe(EnergyProjectile), PartySlotIndex);
 		}
 	}
 
-	OwningPokeBall->SetLifeSpan(0.15f);
+	OwningPokeBall->HideAfterOpening();
+	OwningPokeBall->SetLifeSpan(5.f);
 }
 
 void UPokeballSummonComponent::HandleSummonEnergyLanded(FVector LandingLocation, FVector LandingNormal)
 {
-	UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] Summon energy landed at location: %s, normal: %s"), *LandingLocation.ToString(), *LandingNormal.ToString());
+	UE_LOG(LogTemp, Log, TEXT("[PokeballSummonComponent] HandleSummonEnergyLanded: Summon energy landed at location: %s, normal: %s"), *LandingLocation.ToString(), *LandingNormal.ToString());
 	OnPokeBallSummonLanded.Broadcast(LandingLocation, LandingNormal, PartySlotIndex);
 }

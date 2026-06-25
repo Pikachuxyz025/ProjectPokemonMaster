@@ -74,6 +74,16 @@ void APokeBall::InitializeForSummon(AActor* InSourceActor, const FVector& InTarg
 	}
 }
 
+void APokeBall::HideAfterOpening()
+{
+	if (ProjectileMesh)
+	{
+		ProjectileMesh->SetVisibility(false, true);
+	}
+
+	SetActorEnableCollision(false);
+}
+
 void APokeBall::OnPokeballStop(const FHitResult& ImpactResult)
 {
 	UE_LOG(LogTemp, Display, TEXT("[Pokeball] Stopped. Destroying in %.2f seconds."), DestroyAfterStopDelay);

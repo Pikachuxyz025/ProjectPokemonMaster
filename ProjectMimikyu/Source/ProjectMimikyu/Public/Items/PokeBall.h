@@ -28,6 +28,8 @@ public:
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const { return ProjectileMovementComponent; }
 
+	void HideAfterOpening();
+
 protected:
 
 	virtual void BeginPlay() override;
