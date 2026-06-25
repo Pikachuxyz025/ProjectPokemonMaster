@@ -269,6 +269,67 @@ DEFINE_FUNCTION(ATrainerCharacter::execGetCurrentPokemon)
 }
 // ********** End Class ATrainerCharacter Function GetCurrentPokemon *******************************
 
+// ********** Begin Class ATrainerCharacter Function HandlePokeballSummonLanded ********************
+struct Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics
+{
+	struct TrainerCharacter_eventHandlePokeballSummonLanded_Parms
+	{
+		FVector LandingLocation;
+		FVector LandingNormal;
+		int32 PartySlotIndex;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/Characters/TrainerCharacter.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function HandlePokeballSummonLanded constinit property declarations ************
+	static const UECodeGen_Private::FStructPropertyParams NewProp_LandingLocation;
+	static const UECodeGen_Private::FStructPropertyParams NewProp_LandingNormal;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_PartySlotIndex;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function HandlePokeballSummonLanded constinit property declarations **************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function HandlePokeballSummonLanded Property Definitions ***********************
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_LandingLocation = { "LandingLocation", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerCharacter_eventHandlePokeballSummonLanded_Parms, LandingLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_LandingNormal = { "LandingNormal", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerCharacter_eventHandlePokeballSummonLanded_Parms, LandingNormal), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_PartySlotIndex = { "PartySlotIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(TrainerCharacter_eventHandlePokeballSummonLanded_Parms, PartySlotIndex), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_LandingLocation,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_LandingNormal,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::NewProp_PartySlotIndex,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::PropPointers) < 2048);
+// ********** End Function HandlePokeballSummonLanded Property Definitions *************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_ATrainerCharacter, nullptr, "HandlePokeballSummonLanded", 	Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::TrainerCharacter_eventHandlePokeballSummonLanded_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00840401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::Function_MetaDataParams), Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::TrainerCharacter_eventHandlePokeballSummonLanded_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(ATrainerCharacter::execHandlePokeballSummonLanded)
+{
+	P_GET_STRUCT(FVector,Z_Param_LandingLocation);
+	P_GET_STRUCT(FVector,Z_Param_LandingNormal);
+	P_GET_PROPERTY(FIntProperty,Z_Param_PartySlotIndex);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->HandlePokeballSummonLanded(Z_Param_LandingLocation,Z_Param_LandingNormal,Z_Param_PartySlotIndex);
+	P_NATIVE_END;
+}
+// ********** End Class ATrainerCharacter Function HandlePokeballSummonLanded **********************
+
 // ********** Begin Class ATrainerCharacter Function OnRep_CurrentPokemon **************************
 struct Z_Construct_UFunction_ATrainerCharacter_OnRep_CurrentPokemon_Statics
 {
@@ -1287,6 +1348,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 // ********** End Class ATrainerCharacter constinit property declarations **************************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("GetCurrentPokemon"), .Pointer = &ATrainerCharacter::execGetCurrentPokemon },
+		{ .NameUTF8 = UTF8TEXT("HandlePokeballSummonLanded"), .Pointer = &ATrainerCharacter::execHandlePokeballSummonLanded },
 		{ .NameUTF8 = UTF8TEXT("OnRep_CurrentPokemon"), .Pointer = &ATrainerCharacter::execOnRep_CurrentPokemon },
 		{ .NameUTF8 = UTF8TEXT("ServerAddToCurrentParty"), .Pointer = &ATrainerCharacter::execServerAddToCurrentParty },
 		{ .NameUTF8 = UTF8TEXT("ServerBroadcastTarget"), .Pointer = &ATrainerCharacter::execServerBroadcastTarget },
@@ -1302,6 +1364,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_ATrainerCharacter_GetCurrentPokemon, "GetCurrentPokemon" }, // 667786273
+		{ &Z_Construct_UFunction_ATrainerCharacter_HandlePokeballSummonLanded, "HandlePokeballSummonLanded" }, // 457979662
 		{ &Z_Construct_UFunction_ATrainerCharacter_OnRep_CurrentPokemon, "OnRep_CurrentPokemon" }, // 354903939
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerAddToCurrentParty, "ServerAddToCurrentParty" }, // 2080610890
 		{ &Z_Construct_UFunction_ATrainerCharacter_ServerBroadcastTarget, "ServerBroadcastTarget" }, // 2464932512
@@ -1500,10 +1563,10 @@ ATrainerCharacter::~ATrainerCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 2084819192U) },
+		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 2105956724U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_1317896075{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_2862343140{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

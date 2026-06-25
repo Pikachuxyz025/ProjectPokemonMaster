@@ -117,23 +117,6 @@ void APokeBall::DestroyPokeball()
 	Destroy();
 }
 
-void APokeBall::HandlePokemonContact(AActor* OtherActor)
-{
-	APokemon_Parent* HitPokemon = Cast<APokemon_Parent>(OtherActor);
-	if (!IsValid(HitPokemon))
-	{
-		return;
-	}
-
-	ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(GetOwner());
-	if (!IsValid(Trainer))
-	{
-		return;
-	}
-
-	Trainer->ServerRequestCatchPokemonWithPokeball(HitPokemon);
-}
-
 void APokeBall::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	switch (ActiveUseMode)

@@ -150,6 +150,10 @@ private:
 	void ThrowPokeballForSummon(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, int32 PartySlotIndex);
 
 	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
+
+	UFUNCTION()
+	void HandlePokeballSummonLanded(FVector LandingLocation, FVector LandingNormal, int32 PartySlotIndex);
+
 	void HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, const FVector& TraceStart, const FVector& TraceEnd);
 	void HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal);
 	void HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex, const FTransform& SpawnTransform);

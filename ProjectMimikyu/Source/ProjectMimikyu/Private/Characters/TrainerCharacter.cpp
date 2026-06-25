@@ -10,12 +10,14 @@
 #include "AIControllers/TrainerController.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "ActorComponents/TargetingComponent.h"
+#include "ActorComponents/InventorySystemComponent.h"
+#include "ActorComponents/TrainerQuickSlotComponent.h"
+#include "ActorComponents/PokeballSummonComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "ActorComponents/InventorySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -28,7 +30,7 @@
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include <Kismet/GameplayStatics.h>
-#include "ActorComponents/TrainerQuickSlotComponent.h"
+
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -679,6 +681,10 @@ void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> Projec
 
 		case EPokeballUseMode::Summon:
 			Pokeball->InitializeForSummon(this, ThrowRequest.SummonTargetLocation,ThrowRequest.PartySlotIndex);
+			if (UPokeballSummonComponent* SummonComponent = Pokeball->GetSummonComponent())
+			{
+				SummonComponent->OnPokeBallSummonLanded.AddDynamic(this, &ATrainerCharacter::HandlePokeballSummonLanded);
+			}
 			break;
 
 		default:
@@ -878,6 +884,11 @@ bool ATrainerCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart,
 	return true;
 }
 
+void ATrainerCharacter::HandlePokeballSummonLanded(FVector LandingLocation, FVector LandingNormal, int32 PartySlotIndex)
+{
+	HandleSendOutPokemonAtLanding(PartySlotIndex, LandingLocation, LandingNormal);
+}
+
 void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, const FVector& TraceStart, const FVector& TraceEnd)
 {
 	// Server checks if player has a Pokemon, if the Pokemon is ready, and if the spawn location is valid before spawning the Pokemon and setting it as the current active Pokemon
@@ -973,6 +984,68 @@ void ATrainerCharacter::HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, 
 
 void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex, const FTransform& SpawnTransform)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!IsValid(CurrentPokemon))
+	{
+		CurrentPokemon = nullptr;
+	}
+
+	ATrainerPlayerState* TPS = GetTPS();
+	if (!TPS || TPS->IsCurrentPartyEmpty() || CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
+		return;
+	}
+
+	FPokemonInfo PokemonOut;
+
+	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Party Index"));
+		return;
+	}
+
+	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Pokemon Not Ready"));
+		return;
+	}
+
+	if (!PokemonOut.StoredPokemonDataAsset || !PokemonOut.StoredPokemonDataAsset->StoredPokemonClass)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Invalid Pokemon Data Asset"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Create Pokemon here!"));
+
+	APokemon_Parent* IChooseYou = GetWorld()->SpawnActorDeferred<APokemon_Parent>
+		(
+			PokemonOut.StoredPokemonDataAsset->StoredPokemonClass,
+			SpawnTransform,
+			this,
+			Cast<APawn>(this),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+
+	if (!IChooseYou)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Failed to spawn Pokemon"));
+		return;
+	}
+
+	IChooseYou->SetPokemonStartup(PokemonOut);
+	IChooseYou->SetPokemonTrainer(this);
+	IChooseYou->FinishSpawning(SpawnTransform);
+
+	CurrentPokemon = IChooseYou;
+
+	TPS->SetPartyIndexClamped(SelectedPartyIndex);
+	TPS->PokemonIsOut(IChooseYou);
 }
 
 #pragma endregion

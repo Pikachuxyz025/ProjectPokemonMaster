@@ -19,15 +19,20 @@ void UPokeballSummonComponent::BeginPlay()
 
 void UPokeballSummonComponent::InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation, int32 InPartySlotIndex)
 {
-	//OwningPokeBall = InOwningPokeBall;
+	OwningPokeBall = Cast<APokeBall>(GetOwner());
 	SourceActor = InSourceActor;
 	TargetLocation = InTargetLocation;
+	PartySlotIndex = InPartySlotIndex;
 
-	//StartLocation = OwningPokeBall->GetActorLocation();
+	if (!IsValid(OwningPokeBall))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokeballSummonComponent] Owning PokeBall is not valid during initialization."));
+		return;
+	}
+
+	StartLocation = OwningPokeBall->GetActorLocation();
 	bIsInitialized = true;
 	bHasOpened = false;
-
-	PartySlotIndex = InPartySlotIndex;
 
 	SetComponentTickEnabled(true);
 }

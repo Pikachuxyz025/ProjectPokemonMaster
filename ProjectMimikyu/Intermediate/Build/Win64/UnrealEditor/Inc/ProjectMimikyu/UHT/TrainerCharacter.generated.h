@@ -53,6 +53,7 @@ PROJECTMIMIKYU_API void FOnPokemonSentOut_DelegateWrapper(const FMulticastScript
 	virtual void ServerSetPokemon_Implementation(APokemon_Parent* LeadPokemon); \
 	virtual void ServerRequestCatchPokemonWithPokeball_Implementation(APokemon_Parent* TargetPokemon); \
 	DECLARE_FUNCTION(execOnRep_CurrentPokemon); \
+	DECLARE_FUNCTION(execHandlePokeballSummonLanded); \
 	DECLARE_FUNCTION(execServerThrowSelectedPokemon); \
 	DECLARE_FUNCTION(execServerThrowSelectedInventoryItem); \
 	DECLARE_FUNCTION(execServerBroadcastTarget); \

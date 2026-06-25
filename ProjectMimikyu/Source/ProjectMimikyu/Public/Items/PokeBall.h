@@ -54,8 +54,6 @@ protected:
 	UFUNCTION()
 	void DestroyPokeball();
 
-	void HandlePokemonContact(AActor* OtherActor);
-
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
@@ -79,4 +77,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pokeball")
 	EPokeballType GetPokeballType() const { return CurrentPokeball; }
+
+	UPokeballSummonComponent* GetSummonComponent() const { return SummonComponent; }
+	UPokeballCaptureComponent* GetCaptureComponent() const { return CaptureComponent; }
 };
