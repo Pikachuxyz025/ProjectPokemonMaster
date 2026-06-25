@@ -57,7 +57,7 @@ void APokeBall::InitializeForCapture(AActor* InSourceActor)
 	}
 }
 
-void APokeBall::InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation)
+void APokeBall::InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation, int32 InPartySlotIndex)
 {
 	ActiveUseMode = EPokeballUseMode::Summon;
 	SetOwner(InSourceActor);
@@ -70,7 +70,7 @@ void APokeBall::InitializeForSummon(AActor* InSourceActor, const FVector& InTarg
 
 	if (SummonComponent)
 	{
-		SummonComponent->InitializeSummon(this, InTargetLocation, InSourceActor);
+		SummonComponent->InitializeForSummon(InSourceActor, InTargetLocation, InPartySlotIndex);
 	}
 }
 

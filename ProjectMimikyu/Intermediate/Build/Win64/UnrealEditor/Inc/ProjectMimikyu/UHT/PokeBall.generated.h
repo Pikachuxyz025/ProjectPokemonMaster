@@ -17,10 +17,13 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class AActor;
 class UPrimitiveComponent;
+enum class EPokeballType : uint8;
 struct FHitResult;
 
 // ********** Begin Class APokeBall ****************************************************************
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execGetPokeballType); \
+	DECLARE_FUNCTION(execSetPokeballType); \
 	DECLARE_FUNCTION(execOnBeginOverlap); \
 	DECLARE_FUNCTION(execDestroyPokeball); \
 	DECLARE_FUNCTION(execOnPokeballStop); \
@@ -31,7 +34,7 @@ struct FHitResult;
 struct Z_Construct_UClass_APokeBall_Statics;
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_APokeBall_NoRegister();
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_INCLASS_NO_PURE_DECLS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAPokeBall(); \
 	friend struct ::Z_Construct_UClass_APokeBall_Statics; \
@@ -42,7 +45,7 @@ public: \
 	DECLARE_SERIALIZER(APokeBall)
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_ENHANCED_CONSTRUCTORS \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_ENHANCED_CONSTRUCTORS \
 	/** Deleted move- and copy-constructors, should never be used */ \
 	APokeBall(APokeBall&&) = delete; \
 	APokeBall(const APokeBall&) = delete; \
@@ -52,13 +55,13 @@ public: \
 	NO_API virtual ~APokeBall();
 
 
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_23_PROLOG
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_15_PROLOG
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_INCLASS_NO_PURE_DECLS \
-	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_26_ENHANCED_CONSTRUCTORS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_INCLASS_NO_PURE_DECLS \
+	FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h_18_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
@@ -69,16 +72,5 @@ class APokeBall;
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h
-
-// ********** Begin Enum EPokeballUseMode **********************************************************
-#define FOREACH_ENUM_EPOKEBALLUSEMODE(op) \
-	op(EPokeballUseMode::None) \
-	op(EPokeballUseMode::Capture) \
-	op(EPokeballUseMode::Summon) 
-
-enum class EPokeballUseMode : uint8;
-template<> struct TIsUEnumClass<EPokeballUseMode> { enum { Value = true }; };
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokeballUseMode>();
-// ********** End Enum EPokeballUseMode ************************************************************
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

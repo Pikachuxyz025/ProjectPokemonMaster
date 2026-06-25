@@ -145,10 +145,14 @@ private:
 	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon);
 	void HandleReturnedPokemon(APokemon_Parent* ReturnedPokemon);
 
-	void ThrowThrowableProjectile (TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData);
+	void ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, const FPokeballThrowRequest& ThrowRequest);
+	void ThrowPokeballForCapture(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, EPokeballType PokeballType);
+	void ThrowPokeballForSummon(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, int32 PartySlotIndex);
 
 	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
 	void HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, const FVector& TraceStart, const FVector& TraceEnd);
+	void HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal);
+	void HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex, const FTransform& SpawnTransform);
 
 	void AddToParty(APokemon_Parent* NewPokemon);
 	FPokemonInfo GetCurrentPokemonInfo();
@@ -218,7 +222,7 @@ private:
 
 	// Poké Ball settings
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
-	TSubclassOf<APokeBall> PokeballClass;
+	TSubclassOf<APokeBall> PokeballProjectileClass;
 
 	UPROPERTY(VisibleAnywhere,Category = "Inventory")
 	TSubclassOf<AProjectile> CurrentThrowableProjectileClass;

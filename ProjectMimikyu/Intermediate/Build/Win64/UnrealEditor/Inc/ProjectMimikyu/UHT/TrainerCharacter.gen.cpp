@@ -1069,7 +1069,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 		{ "Category", "Input" },
 		{ "ModuleRelativePath", "Public/Characters/TrainerCharacter.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokeballClass_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_PokeballProjectileClass_MetaData[] = {
 		{ "Category", "Items|Pokeball" },
 #if !UE_BUILD_SHIPPING
 		{ "Comment", "// Pok\xc3\xa9 Ball settings\n" },
@@ -1244,7 +1244,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_Command;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_ToggleLockOn;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_IA_Aim;
-	static const UECodeGen_Private::FClassPropertyParams NewProp_PokeballClass;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_PokeballProjectileClass;
 	static const UECodeGen_Private::FClassPropertyParams NewProp_CurrentThrowableProjectileClass;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_PokeballThrowSpeed;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_PokeballSpawnForwardOffset;
@@ -1340,7 +1340,7 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharac
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_Command = { "IA_Command", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, IA_Command), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_Command_MetaData), NewProp_IA_Command_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_ToggleLockOn = { "IA_ToggleLockOn", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, IA_ToggleLockOn), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_ToggleLockOn_MetaData), NewProp_IA_ToggleLockOn_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_Aim = { "IA_Aim", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, IA_Aim), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_IA_Aim_MetaData), NewProp_IA_Aim_MetaData) };
-const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballClass = { "PokeballClass", nullptr, (EPropertyFlags)0x0044000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, PokeballClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_APokeBall_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballClass_MetaData), NewProp_PokeballClass_MetaData) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballProjectileClass = { "PokeballProjectileClass", nullptr, (EPropertyFlags)0x0044000000000001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, PokeballProjectileClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_APokeBall_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballProjectileClass_MetaData), NewProp_PokeballProjectileClass_MetaData) };
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_CurrentThrowableProjectileClass = { "CurrentThrowableProjectileClass", nullptr, (EPropertyFlags)0x0044000000020001, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, CurrentThrowableProjectileClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_AProjectile_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentThrowableProjectileClass_MetaData), NewProp_CurrentThrowableProjectileClass_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballThrowSpeed = { "PokeballThrowSpeed", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, PokeballThrowSpeed), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballThrowSpeed_MetaData), NewProp_PokeballThrowSpeed_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballSpawnForwardOffset = { "PokeballSpawnForwardOffset", nullptr, (EPropertyFlags)0x0040000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, PokeballSpawnForwardOffset), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PokeballSpawnForwardOffset_MetaData), NewProp_PokeballSpawnForwardOffset_MetaData) };
@@ -1409,7 +1409,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ATrainerC
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_Command,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_ToggleLockOn,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_IA_Aim,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballClass,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballProjectileClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_CurrentThrowableProjectileClass,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballThrowSpeed,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_PokeballSpawnForwardOffset,
@@ -1500,10 +1500,10 @@ ATrainerCharacter::~ATrainerCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 3777987269U) },
+		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 2084819192U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_4157897992{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_1317896075{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

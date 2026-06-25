@@ -28,63 +28,6 @@ PROJECTMIMIKYU_API UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode();
 UPackage* Z_Construct_UPackage__Script_ProjectMimikyu();
 // ********** End Cross Module References **********************************************************
 
-// ********** Begin Enum EPokeballUseMode **********************************************************
-static FEnumRegistrationInfo Z_Registration_Info_UEnum_EPokeballUseMode;
-static UEnum* EPokeballUseMode_StaticEnum()
-{
-	if (!Z_Registration_Info_UEnum_EPokeballUseMode.OuterSingleton)
-	{
-		Z_Registration_Info_UEnum_EPokeballUseMode.OuterSingleton = GetStaticEnum(Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode, (UObject*)Z_Construct_UPackage__Script_ProjectMimikyu(), TEXT("EPokeballUseMode"));
-	}
-	return Z_Registration_Info_UEnum_EPokeballUseMode.OuterSingleton;
-}
-template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokeballUseMode>()
-{
-	return EPokeballUseMode_StaticEnum();
-}
-struct Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
-		{ "BlueprintType", "true" },
-		{ "Capture.DisplayName", "Capture" },
-		{ "Capture.Name", "EPokeballUseMode::Capture" },
-		{ "ModuleRelativePath", "Public/Items/PokeBall.h" },
-		{ "None.DisplayName", "None" },
-		{ "None.Name", "EPokeballUseMode::None" },
-		{ "Summon.DisplayName", "Summon" },
-		{ "Summon.Name", "EPokeballUseMode::Summon" },
-	};
-#endif // WITH_METADATA
-	static constexpr UECodeGen_Private::FEnumeratorParam Enumerators[] = {
-		{ "EPokeballUseMode::None", (int64)EPokeballUseMode::None },
-		{ "EPokeballUseMode::Capture", (int64)EPokeballUseMode::Capture },
-		{ "EPokeballUseMode::Summon", (int64)EPokeballUseMode::Summon },
-	};
-	static const UECodeGen_Private::FEnumParams EnumParams;
-}; // struct Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics 
-const UECodeGen_Private::FEnumParams Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::EnumParams = {
-	(UObject*(*)())Z_Construct_UPackage__Script_ProjectMimikyu,
-	nullptr,
-	"EPokeballUseMode",
-	"EPokeballUseMode",
-	Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::Enumerators,
-	RF_Public|RF_Transient|RF_MarkAsNative,
-	UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::Enumerators),
-	EEnumFlags::None,
-	(uint8)UEnum::ECppForm::EnumClass,
-	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::Enum_MetaDataParams), Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::Enum_MetaDataParams)
-};
-UEnum* Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode()
-{
-	if (!Z_Registration_Info_UEnum_EPokeballUseMode.InnerSingleton)
-	{
-		UECodeGen_Private::ConstructUEnum(Z_Registration_Info_UEnum_EPokeballUseMode.InnerSingleton, Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode_Statics::EnumParams);
-	}
-	return Z_Registration_Info_UEnum_EPokeballUseMode.InnerSingleton;
-}
-// ********** End Enum EPokeballUseMode ************************************************************
-
 // ********** Begin Class APokeBall Function DestroyPokeball ***************************************
 struct Z_Construct_UFunction_APokeBall_DestroyPokeball_Statics
 {
@@ -119,6 +62,60 @@ DEFINE_FUNCTION(APokeBall::execDestroyPokeball)
 	P_NATIVE_END;
 }
 // ********** End Class APokeBall Function DestroyPokeball *****************************************
+
+// ********** Begin Class APokeBall Function GetPokeballType ***************************************
+struct Z_Construct_UFunction_APokeBall_GetPokeballType_Statics
+{
+	struct PokeBall_eventGetPokeballType_Parms
+	{
+		EPokeballType ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokeball" },
+		{ "ModuleRelativePath", "Public/Items/PokeBall.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function GetPokeballType constinit property declarations ***********************
+	static const UECodeGen_Private::FBytePropertyParams NewProp_ReturnValue_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function GetPokeballType constinit property declarations *************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function GetPokeballType Property Definitions **********************************
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::NewProp_ReturnValue_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokeBall_eventGetPokeballType_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EPokeballType, METADATA_PARAMS(0, nullptr) }; // 2498691174
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::NewProp_ReturnValue_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PropPointers) < 2048);
+// ********** End Function GetPokeballType Property Definitions ************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_APokeBall, nullptr, "GetPokeballType", 	Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PokeBall_eventGetPokeballType_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::PokeBall_eventGetPokeballType_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_APokeBall_GetPokeballType()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokeBall_GetPokeballType_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(APokeBall::execGetPokeballType)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(EPokeballType*)Z_Param__Result=P_THIS->GetPokeballType();
+	P_NATIVE_END;
+}
+// ********** End Class APokeBall Function GetPokeballType *****************************************
 
 // ********** Begin Class APokeBall Function InitializeForCapture **********************************
 struct Z_Construct_UFunction_APokeBall_InitializeForCapture_Statics
@@ -179,6 +176,7 @@ struct Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics
 	{
 		AActor* InSourceActor;
 		FVector InTargetLocation;
+		int32 InPartySlotIndex;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -193,6 +191,7 @@ struct Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics
 // ********** Begin Function InitializeForSummon constinit property declarations *******************
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InSourceActor;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_InTargetLocation;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_InPartySlotIndex;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Function InitializeForSummon constinit property declarations *********************
 	static const UECodeGen_Private::FFunctionParams FuncParams;
@@ -201,9 +200,11 @@ struct Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics
 // ********** Begin Function InitializeForSummon Property Definitions ******************************
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InSourceActor = { "InSourceActor", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokeBall_eventInitializeForSummon_Parms, InSourceActor), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InTargetLocation = { "InTargetLocation", nullptr, (EPropertyFlags)0x0010000008000182, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokeBall_eventInitializeForSummon_Parms, InTargetLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InTargetLocation_MetaData), NewProp_InTargetLocation_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InPartySlotIndex = { "InPartySlotIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokeBall_eventInitializeForSummon_Parms, InPartySlotIndex), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InSourceActor,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InTargetLocation,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::NewProp_InPartySlotIndex,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_InitializeForSummon_Statics::PropPointers) < 2048);
 // ********** End Function InitializeForSummon Property Definitions ********************************
@@ -225,9 +226,10 @@ DEFINE_FUNCTION(APokeBall::execInitializeForSummon)
 {
 	P_GET_OBJECT(AActor,Z_Param_InSourceActor);
 	P_GET_STRUCT_REF(FVector,Z_Param_Out_InTargetLocation);
+	P_GET_PROPERTY(FIntProperty,Z_Param_InPartySlotIndex);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->InitializeForSummon(Z_Param_InSourceActor,Z_Param_Out_InTargetLocation);
+	P_THIS->InitializeForSummon(Z_Param_InSourceActor,Z_Param_Out_InTargetLocation,Z_Param_InPartySlotIndex);
 	P_NATIVE_END;
 }
 // ********** End Class APokeBall Function InitializeForSummon *************************************
@@ -376,6 +378,61 @@ DEFINE_FUNCTION(APokeBall::execOnPokeballStop)
 }
 // ********** End Class APokeBall Function OnPokeballStop ******************************************
 
+// ********** Begin Class APokeBall Function SetPokeballType ***************************************
+struct Z_Construct_UFunction_APokeBall_SetPokeballType_Statics
+{
+	struct PokeBall_eventSetPokeballType_Parms
+	{
+		EPokeballType NewPokeballType;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokeball" },
+		{ "ModuleRelativePath", "Public/Items/PokeBall.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function SetPokeballType constinit property declarations ***********************
+	static const UECodeGen_Private::FBytePropertyParams NewProp_NewPokeballType_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_NewPokeballType;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function SetPokeballType constinit property declarations *************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function SetPokeballType Property Definitions **********************************
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::NewProp_NewPokeballType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::NewProp_NewPokeballType = { "NewPokeballType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokeBall_eventSetPokeballType_Parms, NewPokeballType), Z_Construct_UEnum_ProjectMimikyu_EPokeballType, METADATA_PARAMS(0, nullptr) }; // 2498691174
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::NewProp_NewPokeballType_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::NewProp_NewPokeballType,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PropPointers) < 2048);
+// ********** End Function SetPokeballType Property Definitions ************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_APokeBall, nullptr, "SetPokeballType", 	Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PokeBall_eventSetPokeballType_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::PokeBall_eventSetPokeballType_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_APokeBall_SetPokeballType()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokeBall_SetPokeballType_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(APokeBall::execSetPokeballType)
+{
+	P_GET_ENUM(EPokeballType,Z_Param_NewPokeballType);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->SetPokeballType(EPokeballType(Z_Param_NewPokeballType));
+	P_NATIVE_END;
+}
+// ********** End Class APokeBall Function SetPokeballType *****************************************
+
 // ********** Begin Class APokeBall ****************************************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_APokeBall;
 UClass* APokeBall::GetPrivateStaticClass()
@@ -465,18 +522,22 @@ struct Z_Construct_UClass_APokeBall_Statics
 // ********** End Class APokeBall constinit property declarations **********************************
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("DestroyPokeball"), .Pointer = &APokeBall::execDestroyPokeball },
+		{ .NameUTF8 = UTF8TEXT("GetPokeballType"), .Pointer = &APokeBall::execGetPokeballType },
 		{ .NameUTF8 = UTF8TEXT("InitializeForCapture"), .Pointer = &APokeBall::execInitializeForCapture },
 		{ .NameUTF8 = UTF8TEXT("InitializeForSummon"), .Pointer = &APokeBall::execInitializeForSummon },
 		{ .NameUTF8 = UTF8TEXT("OnBeginOverlap"), .Pointer = &APokeBall::execOnBeginOverlap },
 		{ .NameUTF8 = UTF8TEXT("OnPokeballStop"), .Pointer = &APokeBall::execOnPokeballStop },
+		{ .NameUTF8 = UTF8TEXT("SetPokeballType"), .Pointer = &APokeBall::execSetPokeballType },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_APokeBall_DestroyPokeball, "DestroyPokeball" }, // 459954646
+		{ &Z_Construct_UFunction_APokeBall_GetPokeballType, "GetPokeballType" }, // 1120088706
 		{ &Z_Construct_UFunction_APokeBall_InitializeForCapture, "InitializeForCapture" }, // 1009026790
-		{ &Z_Construct_UFunction_APokeBall_InitializeForSummon, "InitializeForSummon" }, // 531342714
+		{ &Z_Construct_UFunction_APokeBall_InitializeForSummon, "InitializeForSummon" }, // 1995402389
 		{ &Z_Construct_UFunction_APokeBall_OnBeginOverlap, "OnBeginOverlap" }, // 3040017189
 		{ &Z_Construct_UFunction_APokeBall_OnPokeballStop, "OnPokeballStop" }, // 2171056402
+		{ &Z_Construct_UFunction_APokeBall_SetPokeballType, "SetPokeballType" }, // 2380213761
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -489,7 +550,7 @@ struct Z_Construct_UClass_APokeBall_Statics
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_CaptureComponent = { "CaptureComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, CaptureComponent), Z_Construct_UClass_UPokeballCaptureComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CaptureComponent_MetaData), NewProp_CaptureComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_SummonComponent = { "SummonComponent", nullptr, (EPropertyFlags)0x01240800000a001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, SummonComponent), Z_Construct_UClass_UPokeballSummonComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SummonComponent_MetaData), NewProp_SummonComponent_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_ActiveUseMode_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
-const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_ActiveUseMode = { "ActiveUseMode", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, ActiveUseMode), Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActiveUseMode_MetaData), NewProp_ActiveUseMode_MetaData) }; // 3092814764
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_ActiveUseMode = { "ActiveUseMode", nullptr, (EPropertyFlags)0x0020080000000015, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, ActiveUseMode), Z_Construct_UEnum_ProjectMimikyu_EPokeballUseMode, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ActiveUseMode_MetaData), NewProp_ActiveUseMode_MetaData) }; // 3521838252
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_DestroyAfterStopDelay = { "DestroyAfterStopDelay", nullptr, (EPropertyFlags)0x0020080000010001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, DestroyAfterStopDelay), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DestroyAfterStopDelay_MetaData), NewProp_DestroyAfterStopDelay_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_ProjectileMesh = { "ProjectileMesh", nullptr, (EPropertyFlags)0x00400000000a0009, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(APokeBall, ProjectileMesh), Z_Construct_UClass_USkeletalMeshComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ProjectileMesh_MetaData), NewProp_ProjectileMesh_MetaData) };
 const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_APokeBall_Statics::NewProp_CurrentPokeball_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
@@ -550,18 +611,15 @@ APokeBall::~APokeBall() {}
 // ********** Begin Registration *******************************************************************
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics
 {
-	static constexpr FEnumRegisterCompiledInInfo EnumInfo[] = {
-		{ EPokeballUseMode_StaticEnum, TEXT("EPokeballUseMode"), &Z_Registration_Info_UEnum_EPokeballUseMode, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3092814764U) },
-	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_APokeBall, APokeBall::StaticClass, TEXT("APokeBall"), &Z_Registration_Info_UClass_APokeBall, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokeBall), 173225056U) },
+		{ Z_Construct_UClass_APokeBall, APokeBall::StaticClass, TEXT("APokeBall"), &Z_Registration_Info_UClass_APokeBall, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokeBall), 2290263857U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_2598085943{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_3190344858{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,
-	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Items_PokeBall_h__Script_ProjectMimikyu_Statics::EnumInfo),
+	nullptr, 0,
 };
 // ********** End Registration *********************************************************************
 

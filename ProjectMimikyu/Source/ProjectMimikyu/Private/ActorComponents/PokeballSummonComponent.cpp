@@ -17,20 +17,17 @@ void UPokeballSummonComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UPokeballSummonComponent::InitializeSummon(APokeBall* InOwningPokeBall, const FVector& InTargetLocation, AActor* InSourceActor)
+void UPokeballSummonComponent::InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation, int32 InPartySlotIndex)
 {
-	OwningPokeBall = InOwningPokeBall;
+	//OwningPokeBall = InOwningPokeBall;
 	SourceActor = InSourceActor;
 	TargetLocation = InTargetLocation;
 
-	if (!IsValid(OwningPokeBall))
-	{
-		return;
-	}
-
-	StartLocation = OwningPokeBall->GetActorLocation();
+	//StartLocation = OwningPokeBall->GetActorLocation();
 	bIsInitialized = true;
 	bHasOpened = false;
+
+	PartySlotIndex = InPartySlotIndex;
 
 	SetComponentTickEnabled(true);
 }
@@ -104,7 +101,7 @@ void UPokeballSummonComponent::OpenPokeBall()
 		}
 
 		SpawnParams.Owner = SourceActorPtr;
-		SpawnParams.Instigator = Cast<APawn>(SourceActor);
+		SpawnParams.Instigator = Cast<APawn>(SourceActorPtr);
 
 		ASummonEnergyProjectile* EnergyProjectile =
 			OwningPokeBall->GetWorld()->SpawnActor<ASummonEnergyProjectile>(
@@ -121,7 +118,7 @@ void UPokeballSummonComponent::OpenPokeBall()
 				&UPokeballSummonComponent::HandleSummonEnergyLanded
 			);
 
-			EnergyProjectile->InitSummonEnergy(TargetLocation, SourceActor);
+			EnergyProjectile->InitSummonEnergy(TargetLocation, SourceActorPtr);
 		}
 	}
 
@@ -130,5 +127,5 @@ void UPokeballSummonComponent::OpenPokeBall()
 
 void UPokeballSummonComponent::HandleSummonEnergyLanded(FVector LandingLocation, FVector LandingNormal)
 {
-	OnPokeBallSummonLanded.Broadcast(LandingLocation, LandingNormal);
+	OnPokeBallSummonLanded.Broadcast(LandingLocation, LandingNormal, PartySlotIndex);
 }

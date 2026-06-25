@@ -16,9 +16,19 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
+// ********** Begin ScriptStruct FPokeballThrowRequest *********************************************
+struct Z_Construct_UScriptStruct_FPokeballThrowRequest_Statics;
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_212_GENERATED_BODY \
+	friend struct ::Z_Construct_UScriptStruct_FPokeballThrowRequest_Statics; \
+	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
+
+
+struct FPokeballThrowRequest;
+// ********** End ScriptStruct FPokeballThrowRequest ***********************************************
+
 // ********** Begin ScriptStruct FPokemonTypeInfo **************************************************
 struct Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_260_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_292_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonTypeInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -28,7 +38,7 @@ struct FPokemonTypeInfo;
 
 // ********** Begin ScriptStruct FPokemonMoveChart *************************************************
 struct Z_Construct_UScriptStruct_FPokemonMoveChart_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_274_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_306_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonMoveChart_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
@@ -39,7 +49,7 @@ struct FPokemonMoveChart;
 
 // ********** Begin ScriptStruct FProjectileTagContainer *******************************************
 struct Z_Construct_UScriptStruct_FProjectileTagContainer_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_282_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_314_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FProjectileTagContainer_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -49,7 +59,7 @@ struct FProjectileTagContainer;
 
 // ********** Begin ScriptStruct FEnvironmentDropParams ********************************************
 struct Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_331_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_363_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FEnvironmentDropParams_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -59,7 +69,7 @@ struct FEnvironmentDropParams;
 
 // ********** Begin ScriptStruct FTypeChartMatchup *************************************************
 struct Z_Construct_UScriptStruct_FTypeChartMatchup_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_392_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_424_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FTypeChartMatchup_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
@@ -70,7 +80,7 @@ struct FTypeChartMatchup;
 
 // ********** Begin ScriptStruct FPokemonUIInfo ****************************************************
 struct Z_Construct_UScriptStruct_FPokemonUIInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_421_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_453_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonUIInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -80,7 +90,7 @@ struct FPokemonUIInfo;
 
 // ********** Begin ScriptStruct FGameplayTagIntPair ***********************************************
 struct Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_442_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_474_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FGameplayTagIntPair_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -90,7 +100,7 @@ struct FGameplayTagIntPair;
 
 // ********** Begin ScriptStruct FGameplayTagFloatPair *********************************************
 struct Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_454_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_486_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FGameplayTagFloatPair_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -100,7 +110,7 @@ struct FGameplayTagFloatPair;
 
 // ********** Begin ScriptStruct FPokemonInfo ******************************************************
 struct Z_Construct_UScriptStruct_FPokemonInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_466_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_498_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -110,7 +120,7 @@ struct FPokemonInfo;
 
 // ********** Begin ScriptStruct FTagCategoryMap ***************************************************
 struct Z_Construct_UScriptStruct_FTagCategoryMap_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_636_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_671_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FTagCategoryMap_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -120,7 +130,7 @@ struct FTagCategoryMap;
 
 // ********** Begin ScriptStruct FSequentialShotParams *********************************************
 struct Z_Construct_UScriptStruct_FSequentialShotParams_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_654_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_689_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FSequentialShotParams_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -130,7 +140,7 @@ struct FSequentialShotParams;
 
 // ********** Begin ScriptStruct FPokemonParty *****************************************************
 struct Z_Construct_UScriptStruct_FPokemonParty_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_686_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_721_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FPokemonParty_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -140,7 +150,7 @@ struct FPokemonParty;
 
 // ********** Begin ScriptStruct FInventorySlotInfo ************************************************
 struct Z_Construct_UScriptStruct_FInventorySlotInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_711_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_746_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FInventorySlotInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -150,7 +160,7 @@ struct FInventorySlotInfo;
 
 // ********** Begin ScriptStruct FDamageInfo *******************************************************
 struct Z_Construct_UScriptStruct_FDamageInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_734_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_769_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FDamageInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct();
 
@@ -160,7 +170,7 @@ struct FDamageInfo;
 
 // ********** Begin ScriptStruct FInventoryItemInfo ************************************************
 struct Z_Construct_UScriptStruct_FInventoryItemInfo_Statics;
-#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_752_GENERATED_BODY \
+#define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_CharacterTypes_h_787_GENERATED_BODY \
 	friend struct ::Z_Construct_UScriptStruct_FInventoryItemInfo_Statics; \
 	PROJECTMIMIKYU_API static class UScriptStruct* StaticStruct(); \
 	typedef FTableRowBase Super;
@@ -393,6 +403,17 @@ enum class EPokeballType : uint8;
 template<> struct TIsUEnumClass<EPokeballType> { enum { Value = true }; };
 template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokeballType>();
 // ********** End Enum EPokeballType ***************************************************************
+
+// ********** Begin Enum EPokeballUseMode **********************************************************
+#define FOREACH_ENUM_EPOKEBALLUSEMODE(op) \
+	op(EPokeballUseMode::None) \
+	op(EPokeballUseMode::Capture) \
+	op(EPokeballUseMode::Summon) 
+
+enum class EPokeballUseMode : uint8;
+template<> struct TIsUEnumClass<EPokeballUseMode> { enum { Value = true }; };
+template<> PROJECTMIMIKYU_NON_ATTRIBUTED_API UEnum* StaticEnum<EPokeballUseMode>();
+// ********** End Enum EPokeballUseMode ************************************************************
 
 // ********** Begin Enum ESlotType *****************************************************************
 #define FOREACH_ENUM_ESLOTTYPE(op) \

@@ -32,6 +32,7 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__Delega
 	{
 		FVector LandingLocation;
 		FVector LandingNormal;
+		int32 PartySlotIndex;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -42,6 +43,7 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__Delega
 // ********** Begin Delegate FPokeBallSummonLanded constinit property declarations *****************
 	static const UECodeGen_Private::FStructPropertyParams NewProp_LandingLocation;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_LandingNormal;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_PartySlotIndex;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Delegate FPokeBallSummonLanded constinit property declarations *******************
 	static const UECodeGen_Private::FDelegateFunctionParams FuncParams;
@@ -50,9 +52,11 @@ struct Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__Delega
 // ********** Begin Delegate FPokeBallSummonLanded Property Definitions ****************************
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_LandingLocation = { "LandingLocation", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventPokeBallSummonLanded_Parms, LandingLocation), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_LandingNormal = { "LandingNormal", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventPokeBallSummonLanded_Parms, LandingNormal), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_PartySlotIndex = { "PartySlotIndex", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(_Script_ProjectMimikyu_eventPokeBallSummonLanded_Parms, PartySlotIndex), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_LandingLocation,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_LandingNormal,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::NewProp_PartySlotIndex,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature_Statics::PropPointers) < 2048);
 // ********** End Delegate FPokeBallSummonLanded Property Definitions ******************************
@@ -70,16 +74,18 @@ UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__De
 	}
 	return ReturnFunction;
 }
-void FPokeBallSummonLanded_DelegateWrapper(const FMulticastScriptDelegate& PokeBallSummonLanded, FVector LandingLocation, FVector LandingNormal)
+void FPokeBallSummonLanded_DelegateWrapper(const FMulticastScriptDelegate& PokeBallSummonLanded, FVector LandingLocation, FVector LandingNormal, int32 PartySlotIndex)
 {
 	struct _Script_ProjectMimikyu_eventPokeBallSummonLanded_Parms
 	{
 		FVector LandingLocation;
 		FVector LandingNormal;
+		int32 PartySlotIndex;
 	};
 	_Script_ProjectMimikyu_eventPokeBallSummonLanded_Parms Parms;
 	Parms.LandingLocation=LandingLocation;
 	Parms.LandingNormal=LandingNormal;
+	Parms.PartySlotIndex=PartySlotIndex;
 	PokeBallSummonLanded.ProcessMulticastDelegate<UObject>(&Parms);
 }
 // ********** End Delegate FPokeBallSummonLanded ***************************************************
@@ -226,7 +232,7 @@ struct Z_Construct_UClass_UPokeballSummonComponent_Statics
 }; // struct Z_Construct_UClass_UPokeballSummonComponent_Statics
 
 // ********** Begin Class UPokeballSummonComponent Property Definitions ****************************
-const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UPokeballSummonComponent_Statics::NewProp_OnPokeBallSummonLanded = { "OnPokeBallSummonLanded", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokeballSummonComponent, OnPokeBallSummonLanded), Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnPokeBallSummonLanded_MetaData), NewProp_OnPokeBallSummonLanded_MetaData) }; // 1202639662
+const UECodeGen_Private::FMulticastDelegatePropertyParams Z_Construct_UClass_UPokeballSummonComponent_Statics::NewProp_OnPokeBallSummonLanded = { "OnPokeBallSummonLanded", nullptr, (EPropertyFlags)0x0010000010080000, UECodeGen_Private::EPropertyGenFlags::InlineMulticastDelegate, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokeballSummonComponent, OnPokeBallSummonLanded), Z_Construct_UDelegateFunction_ProjectMimikyu_PokeBallSummonLanded__DelegateSignature, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OnPokeBallSummonLanded_MetaData), NewProp_OnPokeBallSummonLanded_MetaData) }; // 3502932734
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UPokeballSummonComponent_Statics::NewProp_OpenDistance = { "OpenDistance", nullptr, (EPropertyFlags)0x0020080000010015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokeballSummonComponent, OpenDistance), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OpenDistance_MetaData), NewProp_OpenDistance_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UPokeballSummonComponent_Statics::NewProp_OpenBurstSystem = { "OpenBurstSystem", nullptr, (EPropertyFlags)0x0124080000010015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokeballSummonComponent, OpenBurstSystem), Z_Construct_UClass_UNiagaraSystem_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_OpenBurstSystem_MetaData), NewProp_OpenBurstSystem_MetaData) };
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UPokeballSummonComponent_Statics::NewProp_SummonEnergyProjectileClass = { "SummonEnergyProjectileClass", nullptr, (EPropertyFlags)0x0024080000010015, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UPokeballSummonComponent, SummonEnergyProjectileClass), Z_Construct_UClass_UClass_NoRegister, Z_Construct_UClass_ASummonEnergyProjectile_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_SummonEnergyProjectileClass_MetaData), NewProp_SummonEnergyProjectileClass_MetaData) };
@@ -283,10 +289,10 @@ UPokeballSummonComponent::~UPokeballSummonComponent() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokeballSummonComponent, UPokeballSummonComponent::StaticClass, TEXT("UPokeballSummonComponent"), &Z_Registration_Info_UClass_UPokeballSummonComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokeballSummonComponent), 654101816U) },
+		{ Z_Construct_UClass_UPokeballSummonComponent, UPokeballSummonComponent::StaticClass, TEXT("UPokeballSummonComponent"), &Z_Registration_Info_UClass_UPokeballSummonComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokeballSummonComponent), 3398480942U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_2267483171{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_1260080736{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokeballSummonComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

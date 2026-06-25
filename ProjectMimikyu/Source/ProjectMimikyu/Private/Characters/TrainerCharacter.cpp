@@ -314,7 +314,36 @@ void ATrainerCharacter::ServerRequestCatchPokemonWithPokeball_Implementation(APo
 
 void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 SelectedPartyIndex, const FAimData& AimData)
 {
-	// TODO: Implement this function to throw a selected Pokemon from the party using the provided AimData for trajectory calculation.
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (IsValid(CurrentPokemon))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedPokemon failed: Current Pokemon is already out."));
+		return;
+	}
+
+	ATrainerPlayerState* TPS = GetTPS();
+	if (!TPS || TPS->IsCurrentPartyEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedPokemon failed: No Pokemon in party to throw."));
+		return;
+	}
+
+	FPokemonInfo PokemonOut;
+	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedPokemon failed: Invalid party index."));
+		return;
+	}
+
+	// TODO: Replace this with PokemonOut.CaptureBallType once that exist
+	const EPokeballType CaptureBallType = EPokeballType::EPT_None;
+
+	ThrowPokeballForSummon(PokeballProjectileClass, AimData, SelectedPartyIndex);
+
 }
 
 bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
@@ -594,7 +623,7 @@ void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent*
 
 #pragma region Come On Out
 
-void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData)
+void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData,const FPokeballThrowRequest& ThrowRequest)
 {
 	if (!ProjectileClass || !TargetingComponent)
 	{
@@ -640,11 +669,46 @@ void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> Projec
 	// If projectile is a Pokeball, initialize it for the capture component
 	if (APokeBall* Pokeball = Cast<APokeBall>(Projectile))
 	{
-		Pokeball->InitializeForCapture(this);
+		Pokeball->SetPokeballType(ThrowRequest.PokeballType);
+
+		switch (ThrowRequest.UseMode)
+		{
+		case EPokeballUseMode::Capture:
+			Pokeball->InitializeForCapture(this);
+			break;
+
+		case EPokeballUseMode::Summon:
+			Pokeball->InitializeForSummon(this, ThrowRequest.SummonTargetLocation,ThrowRequest.PartySlotIndex);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
 	Projectile->LaunchProjectile(LaunchVelocity);
+}
+
+void ATrainerCharacter::ThrowPokeballForCapture(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, EPokeballType PokeballType)
+{
+	FPokeballThrowRequest ThrowRequest;
+	ThrowRequest.UseMode = EPokeballUseMode::Capture;
+	ThrowRequest.PokeballType = PokeballType;
+	ThrowRequest.TargetActor = AimData.TargetActor.Get();
+
+	ThrowThrowableProjectile(ProjectileClass, AimData, ThrowRequest);
+}
+
+void ATrainerCharacter::ThrowPokeballForSummon(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, int32 PartySlotIndex)
+{
+	FPokeballThrowRequest ThrowRequest;
+	ThrowRequest.UseMode = EPokeballUseMode::Summon;
+	ThrowRequest.PartySlotIndex = PartySlotIndex;
+	ThrowRequest.TargetActor = AimData.TargetActor.Get();
+	ThrowRequest.SummonTargetLocation = AimData.AimWorldLocation;
+
+	ThrowThrowableProjectile(ProjectileClass, AimData, ThrowRequest);
 }
 
 void ATrainerCharacter::ThrowQuickSlotInput()
@@ -722,10 +786,25 @@ void ATrainerCharacter::ThrowSelectedPokemonInput()
 		return;
 	}
 
-	FVector Start = GetActorLocation();
-	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
+	//FVector Start = GetActorLocation();
+	//FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
 
-	ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
+	//ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
+
+	const FVector SpawnLocation = 
+		GetActorLocation() + GetActorForwardVector() * PokeballSpawnForwardOffset + FVector::UpVector * PokeballSpawnUpOffset;
+
+	FAimData AimData;
+	TargetingComponent->BuildProjectileAimData
+	(
+		SpawnLocation,
+		PokeballThrowSpeed,
+		PokeballCollisionRadius,
+		AimData
+	);
+
+	ServerThrowSelectedPokemon(QuickSlotComponent->GetPartyIndex(), AimData);
+
 }
 
 void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName ItemID, const FAimData& AimData)
@@ -761,7 +840,10 @@ void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName It
 		return;
 	}
 
-	ThrowThrowableProjectile(ItemInfo->ProjectileClass,AimData);
+	FPokeballThrowRequest ThrowRequest;
+	ThrowRequest.UseMode = EPokeballUseMode::Capture;
+	
+	ThrowThrowableProjectile(ItemInfo->ProjectileClass,AimData,ThrowRequest);
 }
 
 void ATrainerCharacter::ComeOnOut()
@@ -870,6 +952,27 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 
 	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);
+}
+
+void ATrainerCharacter::HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	const FVector SpawnLocation = LandingLocation + LandingNormal * 90.f;
+	const FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, GetActorLocation());
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SpawnLocation);
+	SpawnTransform.SetRotation(SpawnRotation.Quaternion());
+
+	HandleSendOutPokemonAtTransform(SelectedPartyIndex, SpawnTransform);
+}
+
+void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex, const FTransform& SpawnTransform)
+{
 }
 
 #pragma endregion

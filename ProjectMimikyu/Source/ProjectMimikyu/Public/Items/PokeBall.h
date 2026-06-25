@@ -8,14 +8,6 @@
 #include "Characters/CharacterTypes.h"
 #include "PokeBall.generated.h"
 
-UENUM(BlueprintType)
-enum class EPokeballUseMode :uint8
-{
-	None UMETA(DisplayName = "None"),
-	Capture UMETA(DisplayName = "Capture"),
-	Summon UMETA(DisplayName = "Summon")
-};
-
 class UPokeballCaptureComponent;
 class UPokeballSummonComponent;
 class UProjectileMovementComponent;
@@ -32,7 +24,7 @@ public:
 	void InitializeForCapture(AActor* InSourceActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokeball")
-	void InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation);
+	void InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation, int32 InPartySlotIndex);
 
 	UProjectileMovementComponent* GetProjectileMovementComponent() const { return ProjectileMovementComponent; }
 
@@ -79,4 +71,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float BoostedModifier = 0;
+
+public:
+
+	UFUNCTION(BlueprintCallable,Category = "Pokeball")
+	void SetPokeballType(EPokeballType NewPokeballType) { CurrentPokeball = NewPokeballType; }
+
+	UFUNCTION(BlueprintCallable, Category = "Pokeball")
+	EPokeballType GetPokeballType() const { return CurrentPokeball; }
 };

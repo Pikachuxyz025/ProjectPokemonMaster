@@ -199,6 +199,38 @@ enum class EPokeballType :uint8
 };
 
 UENUM(BlueprintType)
+enum class EPokeballUseMode :uint8
+{
+	None UMETA(DisplayName = "None"),
+	Capture UMETA(DisplayName = "Capture"),
+	Summon UMETA(DisplayName = "Summon")
+};
+
+USTRUCT(BlueprintType)
+struct FPokeballThrowRequest
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPokeballUseMode UseMode = EPokeballUseMode::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPokeballType PokeballType = EPokeballType::EPT_None;
+
+	// Used for summoning from the party
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PartySlotIndex = INDEX_NONE;
+
+	// Used when the energy projectile needs to land somewhere
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector SummonTargetLocation = FVector::ZeroVector;
+
+	// Optional. Mostly useful for capture targeting
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<AActor> TargetActor = nullptr;
+};
+
+UENUM(BlueprintType)
 enum class ESlotType :uint8
 {
 	EST_None UMETA(DisplayName="None"),
@@ -470,6 +502,9 @@ struct FPokemonInfo
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPokeballType CapturedBallType = EPokeballType::EPT_None;
 
 	UPROPERTY(BlueprintReadOnly)
 	FPokemonUIInfo CurrentUiInfo;

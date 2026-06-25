@@ -8,10 +8,11 @@ class APokeBall;
 class UNiagaraSystem;
 class ASummonEnergyProjectile;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
 	FPokeBallSummonLanded,
 	FVector, LandingLocation,
-	FVector, LandingNormal
+	FVector, LandingNormal,
+	int32, PartySlotIndex	
 );
 
 UCLASS(ClassGroup = (Pokeball), meta = (BlueprintSpawnableComponent))
@@ -22,7 +23,7 @@ class PROJECTMIMIKYU_API UPokeballSummonComponent : public UActorComponent
 public:
 	UPokeballSummonComponent();
 
-	void InitializeSummon(APokeBall* InOwningPokeBall, const FVector& InTargetLocation, AActor* InSourceActor);
+	void InitializeForSummon(AActor* InSourceActor, const FVector& InTargetLocation, int32 InPartySlotIndex);
 
 	void HandleHit(const FHitResult& Hit);
 
@@ -51,6 +52,7 @@ private:
 
 	FVector StartLocation = FVector::ZeroVector;
 	FVector TargetLocation = FVector::ZeroVector;
+	int32 PartySlotIndex = INDEX_NONE;
 
 	bool bIsInitialized = false;
 	bool bHasOpened = false;
