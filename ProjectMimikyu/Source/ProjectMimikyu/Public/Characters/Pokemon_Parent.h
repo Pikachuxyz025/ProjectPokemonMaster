@@ -9,6 +9,7 @@
 #include "Interfaces/PokemonCombatInterface.h"
 #include "Interfaces/TargetableInterface.h"
 #include "AbilitySystemInterface.h"
+#include "ActorComponents/TargetingType.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "GameplayTagContainer.h"
 #include "Command/PokemonCommandTypes.h"
@@ -110,7 +111,6 @@ virtual bool IsCatchableTarget_Implementation() const override;
 virtual float GetTargetPriorityScore_Implementation() const override;
 #pragma endregion
 
-
 UFUNCTION(BlueprintCallable)
 virtual	void AttackEnded();
 
@@ -199,6 +199,8 @@ public:
 	void BindTrainerTargetDelegate(AActor* TrainerActor);
 	void UnbindTrainerTargetDelegate(AActor* TrainerActor);
 
+	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData);
+	void SetCommandTargetFromAimData(const FAimData& AimData);
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()
 	void PrepareForFieldRemoval();

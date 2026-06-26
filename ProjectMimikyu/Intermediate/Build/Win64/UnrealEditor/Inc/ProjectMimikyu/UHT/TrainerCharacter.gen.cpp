@@ -42,6 +42,7 @@ PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonGameplayAbilities_NoRegist
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UPokemonInputConfig_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTargetingComponent_NoRegister();
 PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister();
+PROJECTMIMIKYU_API UClass* Z_Construct_UClass_UTrainerThrowableComponent_NoRegister();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPartyUpdated__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnPokemonSentOut__DelegateSignature();
 PROJECTMIMIKYU_API UFunction* Z_Construct_UDelegateFunction_ProjectMimikyu_OnTargetRegistered__DelegateSignature();
@@ -1072,6 +1073,12 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 		{ "EditInline", "true" },
 		{ "ModuleRelativePath", "Public/Characters/TrainerCharacter.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_ThrowableComponent_MetaData[] = {
+		{ "AllowPrivateAccess", "true" },
+		{ "Category", "Components" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/Characters/TrainerCharacter.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DefaultMappingContext_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Input" },
@@ -1300,6 +1307,7 @@ struct Z_Construct_UClass_ATrainerCharacter_Statics
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InventorySystem;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_TargetingComponent;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_QuickSlotComponent;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_ThrowableComponent;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_DefaultMappingContext;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_InputConfig;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_JumpAction;
@@ -1398,6 +1406,7 @@ const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharac
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_InventorySystem = { "InventorySystem", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, InventorySystem), Z_Construct_UClass_UInventorySystemComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InventorySystem_MetaData), NewProp_InventorySystem_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_TargetingComponent = { "TargetingComponent", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, TargetingComponent), Z_Construct_UClass_UTargetingComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_TargetingComponent_MetaData), NewProp_TargetingComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_QuickSlotComponent = { "QuickSlotComponent", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, QuickSlotComponent), Z_Construct_UClass_UTrainerQuickSlotComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_QuickSlotComponent_MetaData), NewProp_QuickSlotComponent_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_ThrowableComponent = { "ThrowableComponent", nullptr, (EPropertyFlags)0x014400000009001d, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, ThrowableComponent), Z_Construct_UClass_UTrainerThrowableComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_ThrowableComponent_MetaData), NewProp_ThrowableComponent_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_DefaultMappingContext = { "DefaultMappingContext", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, DefaultMappingContext), Z_Construct_UClass_UInputMappingContext_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefaultMappingContext_MetaData), NewProp_DefaultMappingContext_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_InputConfig = { "InputConfig", nullptr, (EPropertyFlags)0x0144000000010001, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, InputConfig), Z_Construct_UClass_UPokemonInputConfig_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_InputConfig_MetaData), NewProp_InputConfig_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_JumpAction = { "JumpAction", nullptr, (EPropertyFlags)0x0144000000000015, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(ATrainerCharacter, JumpAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_JumpAction_MetaData), NewProp_JumpAction_MetaData) };
@@ -1467,6 +1476,7 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_ATrainerC
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_InventorySystem,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_TargetingComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_QuickSlotComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_ThrowableComponent,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_DefaultMappingContext,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_InputConfig,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_ATrainerCharacter_Statics::NewProp_JumpAction,
@@ -1570,10 +1580,10 @@ ATrainerCharacter::~ATrainerCharacter() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 1359461534U) },
+		{ Z_Construct_UClass_ATrainerCharacter, ATrainerCharacter::StaticClass, TEXT("ATrainerCharacter"), &Z_Registration_Info_UClass_ATrainerCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(ATrainerCharacter), 3335545658U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_1144487828{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_1832612516{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_Characters_TrainerCharacter_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

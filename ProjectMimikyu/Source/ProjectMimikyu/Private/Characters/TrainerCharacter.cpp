@@ -13,6 +13,7 @@
 #include "ActorComponents/InventorySystemComponent.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "ActorComponents/PokeballSummonComponent.h"
+#include "ActorComponents/TrainerThrowableComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
@@ -75,6 +76,8 @@ ATrainerCharacter::ATrainerCharacter()
 	InventorySystem = CreateDefaultSubobject<UInventorySystemComponent>(TEXT("Inventory System"));
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("Targeting Component"));
 	QuickSlotComponent = CreateDefaultSubobject<UTrainerQuickSlotComponent>(TEXT("Quick Slot Component"));
+	ThrowableComponent = CreateDefaultSubobject<UTrainerThrowableComponent>(TEXT("Throwable Component"));
+
 	bReplicates = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -194,7 +197,7 @@ void ATrainerCharacter::ServerRequestReturnCurrentPokemon_Implementation()
 		return;
 	}
 
-	if (CurrentPokemon->IsOwnedByTrainer(this))
+	if (!CurrentPokemon->IsOwnedByTrainer(this))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerRequestReturnCurrentPokemon failed: Current Pokemon does not belong to this trainer."));
 		return;
@@ -584,11 +587,10 @@ void ATrainerCharacter::Input_EndFocusAim()
 
 void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const FAimData& AimData)
 {
-	if(!CurrentPokemon)
+	if (!CurrentPokemon)
 	{
 		UE_LOG(LogTemp, Display, TEXT("ServerCallCommand failed: No current Pokemon."));
 		return;
-	
 	}
 
 	if (MoveIndex == INDEX_NONE || MoveIndex < 0)
@@ -596,6 +598,7 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		UE_LOG(LogTemp, Warning, TEXT("ServerCallCommand failed: Invalid move index."));
 		return;
 	}
+
 	CurrentPokemon->CallCommand(MoveIndex);
 }
 
@@ -817,7 +820,7 @@ void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName It
 
 	if (!InventorySystem->HasItem(ItemID,1))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Player does not have item %s."), *ItemID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[TrainerCharacter] ServerThrowSelectedItem failed: Player does not have item %s."), *ItemID.ToString());
 		return;
 	}
 
@@ -825,19 +828,19 @@ void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName It
 
 	if(!ItemInfo)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Could not find item info for %s."), *ItemID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[TrainerCharacter] ServerThrowSelectedItem failed: Could not find item info for %s."), *ItemID.ToString());
 		return;
 	}
 
 	if (!ItemInfo->bIsThrowable || !ItemInfo->ProjectileClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Item %s is not a throwable item."), *ItemID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[TrainerCharacter] ServerThrowSelectedItem failed: Item %s is not a throwable item."), *ItemID.ToString());
 		return;
 	}
 
 	if (!InventorySystem->TryConsumeItem(ItemID, 1))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedItem failed: Could not consume item %s."), *ItemID.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("[TrainerCharacter] ServerThrowSelectedItem failed: Could not consume item %s."), *ItemID.ToString());
 		return;
 	}
 
@@ -1116,7 +1119,7 @@ void ATrainerCharacter::TargetAndEngage()
 {
 	if (!CurrentPokemon)
 		return;
-	UE_LOG(LogTemp, Display, TEXT("Looking for target"));
+	UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] TargetAndEngage: Looking for target"));
 	FHitResult OutHit;
 	FVector Start = GetActorLocation();
 	FVector End = FollowCamera->GetComponentLocation() + (FollowCamera->GetForwardVector() * CatchingDistance);
@@ -1124,9 +1127,21 @@ void ATrainerCharacter::TargetAndEngage()
 
 	if (OutHit.bBlockingHit)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Hit something"));
-		EngagedTarget = OutHit.GetActor();
-		GetTPS()->SetTrainerIsInCombat(EngagedTarget);
+		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] TargetAndEngage: Hit something"));
+
+		APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(OutHit.GetActor());
+
+		EngagedTarget = PokemonTarget;
+
+		if (PokemonTarget)
+		{
+			GetTPS()->SetTrainerIsInCombat(PokemonTarget);
+		}
+		else
+		{
+			GetTPS()->SetTrainerIsInCombat(nullptr);
+		}
+
 		ServerBroadcastTarget(OutHit);
 	}
 }

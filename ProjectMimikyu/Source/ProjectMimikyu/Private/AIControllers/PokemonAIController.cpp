@@ -238,25 +238,17 @@ void APokemonAIController::SetTrainer(AActor* NewTrainer)
 
 void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 {
-	CombatTarget = NewTarget;
+	APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(NewTarget);
 
-	if(CombatTarget)
+	if (!IsValid(TargetPokemon) || TargetPokemon == ControlledPokemon)
 	{
-		if (ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(CombatTarget))
-		{
-			return;
-		}
-		if (APokemon_Parent* Target = Cast<APokemon_Parent>(CombatTarget))
-		{
-			if (Target == ControlledPokemon)
-				return;
-		}
-		SetPokemonState(EPokemonState::EPS_Combative);
-	}
-	else
-	{
+		ClearCombatTarget();
 		SetPokemonState(EPokemonState::EPS_Passive);
+		return;
 	}
+
+	CombatTarget = TargetPokemon;
+	SetPokemonState(EPokemonState::EPS_Combative);
 	SetBlackboardAttackTarget();
 }
 

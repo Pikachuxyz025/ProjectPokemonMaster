@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Command/PokemonCommandTypes.h"
+#include "ActorComponents/TargetingType.h"
 #include "PokemonCommandComponent.generated.h"
 
 class APokemon_Parent;
@@ -38,6 +39,9 @@ public:
 
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
 	void SetCommandTargetFromHit(const FHitResult& Hit);
+
+	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData) const;
+	void SetCommandTargetFromAimData(const FAimData& AimData);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	void Dodge(const FVector& NewDodgeDirection);

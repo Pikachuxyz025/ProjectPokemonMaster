@@ -519,6 +519,23 @@ void APokemon_Parent::UnbindTrainerTargetDelegate(AActor* TrainerActor)
 	}
 }
 
+FPokemonCommandTarget APokemon_Parent::BuildCommandTargetFromAimData(const FAimData& AimData)
+{
+	if (CommandComponent)
+	{
+		return CommandComponent->BuildCommandTargetFromAimData(AimData);
+	}
+	return FPokemonCommandTarget();
+}
+
+void APokemon_Parent::SetCommandTargetFromAimData(const FAimData& AimData)
+{
+	if (CommandComponent)
+	{
+		CommandComponent->SetCommandTargetFromAimData(AimData);
+	}
+}
+
 void APokemon_Parent::PrepareForFieldRemoval()
 {
 	if (FieldPresenceComponent)
@@ -807,13 +824,37 @@ void APokemon_Parent::CombatReady(AActor* Target)
 
 void APokemon_Parent::GetReadyForCombat(const FHitResult& CombatHitResult)
 {
-	APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(CombatHitResult.GetActor());
-	PokemonController->SetCombatTarget(PokemonTarget);
-	ApplyEffectToSelf(StaminaRecoveryEffect, 1.f);
-	if (PokemonTarget)
+	const FPokemonCommandTarget CommandTarget = BuildCommandTargetFromHit(CombatHitResult);
+	SetCommandTarget(CommandTarget);
+
+	if (!PokemonController)
 	{
-		PokemonTarget->CombatReady(this);
+		PokemonController = GetPokemonController();
 	}
+
+	if (!PokemonController)
+	{
+		return;
+	}
+
+	if (CommandTarget.TargetType == EPokemonCommandTargetType::EnemyPokemon)
+	{
+		APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(CommandTarget.TargetActor.Get());
+
+		if (!PokemonTarget || PokemonTarget == this)
+		{
+			PokemonController->ClearCombatTarget();
+			return;
+		}
+
+		PokemonController->SetCombatTarget(PokemonTarget);
+		ApplyEffectToSelf(StaminaRecoveryEffect, 1.f);
+
+		PokemonTarget->CombatReady(this);
+		return;
+	}
+
+	PokemonController->ClearCombatTarget();
 }
 
 void APokemon_Parent::DisengageFromCombat()

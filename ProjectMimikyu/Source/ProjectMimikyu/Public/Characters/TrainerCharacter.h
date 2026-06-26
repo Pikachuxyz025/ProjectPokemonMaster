@@ -28,6 +28,7 @@ class APokeBall;
 class UPokemonGameplayAbilities;
 class UEnhancedInputLocalPlayerSubsystem;
 class UTrainerQuickSlotComponent;
+class UTrainerThrowableComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Parent*>, PokemonParty);
@@ -185,6 +186,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UTrainerQuickSlotComponent> QuickSlotComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UTrainerThrowableComponent> ThrowableComponent;
 
 	// Input assets
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))

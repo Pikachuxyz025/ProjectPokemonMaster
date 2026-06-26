@@ -85,9 +85,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Key Names")
 	FName CombatTargetKeyName = FName("CombatTarget");
 
-	UFUNCTION(BlueprintCallable,Category = "Pokemon|AI|Targeting")
-	void ClearCombatTarget();
-
 	void SetBlackboardTrainer();
 	void SetBlackboardASC();
 	void SetBlackboardAttackTarget();
@@ -107,6 +104,9 @@ public:
 	void ActivateAbilityByTag(FGameplayTag InputTag);
 	void SetBlackboardActionState(EMoveAction DamageAction);
 	void SetBlackboardDesiredCombatMode(FGameplayTag NewCombatModeTag);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Targeting")
+	void ClearCombatTarget();
 private:
 
 	UPROPERTY()

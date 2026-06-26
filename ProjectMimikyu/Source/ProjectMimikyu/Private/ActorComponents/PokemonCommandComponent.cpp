@@ -75,6 +75,43 @@ void UPokemonCommandComponent::SetCommandTargetFromHit(const FHitResult& Hit)
 	SetCommandTarget(BuildCommandTargetFromHit(Hit));
 }
 
+FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromAimData(const FAimData& AimData) const
+{
+	FPokemonCommandTarget Result;
+
+	Result.TargetActor = AimData.TargetActor.Get();
+	Result.TargetLocation = AimData.AimWorldLocation;
+	Result.ImpactNormal = FVector::UpVector;
+
+	AActor* TargetActor = Result.TargetActor.Get();
+
+	if (IsValid(TargetActor))
+	{
+		if (Cast<APokemon_Parent>(TargetActor))
+		{
+			Result.TargetType = EPokemonCommandTargetType::EnemyPokemon;
+			return Result;
+		}
+
+		Result.TargetType = EPokemonCommandTargetType::Environment;
+		return Result;
+	}
+
+	if (!AimData.AimWorldLocation.IsNearlyZero())
+	{
+		Result.TargetType = EPokemonCommandTargetType::Location;
+		return Result;
+	}
+
+	Result.TargetType = EPokemonCommandTargetType::None;
+	return Result;
+}
+
+void UPokemonCommandComponent::SetCommandTargetFromAimData(const FAimData& AimData)
+{
+	SetCommandTarget(BuildCommandTargetFromAimData(AimData));
+}
+
 bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 {
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
