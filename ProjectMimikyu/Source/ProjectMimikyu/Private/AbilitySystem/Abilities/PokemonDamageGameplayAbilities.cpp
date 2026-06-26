@@ -11,10 +11,15 @@
 FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
 	FDamageEffectParams Params;
-	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+
+	AActor* SourceAvatar = GetAvatarActorFromActorInfo();
+	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+	Params.WorldContextObject = SourceAvatar;
 	Params.DamageGameplayEffectClass = DamageEffectClass;
-	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.SourceAbilitySystemComponent = SourceASC;
+	Params.TargetAbilitySystemComponent = TargetASC;
 	Params.BasedDamage = Damage;
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageType = MoveTypeTag;
@@ -26,19 +31,48 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
 	Params.KnockbackChance = KnockbackChance;
 
-	if (IsValid(TargetActor))
+	if (!IsValid(SourceAvatar))
 	{
-		FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
-		Rotation.Pitch = 45.f;
-		const FVector ToTarget = Rotation.Vector();
-		Params.DeathImpulse = ToTarget * DeathImpulseMagnitude;
-		Params.KnockbackForce = ToTarget * KnockbackForceMagnitude;
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDamageGameplayAbilities] MakeDamageEffectParams failed: SourceAvatar is invalid on %s."), *GetNameSafe(this));
+		return Params;
+	}
 
-		TScriptInterface<IPokemonCombatInterface> TargetPokemon = TargetActor;
-		if (TargetPokemon)
-		{
-			Params.TypeMultiplier = TargetPokemon->GetTypeMatchup(MoveElementalType);
-		}
+	if (!SourceASC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDamageGameplayAbilities] MakeDamageEffectParams failed: SourceASC is null on %s."), *GetNameSafe(this));
+		return Params;
+	}
+
+	if (!IsValid(TargetActor))
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDamageGameplayAbilities] MakeDamageEffectParams failed: TargetActor is invalid on %s."), *GetNameSafe(this));
+		return Params;
+	}
+
+	if (!TargetASC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDamageGameplayAbilities] MakeDamageEffectParams failed: TargetASC is null. Target=%s"), *GetNameSafe(TargetActor));
+		return Params;
+	}
+
+	if (!DamageEffectClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDamageGameplayAbilities] MakeDamageEffectParams failed: DamageEffectClass is null on %s."), *GetNameSafe(this));
+		return Params;
+	}
+
+	FRotator Rotation = (TargetActor->GetActorLocation() - SourceAvatar->GetActorLocation()).Rotation();
+	Rotation.Pitch = 45.f;
+
+	const FVector ToTarget = Rotation.Vector();
+
+	Params.DeathImpulse = ToTarget * DeathImpulseMagnitude;
+	Params.KnockbackForce = ToTarget * KnockbackForceMagnitude;
+
+	TScriptInterface<IPokemonCombatInterface> TargetPokemon = TargetActor;
+	if (TargetPokemon)
+	{
+		Params.TypeMultiplier = TargetPokemon->GetTypeMatchup(MoveElementalType);
 	}
 
 	return Params;

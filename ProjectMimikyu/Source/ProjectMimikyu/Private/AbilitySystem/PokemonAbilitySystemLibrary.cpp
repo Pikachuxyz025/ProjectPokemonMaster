@@ -151,25 +151,83 @@ UTrainerOverlayWidgetController* UPokemonAbilitySystemLibrary::GetTrainerOverlay
 
 FGameplayEffectContextHandle UPokemonAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
-	const FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
-	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	FGameplayEffectContextHandle EmptyContext;
 
-	FGameplayEffectContextHandle EffectContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
+	if (!DamageEffectParams.SourceAbilitySystemComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonAbilitySystemLibrary] ApplyDamageEffect failed: SourceAbilitySystemComponent is null."));
+		return EmptyContext;
+	}
+
+	if (!DamageEffectParams.TargetAbilitySystemComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonAbilitySystemLibrary] ApplyDamageEffect failed: TargetAbilitySystemComponent is null."));
+		return EmptyContext;
+	}
+
+	if (!DamageEffectParams.DamageGameplayEffectClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonAbilitySystemLibrary] ApplyDamageEffect failed: DamageGameplayEffectClass is null."));
+		return EmptyContext;
+	}
+
+	const FPokemonGameplayTags GameplayTags = FPokemonGameplayTags::Get();
+
+	const AActor* SourceAvatarActor =
+		DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+
+	FGameplayEffectContextHandle EffectContextHandle =
+		DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
+
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
 
-    // Set KnockbackForce and Death Impluse
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 	SetKnockbackForce(EffectContextHandle, DamageEffectParams.KnockbackForce);
 	SetTypeMultiplier(EffectContextHandle, DamageEffectParams.TypeMultiplier);
 	SetDamageType(EffectContextHandle, DamageEffectParams.DamageType);
 
-	FGameplayEffectSpecHandle EffectSpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageGameplayEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
+	FGameplayEffectSpecHandle EffectSpecHandle =
+		DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(
+			DamageEffectParams.DamageGameplayEffectClass,
+			DamageEffectParams.AbilityLevel,
+			EffectContextHandle
+		);
 
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BasedDamage);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Debuff_Chance, DamageEffectParams.DebuffChance);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Debuff_Frequency, DamageEffectParams.DebuffFrequency);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Debuff_Damage, DamageEffectParams.DebuffDamage);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Debuff_Duration, DamageEffectParams.DebuffDuration);
+	if (!EffectSpecHandle.IsValid() || !EffectSpecHandle.Data.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ApplyDamageEffect failed: EffectSpecHandle is invalid."));
+		return EffectContextHandle;
+	}
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		EffectSpecHandle,
+		DamageEffectParams.DamageType,
+		DamageEffectParams.BasedDamage
+	);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		EffectSpecHandle,
+		GameplayTags.Debuff_Chance,
+		DamageEffectParams.DebuffChance
+	);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		EffectSpecHandle,
+		GameplayTags.Debuff_Frequency,
+		DamageEffectParams.DebuffFrequency
+	);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		EffectSpecHandle,
+		GameplayTags.Debuff_Damage,
+		DamageEffectParams.DebuffDamage
+	);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		EffectSpecHandle,
+		GameplayTags.Debuff_Duration,
+		DamageEffectParams.DebuffDuration
+	);
 
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
 

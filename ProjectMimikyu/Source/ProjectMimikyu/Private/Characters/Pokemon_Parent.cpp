@@ -818,8 +818,26 @@ int32 APokemon_Parent::GetBaseStatFromTag(const FGameplayTag& StatTag)
 
 void APokemon_Parent::CombatReady(AActor* Target)
 {
+	if (!PokemonController)
+	{
+		PokemonController = GetPokemonController();
+	}
+
+	if (!PokemonController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CombatReady failed: PokemonController is null on %s."), *GetNameSafe(this));
+		return;
+	}
+
 	APokemon_Parent* PokemonTarget = Cast<APokemon_Parent>(Target);
-	PokemonController->SetCombatTarget(Target);
+
+	if (!PokemonTarget || PokemonTarget == this)
+	{
+		PokemonController->ClearCombatTarget();
+		return;
+	}
+
+	PokemonController->SetCombatTarget(PokemonTarget);
 }
 
 void APokemon_Parent::GetReadyForCombat(const FHitResult& CombatHitResult)
