@@ -1186,18 +1186,108 @@ int32 APokemon_Parent::CalculateEffortLevelBase(int32 BaseStat, int32 AsCurrentL
 
 float APokemon_Parent::TypeChartDamageMultiplier(EElementalType DamageElementType, const FPokemonTypeInfo& PokemonTypes)
 {
-	FString FirstTypeContextString;
-	float X = 1;
-	float Y = 1;
-	FTypeChartMatchup* FirstTypeChart;
-	FTypeChartMatchup* SecondTypeChart;
+	if (!TypeChartDataTable)
+	{
+		UE_LOG(LogTemp, Error,
+			TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: TypeChartDataTable is null on %s."),
+			*GetNameSafe(this)
+		);
 
-	FirstTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.FirstType], FirstTypeContextString, true);
-	X = FirstTypeChart->TypeResponse[DamageElementType];
+		return 1.f;
+	}
+
+	if (!TypeResponse.Contains(PokemonTypes.FirstType))
+	{
+		UE_LOG(LogTemp, Error,
+			TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: FirstType [%d] not found in TypeResponse map on %s."),
+			static_cast<int32>(PokemonTypes.FirstType),
+			*GetNameSafe(this)
+		);
+
+		return 1.f;
+	}
+
+	const FName FirstTypeRowName = TypeResponse[PokemonTypes.FirstType];
+
+	const FTypeChartMatchup* FirstTypeChart =
+		TypeChartDataTable->FindRow<FTypeChartMatchup>(
+			FirstTypeRowName,
+			TEXT("[APokemon_Parent] TypeChartDamageMultiplier FirstType"),
+			true
+		);
+
+	if (!FirstTypeChart)
+	{
+		UE_LOG(LogTemp, Error,
+			TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: Missing first type row [%s] in TypeChartDataTable on %s."),
+			*FirstTypeRowName.ToString(),
+			*GetNameSafe(this)
+		);
+
+		return 1.f;
+	}
+
+	float X = 1.f;
+	float Y = 1.f;
+
+	if (FirstTypeChart->TypeResponse.Contains(DamageElementType))
+	{
+		X = FirstTypeChart->TypeResponse[DamageElementType];
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error,
+			TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: First type row [%s] has no response for attacking type [%d]."),
+			*FirstTypeRowName.ToString(),
+			static_cast<int32>(DamageElementType)
+		);
+	}
+
 	if (PokemonTypes.SecondType != EElementalType::EET_None)
 	{
-		SecondTypeChart = TypeChartDataTable->FindRow<FTypeChartMatchup>(TypeResponse[PokemonTypes.SecondType], FirstTypeContextString, true);
-		Y = SecondTypeChart->TypeResponse[DamageElementType];
+		if (!TypeResponse.Contains(PokemonTypes.SecondType))
+		{
+			UE_LOG(LogTemp, Error,
+				TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: SecondType [%d] not found in TypeResponse map on %s."),
+				static_cast<int32>(PokemonTypes.SecondType),
+				*GetNameSafe(this)
+			);
+
+			return X;
+		}
+
+		const FName SecondTypeRowName = TypeResponse[PokemonTypes.SecondType];
+
+		const FTypeChartMatchup* SecondTypeChart =
+			TypeChartDataTable->FindRow<FTypeChartMatchup>(
+				SecondTypeRowName,
+				TEXT("[APokemon_Parent] TypeChartDamageMultiplier SecondType"),
+				true
+			);
+
+		if (!SecondTypeChart)
+		{
+			UE_LOG(LogTemp, Error,
+				TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: Missing second type row [%s] in TypeChartDataTable on %s."),
+				*SecondTypeRowName.ToString(),
+				*GetNameSafe(this)
+			);
+
+			return X;
+		}
+
+		if (SecondTypeChart->TypeResponse.Contains(DamageElementType))
+		{
+			Y = SecondTypeChart->TypeResponse[DamageElementType];
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error,
+				TEXT("[APokemon_Parent] TypeChartDamageMultiplier failed: Second type row [%s] has no response for attacking type [%d]."),
+				*SecondTypeRowName.ToString(),
+				static_cast<int32>(DamageElementType)
+			);
+		}
 	}
 
 	return X * Y;
