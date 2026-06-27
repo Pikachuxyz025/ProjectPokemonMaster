@@ -225,6 +225,11 @@ bool UPokemonNavigationComponent::ProcessChase()
 
 	if (PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Clearing Chase request because target cannot be combat targeted. Owner=%s Target=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(TargetActor));
+
 		ClearNavigationIntent();
 		return false;
 	}
@@ -393,9 +398,17 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 
 bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float AcceptableRadius)
 {
-	if (!CachedAIController || !TargetActor)
+	if (!CachedAIController || !TargetActor|| !OwnerPawn)
 	{
 		return false;
+	}
+
+	const float Distance = FVector::Dist(OwnerPawn->GetActorLocation(), TargetActor->GetActorLocation());
+
+	if (Distance <= AcceptableRadius)
+	{
+		CachedAIController->StopMovement();
+		return true;
 	}
 
 	FAIMoveRequest MoveRequest;
@@ -408,9 +421,10 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 		CachedAIController->MoveTo(MoveRequest);
 
 	UE_LOG(LogTemp, Warning,
-		TEXT("[PokemonNav] MoveToActor | Owner=%s | Target=%s | Radius=%.1f | Result=%s"),
+		TEXT("[PokemonNav] MoveToActor | Owner=%s | Target=%s | Distance=%.1f | Radius=%.1f | Result=%s"),
 		*GetNameSafe(GetOwner()),
 		*GetNameSafe(TargetActor),
+		Distance,
 		AcceptableRadius,
 		*UEnum::GetValueAsString(Result.Code)
 	);
