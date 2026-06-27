@@ -129,6 +129,25 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
 	bool CanBeReturned() const { return bCanBeReturned; }
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
+	EPokemonIncapacitationState GetIncapacitationState() const { return IncapacitationState; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
+	bool IsFainted() const { return IncapacitationState == EPokemonIncapacitationState::EIS_FaintedProne; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
+	bool IsIncapacitated() const { return IncapacitationState != EPokemonIncapacitationState::EIS_None; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
+	bool CanAct() const { return IncapacitationState == EPokemonIncapacitationState::EIS_None; }
+		
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Incapacitation")
+	bool CanBeCombatTargeted() const
+	{
+		return IncapacitationState != EPokemonIncapacitationState::EIS_FaintedProne
+			&& IncapacitationState != EPokemonIncapacitationState::EIS_BeingReturned;
+	}
+
 	UPROPERTY(BlueprintAssignable, Category = "Pokemon|Incapacitation")
 	FOnIncapacitationEvent OnProneEntered;
 

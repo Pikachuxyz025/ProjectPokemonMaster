@@ -611,9 +611,29 @@ bool APokemon_Parent::IsPokemonProne() const
 	return IncapacitationComponent && IncapacitationComponent->IsProne();
 }
 
+bool APokemon_Parent::IsFainted() const
+{
+	return IncapacitationComponent ? IncapacitationComponent->IsFainted() : false;
+}
+
+bool APokemon_Parent::IsIncapacitated() const
+{
+	return IncapacitationComponent ? IncapacitationComponent->IsIncapacitated() : false;
+}
+
+bool APokemon_Parent::CanAct() const
+{
+	return IncapacitationComponent ? IncapacitationComponent->CanAct() : false;
+}
+
+bool APokemon_Parent::CanBeCombatTargeted() const
+{
+	return IncapacitationComponent ? IncapacitationComponent->CanBeCombatTargeted() : false;
+}
+
 bool APokemon_Parent::IsPokemonFaintedProne() const
 {
-	return IncapacitationComponent&&IncapacitationComponent->IsFaintedProne();
+	return IncapacitationComponent ? IncapacitationComponent->IsFaintedProne() : false;
 }
 
 void APokemon_Parent::Fainted(const FVector& DeathImpulse)

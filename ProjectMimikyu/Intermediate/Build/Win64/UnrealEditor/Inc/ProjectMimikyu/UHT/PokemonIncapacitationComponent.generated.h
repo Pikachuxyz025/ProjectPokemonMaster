@@ -17,6 +17,7 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 class AActor;
 class UPrimitiveComponent;
+enum class EPokemonIncapacitationState : uint8;
 struct FHitResult;
 
 // ********** Begin ScriptStruct FKnockbackTuning **************************************************
@@ -50,6 +51,11 @@ PROJECTMIMIKYU_API void FOnIncapacitationEvent_DelegateWrapper(const FMulticastS
 #define FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h_94_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execOnRagdollSafetyTimeout); \
 	DECLARE_FUNCTION(execOnMeshPhysicsHit); \
+	DECLARE_FUNCTION(execCanBeCombatTargeted); \
+	DECLARE_FUNCTION(execCanAct); \
+	DECLARE_FUNCTION(execIsIncapacitated); \
+	DECLARE_FUNCTION(execIsFainted); \
+	DECLARE_FUNCTION(execGetIncapacitationState); \
 	DECLARE_FUNCTION(execCanBeReturned); \
 	DECLARE_FUNCTION(execIsInControlledRagdoll); \
 	DECLARE_FUNCTION(execIsFaintedProne); \

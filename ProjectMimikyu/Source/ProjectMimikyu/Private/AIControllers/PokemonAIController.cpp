@@ -240,7 +240,14 @@ void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 {
 	APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(NewTarget);
 
-	if (!IsValid(TargetPokemon) || TargetPokemon == ControlledPokemon)
+	if (!ControlledPokemon || !ControlledPokemon->CanAct())
+	{
+		ClearCombatTarget();
+		SetPokemonState(EPokemonState::EPS_Passive);
+		return;
+	}
+
+	if (!TargetPokemon || TargetPokemon == ControlledPokemon || !TargetPokemon->CanBeCombatTargeted())
 	{
 		ClearCombatTarget();
 		SetPokemonState(EPokemonState::EPS_Passive);

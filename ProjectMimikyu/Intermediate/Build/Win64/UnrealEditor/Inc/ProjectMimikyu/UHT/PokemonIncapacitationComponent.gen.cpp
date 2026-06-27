@@ -468,6 +468,118 @@ DEFINE_FUNCTION(UPokemonIncapacitationComponent::execBeginManualReturn)
 }
 // ********** End Class UPokemonIncapacitationComponent Function BeginManualReturn *****************
 
+// ********** Begin Class UPokemonIncapacitationComponent Function CanAct **************************
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics
+{
+	struct PokemonIncapacitationComponent_eventCanAct_Parms
+	{
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function CanAct constinit property declarations ********************************
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function CanAct constinit property declarations **********************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function CanAct Property Definitions *******************************************
+void Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((PokemonIncapacitationComponent_eventCanAct_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(PokemonIncapacitationComponent_eventCanAct_Parms), &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PropPointers) < 2048);
+// ********** End Function CanAct Property Definitions *********************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "CanAct", 	Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PokemonIncapacitationComponent_eventCanAct_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::PokemonIncapacitationComponent_eventCanAct_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execCanAct)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->CanAct();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function CanAct ****************************
+
+// ********** Begin Class UPokemonIncapacitationComponent Function CanBeCombatTargeted *************
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics
+{
+	struct PokemonIncapacitationComponent_eventCanBeCombatTargeted_Parms
+	{
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function CanBeCombatTargeted constinit property declarations *******************
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function CanBeCombatTargeted constinit property declarations *********************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function CanBeCombatTargeted Property Definitions ******************************
+void Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((PokemonIncapacitationComponent_eventCanBeCombatTargeted_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(PokemonIncapacitationComponent_eventCanBeCombatTargeted_Parms), &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PropPointers) < 2048);
+// ********** End Function CanBeCombatTargeted Property Definitions ********************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "CanBeCombatTargeted", 	Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PokemonIncapacitationComponent_eventCanBeCombatTargeted_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::PokemonIncapacitationComponent_eventCanBeCombatTargeted_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execCanBeCombatTargeted)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->CanBeCombatTargeted();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function CanBeCombatTargeted ***************
+
 // ********** Begin Class UPokemonIncapacitationComponent Function CanBeReturned *******************
 struct Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeReturned_Statics
 {
@@ -632,6 +744,116 @@ DEFINE_FUNCTION(UPokemonIncapacitationComponent::execEnterProneState)
 }
 // ********** End Class UPokemonIncapacitationComponent Function EnterProneState *******************
 
+// ********** Begin Class UPokemonIncapacitationComponent Function GetIncapacitationState **********
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics
+{
+	struct PokemonIncapacitationComponent_eventGetIncapacitationState_Parms
+	{
+		EPokemonIncapacitationState ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function GetIncapacitationState constinit property declarations ****************
+	static const UECodeGen_Private::FBytePropertyParams NewProp_ReturnValue_Underlying;
+	static const UECodeGen_Private::FEnumPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function GetIncapacitationState constinit property declarations ******************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function GetIncapacitationState Property Definitions ***************************
+const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::NewProp_ReturnValue_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, nullptr, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonIncapacitationComponent_eventGetIncapacitationState_Parms, ReturnValue), Z_Construct_UEnum_ProjectMimikyu_EPokemonIncapacitationState, METADATA_PARAMS(0, nullptr) }; // 1737006129
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::NewProp_ReturnValue_Underlying,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PropPointers) < 2048);
+// ********** End Function GetIncapacitationState Property Definitions *****************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "GetIncapacitationState", 	Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PokemonIncapacitationComponent_eventGetIncapacitationState_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::PokemonIncapacitationComponent_eventGetIncapacitationState_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execGetIncapacitationState)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(EPokemonIncapacitationState*)Z_Param__Result=P_THIS->GetIncapacitationState();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function GetIncapacitationState ************
+
+// ********** Begin Class UPokemonIncapacitationComponent Function IsFainted ***********************
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics
+{
+	struct PokemonIncapacitationComponent_eventIsFainted_Parms
+	{
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function IsFainted constinit property declarations *****************************
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function IsFainted constinit property declarations *******************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function IsFainted Property Definitions ****************************************
+void Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((PokemonIncapacitationComponent_eventIsFainted_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(PokemonIncapacitationComponent_eventIsFainted_Parms), &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PropPointers) < 2048);
+// ********** End Function IsFainted Property Definitions ******************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "IsFainted", 	Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PokemonIncapacitationComponent_eventIsFainted_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::PokemonIncapacitationComponent_eventIsFainted_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execIsFainted)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->IsFainted();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function IsFainted *************************
+
 // ********** Begin Class UPokemonIncapacitationComponent Function IsFaintedProne ******************
 struct Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFaintedProne_Statics
 {
@@ -687,6 +909,62 @@ DEFINE_FUNCTION(UPokemonIncapacitationComponent::execIsFaintedProne)
 	P_NATIVE_END;
 }
 // ********** End Class UPokemonIncapacitationComponent Function IsFaintedProne ********************
+
+// ********** Begin Class UPokemonIncapacitationComponent Function IsIncapacitated *****************
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics
+{
+	struct PokemonIncapacitationComponent_eventIsIncapacitated_Parms
+	{
+		bool ReturnValue;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function IsIncapacitated constinit property declarations ***********************
+	static void NewProp_ReturnValue_SetBit(void* Obj);
+	static const UECodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function IsIncapacitated constinit property declarations *************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function IsIncapacitated Property Definitions **********************************
+void Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+{
+	((PokemonIncapacitationComponent_eventIsIncapacitated_Parms*)Obj)->ReturnValue = 1;
+}
+const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, sizeof(bool), sizeof(PokemonIncapacitationComponent_eventIsIncapacitated_Parms), &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::NewProp_ReturnValue,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PropPointers) < 2048);
+// ********** End Function IsIncapacitated Property Definitions ************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "IsIncapacitated", 	Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PokemonIncapacitationComponent_eventIsIncapacitated_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x54020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::PokemonIncapacitationComponent_eventIsIncapacitated_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execIsIncapacitated)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	*(bool*)Z_Param__Result=P_THIS->IsIncapacitated();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function IsIncapacitated *******************
 
 // ********** Begin Class UPokemonIncapacitationComponent Function IsInControlledRagdoll ***********
 struct Z_Construct_UFunction_UPokemonIncapacitationComponent_IsInControlledRagdoll_Statics
@@ -1026,11 +1304,16 @@ struct Z_Construct_UClass_UPokemonIncapacitationComponent_Statics
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("ApplyKnockback"), .Pointer = &UPokemonIncapacitationComponent::execApplyKnockback },
 		{ .NameUTF8 = UTF8TEXT("BeginManualReturn"), .Pointer = &UPokemonIncapacitationComponent::execBeginManualReturn },
+		{ .NameUTF8 = UTF8TEXT("CanAct"), .Pointer = &UPokemonIncapacitationComponent::execCanAct },
+		{ .NameUTF8 = UTF8TEXT("CanBeCombatTargeted"), .Pointer = &UPokemonIncapacitationComponent::execCanBeCombatTargeted },
 		{ .NameUTF8 = UTF8TEXT("CanBeReturned"), .Pointer = &UPokemonIncapacitationComponent::execCanBeReturned },
 		{ .NameUTF8 = UTF8TEXT("EnterCollapsedFaint"), .Pointer = &UPokemonIncapacitationComponent::execEnterCollapsedFaint },
 		{ .NameUTF8 = UTF8TEXT("EnterFaintedProneState"), .Pointer = &UPokemonIncapacitationComponent::execEnterFaintedProneState },
 		{ .NameUTF8 = UTF8TEXT("EnterProneState"), .Pointer = &UPokemonIncapacitationComponent::execEnterProneState },
+		{ .NameUTF8 = UTF8TEXT("GetIncapacitationState"), .Pointer = &UPokemonIncapacitationComponent::execGetIncapacitationState },
+		{ .NameUTF8 = UTF8TEXT("IsFainted"), .Pointer = &UPokemonIncapacitationComponent::execIsFainted },
 		{ .NameUTF8 = UTF8TEXT("IsFaintedProne"), .Pointer = &UPokemonIncapacitationComponent::execIsFaintedProne },
+		{ .NameUTF8 = UTF8TEXT("IsIncapacitated"), .Pointer = &UPokemonIncapacitationComponent::execIsIncapacitated },
 		{ .NameUTF8 = UTF8TEXT("IsInControlledRagdoll"), .Pointer = &UPokemonIncapacitationComponent::execIsInControlledRagdoll },
 		{ .NameUTF8 = UTF8TEXT("IsProne"), .Pointer = &UPokemonIncapacitationComponent::execIsProne },
 		{ .NameUTF8 = UTF8TEXT("OnMeshPhysicsHit"), .Pointer = &UPokemonIncapacitationComponent::execOnMeshPhysicsHit },
@@ -1040,11 +1323,16 @@ struct Z_Construct_UClass_UPokemonIncapacitationComponent_Statics
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_ApplyKnockback, "ApplyKnockback" }, // 3032625738
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_BeginManualReturn, "BeginManualReturn" }, // 3041835458
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanAct, "CanAct" }, // 734675175
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted, "CanBeCombatTargeted" }, // 2735214797
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeReturned, "CanBeReturned" }, // 48312327
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterCollapsedFaint, "EnterCollapsedFaint" }, // 2698802183
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState, "EnterFaintedProneState" }, // 3392357616
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterProneState, "EnterProneState" }, // 1572542536
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState, "GetIncapacitationState" }, // 2284978847
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted, "IsFainted" }, // 3551158652
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFaintedProne, "IsFaintedProne" }, // 645235249
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsIncapacitated, "IsIncapacitated" }, // 3991821986
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsInControlledRagdoll, "IsInControlledRagdoll" }, // 140211291
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsProne, "IsProne" }, // 3414453994
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_OnMeshPhysicsHit, "OnMeshPhysicsHit" }, // 3323290535
@@ -1152,10 +1440,10 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FActiveKnockbackState::StaticStruct, Z_Construct_UScriptStruct_FActiveKnockbackState_Statics::NewStructOps, TEXT("ActiveKnockbackState"),&Z_Registration_Info_UScriptStruct_FActiveKnockbackState, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FActiveKnockbackState), 2848586431U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonIncapacitationComponent, UPokemonIncapacitationComponent::StaticClass, TEXT("UPokemonIncapacitationComponent"), &Z_Registration_Info_UClass_UPokemonIncapacitationComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonIncapacitationComponent), 2075998510U) },
+		{ Z_Construct_UClass_UPokemonIncapacitationComponent, UPokemonIncapacitationComponent::StaticClass, TEXT("UPokemonIncapacitationComponent"), &Z_Registration_Info_UClass_UPokemonIncapacitationComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonIncapacitationComponent), 53029444U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_2938808140{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_3795275887{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

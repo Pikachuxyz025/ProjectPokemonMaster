@@ -225,6 +225,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsPokemonProne() const;
 
+	UFUNCTION(BlueprintPure,Category="Pokemon|State")
+	bool IsFainted() const;
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|State")
+	bool IsIncapacitated() const;
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|State")
+	bool CanAct() const;
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|State")
+	bool CanBeCombatTargeted() const;
+
 	UFUNCTION(BlueprintCallable)
 	bool IsPokemonFaintedProne() const;
 

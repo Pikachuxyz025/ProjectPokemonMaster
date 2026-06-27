@@ -73,6 +73,10 @@ PROJECTMIMIKYU_API void FOnCharging_DelegateWrapper(const FMulticastScriptDelega
 	DECLARE_FUNCTION(execDebug_TestHeavyFaint); \
 	DECLARE_FUNCTION(execDebug_TestCollapseFaint); \
 	DECLARE_FUNCTION(execIsPokemonFaintedProne); \
+	DECLARE_FUNCTION(execCanBeCombatTargeted); \
+	DECLARE_FUNCTION(execCanAct); \
+	DECLARE_FUNCTION(execIsIncapacitated); \
+	DECLARE_FUNCTION(execIsFainted); \
 	DECLARE_FUNCTION(execIsPokemonProne); \
 	DECLARE_FUNCTION(execBeginManualReturnAfterFaint); \
 	DECLARE_FUNCTION(execEnterCollapsedFaint); \

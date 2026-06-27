@@ -274,7 +274,20 @@ float UPokemonBrainComponent::GetHPPercent() const
 
 bool UPokemonBrainComponent::HasCombatTarget() const
 {
-	return OwningPokemonController && OwningPokemonController->GetCombatTarget() != nullptr;
+	if (!OwningPokemonController || !ControlledPokemon || !ControlledPokemon->CanAct())
+	{
+		return false;
+	}
+
+	AActor* TargetActor = OwningPokemonController->GetCombatTarget();
+	APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(TargetActor);
+
+	if (!TargetPokemon)
+	{
+		return false;
+	}
+
+	return TargetPokemon->CanBeCombatTargeted();
 }
 
 void UPokemonBrainComponent::UpdateNavigationIntent()

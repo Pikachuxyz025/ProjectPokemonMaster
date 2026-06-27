@@ -115,12 +115,22 @@ void UPokemonIncapacitationComponent::EnterProneState()
 void UPokemonIncapacitationComponent::EnterFaintedProneState()
 {
 	StopCombatAndMovement();
+
 	ForceStopMotion();
 
 	bIsProne = true;
 	bIsFaintedProne = true;
 	bCanBeReturned = true;
 	IncapacitationState = EPokemonIncapacitationState::EIS_FaintedProne;
+
+	if (APokemon_Parent* OwnerPokemon = GetPokemonOwner())
+	{
+		if (APokemonAIController* PokemonController = Cast<APokemonAIController>(OwnerPokemon->GetController()))
+		{
+			PokemonController->ClearCombatTarget();
+			PokemonController->SetPokemonState(EPokemonState::EPS_Passive);
+		}
+	}
 
 	OnFaintedProneEntered.Broadcast();
 }
