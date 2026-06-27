@@ -5,7 +5,7 @@
 #include "Characters/Pokemon_Parent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Interfaces/PokemonCombatInterface.h"
-#include "AbilitySystemComponent.h""
+#include "AbilitySystemComponent.h"
 #include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystem/AbilityTasks/AT_FireProjectiles.h>
 
