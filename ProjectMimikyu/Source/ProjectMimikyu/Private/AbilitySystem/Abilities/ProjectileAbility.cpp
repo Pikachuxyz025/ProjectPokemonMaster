@@ -29,13 +29,13 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 	CommonParams.DamageEffectClass = DamageEffectClass;
 	CommonParams.CategoryTags = FullTags;
 
-	CommonParams.DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 	CommonParams.SourceActor = GetAvatarActorFromActorInfo();
 	CommonParams.ActivationId = FMath::Rand();
 	CommonParams.TargetActor = TargetActor;
 	CommonParams.InitialSpeed = ProjectileConfig.Speed;
 	CommonParams.ProjectileGravityScale = ProjectileConfig.GravityScale;
 
+	CommonParams.DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor);
 	const FVector SocketLocation = IPokemonCombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
