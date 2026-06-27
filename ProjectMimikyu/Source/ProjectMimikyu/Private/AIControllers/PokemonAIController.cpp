@@ -63,6 +63,14 @@ void APokemonAIController::ClearCombatTarget()
 	}
 }
 
+void APokemonAIController::StopPokemonBrain(const FString& Reason)
+{
+	if (PokemonBrainComponent)
+	{
+		PokemonBrainComponent->StopLogic(Reason);
+}
+}
+
 void APokemonAIController::SetBlackboardTrainer()
 {
 	//if (!Blackboard)

@@ -92,14 +92,18 @@ protected:
 	virtual void OnUnPossess() override;
 	void HandleSenseDamage(AActor* Actor);
 public:
+
 	void SetTrainer(AActor* NewTrainer);
 	void SetCombatTarget(AActor* NewTarget);
 	void SetTree(UBehaviorTree* NewBehaviorTree, APokemon_Parent* NewPokemon);
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AActor* GetCombatTarget() { return CombatTarget; }
+
 	void SetPokemonState(EPokemonState NewPokemonState);
 	void SetPokemonStatus(EPokemonStatus NewPokemonStatus);
 	EPokemonState GetPokemonState() const;
+
 	void SetBlackboardCurrentMove(class UPokemonMoveDataAsset* MoveData);
 	void ActivateAbilityByTag(FGameplayTag InputTag);
 	void SetBlackboardActionState(EMoveAction DamageAction);
@@ -107,6 +111,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Targeting")
 	void ClearCombatTarget();
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Brain")
+	void StopPokemonBrain(const FString& Reason);
 private:
 
 	UPROPERTY()

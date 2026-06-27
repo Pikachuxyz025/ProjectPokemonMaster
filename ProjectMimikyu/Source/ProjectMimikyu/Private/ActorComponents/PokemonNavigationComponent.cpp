@@ -7,7 +7,7 @@
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "GameFramework/Pawn.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Characters/Pokemon_Parent.h"
 
 UPokemonNavigationComponent::UPokemonNavigationComponent()
 {
@@ -76,6 +76,14 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 {
 	if (!bHasActiveRequest || !CachedAIController)
 	{
+		return;
+	}
+
+	APokemon_Parent* OwnerPokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!OwnerPokemon || !OwnerPokemon->CanAct())
+	{
+		ClearNavigationIntent();
 		return;
 	}
 

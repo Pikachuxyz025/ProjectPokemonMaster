@@ -162,7 +162,8 @@ void UPokemonIncapacitationComponent::BeginManualReturn()
 void UPokemonIncapacitationComponent::StopCombatAndMovement()
 {
 	APokemon_Parent* OwnerPokemon = GetPokemonOwner();
-	if(!OwnerPokemon)
+
+	if (!OwnerPokemon)
 	{
 		return;
 	}
@@ -175,12 +176,10 @@ void UPokemonIncapacitationComponent::StopCombatAndMovement()
 
 	if (APokemonAIController* PokemonController = Cast<APokemonAIController>(OwnerPokemon->GetController()))
 	{
+		PokemonController->ClearCombatTarget();
+		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
+		PokemonController->StopPokemonBrain(TEXT("Pokemon Incapacitated"));
 		PokemonController->StopMovement();
-
-		if (UBrainComponent* BrainComp = PokemonController->GetBrainComponent())
-		{
-			BrainComp->StopLogic(TEXT("Pokemon incapacitated"));
-		}
 	}
 }
 

@@ -114,6 +114,61 @@ DEFINE_FUNCTION(APokemonAIController::execGetCombatTarget)
 }
 // ********** End Class APokemonAIController Function GetCombatTarget ******************************
 
+// ********** Begin Class APokemonAIController Function StopPokemonBrain ***************************
+struct Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics
+{
+	struct PokemonAIController_eventStopPokemonBrain_Parms
+	{
+		FString Reason;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|AI|Brain" },
+		{ "ModuleRelativePath", "Public/AIControllers/PokemonAIController.h" },
+	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_Reason_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function StopPokemonBrain constinit property declarations **********************
+	static const UECodeGen_Private::FStrPropertyParams NewProp_Reason;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function StopPokemonBrain constinit property declarations ************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function StopPokemonBrain Property Definitions *********************************
+const UECodeGen_Private::FStrPropertyParams Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::NewProp_Reason = { "Reason", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(PokemonAIController_eventStopPokemonBrain_Parms, Reason), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_Reason_MetaData), NewProp_Reason_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::NewProp_Reason,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PropPointers) < 2048);
+// ********** End Function StopPokemonBrain Property Definitions ***********************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_APokemonAIController, nullptr, "StopPokemonBrain", 	Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PokemonAIController_eventStopPokemonBrain_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::Function_MetaDataParams), Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::PokemonAIController_eventStopPokemonBrain_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_APokemonAIController_StopPokemonBrain()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_APokemonAIController_StopPokemonBrain_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(APokemonAIController::execStopPokemonBrain)
+{
+	P_GET_PROPERTY(FStrProperty,Z_Param_Reason);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->StopPokemonBrain(Z_Param_Reason);
+	P_NATIVE_END;
+}
+// ********** End Class APokemonAIController Function StopPokemonBrain *****************************
+
 // ********** Begin Class APokemonAIController *****************************************************
 FClassRegistrationInfo Z_Registration_Info_UClass_APokemonAIController;
 UClass* APokemonAIController::GetPrivateStaticClass()
@@ -268,11 +323,13 @@ struct Z_Construct_UClass_APokemonAIController_Statics
 	static constexpr UE::CodeGen::FClassNativeFunction Funcs[] = {
 		{ .NameUTF8 = UTF8TEXT("ClearCombatTarget"), .Pointer = &APokemonAIController::execClearCombatTarget },
 		{ .NameUTF8 = UTF8TEXT("GetCombatTarget"), .Pointer = &APokemonAIController::execGetCombatTarget },
+		{ .NameUTF8 = UTF8TEXT("StopPokemonBrain"), .Pointer = &APokemonAIController::execStopPokemonBrain },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_APokemonAIController_ClearCombatTarget, "ClearCombatTarget" }, // 1115823082
 		{ &Z_Construct_UFunction_APokemonAIController_GetCombatTarget, "GetCombatTarget" }, // 1192571914
+		{ &Z_Construct_UFunction_APokemonAIController_StopPokemonBrain, "StopPokemonBrain" }, // 1956191736
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -367,10 +424,10 @@ APokemonAIController::~APokemonAIController() {}
 struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_APokemonAIController, APokemonAIController::StaticClass, TEXT("APokemonAIController"), &Z_Registration_Info_UClass_APokemonAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemonAIController), 470278029U) },
+		{ Z_Construct_UClass_APokemonAIController, APokemonAIController::StaticClass, TEXT("APokemonAIController"), &Z_Registration_Info_UClass_APokemonAIController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(APokemonAIController), 2833791645U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_3299609612{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_3375766058{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_AIControllers_PokemonAIController_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	nullptr, 0,

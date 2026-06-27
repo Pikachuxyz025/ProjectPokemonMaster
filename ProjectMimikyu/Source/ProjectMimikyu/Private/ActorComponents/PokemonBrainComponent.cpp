@@ -200,6 +200,23 @@ void UPokemonBrainComponent::RunThink()
 		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink aborted: missing refs"));
 		return;
 	}
+
+	if (!ControlledPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[Brain] RunThink stopped | Owner=%s cannot act | IsFainted=%s"),
+			*GetNameSafe(ControlledPokemon),
+			ControlledPokemon->IsFainted() ? TEXT("True") : TEXT("False"));
+
+		if (CachedNavigationComponent)
+		{
+			CachedNavigationComponent->ClearNavigationIntent();
+		}
+
+		StopLogic(TEXT("Controlled Pokemon cannot act"));
+		return;
+	}
+
 	const float Now = GetCurrentWorldTime();
 
 	float DeltaSinceLast = 0.f;
@@ -216,9 +233,13 @@ void UPokemonBrainComponent::RunThink()
 
 	if(bEnableNavigationIntentOutput)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink | DesiredCombatMode=%s | HPPercent=%.2f | HasTarget=%s | DeltaSinceLast=%.2f"),
+		UE_LOG(LogTemp, Warning,
+			TEXT("[Brain] RunThink | Owner=%s | DesiredCombatMode=%s | HPPercent=%.2f | CanAct=%s | IsFainted=%s | HasTarget=%s | DeltaSinceLast=%.2f"),
+			*GetNameSafe(ControlledPokemon),
 			*NewDesiredCombatMode.ToString(),
 			HPPercent,
+			ControlledPokemon && ControlledPokemon->CanAct() ? TEXT("True") : TEXT("False"),
+			ControlledPokemon && ControlledPokemon->IsFainted() ? TEXT("True") : TEXT("False"),
 			bHasTarget ? TEXT("True") : TEXT("False"),
 			DeltaSinceLast);
 		UpdateNavigationIntent();
@@ -402,7 +423,10 @@ FGameplayTag UPokemonBrainComponent::DetermineDesiredCombatMode(float HPPercent,
 	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
 
 	if (!bHasTarget)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[Brain] DetermineDesiredCombatMode | No target | HPPercent=%.2f"), HPPercent);
 		return Tags.AI_Decision_Combat_Idle;
+	}
 
 	if (HPPercent < .25f && BrainConfig && BrainConfig->RiskToTolerance < .4f)
 		return Tags.AI_Decision_Combat_Flee;

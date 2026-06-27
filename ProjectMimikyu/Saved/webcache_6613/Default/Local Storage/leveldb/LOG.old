@@ -1,3 +1,5 @@
-2026/06/27-01:13:37.862 6688 Reusing MANIFEST C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
-2026/06/27-01:13:37.879 6688 Recovering log #117
-2026/06/27-01:13:37.881 6688 Reusing old log C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/000117.log 
+2026/06/27-02:05:40.809 7004 Reusing MANIFEST C:\Users\1351d\OneDrive\Documents\GitHub\ProjectPokemonMaster\ProjectMimikyu\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
+2026/06/27-02:05:40.817 7004 Recovering log #117
+2026/06/27-02:05:40.818 7004 Level-0 table #120: started
+2026/06/27-02:05:40.829 7004 Level-0 table #120: 67129 bytes OK
+2026/06/27-02:05:40.836 7004 Delete type=0 #117
