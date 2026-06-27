@@ -148,19 +148,26 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 bool UPokemonBrainComponent::CanThink() const
 {
-	return false;
+	return bBrainActive && BrainConfig && ControlledPokemon && ControlledPokemon->CanAct();
 }
 
 bool UPokemonBrainComponent::ShouldThinkNow(float CurrentTime) const
 {
-	if(!bBrainActive||!BrainConfig)
+	if (!CanThink())
+	{
 		return false;
+	}
 
 	if (CurrentTime < NextThinkTime)
+	{
 		return false;
+	}
 
 	if (CurrentTime < CommitUntilTime && !HasUrgentInterrupt())
+	{
 		return false;
+	}
+
 	return true;
 }
 

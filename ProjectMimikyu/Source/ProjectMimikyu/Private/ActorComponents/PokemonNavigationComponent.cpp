@@ -219,6 +219,13 @@ bool UPokemonNavigationComponent::ProcessChase()
 
 	if(!TargetActor)
 	{
+		ClearNavigationIntent();
+		return false;
+	}
+
+	if (PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
+	{
+		ClearNavigationIntent();
 		return false;
 	}
 

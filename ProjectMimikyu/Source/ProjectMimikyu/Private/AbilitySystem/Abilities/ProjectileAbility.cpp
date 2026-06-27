@@ -2,10 +2,10 @@
 
 
 #include "AbilitySystem/Abilities/ProjectileAbility.h"
-#include "Items/ProjectileAttack.h"
+#include "Characters/Pokemon_Parent.h"
+#include "AIControllers/PokemonAIController.h"
 #include "Interfaces/PokemonCombatInterface.h"
-#include "AbilitySystemComponent.h"
-#include "Components/SphereComponent.h"
+#include "AbilitySystemComponent.h""
 #include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystem/AbilityTasks/AT_FireProjectiles.h>
 
@@ -18,7 +18,21 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
-	UE_LOG(LogTemp, Display, TEXT("Spawning"));
+
+	UE_LOG(LogTemp, Display, TEXT("[ProjectileAbility] SpawnProjectile: Spawning"));
+
+	AActor* ResolvedTargetActor = TargetActor;
+
+	if (!IsValid(ResolvedTargetActor))
+	{
+		if (APokemon_Parent* SourcePokemon = Cast<APokemon_Parent>(GetAvatarActorFromActorInfo()))
+		{
+			if (APokemonAIController* PokemonController = Cast<APokemonAIController>(SourcePokemon->GetController()))
+			{
+				ResolvedTargetActor = PokemonController->GetCombatTarget();
+			}
+		}
+	}
 
 	// 1) Build the full tag set from the struct
 	const FGameplayTagContainer FullTags = ProjectileCategoryTags.GenerateFullTagContainer();
@@ -31,58 +45,22 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 
 	CommonParams.SourceActor = GetAvatarActorFromActorInfo();
 	CommonParams.ActivationId = FMath::Rand();
-	CommonParams.TargetActor = TargetActor;
+	CommonParams.TargetActor = ResolvedTargetActor;
 	CommonParams.InitialSpeed = ProjectileConfig.Speed;
 	CommonParams.ProjectileGravityScale = ProjectileConfig.GravityScale;
 
-	CommonParams.DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(TargetActor);
+	CommonParams.DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(ResolvedTargetActor);
 	const FVector SocketLocation = IPokemonCombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-
-	//FTransform SpawnTransform;
-	//SpawnTransform.SetLocation(SocketLocation);
-	//SpawnTransform.SetRotation(Rotation.Quaternion());
-
-	//AProjectileAttack* Projectile = GetWorld()->SpawnActorDeferred<AProjectileAttack>(
-	//	ProjectileConfig.ProjectileClass,
-	//	SpawnTransform,
-	//	GetOwningActorFromActorInfo(),
-	//	Cast<APawn>(GetOwningActorFromActorInfo()),
-	//	ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
-	//Projectile->GetSphereComponent()->IgnoreActorWhenMoving(GetOwningActorFromActorInfo(), true);
 
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 	EffectContextHandle.SetAbility(this);
-	//EffectContextHandle.AddSourceObject(Projectile);
-	//TArray<TWeakObjectPtr<AActor>> Actors;
-	//Actors.Add(Projectile);
-	//EffectContextHandle.AddActors(Actors);
+
 	FHitResult HitResult;
 	HitResult.Location = ProjectileTargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
 	CommonParams.DamageEffectContextHandle = EffectContextHandle;
-	///const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-
-//	UAT_FireProjectiles* FireTask = UAT_FireProjectiles::FireProjectiles
-//	(
-//this,
-//		"FireProjectiles",
-//		EProjectileSpreadMode::SingleShot,
-//		ProjectileConfig.ProjectileClass,
-//		DamageEffectClass,
-//		EffectContextHandle,
-//		MakeDamageEffectParamsFromClassDefaults(),
-//		GetAbilityLevel(),
-//		SocketLocation,
-//		Rotation,
-//		GetAvatarActorFromActorInfo(),
-//		1,
-//		0.1f,
-//		ProjectileConfig.SpreadAngle,
-//		0.f
-//	);
 
 	CommonParams.SpawnLocation = SocketLocation;
 	CommonParams.TargetLocation = ProjectileTargetLocation;
@@ -177,10 +155,15 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 	}
 
-	//FireTask->ReadyForActivation();
-	//Projectile->DamageEffectSpecHandle = ;
-	//Projectile->DamageEffectParams = ;
-	//Projectile->FinishSpawning(SpawnTransform);
+	UE_LOG(LogTemp, Warning,
+		TEXT("[ProjectileAbility] SpawnProjectile | Ability=%s | Source=%s | InputTarget=%s | ResolvedTarget=%s | SocketTag=%s | TargetLocation=%s"),
+		*GetNameSafe(this),
+		*GetNameSafe(GetAvatarActorFromActorInfo()),
+		*GetNameSafe(TargetActor),
+		*GetNameSafe(ResolvedTargetActor),
+		*SocketTag.ToString(),
+		*ProjectileTargetLocation.ToString()
+	);
 }
 
 #if WITH_EDITOR
