@@ -672,42 +672,6 @@ DEFINE_FUNCTION(UPokemonIncapacitationComponent::execEnterCollapsedFaint)
 }
 // ********** End Class UPokemonIncapacitationComponent Function EnterCollapsedFaint ***************
 
-// ********** Begin Class UPokemonIncapacitationComponent Function EnterFaintedProneState **********
-struct Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState_Statics
-{
-#if WITH_METADATA
-	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
-		{ "Category", "Pokemon|Incapacitation" },
-		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
-	};
-#endif // WITH_METADATA
-
-// ********** Begin Function EnterFaintedProneState constinit property declarations ****************
-// ********** End Function EnterFaintedProneState constinit property declarations ******************
-	static const UECodeGen_Private::FFunctionParams FuncParams;
-};
-const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "EnterFaintedProneState", 	nullptr, 
-	0, 
-0,
-RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState_Statics::Function_MetaDataParams)},  };
-UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState()
-{
-	static UFunction* ReturnFunction = nullptr;
-	if (!ReturnFunction)
-	{
-		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState_Statics::FuncParams);
-	}
-	return ReturnFunction;
-}
-DEFINE_FUNCTION(UPokemonIncapacitationComponent::execEnterFaintedProneState)
-{
-	P_FINISH;
-	P_NATIVE_BEGIN;
-	P_THIS->EnterFaintedProneState();
-	P_NATIVE_END;
-}
-// ********** End Class UPokemonIncapacitationComponent Function EnterFaintedProneState ************
-
 // ********** Begin Class UPokemonIncapacitationComponent Function EnterProneState *****************
 struct Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterProneState_Statics
 {
@@ -743,6 +707,42 @@ DEFINE_FUNCTION(UPokemonIncapacitationComponent::execEnterProneState)
 	P_NATIVE_END;
 }
 // ********** End Class UPokemonIncapacitationComponent Function EnterProneState *******************
+
+// ********** Begin Class UPokemonIncapacitationComponent Function FinalizeFaintedProneState *******
+struct Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState_Statics
+{
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "Category", "Pokemon|Incapacitation" },
+		{ "ModuleRelativePath", "Public/ActorComponents/PokemonIncapacitationComponent.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function FinalizeFaintedProneState constinit property declarations *************
+// ********** End Function FinalizeFaintedProneState constinit property declarations ***************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_UPokemonIncapacitationComponent, nullptr, "FinalizeFaintedProneState", 	nullptr, 
+	0, 
+0,
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04020401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState_Statics::Function_MetaDataParams), Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState_Statics::Function_MetaDataParams)},  };
+UFunction* Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(UPokemonIncapacitationComponent::execFinalizeFaintedProneState)
+{
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->FinalizeFaintedProneState();
+	P_NATIVE_END;
+}
+// ********** End Class UPokemonIncapacitationComponent Function FinalizeFaintedProneState *********
 
 // ********** Begin Class UPokemonIncapacitationComponent Function GetIncapacitationState **********
 struct Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState_Statics
@@ -1308,8 +1308,8 @@ struct Z_Construct_UClass_UPokemonIncapacitationComponent_Statics
 		{ .NameUTF8 = UTF8TEXT("CanBeCombatTargeted"), .Pointer = &UPokemonIncapacitationComponent::execCanBeCombatTargeted },
 		{ .NameUTF8 = UTF8TEXT("CanBeReturned"), .Pointer = &UPokemonIncapacitationComponent::execCanBeReturned },
 		{ .NameUTF8 = UTF8TEXT("EnterCollapsedFaint"), .Pointer = &UPokemonIncapacitationComponent::execEnterCollapsedFaint },
-		{ .NameUTF8 = UTF8TEXT("EnterFaintedProneState"), .Pointer = &UPokemonIncapacitationComponent::execEnterFaintedProneState },
 		{ .NameUTF8 = UTF8TEXT("EnterProneState"), .Pointer = &UPokemonIncapacitationComponent::execEnterProneState },
+		{ .NameUTF8 = UTF8TEXT("FinalizeFaintedProneState"), .Pointer = &UPokemonIncapacitationComponent::execFinalizeFaintedProneState },
 		{ .NameUTF8 = UTF8TEXT("GetIncapacitationState"), .Pointer = &UPokemonIncapacitationComponent::execGetIncapacitationState },
 		{ .NameUTF8 = UTF8TEXT("IsFainted"), .Pointer = &UPokemonIncapacitationComponent::execIsFainted },
 		{ .NameUTF8 = UTF8TEXT("IsFaintedProne"), .Pointer = &UPokemonIncapacitationComponent::execIsFaintedProne },
@@ -1327,8 +1327,8 @@ struct Z_Construct_UClass_UPokemonIncapacitationComponent_Statics
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeCombatTargeted, "CanBeCombatTargeted" }, // 2735214797
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_CanBeReturned, "CanBeReturned" }, // 48312327
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterCollapsedFaint, "EnterCollapsedFaint" }, // 2698802183
-		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterFaintedProneState, "EnterFaintedProneState" }, // 3392357616
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_EnterProneState, "EnterProneState" }, // 1572542536
+		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_FinalizeFaintedProneState, "FinalizeFaintedProneState" }, // 1904464126
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_GetIncapacitationState, "GetIncapacitationState" }, // 2284978847
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFainted, "IsFainted" }, // 3551158652
 		{ &Z_Construct_UFunction_UPokemonIncapacitationComponent_IsFaintedProne, "IsFaintedProne" }, // 645235249
@@ -1440,10 +1440,10 @@ struct Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPo
 		{ FActiveKnockbackState::StaticStruct, Z_Construct_UScriptStruct_FActiveKnockbackState_Statics::NewStructOps, TEXT("ActiveKnockbackState"),&Z_Registration_Info_UScriptStruct_FActiveKnockbackState, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FActiveKnockbackState), 2848586431U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UPokemonIncapacitationComponent, UPokemonIncapacitationComponent::StaticClass, TEXT("UPokemonIncapacitationComponent"), &Z_Registration_Info_UClass_UPokemonIncapacitationComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonIncapacitationComponent), 53029444U) },
+		{ Z_Construct_UClass_UPokemonIncapacitationComponent, UPokemonIncapacitationComponent::StaticClass, TEXT("UPokemonIncapacitationComponent"), &Z_Registration_Info_UClass_UPokemonIncapacitationComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UPokemonIncapacitationComponent), 1052009481U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_3795275887{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_986878454{
 	TEXT("/Script/ProjectMimikyu"),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_1351d_OneDrive_Documents_GitHub_ProjectPokemonMaster_ProjectMimikyu_Source_ProjectMimikyu_Public_ActorComponents_PokemonIncapacitationComponent_h__Script_ProjectMimikyu_Statics::ScriptStructInfo),

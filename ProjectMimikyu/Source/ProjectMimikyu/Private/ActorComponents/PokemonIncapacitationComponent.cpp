@@ -92,7 +92,7 @@ void UPokemonIncapacitationComponent::EnterCollapsedFaint()
 {
 	StopCombatAndMovement();
 	EnterProneState();
-	EnterFaintedProneState();
+	FinalizeFaintedProneState();
 }
 
 void UPokemonIncapacitationComponent::EnterProneState()
@@ -112,25 +112,14 @@ void UPokemonIncapacitationComponent::EnterProneState()
 	OnProneEntered.Broadcast();
 }
 
-void UPokemonIncapacitationComponent::EnterFaintedProneState()
+void UPokemonIncapacitationComponent::FinalizeFaintedProneState()
 {
-	StopCombatAndMovement();
-
 	ForceStopMotion();
 
 	bIsProne = true;
 	bIsFaintedProne = true;
 	bCanBeReturned = true;
 	IncapacitationState = EPokemonIncapacitationState::EIS_FaintedProne;
-
-	if (APokemon_Parent* OwnerPokemon = GetPokemonOwner())
-	{
-		if (APokemonAIController* PokemonController = Cast<APokemonAIController>(OwnerPokemon->GetController()))
-		{
-			PokemonController->ClearCombatTarget();
-			PokemonController->SetPokemonState(EPokemonState::EPS_Passive);
-		}
-	}
 
 	OnFaintedProneEntered.Broadcast();
 }
@@ -238,7 +227,7 @@ void UPokemonIncapacitationComponent::TransitionRagdollToProne()
 
 	if(bShouldEnterFaintProne)
 	{
-		EnterFaintedProneState();
+		FinalizeFaintedProneState();
 	}
 }
 

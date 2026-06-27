@@ -9,6 +9,21 @@
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
 
+namespace PokemonNavigationUtils
+{
+	bool IsInvalidPokemonNavigationTarget(AActor* TargetActor)
+	{
+		APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(TargetActor);
+
+		if (!TargetPokemon)
+		{
+			return false;
+		}
+
+		return !TargetPokemon->CanBeCombatTargeted();
+	}
+}
+
 UPokemonNavigationComponent::UPokemonNavigationComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -218,6 +233,17 @@ bool UPokemonNavigationComponent::ProcessApproach()
 
 	if (!TargetActor)
 	{
+		ClearNavigationIntent();
+		return false;
+	}
+
+	if(PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Clearing Approach request because target cannot be combat targeted. Owner=%s Target=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(TargetActor));
+		ClearNavigationIntent();
 		return false;
 	}
 

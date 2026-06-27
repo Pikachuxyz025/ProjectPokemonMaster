@@ -61,7 +61,7 @@ PROJECTMIMIKYU_API void FOnIncapacitationEvent_DelegateWrapper(const FMulticastS
 	DECLARE_FUNCTION(execIsFaintedProne); \
 	DECLARE_FUNCTION(execIsProne); \
 	DECLARE_FUNCTION(execBeginManualReturn); \
-	DECLARE_FUNCTION(execEnterFaintedProneState); \
+	DECLARE_FUNCTION(execFinalizeFaintedProneState); \
 	DECLARE_FUNCTION(execEnterProneState); \
 	DECLARE_FUNCTION(execEnterCollapsedFaint); \
 	DECLARE_FUNCTION(execApplyKnockback);

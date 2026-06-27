@@ -112,7 +112,7 @@ public:
 	void EnterProneState();
 	
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Incapacitation")
-	void EnterFaintedProneState();
+	void FinalizeFaintedProneState();
 	
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Incapacitation")
 	void BeginManualReturn();
