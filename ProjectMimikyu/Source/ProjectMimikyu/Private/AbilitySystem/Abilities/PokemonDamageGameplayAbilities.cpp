@@ -190,6 +190,33 @@ bool UPokemonDamageGameplayAbilities::CanActivateAbility(const FGameplayAbilityS
 	return true;
 }
 
+bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: ActorInfo or AbilitySystemComponent is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	const UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
+
+	const UPokemonBaseAttributeSet* PAS = ASC->GetSet<UPokemonBaseAttributeSet>();
+	if (!PAS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: PAS is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	const float CurrentPowerPoints = PAS->GetPowerPoints();
+	if (CurrentPowerPoints < PowerPointCost)
+	{
+		UE_LOG(LogTemp, Display, TEXT("[PokemonDamageGameplayAbilities] CheckCost blocked: Not enough PP (%.1f/%.1f) for [%s]."), CurrentPowerPoints, PowerPointCost, *GetNameSafe(this));
+		return false;
+	}
+	
+	return true;
+}
+
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 {
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
@@ -215,17 +242,12 @@ bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 	}
 
 	// 2) PP check
-	const UPokemonBaseAttributeSet* PAS = ASC->GetSet<UPokemonBaseAttributeSet>();
-	if (!PAS)
+	if (!CheckCost(CurrentSpecHandle, ActorInfo, nullptr))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: PAS is null on [%s]."), *GetNameSafe(this));
-		return false;
-	}
+		UE_LOG(LogTemp, Display,
+			TEXT("CommitPokemonMove blocked: CheckCost failed for [%s]."),
+			*GetNameSafe(this));
 
-	const float CurrentPowerPoints = PAS->GetPowerPoints();
-	if (CurrentPowerPoints < PowerPointCost)
-	{
-		UE_LOG(LogTemp, Display, TEXT("CommitPokemonMove blocked: Not enough PP (%.1f/%.1f) for [%s]."), CurrentPowerPoints, PowerPointCost, *GetNameSafe(this));
 		return false;
 	}
 
