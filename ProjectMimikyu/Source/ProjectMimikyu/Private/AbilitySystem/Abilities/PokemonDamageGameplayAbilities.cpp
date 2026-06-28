@@ -103,6 +103,24 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 		return DamageEffectParams;
 	}
 
+	const UPokemonBaseAttributeSet* SourceAttributeSet = nullptr;
+	const UPokemonBaseAttributeSet* TargetAttributeSet = nullptr;
+
+	if (DamageEffectParams.SourceAbilitySystemComponent)
+	{
+		SourceAttributeSet = DamageEffectParams.SourceAbilitySystemComponent->GetSet<UPokemonBaseAttributeSet>();
+	}
+
+	if (DamageEffectParams.TargetAbilitySystemComponent)
+	{
+		TargetAttributeSet = DamageEffectParams.TargetAbilitySystemComponent->GetSet<UPokemonBaseAttributeSet>();
+	}
+
+	const float SourceAttack = SourceAttributeSet ? SourceAttributeSet->GetAttack() : 0.f;
+	const float SourceSpeed = SourceAttributeSet ? SourceAttributeSet->GetSpeed() : 0.f;
+	const float TargetDefense = TargetAttributeSet ? TargetAttributeSet->GetDefense() : 0.f;
+	const float TargetSpeed = TargetAttributeSet ? TargetAttributeSet->GetSpeed() : 0.f;
+
 	FVector AttackDirection = TargetActor->GetActorLocation() - Attacker->GetActorLocation();
 
 	if (AttackDirection.IsNearlyZero())
@@ -111,6 +129,16 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	}
 
 	AttackDirection = AttackDirection.GetSafeNormal();
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[ImpactParams] Move=%s SourceAttack=%.2f SourceSpeed=%.2f TargetDefense=%.2f ImpactForce=%.2f DamageBefore=%.2f"),
+		*GetNameSafe(this),
+		SourceAttack,
+		SourceSpeed,
+		TargetDefense,
+		ImpactForce,
+		DamageEffectParams.BasedDamage
+	);
 
 	FPokemonMoveContactContext ContactContext;
 	ContactContext.AttackingActor = Attacker;
@@ -127,11 +155,19 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.ImpactForce = ImpactForce;
 	ContactContext.KnockbackForce = KnockbackForceMagnitude;
 
-	ContactContext.AttackerSpeed = Attacker->GetVelocity().Size();
+	ContactContext.AttackerSpeed = FMath::Max(Attacker->GetVelocity().Size(), SourceSpeed);
+
+	// Temporary until we add size/weight data from PokemonDataAsset.
 	ContactContext.AttackerWeight = 1.f;
 	ContactContext.DefenderWeight = 1.f;
-	ContactContext.DefenderDefense = 0.f;
-	ContactContext.DefenderPoise = 0.f;
+
+	// First stat-driven pass.
+	ContactContext.ImpactForce = ImpactForce + SourceAttack;
+	ContactContext.DefenderDefense = TargetDefense;
+
+	// Temporary poise formula.
+	// Later this should become its own stat or data-driven value.
+	ContactContext.DefenderPoise = TargetDefense * 0.25f;
 
 	ContactContext.bWasCounterHit = false;
 	ContactContext.bDefenderBraced = false;
@@ -139,7 +175,13 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.bAttackerAirborne = false;
 
 	OutImpactResolution = DefenderResolver->ResolveAndApplyImpact(ContactContext);
-
+	UE_LOG(LogTemp, Display,
+		TEXT("[ImpactParams] Result=%s DamageMultiplier=%.2f DamageAfter=%.2f Knockback=%s"),
+		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(OutImpactResolution.ImpactResult)),
+		OutImpactResolution.DamageMultiplier,
+		DamageEffectParams.BasedDamage,
+		*DamageEffectParams.KnockbackForce.ToString()
+	);
 	if (!OutImpactResolution.bApplyDamage)
 	{
 		DamageEffectParams.BasedDamage = 0.f;
