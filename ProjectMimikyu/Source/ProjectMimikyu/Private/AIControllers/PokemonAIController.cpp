@@ -84,7 +84,7 @@ void APokemonAIController::EndCombat()
 	StopMovement();
 
 	ClearFocus(EAIFocusPriority::Default);
-	ClearFocus(EAIFocusPriority::Gameplay);
+	ClearFocus(EAIFocusPriority::Move);
 	ClearFocus(EAIFocusPriority::Gameplay);
 
 	APokemon_Parent* Pokemon = ControlledPokemon ? ControlledPokemon : Cast<APokemon_Parent>(GetPawn());

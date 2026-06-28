@@ -201,6 +201,7 @@ public:
 
 	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData);
 	void SetCommandTargetFromAimData(const FAimData& AimData);
+
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()
 	void PrepareForFieldRemoval();
@@ -210,11 +211,8 @@ public:
 
 #pragma region Fainted Chain Entry Points
 
-	UFUNCTION()
-	void EnterFaintedState(bool bFromKnockback);
-
 	UFUNCTION(BlueprintCallable)
-	void ApplyPokemonKnockback(const FVector& KnockbackVelocity, bool bCanCauseFaint, bool bForceRagdoll =false);
+	void ApplyPokemonKnockback(const FVector& KnockbackVelocity, bool bCanCauseFaint, bool bForceRagdoll = false);
 
 	UFUNCTION(BlueprintCallable)
 	void EnterCollapsedFaint();
@@ -225,7 +223,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsPokemonProne() const;
 
-	UFUNCTION(BlueprintPure,Category="Pokemon|State")
+	UFUNCTION(BlueprintPure, Category = "Pokemon|State")
 	bool IsFainted() const;
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|State")

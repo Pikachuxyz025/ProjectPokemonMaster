@@ -544,36 +544,6 @@ void APokemon_Parent::PrepareForFieldRemoval()
 	}
 }
 
-void APokemon_Parent::EnterFaintedState(bool bFromKnockback)
-{
-	if (bIsDead)
-	{
-		return;
-	}
-
-	bIsDead = true;
-
-	// Stop Combat Logic
-	if(CommandComponent)
-	{
-		CommandComponent->ClearActiveMove();
-	}
-
-	// Stop movement
-	if (GetCharacterMovement())
-	{
-		GetCharacterMovement()->StopMovementImmediately();
-		GetCharacterMovement()->DisableMovement();
-	}
-	if (PokemonController)
-	{
-		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
-		PokemonController->GetBrainComponent()->StopLogic(FString::Printf(TEXT("Returned to ball / caught")));
-		PokemonController->StopMovement();
-	}
-}
-
-
 void APokemon_Parent::ClearTrainerBindings()
 {
 	if (OwnershipComponent)
