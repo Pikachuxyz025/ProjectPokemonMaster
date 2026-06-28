@@ -326,6 +326,12 @@ void UAT_FireProjectiles::FireOneProjectile(const FRotator& NewRotation)
 void UAT_FireProjectiles::SpawnProjectile(AProjectileAttack* Projectile, const UAbilitySystemComponent* SourceASC, FTransform& SpawnTransform)
 {
 	Projectile->GetSphereComponent()->IgnoreActorWhenMoving(CommonParams.SourceActor, true);
+
+	if (Projectile->ProjectileMesh)
+	{
+		Projectile->ProjectileMesh->IgnoreActorWhenMoving(CommonParams.SourceActor, true);
+	}
+
 	auto DamageEffectContextHandle = CommonParams.DamageEffectContextHandle;
 
 	DamageEffectContextHandle.AddSourceObject(Projectile);

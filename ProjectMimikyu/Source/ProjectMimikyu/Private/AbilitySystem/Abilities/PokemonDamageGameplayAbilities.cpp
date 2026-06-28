@@ -175,13 +175,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.bAttackerAirborne = false;
 
 	OutImpactResolution = DefenderResolver->ResolveAndApplyImpact(ContactContext);
-	UE_LOG(LogTemp, Display,
-		TEXT("[ImpactParams] Result=%s DamageMultiplier=%.2f DamageAfter=%.2f Knockback=%s"),
-		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(OutImpactResolution.ImpactResult)),
-		OutImpactResolution.DamageMultiplier,
-		DamageEffectParams.BasedDamage,
-		*DamageEffectParams.KnockbackForce.ToString()
-	);
+
 	if (!OutImpactResolution.bApplyDamage)
 	{
 		DamageEffectParams.BasedDamage = 0.f;
@@ -195,6 +189,14 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	{
 		DamageEffectParams.KnockbackForce = OutImpactResolution.DefenderImpulse;
 	}
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[ImpactParams] Result=%s DamageMultiplier=%.2f DamageAfter=%.2f Knockback=%s"),
+		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(OutImpactResolution.ImpactResult)),
+		OutImpactResolution.DamageMultiplier,
+		DamageEffectParams.BasedDamage,
+		*DamageEffectParams.KnockbackForce.ToString()
+	);
 
 	return DamageEffectParams;
 }

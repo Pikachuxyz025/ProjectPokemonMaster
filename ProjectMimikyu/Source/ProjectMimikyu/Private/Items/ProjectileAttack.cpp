@@ -51,17 +51,18 @@ void AProjectileAttack::PostEditChangeProperty(FPropertyChangedEvent& Event)
 
 void AProjectileAttack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//Super::OnHit(HitComp, OtherActor, OtherComp, NormalImpulse, Hit);
-	UE_LOG(LogTemp, Display, TEXT("Projectile hit: %s"), *UKismetSystemLibrary::GetDisplayName(OtherActor));
-	//if (HasAuthority())
-	//{
-	//	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-	//	{
-	//		TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+	if (!OtherActor || OtherActor == this)
+	{
+		return;
+	}
 
-	//	}
-	//	Destroy();
-	//}
+	if (OtherActor == GetOwner() || OtherActor == GetInstigator())
+	{
+		UE_LOG(LogTemp, Display, TEXT("Projectile ignored owner/instigator: %s"), *GetNameSafe(OtherActor));
+		return;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Projectile hit: %s"), *UKismetSystemLibrary::GetDisplayName(OtherActor));
 
 	if (HasAuthority())
 	{
@@ -70,16 +71,23 @@ void AProjectileAttack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 
 			DamageEffectParams.DeathImpulse = DeathImpulse;
+
 			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
 			if (bKnockback)
 			{
-				const FVector KnockbackDirectionOffset = GetActorForwardVector().RotateAngleAxis(45.f, GetActorRightVector());
-				const FVector KnockbackForce = KnockbackDirectionOffset * DamageEffectParams.KnockbackForceMagnitude;
+				const FVector KnockbackDirectionOffset =
+					GetActorForwardVector().RotateAngleAxis(45.f, GetActorRightVector());
+
+				const FVector KnockbackForce =
+					KnockbackDirectionOffset * DamageEffectParams.KnockbackForceMagnitude;
+
 				DamageEffectParams.KnockbackForce = KnockbackForce;
 			}
+
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UPokemonAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
+
 		Destroy();
 	}
 }
