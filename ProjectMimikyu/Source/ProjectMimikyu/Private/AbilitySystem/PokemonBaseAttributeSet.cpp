@@ -120,19 +120,6 @@ void UPokemonBaseAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 		const bool bFatal = NewHealth <= 0.f;
 		if (bFatal)
 		{
-			//TScriptInterface<IPokemonCombatInterface> TargetCombatInteface = Props.TargetAvatarActor;
-			//TScriptInterface<IPokemonCombatInterface> SourceCombatInteface = Props.SourceAvatarActor;
-			
-			SendXPEvent(Props);
-
-			//if (TargetCombatInteface)
-			//{
-			//	TargetCombatInteface->Fainted(UPokemonAbilitySystemLibrary::GetDeathImpulse(Props.EffectContext));
-			//}
-			//if (SourceCombatInteface)
-			//{
-			//	SourceCombatInteface->DisengageFromCombat();
-			//}
 
 			APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(Props.TargetAvatarActor);
 			if (TargetPokemon)
@@ -286,19 +273,6 @@ void UPokemonBaseAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 	}
 	SetPokemonXP(Props.SourceCharacter, NewXP);
 	IPokemonCombatInterface::Execute_UpdatePokemonInfoInParty(Props.SourceCharacter);
-}
-
-void UPokemonBaseAttributeSet::SendXPEvent(const FEffectProperties& Props)
-{
-	if (!Props.TargetCharacter->Implements<UPokemonCombatInterface>()) return; 
-
-	TScriptInterface<IPokemonCombatInterface> TargetPokemon = Props.TargetCharacter;
-	FGameplayTag IncomingXPTag = FPokemonGameplayTags::Get().Attributes_Meta_IncomingXP;
-	FGameplayEventData Payload;
-	Payload.EventTag = IncomingXPTag;
-	Payload.EventMagnitude = (float)TargetPokemon->GetXPBaseReward();
-
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, IncomingXPTag, Payload);
 }
 
 void UPokemonBaseAttributeSet::SetPokemonXP(ACharacter* AlteredPokemon, float NewXP)

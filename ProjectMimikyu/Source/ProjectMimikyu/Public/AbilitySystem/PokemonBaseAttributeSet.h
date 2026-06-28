@@ -188,7 +188,6 @@ public:
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	void HandleIncomingXP(const FEffectProperties& Props);
-	void SendXPEvent(const FEffectProperties& Props);
 
 	void SetPokemonXP(ACharacter* AlteredPokemon, float NewXP);
 	void SetPokemonLevel(ACharacter* AlteredPokemon, float NewLevel);

@@ -284,17 +284,28 @@ void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 {
 	APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(NewTarget);
 
-	if (!ControlledPokemon || !ControlledPokemon->CanAct())
+	if (!ControlledPokemon)
 	{
 		ClearCombatTarget();
-		SetPokemonState(EPokemonState::EPS_Passive);
+		return;
+	}
+
+	if (!ControlledPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[AI] SetCombatTarget rejected because controlled Pokemon cannot act | Owner=%s | Target=%s"),
+			*GetNameSafe(ControlledPokemon),
+			*GetNameSafe(NewTarget));
+
+		ClearCombatTarget();
+		SetPokemonState(EPokemonState::EPS_Fainted);
+		StopMovement();
 		return;
 	}
 
 	if (!TargetPokemon || TargetPokemon == ControlledPokemon || !TargetPokemon->CanBeCombatTargeted())
 	{
-		ClearCombatTarget();
-		SetPokemonState(EPokemonState::EPS_Passive);
+		EndCombat();
 		return;
 	}
 

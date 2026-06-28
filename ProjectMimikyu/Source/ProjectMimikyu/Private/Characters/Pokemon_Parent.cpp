@@ -22,11 +22,12 @@
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
-#include "Net/UnrealNetwork.h"
+#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
+#include <AbilitySystemBlueprintLibrary.h>
 
 
 APokemon_Parent::APokemon_Parent()
@@ -696,12 +697,42 @@ bool APokemon_Parent::CanInteractWhileFainted() const
 
 void APokemon_Parent::HandleDefeatedBy(AActor* DefeatingActor, const FVector& DeathImpulse)
 {
+	if (bIsDead)
+	{
+		return;
+	}
+
+	AwardDefeatTo(DefeatingActor);
+
 	Fainted(DeathImpulse);
 
 	if (APokemon_Parent* WinningPokemon = Cast<APokemon_Parent>(DefeatingActor))
 	{
 		WinningPokemon->DisengageFromCombat();
 	}
+}
+
+void APokemon_Parent::AwardDefeatTo(AActor* DefeatingActor)
+{
+	if (!DefeatingActor)
+	{
+		return;
+}
+
+	if (!DefeatingActor->Implements<UPokemonCombatInterface>())
+	{
+		return;
+	}
+
+	const FGameplayTag IncomingXPTag = FPokemonGameplayTags::Get().Attributes_Meta_IncomingXP;
+
+	FGameplayEventData Payload;
+	Payload.EventTag = IncomingXPTag;
+	Payload.EventMagnitude = static_cast<float>(GetXPBaseReward());
+	Payload.Instigator = this;
+	Payload.Target = DefeatingActor;;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(DefeatingActor, IncomingXPTag, Payload);
 }
 
 void APokemon_Parent::Return()
