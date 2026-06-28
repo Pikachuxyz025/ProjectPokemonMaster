@@ -26,13 +26,13 @@
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
+#include "ActorComponents/PokemonImpactResolverComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
 #include <AbilitySystemBlueprintLibrary.h>
 
 
 APokemon_Parent::APokemon_Parent()
 {
-
 	PrimaryActorTick.bCanEverTick = true;
 	if (PokemonDataAsset && PokemonDataAsset->Model)
 	{
@@ -48,7 +48,7 @@ APokemon_Parent::APokemon_Parent()
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
 	FieldPresenceComponent = CreateDefaultSubobject<UPokemonFieldPresenceComponent>("Field Presence Component");
 	CombatSocketComponent = CreateDefaultSubobject<UPokemonCombatSocketComponent>("Combat Socket Component");
-
+	ImpactResolverComponent = CreateDefaultSubobject<UPokemonImpactResolverComponent>("Impact Resolver Component");
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);

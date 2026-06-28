@@ -2,7 +2,7 @@
 
 
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
-#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
+#include "ActorComponents/PokemonImpactResolverComponent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemComponent.h"
@@ -78,12 +78,83 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	return Params;
 }
 
-void UPokemonDamageGameplayAbilities::CauseDamage(AActor* TargetActor)
+FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamageParams(AActor* TargetActor, FDamageEffectParams DamageEffectParams, FPokemonImpactResolution& OutImpactResolution)
 {
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!TargetASC) return;
-	FGameplayEffectSpecHandle DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
-	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), TargetASC);
+	AActor* Attacker = GetAvatarActorFromActorInfo();
+
+	if (!Attacker || !TargetActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ResolveImpactAndModifyDamageParams failed: missing attacker or target."));
+		return DamageEffectParams;
+	}
+
+	UPokemonImpactResolverComponent* DefenderResolver =
+		TargetActor->FindComponentByClass<UPokemonImpactResolverComponent>();
+
+	if (!DefenderResolver)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT("ResolveImpactAndModifyDamageParams failed: %s has no PokemonImpactResolverComponent."),
+			*GetNameSafe(TargetActor)
+		);
+
+		return DamageEffectParams;
+	}
+
+	FVector AttackDirection = TargetActor->GetActorLocation() - Attacker->GetActorLocation();
+
+	if (AttackDirection.IsNearlyZero())
+	{
+		AttackDirection = Attacker->GetActorForwardVector();
+	}
+
+	AttackDirection = AttackDirection.GetSafeNormal();
+
+	FPokemonMoveContactContext ContactContext;
+	ContactContext.AttackingActor = Attacker;
+	ContactContext.DefendingActor = TargetActor;
+
+	ContactContext.MoveActionTag = MoveActionTag;
+	ContactContext.MoveTypeTag = MoveTypeTag;
+	ContactContext.DamageResponseTag = DamageResponseTag;
+
+	ContactContext.ContactPoint = TargetActor->GetActorLocation();
+	ContactContext.AttackDirection = AttackDirection;
+
+	ContactContext.Damage = DamageEffectParams.BasedDamage;
+	ContactContext.ImpactForce = ImpactForce;
+	ContactContext.KnockbackForce = KnockbackForceMagnitude;
+
+	ContactContext.AttackerSpeed = Attacker->GetVelocity().Size();
+	ContactContext.AttackerWeight = 1.f;
+	ContactContext.DefenderWeight = 1.f;
+	ContactContext.DefenderDefense = 0.f;
+	ContactContext.DefenderPoise = 0.f;
+
+	ContactContext.bWasCounterHit = false;
+	ContactContext.bDefenderBraced = false;
+	ContactContext.bDefenderAirborne = false;
+	ContactContext.bAttackerAirborne = false;
+
+	OutImpactResolution = DefenderResolver->ResolveAndApplyImpact(ContactContext);
+
+	if (!OutImpactResolution.bApplyDamage)
+	{
+		DamageEffectParams.BasedDamage = 0.f;
+	}
+	else
+	{
+		DamageEffectParams.BasedDamage *= OutImpactResolution.DamageMultiplier;
+	}
+
+	if (!OutImpactResolution.DefenderImpulse.IsNearlyZero())
+	{
+		DamageEffectParams.KnockbackForce = OutImpactResolution.DefenderImpulse;
+	}
+
+	return DamageEffectParams;
 }
 
 TArray<EDirectionPoint> UPokemonDamageGameplayAbilities::GetKeySequenceFromTag(const FGameplayTag& AbilityTag, bool bLogNotFound) const

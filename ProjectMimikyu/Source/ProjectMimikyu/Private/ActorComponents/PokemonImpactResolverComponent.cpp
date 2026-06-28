@@ -59,16 +59,20 @@ FPokemonImpactResolution UPokemonImpactResolverComponent::ResolveImpact(const FP
 
 	ConfigureResolutionForResult(Resolution, ContactContext, Result, ScoreDelta);
 
+	const FString ResultName = StaticEnum<EPokemonImpactResult>()
+		? StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(Result))
+		: TEXT("Unknown");
+
 	UE_LOG(
 		LogPokemonImpactResolver,
 		Display,
-		TEXT("Impact resolved. Attacker=%s Defender=%s ImpactScore=%.2f ResistanceScore=%.2f Delta=%.2f Result=%d"),
+		TEXT("Impact resolved. Attacker=%s Defender=%s ImpactScore=%.2f ResistanceScore=%.2f Delta=%.2f Result=%s"),
 		*GetNameSafe(ContactContext.AttackingActor),
 		*GetNameSafe(ContactContext.DefendingActor),
 		ImpactScore,
 		ResistanceScore,
 		ScoreDelta,
-		static_cast<int32>(Result)
+		*ResultName
 	);
 
 	return Resolution;

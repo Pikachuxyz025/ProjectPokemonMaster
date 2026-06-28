@@ -39,6 +39,7 @@ class UPokemonCommandComponent;
 class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
 class UPokemonCombatSocketComponent;
+class UPokemonImpactResolverComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -421,6 +422,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonCombatSocketComponent> CombatSocketComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonImpactResolverComponent> ImpactResolverComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -468,6 +472,9 @@ public:
 	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
 
 	UMovesetComponent* GetMovesetComponent() const { return MovesetComponent; }
+
+	UFUNCTION(BlueprintPure,Category = "Combat|Impact")
+	UPokemonImpactResolverComponent* GetImpactResolverComponent() const { return ImpactResolverComponent; }
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() const;

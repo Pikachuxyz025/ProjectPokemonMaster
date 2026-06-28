@@ -6,6 +6,7 @@ using namespace UP;
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
+#include "Combat/PokemonImpactTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
 
@@ -69,14 +70,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float KnockbackForceMagnitude = 1000.f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact")
+	float ImpactForce = 50.f;
+
+	UFUNCTION(BlueprintCallable, Category = "Combat|Impact")
+	FDamageEffectParams ResolveImpactAndModifyDamageParams(AActor* TargetActor, FDamageEffectParams DamageEffectParams,FPokemonImpactResolution& OutImpactResolution);
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Damage")
 	float KnockbackChance = 0.f;
 
 	UPROPERTY(EditAnywhere)
 	EElementalType MoveElementalType = EElementalType::EET_None;
-
-	UFUNCTION(BlueprintCallable)
-	void CauseDamage(AActor* TargetActor);
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FPokemonInputInfo> UpgradeList;
