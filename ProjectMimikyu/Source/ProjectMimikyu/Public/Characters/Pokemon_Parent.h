@@ -260,7 +260,7 @@ public:
 
 
 	void HandleDefeatedBy(AActor* DefeatingActor,const FVector& DeathImpulse);
-	void AwardDefeatTo(AActor* DefeatingActor);
+	void AwardDefeatXPTo(AActor* DefeatingActor);
 
 	void Return();
 	void Dissolve();

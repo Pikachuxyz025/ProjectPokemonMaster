@@ -3,6 +3,7 @@
 
 #include "PokemonAssetManager.h"
 #include "GameplayTags/PokemonGameplayTags.h"
+#include "GameplayTags/PokemonCombatGameplayTags.h"
 
 UPokemonAssetManager& UPokemonAssetManager::Get()
 {
@@ -16,4 +17,5 @@ void UPokemonAssetManager::StartInitialLoading()
 	Super::StartInitialLoading();
 
 	FPokemonGameplayTags::InitializeNativeGameplayTags();
+	FPokemonCombatGameplayTags::InitializeNativeGameplayTags();
 }

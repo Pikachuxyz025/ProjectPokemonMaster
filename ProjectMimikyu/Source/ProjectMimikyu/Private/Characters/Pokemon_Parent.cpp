@@ -702,7 +702,7 @@ void APokemon_Parent::HandleDefeatedBy(AActor* DefeatingActor, const FVector& De
 		return;
 	}
 
-	AwardDefeatTo(DefeatingActor);
+	AwardDefeatXPTo(DefeatingActor);
 
 	Fainted(DeathImpulse);
 
@@ -712,7 +712,7 @@ void APokemon_Parent::HandleDefeatedBy(AActor* DefeatingActor, const FVector& De
 	}
 }
 
-void APokemon_Parent::AwardDefeatTo(AActor* DefeatingActor)
+void APokemon_Parent::AwardDefeatXPTo(AActor* DefeatingActor)
 {
 	if (!DefeatingActor)
 	{
@@ -730,7 +730,7 @@ void APokemon_Parent::AwardDefeatTo(AActor* DefeatingActor)
 	Payload.EventTag = IncomingXPTag;
 	Payload.EventMagnitude = static_cast<float>(GetXPBaseReward());
 	Payload.Instigator = this;
-	Payload.Target = DefeatingActor;;
+	Payload.Target = DefeatingActor;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(DefeatingActor, IncomingXPTag, Payload);
 }

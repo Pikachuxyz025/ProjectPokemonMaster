@@ -14,22 +14,27 @@ void UPokemonAbilitySystemComponent::AbilityActorInfoSet()
 void UPokemonAbilitySystemComponent::AddCharacterAbilities(const TArray<UPokemonMoveDataAsset*>& CurrentPokemonMoves)
 { 
 	for (auto Move : CurrentPokemonMoves)
-	{	
-		if(!Move||!Move->Ability)
+	{
+		if (!Move || !Move->Ability)
 		{
 			continue;
 		}
 		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1);
 
-		if(Move->InputTag.IsValid())
+		if (Move->InputTag.IsValid())
 		{
 			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->InputTag);
+
+			const FGameplayTag* CooldownTag =
+				FPokemonGameplayTags::Get().InputsToCooldowns.Find(Move->InputTag);
+
+			if (CooldownTag && CooldownTag->IsValid())
+			{
+				AbilitySpec.GetDynamicSpecSourceTags().AddTag(*CooldownTag);
+			}
 		}
-		if(Move->CooldownTag.IsValid())
-		{
-			AbilitySpec.GetDynamicSpecSourceTags().AddTag(Move->CooldownTag);
-		}
-			GiveAbility(AbilitySpec);
+
+		GiveAbility(AbilitySpec);
 	}
 }
 

@@ -155,7 +155,8 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 		return false;
 	}
 
-	const FGameplayTag MoveCooldownTag = SelectedMove->CooldownTag;
+	const FGameplayTag MoveCooldownTag = FPokemonGameplayTags::Get().InputsToCooldowns[SelectedMove->InputTag];
+
 	if (PASC->HasMatchingGameplayTag(MoveCooldownTag))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Move '%s' is in cooldown."), *SelectedMove->MoveName.ToString());

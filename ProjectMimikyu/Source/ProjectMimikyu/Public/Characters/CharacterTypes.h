@@ -315,16 +315,16 @@ struct FProjectileTagContainer
 	GENERATED_BODY()
 public: 
 	UPROPERTY(EditAnywhere, meta = (Categories = "Projectiles.Categories"))
-	FGameplayTag CategoryTag;
+	FGameplayTag CategoryTag = FGameplayTag();
 
 	UPROPERTY(EditAnywhere, meta = (Categories = "Projectiles.Modifier"))
 	TArray<FGameplayTag> ModifierTags;
 
 	UPROPERTY(VisibleAnywhere)
-	FGameplayTag UpgradableTag1;
+	FGameplayTag UpgradableTag1 = FGameplayTag();
 
 	UPROPERTY(VisibleAnywhere)
-	FGameplayTag UpgradableTag2;
+	FGameplayTag UpgradableTag2 = FGameplayTag();
 private:
 
 	UPROPERTY(VisibleAnywhere)
@@ -406,14 +406,6 @@ struct FEnvironmentDropParams
 	UPROPERTY(BlueprintReadWrite)
 	bool bRetargetPerWave = false;
 
-	// Targeting
-	//UPROPERTY(BlueprintReadWrite)
-	//TArray<AActor*> ExplicitTargets;
-	//UPROPERTY(BlueprintReadWrite)
-	//bool bPredictive = true;
-	//UPROPERTY(BlueprintReadWrite)
-	//float PredictiveLeadTime = 0.5f;
-
 	// OutPuts
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FVector> CachedLandingPoints;
@@ -454,10 +446,10 @@ struct FPokemonUIInfo
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FText PokemonName;
+	FText PokemonName = FText::GetEmpty();
 
 	UPROPERTY(BlueprintReadOnly)
-    class UTexture2D* PokemonSpriteImage;
+	class UTexture2D* PokemonSpriteImage = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 PokemonLevel = 0;
@@ -487,7 +479,7 @@ struct FGameplayTagFloatPair
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag Tag;
+	FGameplayTag Tag = FGameplayTag();
 
 	UPROPERTY(BlueprintReadOnly)
 	float Value = 0.f;
@@ -499,7 +491,7 @@ struct FPokemonInfo
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UPokemonDataAsset> StoredPokemonDataAsset;
+	TObjectPtr<UPokemonDataAsset> StoredPokemonDataAsset = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
@@ -508,7 +500,7 @@ struct FPokemonInfo
 	EPokeballType CapturedBallType = EPokeballType::EPT_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<APokeBall> CapturedBallClass;
+	TSubclassOf<APokeBall> CapturedBallClass = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)
 	FPokemonUIInfo CurrentUiInfo;
@@ -675,7 +667,7 @@ struct FTagCategoryMap
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FName CategoryName;
+	FName CategoryName = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FGameplayTag> Tags;
@@ -725,22 +717,22 @@ struct FPokemonParty
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	APokemon_Parent* Slot1;
+	APokemon_Parent* Slot1 = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	APokemon_Parent* Slot2;
+	APokemon_Parent* Slot2 = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	APokemon_Parent* Slot3;
+	APokemon_Parent* Slot3 = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	APokemon_Parent* Slot4;
+	APokemon_Parent* Slot4 = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (MakeStructureDefaultValue = "nullptr"))
-	APokemon_Parent* Slot5;
+	APokemon_Parent* Slot5 = nullptr;
 
 	UPROPERTY(VisibleAnywhere,meta=(MakeStructureDefaultValue="nullptr"))
-	APokemon_Parent* Slot6;
+	APokemon_Parent* Slot6 = nullptr;
 
 };
 
@@ -773,16 +765,16 @@ struct FDamageInfo
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere)
-	float DamageAmount;
+	float DamageAmount = 0.f;
 
 	UPROPERTY(VisibleAnywhere)
-	class UPokemonMoveDataAsset* PokemonMove;
+	class UPokemonMoveDataAsset* PokemonMove = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
-	AController* DamageInsigator;
+	AController* DamageInsigator = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
-	AActor* DamageCauser;
+	AActor* DamageCauser = nullptr;
 };
 
 USTRUCT(BlueprintType)
@@ -792,10 +784,10 @@ struct FInventoryItemInfo :public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	FText ItemName;
+	FText ItemName = FText::GetEmpty();
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-	FText Description;
+	FText Description = FText::GetEmpty();
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TObjectPtr<UTexture2D> Thumbnail=nullptr;
@@ -804,10 +796,10 @@ public:
 	int32 MaxStackSize = 99;
 
 	UPROPERTY(EditAnywhere)
-	bool bIsThrowable;
+	bool bIsThrowable = false;
 
 	UPROPERTY(EditAnywhere, meta = (EditCondition = "bIsThrowable", EditConditionHides))
-	TSubclassOf< AProjectile> ProjectileClass;
+	TSubclassOf< AProjectile> ProjectileClass = nullptr;
 };
 #pragma endregion
 
