@@ -724,6 +724,16 @@ bool APokemon_Parent::CanInteractWhileFainted() const
 	return IsPokemonFaintedProne();
 }
 
+void APokemon_Parent::HandleDefeatedBy(AActor* DefeatingActor, const FVector& DeathImpulse)
+{
+	Fainted(DeathImpulse);
+
+	if (APokemon_Parent* WinningPokemon = Cast<APokemon_Parent>(DefeatingActor))
+	{
+		WinningPokemon->DisengageFromCombat();
+	}
+}
+
 void APokemon_Parent::Return()
 {
 	if (FieldPresenceComponent)

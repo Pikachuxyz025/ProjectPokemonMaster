@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
+#include "Characters/Pokemon_Parent.h"
 #include "GameplayEffectExtension.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "GameFramework/Character.h"
@@ -119,20 +120,25 @@ void UPokemonBaseAttributeSet::HandleIncomingDamage(FEffectProperties& Props)
 		const bool bFatal = NewHealth <= 0.f;
 		if (bFatal)
 		{
-			TScriptInterface<IPokemonCombatInterface> TargetCombatInteface = Props.TargetAvatarActor;
-			TScriptInterface<IPokemonCombatInterface> SourceCombatInteface = Props.SourceAvatarActor;
+			//TScriptInterface<IPokemonCombatInterface> TargetCombatInteface = Props.TargetAvatarActor;
+			//TScriptInterface<IPokemonCombatInterface> SourceCombatInteface = Props.SourceAvatarActor;
 			
 			SendXPEvent(Props);
 
-			if (TargetCombatInteface)
-			{
-				TargetCombatInteface->Fainted(UPokemonAbilitySystemLibrary::GetDeathImpulse(Props.EffectContext));
-			}
-			if (SourceCombatInteface)
-			{
-				SourceCombatInteface->DisengageFromCombat();
-			}
+			//if (TargetCombatInteface)
+			//{
+			//	TargetCombatInteface->Fainted(UPokemonAbilitySystemLibrary::GetDeathImpulse(Props.EffectContext));
+			//}
+			//if (SourceCombatInteface)
+			//{
+			//	SourceCombatInteface->DisengageFromCombat();
+			//}
 
+			APokemon_Parent* TargetPokemon = Cast<APokemon_Parent>(Props.TargetAvatarActor);
+			if (TargetPokemon)
+			{
+				TargetPokemon->HandleDefeatedBy(Props.SourceAvatarActor, UPokemonAbilitySystemLibrary::GetDeathImpulse(Props.EffectContext));
+			}
 		}
 		else
 		{

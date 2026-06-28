@@ -261,6 +261,8 @@ public:
 #pragma endregion
 
 
+	void HandleDefeatedBy(AActor* DefeatingActor,const FVector& DeathImpulse);
+
 	void Return();
 	void Dissolve();
 
