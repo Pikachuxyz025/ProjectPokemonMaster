@@ -114,6 +114,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Brain")
 	void StopPokemonBrain(const FString& Reason);
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Combat")
+	void EndCombat();
+
 private:
 
 	UPROPERTY()

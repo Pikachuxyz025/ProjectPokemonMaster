@@ -897,7 +897,13 @@ void APokemon_Parent::GetReadyForCombat(const FHitResult& CombatHitResult)
 
 void APokemon_Parent::DisengageFromCombat()
 {
-	PokemonController->SetCombatTarget(nullptr);
+	APokemonAIController* AIController = GetPokemonController();
+	if (!AIController)
+	{
+		return;
+	}
+
+	AIController->EndCombat();
 }
 
 void APokemon_Parent::AdjustXP(int32 NewXP)

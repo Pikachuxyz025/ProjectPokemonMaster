@@ -161,32 +161,7 @@ bool UPokemonDamageGameplayAbilities::CanActivateAbility(const FGameplayAbilityS
 	{
 		return false;
 	}
-	/*	UAbilitySystemComponent* const AbilitySystemComponent = ActorInfo->AbilitySystemComponent.Get();
-	const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(Handle);
 
-	static const FGameplayTag CooldownRootTag = FPokemonGameplayTags::Get().Cooldown_InputTag;
-	FGameplayTag CurrentCooldownGameplayTag;
-
-	for (const FGameplayTag& Tag : Spec->DynamicAbilityTags)
-	{
-		if (Tag.MatchesTag(CooldownRootTag))
-		{
-			CurrentCooldownGameplayTag = Tag;
-			break;
-		}
-	}
-
-	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
-	if (!ASC) return false;
-
-	if (ASC->HasMatchingGameplayTag(CurrentCooldownGameplayTag))
-	{
-		if (OptionalRelevantTags)
-		{
-			OptionalRelevantTags->AddTag(CurrentCooldownGameplayTag);
-		}
-		return false;
-	}*/
 	return true;
 }
 

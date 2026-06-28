@@ -4,16 +4,14 @@
 #include "AIControllers/PokemonAIController.h"
 #include "GameplayBehaviorsBlueprintFunctionLibrary.h"
 #include "Characters/Pokemon_Parent.h"
-#include "Characters/TrainerCharacter.h"
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "GameplayTags/PokemonGameplayTags.h"
-#include "DataAssets/PokemonAICombatBrainConfig.h"
-#include "Debugging/PokemonDebugLibrary.h"
-#include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonBrainComponent.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 
@@ -61,6 +59,10 @@ void APokemonAIController::ClearCombatTarget()
 	{
 		BlackboardComp->ClearValue(CombatTargetKeyName);
 	}
+
+	ClearFocus(EAIFocusPriority::Default);
+	ClearFocus(EAIFocusPriority::Move);
+	ClearFocus(EAIFocusPriority::Gameplay);
 }
 
 void APokemonAIController::StopPokemonBrain(const FString& Reason)
@@ -69,6 +71,43 @@ void APokemonAIController::StopPokemonBrain(const FString& Reason)
 	{
 		PokemonBrainComponent->StopLogic(Reason);
 }
+}
+
+void APokemonAIController::EndCombat()
+{
+	ClearCombatTarget();
+
+	SetPokemonState(EPokemonState::EPS_Passive);
+	SetBlackboardCurrentMove(nullptr);
+	SetBlackboardDesiredCombatMode(FPokemonGameplayTags::Get().AI_Decision_Combat_Idle);
+
+	StopMovement();
+
+	ClearFocus(EAIFocusPriority::Default);
+	ClearFocus(EAIFocusPriority::Gameplay);
+	ClearFocus(EAIFocusPriority::Gameplay);
+
+	APokemon_Parent* Pokemon = ControlledPokemon ? ControlledPokemon : Cast<APokemon_Parent>(GetPawn());
+	if (!Pokemon)
+	{
+		return;
+	}
+
+	Pokemon->ClearCommandTarget();
+	Pokemon->ClearActiveCommandState();
+
+	if (UPokemonNavigationComponent* NavComp = Pokemon->FindComponentByClass<UPokemonNavigationComponent>())
+	{
+		NavComp->ClearNavigationIntent();
+	}
+
+	Pokemon->bUseControllerRotationYaw = false;
+
+	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
+	{
+		MoveComp->bOrientRotationToMovement = true;
+		MoveComp->bUseControllerDesiredRotation = false;
+	}
 }
 
 void APokemonAIController::SetBlackboardTrainer()
@@ -234,9 +273,6 @@ void APokemonAIController::HandleSenseDamage(AActor* Actor)
 		SetBlackboardAttackTarget();
 	}
 }
-
-
-
 
 void APokemonAIController::SetTrainer(AActor* NewTrainer)
 {
