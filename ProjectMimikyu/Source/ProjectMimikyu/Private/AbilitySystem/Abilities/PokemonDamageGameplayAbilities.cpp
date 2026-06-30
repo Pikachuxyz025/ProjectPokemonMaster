@@ -176,6 +176,11 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 
 	OutImpactResolution = DefenderResolver->ResolveAndApplyImpact(ContactContext);
 
+	OutImpactResolution.AttackerImpulse *= AppliedImpulseScale;
+	OutImpactResolution.DefenderImpulse *= AppliedImpulseScale;
+
+	DefenderResolver->ApplyImpactResolution(ContactContext, OutImpactResolution);
+
 	if (!OutImpactResolution.bApplyDamage)
 	{
 		DamageEffectParams.BasedDamage = 0.f;
@@ -185,10 +190,8 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 		DamageEffectParams.BasedDamage *= OutImpactResolution.DamageMultiplier;
 	}
 
-	if (!OutImpactResolution.DefenderImpulse.IsNearlyZero())
-	{
-		DamageEffectParams.KnockbackForce = OutImpactResolution.DefenderImpulse;
-	}
+	DamageEffectParams.KnockbackForce = OutImpactResolution.DefenderImpulse;
+	
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[ImpactParams] Result=%s DamageMultiplier=%.2f DamageAfter=%.2f Knockback=%s"),

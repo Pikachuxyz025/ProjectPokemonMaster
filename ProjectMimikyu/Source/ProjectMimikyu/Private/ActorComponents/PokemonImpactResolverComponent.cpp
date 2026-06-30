@@ -2,7 +2,7 @@
 #include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include <ActorComponents/PokemonIncapacitationComponent.h>
+#include "Components/PrimitiveComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonImpactResolver, Log, All);
 
