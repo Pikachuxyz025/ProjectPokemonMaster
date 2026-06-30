@@ -66,8 +66,8 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 
 	const FVector ToTarget = Rotation.Vector();
 
-	Params.DeathImpulse = ToTarget * DeathImpulseMagnitude;
-	Params.KnockbackForce = ToTarget * KnockbackForceMagnitude;
+	Params.DeathImpulse = ToTarget * DeathImpulseMagnitude * AppliedImpulseScale;
+	Params.KnockbackForce = ToTarget * KnockbackForceMagnitude * AppliedImpulseScale;
 
 	TScriptInterface<IPokemonCombatInterface> TargetPokemon = TargetActor;
 	if (TargetPokemon)

@@ -1,5 +1,8 @@
 #include "ActorComponents/PokemonImpactResolverComponent.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include <ActorComponents/PokemonIncapacitationComponent.h>
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonImpactResolver, Log, All);
 
@@ -87,6 +90,21 @@ FPokemonImpactResolution UPokemonImpactResolverComponent::ResolveAndApplyImpact(
 
 void UPokemonImpactResolverComponent::ApplyImpactResolution(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution)
 {
+	if (bApplyMovementImpulses)
+	{
+		ApplyImpactImpulseToActor(
+			ContactContext.AttackingActor,
+			ImpactResolution.AttackerImpulse,
+			TEXT("Attacker")
+		);
+
+		ApplyImpactImpulseToActor(
+			ContactContext.DefendingActor,
+			ImpactResolution.DefenderImpulse,
+			TEXT("Defender")
+		);
+	}
+
 	OnImpactResolved.Broadcast(ContactContext, ImpactResolution);
 }
 
@@ -225,5 +243,65 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_NeutralReset;
 		break;
 	}
+}
+
+void UPokemonImpactResolverComponent::ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const
+{
+	if (!IsValid(TargetActor))
+	{
+		return;
+	}
+
+	if (Impulse.SizeSquared() <= FMath::Square(MinImpulseToApply))
+	{
+		return;
+	}
+
+	AActor* OwnerActor = GetOwner();
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	if (ACharacter* Character = Cast<ACharacter>(TargetActor))
+	{
+		UCharacterMovementComponent* MoveComp = Character->GetCharacterMovement();
+
+		if (!MoveComp || MoveComp->MovementMode == MOVE_None)
+		{
+			return;
+		}
+
+		Character->LaunchCharacter(Impulse, true, true);
+
+		UE_LOG(
+			LogPokemonImpactResolver,
+			Display,
+			TEXT("Applied impact impulse. Role=%s Actor=%s Impulse=%s"),
+			RoleLabel,
+			*GetNameSafe(TargetActor),
+			*Impulse.ToString()
+		);
+
+		return;
+	}
+
+	if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(TargetActor->GetRootComponent()))
+	{
+		if (RootPrimitive->IsSimulatingPhysics())
+		{
+			RootPrimitive->AddImpulse(Impulse, NAME_None, true);
+
+			UE_LOG(
+				LogPokemonImpactResolver,
+				Display,
+				TEXT("Applied physics impact impulse. Role=%s Actor=%s Impulse=%s"),
+				RoleLabel,
+				*GetNameSafe(TargetActor),
+				*Impulse.ToString()
+			);
+		}
+	}
+
 }
 

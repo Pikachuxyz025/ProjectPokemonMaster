@@ -67,6 +67,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Thresholds")
 	float NoSellThreshold = -50.f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Application")
+	bool bApplyMovementImpulses = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Application")
+	float MinImpulseToApply = 1.f;
+
 private:
 	float CalculateImpactScore(const FPokemonMoveContactContext& ContactContext) const;
 	float CalculateResistanceScore(const FPokemonMoveContactContext& ContactContext) const;
@@ -77,4 +83,6 @@ private:
 		EPokemonImpactResult Result,
 		float ScoreDelta
 	) const;
+
+	void ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const;
 };
