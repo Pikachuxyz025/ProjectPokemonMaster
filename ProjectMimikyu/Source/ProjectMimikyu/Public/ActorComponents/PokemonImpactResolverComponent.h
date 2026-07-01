@@ -85,4 +85,5 @@ private:
 	) const;
 
 	void ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const;
+	void ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
 };

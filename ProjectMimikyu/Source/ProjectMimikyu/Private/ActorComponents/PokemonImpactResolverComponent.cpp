@@ -90,20 +90,19 @@ FPokemonImpactResolution UPokemonImpactResolverComponent::ResolveAndApplyImpact(
 
 void UPokemonImpactResolverComponent::ApplyImpactResolution(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution)
 {
-	if (bApplyMovementImpulses)
-	{
-		ApplyImpactImpulseToActor(
-			ContactContext.AttackingActor,
-			ImpactResolution.AttackerImpulse,
-			TEXT("Attacker")
-		);
+	ApplyImpactImpulseToActor(
+		ContactContext.AttackingActor,
+		ImpactResolution.AttackerImpulse,
+		TEXT("Attacker")
+	);
 
-		ApplyImpactImpulseToActor(
-			ContactContext.DefendingActor,
-			ImpactResolution.DefenderImpulse,
-			TEXT("Defender")
-		);
-	}
+	ApplyImpactImpulseToActor(
+		ContactContext.DefendingActor,
+		ImpactResolution.DefenderImpulse,
+		TEXT("Defender")
+	);
+
+	ApplyImpactStateConsequences(ContactContext, ImpactResolution);
 
 	OnImpactResolved.Broadcast(ContactContext, ImpactResolution);
 }
@@ -207,7 +206,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerHitStop = 0.06f;
 		OutResolution.DefenderHitStop = 0.02f;
 		OutResolution.AttackerRecoveryTime = 0.55f;
-		OutResolution.DefenderStunTime = 0.05f;
+		OutResolution.DefenderStunTime = 0.0f;
 		OutResolution.DamageMultiplier = 0.15f;
 		OutResolution.bLeavesAttackerVulnerable = true;
 		break;
@@ -220,7 +219,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerHitStop = 0.05f;
 		OutResolution.DefenderHitStop = 0.03f;
 		OutResolution.AttackerRecoveryTime = 0.45f;
-		OutResolution.DefenderStunTime = 0.05f;
+		OutResolution.DefenderStunTime = 0.0f;
 		OutResolution.DamageMultiplier = 0.25f;
 		OutResolution.bLeavesAttackerVulnerable = true;
 		break;
@@ -303,5 +302,20 @@ void UPokemonImpactResolverComponent::ApplyImpactImpulseToActor(AActor* TargetAc
 		}
 	}
 
+}
+
+void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const
+{
+	UE_LOG(
+		LogPokemonImpactResolver,
+		Display,
+		TEXT("Impact state consequence. Result=%s AttackerState=%s DefenderState=%s Advantage=%s AttackerRecovery=%.2f DefenderStun=%.2f"),
+		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(ImpactResolution.ImpactResult)),
+		*ImpactResolution.AttackerPostImpactState.ToString(),
+		*ImpactResolution.DefenderPostImpactState.ToString(),
+		*ImpactResolution.AdvantageTag.ToString(),
+		ImpactResolution.AttackerRecoveryTime,
+		ImpactResolution.DefenderStunTime
+	);
 }
 
