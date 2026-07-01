@@ -171,8 +171,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.DefenderPoise = TargetDefense * 0.25f;
 
 	ContactContext.bWasCounterHit = false;
-	ContactContext.bDefenderBraced = false
-		;
+	ContactContext.bDefenderBraced = true;
 	ContactContext.bDefenderAirborne = false;
 	ContactContext.bAttackerAirborne = false;
 
