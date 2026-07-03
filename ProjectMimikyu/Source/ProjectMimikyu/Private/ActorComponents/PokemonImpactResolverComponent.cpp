@@ -125,6 +125,140 @@ float UPokemonImpactResolverComponent::CalculateResistanceScore(const FPokemonMo
 	return WeightScore + ContactContext.DefenderDefense + ContactContext.DefenderPoise + BracedBonus;
 }
 
+FVector UPokemonImpactResolverComponent::GetSafeImpactDirection(const FPokemonMoveContactContext& ContactContext) const
+{
+	if (!ContactContext.AttackDirection.IsNearlyZero())
+	{
+		return ContactContext.AttackDirection.GetSafeNormal();
+	}
+
+	if (ContactContext.AttackingActor && ContactContext.DefendingActor)
+	{
+		const FVector ToDefender 
+			=
+			ContactContext.DefendingActor->GetActorLocation() - ContactContext.AttackingActor->GetActorLocation();
+		if (!ToDefender.IsNearlyZero())
+		{
+			return ToDefender.GetSafeNormal();
+		}
+	}
+	return FVector::ForwardVector;
+}
+
+FVector UPokemonImpactResolverComponent::GetSafeHorizontalImpactDirection(const FPokemonMoveContactContext& ContactContext, const FVector& RawImpactDirection) const
+{
+	FVector HorizontalDirection = FVector(RawImpactDirection.X, RawImpactDirection.Y, 0.f);
+
+	if (!HorizontalDirection.IsNearlyZero())
+	{
+		return HorizontalDirection.GetSafeNormal();
+	}
+
+	if (ContactContext.AttackingActor && ContactContext.DefendingActor)
+	{
+		 FVector ToDefender
+			=
+			ContactContext.DefendingActor->GetActorLocation() - ContactContext.AttackingActor->GetActorLocation();
+		HorizontalDirection = FVector(ToDefender.X, ToDefender.Y, 0.f);
+
+		ToDefender.Z = 0.f;
+
+		if (!ToDefender.IsNearlyZero())
+		{
+			return ToDefender.GetSafeNormal();
+		}
+	}
+
+	return FVector::ForwardVector;
+}
+
+FVector UPokemonImpactResolverComponent::BuildDefenderImpactImpulse(const FPokemonMoveContactContext& ContactContext, EPokemonImpactResult Result, float MagnitudeScale) const
+{
+	const float BaseMagnitude = ContactContext.KnockbackForce * MagnitudeScale;
+	if (BaseMagnitude <= 0.f)
+	{
+		return FVector::ZeroVector;
+	}
+	const FVector RawImpactDirection = GetSafeImpactDirection(ContactContext);
+	const FVector HorizontalImpactDirection = GetSafeHorizontalImpactDirection(ContactContext, RawImpactDirection);
+
+	const bool bDownwardImpact = RawImpactDirection.Z <= -VerticalImpactThreshold;
+	const bool bUpwardImpact = RawImpactDirection.Z >= VerticalImpactThreshold;
+
+	FVector FinalDirection = HorizontalImpactDirection;
+	float FinalMagnitude = BaseMagnitude;
+
+	if (bDownwardImpact)
+	{
+		if (ContactContext.bDefenderAirborne)
+		{
+			// Airborne target hit from above: spike downward instead of launching upward
+			FinalDirection =
+				(HorizontalImpactDirection * AirSpikeHorizontalInfluence)
+				+ (-FVector::UpVector * AirSpikeDownInfluence);
+
+			FinalDirection = FinalDirection.GetSafeNormal();
+		}
+		else
+		{
+			// Grounded target hit from above: do not pop them upward.
+			// This becomes the early version of a crumple/slam/pin reaction
+			FinalDirection = HorizontalImpactDirection;
+			FinalMagnitude *= GroundedDownwardImpactScalee;
+
+			// Highlight this spot. We'll likely use this to trigger a crumple animation or a slam reaction in the future.
+		}
+	}
+	else if (Result == EPokemonImpactResult::Launch)
+	{
+		if (bUpwardImpact)
+		{
+			// Uppercut/rising impact.
+			FinalDirection =
+				(HorizontalImpactDirection * UpwardLaunchHorizontalInfluence)
+				+ (FVector::UpVector * HorizontalLaunchUpBias);
+
+			FinalDirection = FinalDirection.GetSafeNormal();
+		}
+		else
+		{
+			// Side launch: small lift, not a big automatic arc.
+			FinalDirection = HorizontalImpactDirection
+				+ FVector::UpVector * HorizontalLaunchUpBias;
+
+			FinalDirection = FinalDirection.GetSafeNormal();
+		}
+	}
+	else if (ContactContext.bDefenderAirborne && FMath::Abs(RawImpactDirection.Z) > KINDA_SMALL_NUMBER)
+	{
+		// Non-launch airborne hits can still preserve some vertial incoming direction.
+		FinalDirection = RawImpactDirection;
+	}
+	else
+	{
+		// Grounded normal hit: keep it mostly horizontal.
+		FinalDirection = HorizontalImpactDirection;
+	}
+
+	const FVector FinalImpulse = FinalDirection * FinalMagnitude;
+
+	UE_LOG(
+		LogPokemonImpactResolver,
+		Display,
+		TEXT("[PokemonImpactResolver] Built defender impact impulse. Result=%s AttackingActor=%s DefendingActor=%s RawDirection=%s FinalDirection=%s Magnitude=%.2f FinalImpulse=%s DefenderAirborne=%s"),
+		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(Result)),
+		ContactContext.AttackingActor ? *ContactContext.AttackingActor->GetName() : TEXT("None"),
+		ContactContext.DefendingActor ? *ContactContext.DefendingActor->GetName() : TEXT("None"),
+		*RawImpactDirection.ToString(),
+		*FinalDirection.ToString(),
+		FinalMagnitude,
+		*FinalImpulse.ToString(),
+		ContactContext.bDefenderAirborne ? TEXT("True") : TEXT("False")
+	);
+
+	return FinalImpulse;
+}
+
 void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpactResolution& OutResolution, const FPokemonMoveContactContext& ContactContext, EPokemonImpactResult Result, float ScoreDelta) const
 {
 	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
@@ -142,7 +276,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerPostImpactState = CombatTags.Combat_State_Recovering;
 		OutResolution.DefenderPostImpactState = CombatTags.Combat_State_HitStun;
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_AttackerPlus;
-		OutResolution.DefenderImpulse = SafeAttackDirection * ContactContext.KnockbackForce;
+		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 1.f);
 		OutResolution.AttackerHitStop = 0.05f;
 		OutResolution.DefenderHitStop = 0.07f;
 		OutResolution.AttackerRecoveryTime = 0.2f;
@@ -154,7 +288,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerPostImpactState = CombatTags.Combat_State_Recovering;
 		OutResolution.DefenderPostImpactState = CombatTags.Combat_State_HitStun;
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_AttackerPlus;
-		OutResolution.DefenderImpulse = SafeAttackDirection * ContactContext.KnockbackForce * 1.35f;
+		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 1.35f);
 		OutResolution.AttackerHitStop = 0.07f;
 		OutResolution.DefenderHitStop = 0.1f;
 		OutResolution.AttackerRecoveryTime = 3.f;
@@ -166,7 +300,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerPostImpactState = CombatTags.Combat_State_Recovering;
 		OutResolution.DefenderPostImpactState = CombatTags.Combat_State_Launched;
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_AttackerPlus;
-		OutResolution.DefenderImpulse = (SafeAttackDirection + FVector::UpVector * 0.65f).GetSafeNormal() * ContactContext.KnockbackForce * 1.75f;
+		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 1.75f);
 		OutResolution.AttackerHitStop = 0.08f;
 		OutResolution.DefenderHitStop = 0.12f;
 		OutResolution.AttackerRecoveryTime = 0.25f;
@@ -178,7 +312,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerPostImpactState = CombatTags.Combat_State_Recovering;
 		OutResolution.DefenderPostImpactState = CombatTags.Combat_State_Neutral;
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_NeutralReset;
-		OutResolution.DefenderImpulse = SafeAttackDirection * ContactContext.KnockbackForce * 0.35f;
+		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 0.35f);
 		OutResolution.AttackerHitStop = 0.03f;
 		OutResolution.DefenderHitStop = 0.03f;
 		OutResolution.AttackerRecoveryTime = 0.25f;
@@ -229,7 +363,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerPostImpactState = CombatTags.Combat_State_Recovering;
 		OutResolution.DefenderPostImpactState = CombatTags.Combat_State_HitStun;
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_AttackerPlus;
-		OutResolution.DefenderImpulse = SafeAttackDirection * ContactContext.KnockbackForce * 1.5f;
+		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 1.5f);
 		OutResolution.AttackerHitStop = 0.06f;
 		OutResolution.DefenderHitStop = 0.11f;
 		OutResolution.AttackerRecoveryTime = 0.2f;

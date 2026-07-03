@@ -67,6 +67,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Thresholds")
 	float NoSellThreshold = -50.f;
 
+UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Combat|Impact|Direction")
+float VerticalImpactThreshold = 0.35f;
+
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
+float HorizontalLaunchUpBias = 0.12f;
+
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
+float UpwardLaunchHorizontalInfluence = 0.35f;
+
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
+float AirSpikeHorizontalInfluence = 0.25f;
+
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
+float AirSpikeDownInfluence = 1.0f;
+
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
+float GroundedDownwardImpactScalee = 0.25f;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Application")
 	bool bApplyMovementImpulses = true;
 
@@ -76,6 +94,12 @@ protected:
 private:
 	float CalculateImpactScore(const FPokemonMoveContactContext& ContactContext) const;
 	float CalculateResistanceScore(const FPokemonMoveContactContext& ContactContext) const;
+
+	FVector GetSafeImpactDirection(const FPokemonMoveContactContext& ContactContext) const;
+
+	FVector GetSafeHorizontalImpactDirection(const FPokemonMoveContactContext& ContactContext,const FVector& RawImpactDirection) const;
+
+	FVector BuildDefenderImpactImpulse(const FPokemonMoveContactContext& ContactContext, EPokemonImpactResult Result, float MagnitudeScale) const;
 
 	void ConfigureResolutionForResult(
 		FPokemonImpactResolution& OutResolution,
