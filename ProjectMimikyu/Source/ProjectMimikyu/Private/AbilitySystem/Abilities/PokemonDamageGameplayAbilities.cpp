@@ -22,7 +22,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	Params.TargetAbilitySystemComponent = TargetASC;
 	Params.BasedDamage = Damage;
 	Params.AbilityLevel = GetAbilityLevel();
-	Params.DamageType = MoveTypeTag;
+	Params.MoveTypeTag = MoveTypeTag;
 	Params.DebuffChance = DebuffChance;
 	Params.DebuffFrequency = DebuffFrequency;
 	Params.DebuffDuration = DebuffDuration;
@@ -117,10 +117,30 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 		TargetAttributeSet = DamageEffectParams.TargetAbilitySystemComponent->GetSet<UPokemonBaseAttributeSet>();
 	}
 
-	const float SourceAttack = SourceAttributeSet ? SourceAttributeSet->GetAttack() : 0.f;
+	const FPokemonGameplayTags& GameplayTags = FPokemonGameplayTags::Get();
+
+	const FGameplayTag EffectiveMoveTypeTag =
+		MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.MoveTypeTag;
+
+	float SourceOffenseStat = 0.f;
+	float TargetDefenseStat = 0.f;
+
+	if (SourceAttributeSet && TargetAttributeSet)
+	{
+		if (EffectiveMoveTypeTag.MatchesTagExact(GameplayTags.PokemonMoves_MoveType_Special))
+		{
+			SourceOffenseStat = SourceAttributeSet->GetSpecialAttack();
+			TargetDefenseStat = TargetAttributeSet->GetSpecialDefense();
+		}
+		else
+		{
+			// Default to physical for Physical or unset.
+			SourceOffenseStat = SourceAttributeSet->GetAttack();
+			TargetDefenseStat = TargetAttributeSet->GetDefense();
+		}
+	}
+
 	const float SourceSpeed = SourceAttributeSet ? SourceAttributeSet->GetSpeed() : 0.f;
-	const float TargetDefense = TargetAttributeSet ? TargetAttributeSet->GetDefense() : 0.f;
-	const float TargetSpeed = TargetAttributeSet ? TargetAttributeSet->GetSpeed() : 0.f;
 
 	FVector AttackDirection = TargetActor->GetActorLocation() - Attacker->GetActorLocation();
 
@@ -134,9 +154,9 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	UE_LOG(LogTemp, Display,
 		TEXT("[ImpactParams] Move=%s SourceAttack=%.2f SourceSpeed=%.2f TargetDefense=%.2f ImpactForce=%.2f DamageBefore=%.2f"),
 		*GetNameSafe(this),
-		SourceAttack,
+		SourceOffenseStat,
 		SourceSpeed,
-		TargetDefense,
+		TargetDefenseStat,
 		ImpactForce,
 		DamageEffectParams.BasedDamage
 	);
@@ -163,12 +183,12 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.DefenderWeight = 1.f;
 
 	// First stat-driven pass.
-	ContactContext.ImpactForce = ImpactForce + SourceAttack;
-	ContactContext.DefenderDefense = TargetDefense;
+	ContactContext.ImpactForce = ImpactForce + SourceOffenseStat;
+	ContactContext.DefenderDefense = TargetDefenseStat;
 
 	// Temporary poise formula.
 	// Later this should become its own stat or data-driven value.
-	ContactContext.DefenderPoise = TargetDefense * 0.25f;
+	ContactContext.DefenderPoise = TargetDefenseStat * 0.25f;
 
 	ContactContext.bWasCounterHit = false;
 	ContactContext.bDefenderBraced = false

@@ -2,9 +2,7 @@
 
 
 #include "Items/ProjectileAttack.h"
-#include "Particles/ParticleSystem.h"
-#include "Sound/SoundCue.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -69,28 +67,7 @@ void AProjectileAttack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 
 	if (HasAuthority())
 	{
-		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
-
-			DamageEffectParams.DeathImpulse = DeathImpulse;
-
-			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
-			if (bKnockback)
-			{
-				const FVector KnockbackDirectionOffset =
-					GetActorForwardVector().RotateAngleAxis(45.f, GetActorRightVector());
-
-				const FVector KnockbackForce =
-					KnockbackDirectionOffset * DamageEffectParams.KnockbackForceMagnitude;
-
-				DamageEffectParams.KnockbackForce = KnockbackForce;
-			}
-
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			UPokemonAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
-		}
-
+		TryApplyDamage(OtherActor, Hit);
 		Destroy();
 	}
 }
@@ -175,9 +152,30 @@ void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit
 		const UPokemonBaseAttributeSet* SourceAttributeSet = SourceASC->GetSet<UPokemonBaseAttributeSet>();
 		const UPokemonBaseAttributeSet* TargetAttributeSet = TargetASC->GetSet<UPokemonBaseAttributeSet>();
 
-		const float SourceAttack = SourceAttributeSet ? SourceAttributeSet->GetAttack() : 0.f;
-		const float SourcesSpeed = SourceAttributeSet ? SourceAttributeSet->GetSpeed() : 0.f;
-		const float TargetDefense = TargetAttributeSet ? TargetAttributeSet->GetDefense() : 0.f;
+		const FPokemonGameplayTags& GameplayTags = FPokemonGameplayTags::Get();
+
+		const FGameplayTag EffectiveMoveTypeTag =
+			MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.MoveTypeTag;
+
+		float SourceOffenseStat = 0.f;
+		float TargetDefenseStat = 0.f;
+
+		if (SourceAttributeSet && TargetAttributeSet)
+		{
+			if (EffectiveMoveTypeTag.MatchesTagExact(GameplayTags.PokemonMoves_MoveType_Special))
+			{
+				SourceOffenseStat = SourceAttributeSet->GetSpecialAttack();
+				TargetDefenseStat = TargetAttributeSet->GetSpecialDefense();
+			}
+			else
+			{
+				// Default to physical for Physical or unset.
+				SourceOffenseStat = SourceAttributeSet->GetAttack();
+				TargetDefenseStat = TargetAttributeSet->GetDefense();
+			}
+		}
+
+		const float SourceSpeed = SourceAttributeSet ? SourceAttributeSet->GetSpeed() : 0.f;
 
 		FPokemonMoveContactContext ContactContext;
 		ContactContext.AttackingActor = SourceActor;
@@ -185,23 +183,24 @@ void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit
 
 		ContactContext.MoveActionTag = MoveActionTag;
 		ContactContext.MoveStyleTag = FPokemonCombatGameplayTags::Get().Combat_MoveStyle_Projectile;
-		ContactContext.MoveTypeTag = MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.DamageType;
+		ContactContext.MoveTypeTag = EffectiveMoveTypeTag;
 		ContactContext.DamageResponseTag = DamageResponseTag;
 
 		ContactContext.ContactPoint = Hit.bBlockingHit ? Hit.ImpactPoint : OtherActor->GetActorLocation();
-		ContactContext.ImpactForce = ImpactForce + SourceAttack;
+		ContactContext.AttackDirection = ProjectileDirection;
+		ContactContext.ImpactForce = ImpactForce + SourceOffenseStat;
 		ContactContext.KnockbackForce = DamageEffectParams.KnockbackForceMagnitude;
 
 		const float ProjectileSpeed = ProjectileMovementComponent ? ProjectileMovementComponent->Velocity.Size() : GetVelocity().Size();
 
-		ContactContext.AttackerSpeed = FMath::Max(ProjectileSpeed, SourcesSpeed);
+		ContactContext.AttackerSpeed = FMath::Max(ProjectileSpeed, SourceSpeed);
 
 		// Temporary until Pokemon weight/size data is wired in
 		ContactContext.AttackerWeight = 1.f;
 		ContactContext.DefenderWeight = 1.f;
 
-		ContactContext.DefenderDefense = TargetDefense;
-		ContactContext.DefenderPoise = TargetDefense * .25f;
+		ContactContext.DefenderDefense = TargetDefenseStat;
+		ContactContext.DefenderPoise = TargetDefenseStat * .25f;
 
 		ContactContext.bWasCounterHit = false;
 		ContactContext.bDefenderBraced = false;

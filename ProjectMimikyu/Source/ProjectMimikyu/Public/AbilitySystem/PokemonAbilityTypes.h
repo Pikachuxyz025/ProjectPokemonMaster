@@ -33,7 +33,7 @@ struct FDamageEffectParams
 	float AbilityLevel = 1.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	FGameplayTag DamageType = FGameplayTag();
+	FGameplayTag MoveTypeTag = FGameplayTag();
 
 	UPROPERTY(BlueprintReadOnly)
 	float TypeMultiplier = 1.f;

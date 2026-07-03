@@ -184,7 +184,7 @@ FGameplayEffectContextHandle UPokemonAbilitySystemLibrary::ApplyDamageEffect(con
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 	SetKnockbackForce(EffectContextHandle, DamageEffectParams.KnockbackForce);
 	SetTypeMultiplier(EffectContextHandle, DamageEffectParams.TypeMultiplier);
-	SetDamageType(EffectContextHandle, DamageEffectParams.DamageType);
+	SetDamageType(EffectContextHandle, DamageEffectParams.MoveTypeTag);
 
 	FGameplayEffectSpecHandle EffectSpecHandle =
 		DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(
@@ -201,7 +201,7 @@ FGameplayEffectContextHandle UPokemonAbilitySystemLibrary::ApplyDamageEffect(con
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
 		EffectSpecHandle,
-		DamageEffectParams.DamageType,
+		DamageEffectParams.MoveTypeTag,
 		DamageEffectParams.BasedDamage
 	);
 
