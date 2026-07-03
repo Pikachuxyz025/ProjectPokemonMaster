@@ -290,14 +290,16 @@ void APokemonAIController::SetCombatTarget(AActor* NewTarget)
 		return;
 	}
 
-	if (ControlledPokemon->IsFainted() || !ControlledPokemon->CanBeCombatTargeted())
+	if (!ControlledPokemon->CanAct())
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[AI] SetCombatTarget rejected because controlled Pokemon is not targetable | Owner=%s | Target=%s"),
+			TEXT("[AI] SetCombatTarget rejected because controlled Pokemon cannot act | Owner=%s | Target=%s"),
 			*GetNameSafe(ControlledPokemon),
 			*GetNameSafe(NewTarget));
 
-		EndCombat();
+		ClearCombatTarget();
+		SetPokemonState(EPokemonState::EPS_Fainted);
+		StopMovement();
 		return;
 	}
 
