@@ -12,9 +12,6 @@
 #include <AbilitySystemBlueprintLibrary.h>
 #include "AbilitySystemComponent.h"
 #include <AbilitySystem/PokemonAbilitySystemLibrary.h>
-#include "ActorComponents/PokemonImpactResolverComponent.h"
-#include "AbilitySystem/PokemonBaseAttributeSet.h"
-#include "GameplayTags/PokemonCombatGameplayTags.h"
 
 AProjectileAttack::AProjectileAttack()
 {
@@ -132,125 +129,6 @@ void AProjectileAttack::RetargetTick()
 
 void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit)
 {
-	if (!IsValid(OtherActor))
-	{
-		return;
-	}
-
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-
-	if (!TargetASC)
-	{
-		return;
-	}
-
-	DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-
-	UAbilitySystemComponent* SourceASC = DamageEffectParams.SourceAbilitySystemComponent;
-	AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : GetOwner();
-
-	if (!IsValid(SourceActor))
-	{
-		SourceActor = GetOwner();
-	}
-
-	FVector ProjectileDirection = GetActorForwardVector();
-
-	if (ProjectileMovementComponent && !ProjectileMovementComponent->Velocity.IsNearlyZero())
-	{
-		ProjectileDirection = ProjectileMovementComponent->Velocity.GetSafeNormal();
-	}
-
-	if (ProjectileDirection.IsNearlyZero())
-	{
-		ProjectileDirection = GetActorForwardVector();
-	}
-
-	DamageEffectParams.DeathImpulse = ProjectileDirection * DamageEffectParams.DeathImpulseMagnitude;
-
-	UPokemonImpactResolverComponent* DefenderResolver = OtherActor->FindComponentByClass<UPokemonImpactResolverComponent>();
-
-	if (DefenderResolver && SourceASC)
-	{
-		const UPokemonBaseAttributeSet* SourceAttributeSet = SourceASC->GetSet<UPokemonBaseAttributeSet>();
-		const UPokemonBaseAttributeSet* TargetAttributeSet = TargetASC->GetSet<UPokemonBaseAttributeSet>();
-
-		const float SourceAttack = SourceAttributeSet ? SourceAttributeSet->GetAttack() : 0.f;
-		const float SourcesSpeed = SourceAttributeSet ? SourceAttributeSet->GetSpeed() : 0.f;
-		const float TargetDefense = TargetAttributeSet ? TargetAttributeSet->GetDefense() : 0.f;
-
-		FPokemonMoveContactContext ContactContext;
-		ContactContext.AttackingActor = SourceActor;
-		ContactContext.DefendingActor = OtherActor;
-
-		ContactContext.MoveActionTag = MoveActionTag;
-		ContactContext.MoveStyleTag = FPokemonCombatGameplayTags::Get().Combat_MoveStyle_Projectile;
-		ContactContext.MoveTypeTag = MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.DamageType;
-		ContactContext.DamageResponseTag = DamageResponseTag;
-
-		ContactContext.ContactPoint = Hit.bBlockingHit ? Hit.ImpactPoint : OtherActor->GetActorLocation();
-		ContactContext.ImpactForce = ImpactForce + SourceAttack;
-		ContactContext.KnockbackForce = DamageEffectParams.KnockbackForceMagnitude;
-
-		const float ProjectileSpeed = ProjectileMovementComponent ? ProjectileMovementComponent->Velocity.Size() : GetVelocity().Size();
-
-		ContactContext.AttackerSpeed = FMath::Max(ProjectileSpeed, SourcesSpeed);
-
-		// Temporary until Pokemon weight/size data is wired in
-		ContactContext.AttackerWeight = 1.f;
-		ContactContext.DefenderWeight = 1.f;
-
-		ContactContext.DefenderDefense = TargetDefense;
-		ContactContext.DefenderPoise = TargetDefense * .25f;
-
-		ContactContext.bWasCounterHit = false;
-		ContactContext.bDefenderBraced = false;
-
-		// Hold off on flying/airborne pokemon structure for now
-		ContactContext.bDefenderAirborne = false;
-		ContactContext.bAttackerAirborne = false;
-
-		FPokemonImpactResolution ImpactResolution = DefenderResolver->ResolveImpact(ContactContext);
-
-		ImpactResolution.AttackerImpulse *= AppliedImpulseScale;
-		ImpactResolution.DefenderImpulse *= AppliedImpulseScale;
-
-		DefenderResolver->ApplyImpactResolution(ContactContext, ImpactResolution);
-
-		if (!ImpactResolution.bApplyDamage)
-		{
-			DamageEffectParams.BasedDamage = 0.f;
-		}
-		else
-		{
-			DamageEffectParams.BasedDamage *= ImpactResolution.DamageMultiplier;
-		}
-
-		DamageEffectParams.KnockbackForce = ImpactResolution.DefenderImpulse;
-
-		UE_LOG(LogTemp, Display,
-			TEXT("[ProjectileAttack] [ProjectileImpactParams] Projectile=%s Source=%s Target=%s Result=%s DamageAfter=%.2f Knockback=%s Direction=%s"),
-			*GetNameSafe(this),
-			*GetNameSafe(SourceActor),
-			*GetNameSafe(OtherActor),
-			*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(ImpactResolution.ImpactResult)),
-			DamageEffectParams.BasedDamage,
-			*DamageEffectParams.KnockbackForce.ToString(),
-			*ProjectileDirection.ToString()
-		);
-	}
-	else
-	{
-		// Fallback for non-Pokemon targets or targets without an impact resolver.
-		const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
-		if (bKnockback)
-		{
-			DamageEffectParams.KnockbackForce =
-				ProjectileDirection * DamageEffectParams.KnockbackForceMagnitude;
-		}
-	}
-
-	UPokemonAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 }
 
 void AProjectileAttack::SetInitialVelocity(const FVector& NewVelocity)

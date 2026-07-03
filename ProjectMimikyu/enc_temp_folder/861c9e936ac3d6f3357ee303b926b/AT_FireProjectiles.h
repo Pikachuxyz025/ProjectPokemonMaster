@@ -76,21 +76,6 @@ struct FProjectileBaseParams
 
 	UPROPERTY(BlueprintReadWrite)
 	float ProjectileGravityScale = 0.1f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float ImpactForce = 50.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	float AppliedImpulseScale = 1.f;
-
-	UPROPERTY(BlueprintReadWrite)
-	FGameplayTag MoveActionTag;
-
-	UPROPERTY(BlueprintReadWrite)
-	FGameplayTag MoveTypeTag;
-
-	UPROPERTY(BlueprintReadWrite)
-	FGameplayTag DamageResponseTag;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFireProjectileFinished);

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Items/Projectile.h"
-#include "GameplayTagContainer.h"
 #include "AbilitySystem/Abilities/ProjectileAbility.h"
 #include <GameplayEffectTypes.h>
 #include "ProjectileAttack.generated.h"
@@ -30,21 +29,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
-
-	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	float ImpactForce = 50.f;
-
-	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	float AppliedImpulseScale = 1.f;
-
-	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	FGameplayTag MoveActionTag;
-
-	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	FGameplayTag MoveTypeTag;
-
-	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	FGameplayTag DamageResponseTag;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& Event) override;

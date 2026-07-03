@@ -360,12 +360,6 @@ void UAT_FireProjectiles::SpawnProjectile(AProjectileAttack* Projectile, const U
 
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 	Projectile->DamageEffectParams = CommonParams.DamageEffectParams;
-	Projectile->ImpactForce = CommonParams.ImpactForce;
-	Projectile->AppliedImpulseScale = CommonParams.AppliedImpulseScale;
-	Projectile->MoveActionTag = CommonParams.MoveActionTag;
-	Projectile->MoveTypeTag = CommonParams.MoveTypeTag;
-	Projectile->DamageResponseTag = CommonParams.DamageResponseTag;
-
 	Projectile->FinishSpawning(SpawnTransform);
 }
 

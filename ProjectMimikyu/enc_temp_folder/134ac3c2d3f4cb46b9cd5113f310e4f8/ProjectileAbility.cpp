@@ -50,13 +50,6 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 	CommonParams.ProjectileGravityScale = ProjectileConfig.GravityScale;
 
 	CommonParams.DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(ResolvedTargetActor);
-
-	CommonParams.ImpactForce = ImpactForce;
-	CommonParams.AppliedImpulseScale = AppliedImpulseScale;
-	CommonParams.MoveActionTag = MoveActionTag;
-	CommonParams.MoveTypeTag = MoveTypeTag;
-	CommonParams.DamageResponseTag = DamageResponseTag;
-
 	const FVector SocketLocation = IPokemonCombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 
