@@ -121,6 +121,16 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 		return false;
 	}
 
+	if (!Pokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("TryCallCommand rejected: Pokemon cannot act. Pokemon=%s MoveIndex=%d"),
+			*GetNameSafe(Pokemon),
+			MoveIndex);
+
+		return false;
+	}
+
 	if (IsCommandActive())
 	{
 		UE_LOG(LogTemp, Verbose, TEXT("TryCallCommand ignored: command already active."));
@@ -226,6 +236,15 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
 	if (!Pokemon)
 	{
+		return;
+	}
+
+	if (!Pokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("Dodge rejected: Pokemon cannot act. Pokemon=%s"),
+			*GetNameSafe(Pokemon));
+
 		return;
 	}
 

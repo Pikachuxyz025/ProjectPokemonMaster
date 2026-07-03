@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "Characters/Pokemon_Parent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 
@@ -67,6 +68,17 @@ bool UPokemonAbilitySystemComponent::ActivateAbilityByTag(const FGameplayTag& In
 {
 	if (!InputTag.IsValid()) 
 	{
+		return false;
+	}
+
+	APokemon_Parent* AvatarPokemon = Cast<APokemon_Parent>(GetAvatarActor());
+	if (AvatarPokemon && !AvatarPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("ActivateAbilityByTag rejected: Pokemon cannot act. Pokemon=%s InputTag=%s"),
+			*GetNameSafe(AvatarPokemon),
+			*InputTag.ToString());
+
 		return false;
 	}
 

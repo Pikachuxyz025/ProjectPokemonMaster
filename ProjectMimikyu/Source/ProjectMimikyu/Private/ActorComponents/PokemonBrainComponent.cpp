@@ -148,7 +148,7 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 bool UPokemonBrainComponent::CanThink() const
 {
-	return bBrainActive && BrainConfig && ControlledPokemon && ControlledPokemon->CanAct();
+	return bBrainActive && BrainConfig && ControlledPokemon;
 }
 
 bool UPokemonBrainComponent::ShouldThinkNow(float CurrentTime) const
@@ -208,10 +208,12 @@ void UPokemonBrainComponent::RunThink()
 		return;
 	}
 
+	const float Now = GetCurrentWorldTime();
+
 	if (!ControlledPokemon->CanAct())
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[Brain] RunThink stopped | Owner=%s cannot act | IsFainted=%s"),
+			TEXT("[Brain] RunThink paused | Owner=%s cannot act | IsFainted=%s"),
 			*GetNameSafe(ControlledPokemon),
 			ControlledPokemon->IsFainted() ? TEXT("True") : TEXT("False"));
 
@@ -220,11 +222,12 @@ void UPokemonBrainComponent::RunThink()
 			CachedNavigationComponent->ClearNavigationIntent();
 		}
 
-		StopLogic(TEXT("Controlled Pokemon cannot act"));
+		CommitUntilTime = Now;
+		NextThinkTime = Now + 0.15f;
+		ClearUrgentInterrupt();
+
 		return;
 	}
-
-	const float Now = GetCurrentWorldTime();
 
 	float DeltaSinceLast = 0.f;
 	if (LastDecisionTime > 0.f)

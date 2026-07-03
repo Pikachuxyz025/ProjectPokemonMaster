@@ -217,6 +217,16 @@ void APokemon_Parent::AttackEnded()
 
 void APokemon_Parent::CallCommand(int32 MoveIndex)
 {
+	if (!CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("CallCommand rejected: Pokemon cannot act. Pokemon=%s MoveIndex=%d"),
+			*GetNameSafe(this),
+			MoveIndex);
+
+		return;
+	}
+
 	if (CommandComponent)
 	{
 		CommandComponent->TryCallCommand(MoveIndex);

@@ -552,6 +552,16 @@ void ATrainerCharacter::SelectMove(int32 MoveIndex)
 		return;
 	}
 
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("SelectMove rejected: Current Pokemon cannot act. Pokemon=%s MoveIndex=%d"),
+			*GetNameSafe(CurrentPokemon),
+			MoveIndex);
+
+		return;
+	}
+
 	UE_LOG(LogTemp, Display, TEXT("Move Selected %d"), MoveIndex);
 	if (!TargetingComponent)
 	{
@@ -599,16 +609,52 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		return;
 	}
 
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("ServerCallCommand rejected: Current Pokemon cannot act. Pokemon=%s MoveIndex=%d"),
+			*GetNameSafe(CurrentPokemon),
+			MoveIndex);
+
+		return;
+	}
+
 	CurrentPokemon->CallCommand(MoveIndex);
 }
 
 void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 {
-	if (/*bAreMovesSelectable &&*/ !CurrentPokemon->GetIsCommandActive())
+	if (!IsLocallyControlled())
 	{
-		FVector NewDodgeDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
-		CurrentPokemon->Dodge(NewDodgeDirection);
+		return;
 	}
+
+	if (!CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommandDodge failed: No current Pokemon."));
+		return;
+	}
+
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("CommandDodge rejected: Current Pokemon cannot act. Pokemon=%s"),
+			*GetNameSafe(CurrentPokemon));
+
+		return;
+	}
+
+	if (CurrentPokemon->GetIsCommandActive())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("CommandDodge rejected: Current Pokemon has an active command. Pokemon=%s"),
+			*GetNameSafe(CurrentPokemon));
+
+		return;
+	}
+
+	FVector NewDodgeDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
+	CurrentPokemon->Dodge(NewDodgeDirection);
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)

@@ -157,14 +157,6 @@ bool UPokemonCombatStateComponent::CanAct() const
 {
 	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
 
-	UE_LOG(
-		LogPokemonCombatState,
-		Display,
-		TEXT("[PokemonCombatState] CanAct check: Actor=%s ActiveStates=%s"),
-		*GetNameSafe(GetOwner()),
-		*ActiveCombatStates.ToString()
-	);
-
 	return
 		!HasCombatState(CombatTags.Combat_State_HitStun) &&
 		!HasCombatState(CombatTags.Combat_State_BlockStun) &&
