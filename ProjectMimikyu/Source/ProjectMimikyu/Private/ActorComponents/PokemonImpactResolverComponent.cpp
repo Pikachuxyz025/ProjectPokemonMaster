@@ -1,4 +1,5 @@
 #include "ActorComponents/PokemonImpactResolverComponent.h"
+#include "ActorComponents/PokemonCombatStateComponent.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -156,8 +157,8 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.DefenderImpulse = SafeAttackDirection * ContactContext.KnockbackForce * 1.35f;
 		OutResolution.AttackerHitStop = 0.07f;
 		OutResolution.DefenderHitStop = 0.1f;
-		OutResolution.AttackerRecoveryTime = 0.25f;
-		OutResolution.DefenderStunTime = 0.45f;
+		OutResolution.AttackerRecoveryTime = 3.f;
+		OutResolution.DefenderStunTime = 6.f;
 		OutResolution.DamageMultiplier = 1.15f;
 		break;
 
@@ -218,7 +219,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerImpulse = -SafeAttackDirection * ContactContext.KnockbackForce * 0.75f;
 		OutResolution.AttackerHitStop = 0.05f;
 		OutResolution.DefenderHitStop = 0.03f;
-		OutResolution.AttackerRecoveryTime = 0.45f;
+		OutResolution.AttackerRecoveryTime = 5.f;
 		OutResolution.DefenderStunTime = 0.0f;
 		OutResolution.DamageMultiplier = 0.25f;
 		OutResolution.bLeavesAttackerVulnerable = true;
@@ -304,18 +305,85 @@ void UPokemonImpactResolverComponent::ApplyImpactImpulseToActor(AActor* TargetAc
 
 }
 
-void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const
+void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(
+	const FPokemonMoveContactContext& ContactContext,
+	const FPokemonImpactResolution& ImpactResolution
+) const
 {
 	UE_LOG(
 		LogPokemonImpactResolver,
 		Display,
-		TEXT("Impact state consequence. Result=%s AttackerState=%s DefenderState=%s Advantage=%s AttackerRecovery=%.2f DefenderStun=%.2f"),
+		TEXT("[PokemonImpactResolver] Apply Impact State Consequence: Result=%s AttackerState=%s DefenderState=%s Advantage=%s AttackerRecovery=%.2f DefenderStun=%.2f"),
 		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(ImpactResolution.ImpactResult)),
 		*ImpactResolution.AttackerPostImpactState.ToString(),
 		*ImpactResolution.DefenderPostImpactState.ToString(),
 		*ImpactResolution.AdvantageTag.ToString(),
 		ImpactResolution.AttackerRecoveryTime,
 		ImpactResolution.DefenderStunTime
+	);
+
+	ApplyTimedCombatStateToActor(
+		ContactContext.AttackingActor,
+		ImpactResolution.AttackerPostImpactState,
+		ImpactResolution.AttackerRecoveryTime,
+		TEXT("Attacker")
+	);
+
+	ApplyTimedCombatStateToActor(
+		ContactContext.DefendingActor,
+		ImpactResolution.DefenderPostImpactState,
+		ImpactResolution.DefenderStunTime,
+		TEXT("Defender")
+	);
+}
+
+void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
+	AActor* TargetActor,
+	const FGameplayTag& StateTag,
+	float Duration,
+	const TCHAR* RoleLabel
+) const
+{
+	if (!IsValid(TargetActor) || !StateTag.IsValid() || Duration <= 0.f)
+	{
+		return;
+	}
+
+	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
+
+	if (StateTag == CombatTags.Combat_State_Neutral)
+	{
+		return;
+	}
+
+	UPokemonCombatStateComponent* CombatStateComponent =
+		TargetActor->FindComponentByClass<UPokemonCombatStateComponent>();
+
+	if (!CombatStateComponent)
+	{
+		UE_LOG(
+			LogPokemonImpactResolver,
+			Verbose,
+			TEXT("No CombatStateComponent found. Role=%s Actor=%s State=%s Duration=%.2f"),
+			RoleLabel,
+			*GetNameSafe(TargetActor),
+			*StateTag.ToString(),
+			Duration
+		);
+
+		return;
+	}
+
+	CombatStateComponent->SetCombatState(StateTag, Duration);
+
+	UE_LOG(
+		LogPokemonImpactResolver,
+		Display,
+		TEXT("Applied impact combat state. Role=%s Actor=%s State=%s Duration=%.2f"),
+		RoleLabel,
+		*GetNameSafe(TargetActor),
+		*StateTag.ToString(),
+		Duration
 	);
 }
 

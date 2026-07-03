@@ -1,36 +1,202 @@
-
-
-
 #include "ActorComponents/PokemonCombatStateComponent.h"
 
+#include "GameplayTags/PokemonCombatGameplayTags.h"
+#include "Net/UnrealNetwork.h"
+#include "TimerManager.h"
 
-// Sets default values for this component's properties
+DEFINE_LOG_CATEGORY_STATIC(LogPokemonCombatState, Log, All);
+
 UPokemonCombatStateComponent::UPokemonCombatStateComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = false;
+	SetIsReplicatedByDefault(true);
 }
 
-
-// Called when the game starts
-void UPokemonCombatStateComponent::BeginPlay()
+void UPokemonCombatStateComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::BeginPlay();
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// ...
-	
+	DOREPLIFETIME(UPokemonCombatStateComponent, ActiveCombatStates);
 }
 
-
-// Called every frame
-void UPokemonCombatStateComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UPokemonCombatStateComponent::SetCombatState(FGameplayTag StateTag, float Duration)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!StateTag.IsValid())
+	{
+		return;
+	}
 
-	// ...
+	AActor* OwnerActor = GetOwner();
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
+
+	if (StateTag == CombatTags.Combat_State_Neutral)
+	{
+		ClearCombatStates();
+		return;
+	}
+
+	ActiveCombatStates.AddTag(StateTag);
+	OnCombatStateChanged.Broadcast(StateTag, true);
+
+	if (FTimerHandle* ExistingTimer = ActiveStateTimers.Find(StateTag))
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(*ExistingTimer);
+		}
+		ActiveStateTimers.Remove(StateTag);
+	}
+
+	if (Duration > 0.f)
+	{
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindUObject(this, &UPokemonCombatStateComponent::ClearCombatState, StateTag);
+
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, Duration, false);
+			ActiveStateTimers.Add(StateTag, TimerHandle);
+		}
+	}
+
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("[PokemonCombatState] Combat state applied. Actor=%s State=%s Duration=%.2f ActiveStates=%s"),
+		*GetNameSafe(OwnerActor),
+		*StateTag.ToString(),
+		Duration,
+		*ActiveCombatStates.ToString()
+	);
 }
 
+void UPokemonCombatStateComponent::ClearCombatState(FGameplayTag StateTag)
+{
+	if (!StateTag.IsValid())
+	{
+		return;
+	}
 
+	AActor* OwnerActor = GetOwner();
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	if (FTimerHandle* ExistingTimer = ActiveStateTimers.Find(StateTag))
+	{
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(*ExistingTimer);
+		}
+		ActiveStateTimers.Remove(StateTag);
+	}
+
+	if (ActiveCombatStates.HasTagExact(StateTag))
+	{
+		ActiveCombatStates.RemoveTag(StateTag);
+		OnCombatStateChanged.Broadcast(StateTag, false);
+
+		UE_LOG(
+			LogPokemonCombatState,
+			Display,
+			TEXT("Combat state cleared. Actor=%s State=%s ActiveStates=%s"),
+			*GetNameSafe(OwnerActor),
+			*StateTag.ToString(),
+			*ActiveCombatStates.ToString()
+		);
+	}
+}
+
+void UPokemonCombatStateComponent::ClearCombatStates()
+{
+	AActor* OwnerActor = GetOwner();
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		for (TPair<FGameplayTag, FTimerHandle>& Pair : ActiveStateTimers)
+		{
+			World->GetTimerManager().ClearTimer(Pair.Value);
+		}
+	}
+
+	ActiveStateTimers.Empty();
+
+	const FGameplayTagContainer OldStates = ActiveCombatStates;
+	ActiveCombatStates.Reset();
+
+	for (const FGameplayTag& OldState : OldStates)
+	{
+		OnCombatStateChanged.Broadcast(OldState, false);
+	}
+
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("Combat states cleared. Actor=%s"),
+		*GetNameSafe(OwnerActor)
+	);
+}
+
+bool UPokemonCombatStateComponent::HasCombatState(FGameplayTag StateTag) const
+{
+	return StateTag.IsValid() && ActiveCombatStates.HasTagExact(StateTag);
+}
+
+bool UPokemonCombatStateComponent::CanAct() const
+{
+	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
+
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("[PokemonCombatState] CanAct check: Actor=%s ActiveStates=%s"),
+		*GetNameSafe(GetOwner()),
+		*ActiveCombatStates.ToString()
+	);
+
+	return
+		!HasCombatState(CombatTags.Combat_State_HitStun) &&
+		!HasCombatState(CombatTags.Combat_State_BlockStun) &&
+		!HasCombatState(CombatTags.Combat_State_Clashing) &&
+		!HasCombatState(CombatTags.Combat_State_Launched) &&
+		!HasCombatState(CombatTags.Combat_State_Recovering) &&
+		!HasCombatState(CombatTags.Combat_State_Vulnerable);
+}
+
+bool UPokemonCombatStateComponent::CanMove() const
+{
+	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
+
+	return
+		!HasCombatState(CombatTags.Combat_State_HitStun) &&
+		!HasCombatState(CombatTags.Combat_State_BlockStun) &&
+		!HasCombatState(CombatTags.Combat_State_Clashing) &&
+		!HasCombatState(CombatTags.Combat_State_Launched);
+}
+
+bool UPokemonCombatStateComponent::CanAttack() const
+{
+	return CanAct();
+}
+
+void UPokemonCombatStateComponent::OnRep_ActiveCombatStates()
+{
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("Combat states replicated. Actor=%s ActiveStates=%s"),
+		*GetNameSafe(GetOwner()),
+		*ActiveCombatStates.ToString()
+	);
+}

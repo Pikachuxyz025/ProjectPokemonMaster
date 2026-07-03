@@ -40,6 +40,7 @@ class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
 class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
+class UPokemonCombatStateComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -424,6 +425,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonImpactResolverComponent> ImpactResolverComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonCombatStateComponent> CombatStateComponent;
 
 	FPokemonInfo SetupPokemonInfo();
 

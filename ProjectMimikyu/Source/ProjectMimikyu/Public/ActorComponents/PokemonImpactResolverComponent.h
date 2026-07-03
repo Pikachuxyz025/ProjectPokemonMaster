@@ -86,4 +86,11 @@ private:
 
 	void ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const;
 	void ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
+
+	void ApplyTimedCombatStateToActor(
+		AActor* TargetActor,
+		const FGameplayTag& StateTag,
+		float Duration,
+		const TCHAR* RoleLabel
+	) const;
 };

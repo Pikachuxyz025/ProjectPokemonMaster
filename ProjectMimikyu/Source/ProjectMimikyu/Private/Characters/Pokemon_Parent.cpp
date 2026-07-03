@@ -16,6 +16,7 @@
 #include "ActorComponents/PokemonOwnershipComponent.h"
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
 #include "ActorComponents/PokemonCombatSocketComponent.h"
+#include "ActorComponents/PokemonCombatStateComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -49,6 +50,7 @@ APokemon_Parent::APokemon_Parent()
 	FieldPresenceComponent = CreateDefaultSubobject<UPokemonFieldPresenceComponent>("Field Presence Component");
 	CombatSocketComponent = CreateDefaultSubobject<UPokemonCombatSocketComponent>("Combat Socket Component");
 	ImpactResolverComponent = CreateDefaultSubobject<UPokemonImpactResolverComponent>("Impact Resolver Component");
+	CombatStateComponent = CreateDefaultSubobject<UPokemonCombatStateComponent>("Combat State Component");
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -594,7 +596,15 @@ bool APokemon_Parent::IsIncapacitated() const
 
 bool APokemon_Parent::CanAct() const
 {
-	return IncapacitationComponent ? IncapacitationComponent->CanAct() : false;
+	const bool bCanActFromIncapacitation = IncapacitationComponent
+		? IncapacitationComponent->CanAct()
+		: true;
+
+	const bool bCanActFromCombatState = CombatStateComponent
+		? CombatStateComponent->CanAct()
+		: true;
+
+	return bCanActFromIncapacitation && bCanActFromCombatState;
 }
 
 bool APokemon_Parent::CanBeCombatTargeted() const
