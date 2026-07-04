@@ -22,15 +22,6 @@ enum class EPokemonDebugVerbosity : uint8
 	Verbose     UMETA(DisplayName = "Verbose")
 };
 
-UENUM(BlueprintType)
-enum class EPokemonDebugLogSeverity : uint8
-{
-	Log      UMETA(DisplayName = "Log"),
-	Display  UMETA(DisplayName = "Display"),
-	Warning  UMETA(DisplayName = "Warning"),
-	Error    UMETA(DisplayName = "Error")
-};
-
 USTRUCT(BlueprintType)
 struct FPokemonDebugMessage
 {
@@ -44,9 +35,6 @@ struct FPokemonDebugMessage
 
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<const UObject>SourceObject = nullptr;
-
-	UPROPERTY(BlueprintReadOnly)
-	EPokemonDebugLogSeverity LogSeverity = EPokemonDebugLogSeverity::Log;
 
 	UPROPERTY(BlueprintReadOnly)
 	float TimeStampInSeconds = 0.f;

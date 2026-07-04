@@ -17,19 +17,12 @@ class PROJECTMIMIKYU_API UPokemonDebugLibrary:public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Pokemon|Debug", meta = (WorldContext = "WorldContextObject"))
-	static bool ToggleCategory(
-		const UObject* WorldContextObject,
-		FGameplayTag CategoryTag
-	);
-
 	UFUNCTION(BlueprintCallable,Category="Pokemon|Debug",meta=(WorldContext="WorldContextObject"))
 	static void PrintMessage(
 		const UObject* WorldContextObject,
 		FGameplayTag CategoryTag,
 		const FString& Message,
 		EPokemonDebugOutputMode OutputMode = EPokemonDebugOutputMode::Log,
-		EPokemonDebugLogSeverity LogSeverity = EPokemonDebugLogSeverity::Log,
 		FLinearColor Color = FLinearColor::White,
 		float ScreenDuration = 3.f,
 		EPokemonDebugVerbosity Verbosity = EPokemonDebugVerbosity::Basic

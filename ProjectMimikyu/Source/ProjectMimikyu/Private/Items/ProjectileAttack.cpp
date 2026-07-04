@@ -186,7 +186,11 @@ void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit
 		ContactContext.MoveTypeTag = EffectiveMoveTypeTag;
 		ContactContext.DamageResponseTag = DamageResponseTag;
 
-		ContactContext.ContactPoint = Hit.bBlockingHit ? Hit.ImpactPoint : OtherActor->GetActorLocation();
+		const FVector ProjectileContactPoint = Hit.bBlockingHit
+			? FVector(Hit.ImpactPoint)
+			: OtherActor->GetActorLocation();
+
+		ContactContext.ContactPoint = ProjectileContactPoint;
 		ContactContext.AttackDirection = ProjectileDirection;
 		ContactContext.ImpactForce = ImpactForce + SourceOffenseStat;
 		ContactContext.KnockbackForce = DamageEffectParams.KnockbackForceMagnitude;

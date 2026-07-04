@@ -107,7 +107,7 @@ void UPokemonDebugWorldSubsystem::SetMaxVerbosity(EPokemonDebugVerbosity InVerbo
 	MaxVerbosity = InVerbosity;
 }
 
-void UPokemonDebugWorldSubsystem::AddMessage(const UObject* SourceObject, const FGameplayTag& CategoryTag, const FString& Message, EPokemonDebugOutputMode OutputMode, EPokemonDebugLogSeverity LogSeverity, FColor Color, float ScreenDuration, EPokemonDebugVerbosity Verbosity)
+void UPokemonDebugWorldSubsystem::AddMessage(const UObject* SourceObject, const FGameplayTag& CategoryTag, const FString& Message, EPokemonDebugOutputMode OutputMode, FColor Color, float ScreenDuration, EPokemonDebugVerbosity Verbosity)
 {
 	if (!ShouldEmitMessage(SourceObject, CategoryTag, Verbosity))
 	{
@@ -129,31 +129,12 @@ void UPokemonDebugWorldSubsystem::AddMessage(const UObject* SourceObject, const 
 	MessageData.TimeStampInSeconds = World->GetTimeSeconds();
 	MessageData.Color = Color;
 	MessageData.Verbosity = Verbosity;
-	MessageData.LogSeverity = LogSeverity;
+
 	StoreMessage(MessageData);
-	
 
-	if (OutputMode == EPokemonDebugOutputMode::Log || OutputMode == EPokemonDebugOutputMode::LogAndScreen)
+	if(OutputMode== EPokemonDebugOutputMode::Log || OutputMode == EPokemonDebugOutputMode::LogAndScreen)
 	{
-		switch (LogSeverity)
-		{
-		case EPokemonDebugLogSeverity::Display:
-			UE_LOG(LogPokemonDebug, Display, TEXT("%s"), *FinalMessage);
-			break;
-
-		case EPokemonDebugLogSeverity::Warning:
-			UE_LOG(LogPokemonDebug, Warning, TEXT("%s"), *FinalMessage);
-			break;
-
-		case EPokemonDebugLogSeverity::Error:
-			UE_LOG(LogPokemonDebug, Error, TEXT("%s"), *FinalMessage);
-			break;
-
-		case EPokemonDebugLogSeverity::Log:
-		default:
-			UE_LOG(LogPokemonDebug, Log, TEXT("%s"), *FinalMessage);
-			break;
-		}
+		UE_LOG(LogPokemonDebug, Log, TEXT("%s"), *FinalMessage);
 	}
 
 	if ((OutputMode == EPokemonDebugOutputMode::OnScreen || OutputMode == EPokemonDebugOutputMode::LogAndScreen) && GEngine)

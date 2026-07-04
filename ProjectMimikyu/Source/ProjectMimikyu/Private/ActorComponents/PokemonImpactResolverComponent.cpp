@@ -291,8 +291,8 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.DefenderImpulse = BuildDefenderImpactImpulse(ContactContext, Result, 1.35f);
 		OutResolution.AttackerHitStop = 0.07f;
 		OutResolution.DefenderHitStop = 0.1f;
-		OutResolution.AttackerRecoveryTime = 3.f;
-		OutResolution.DefenderStunTime = 6.f;
+		OutResolution.AttackerRecoveryTime = .3f;
+		OutResolution.DefenderStunTime = .55f;
 		OutResolution.DamageMultiplier = 1.15f;
 		break;
 
@@ -353,7 +353,7 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AttackerImpulse = -SafeAttackDirection * ContactContext.KnockbackForce * 0.75f;
 		OutResolution.AttackerHitStop = 0.05f;
 		OutResolution.DefenderHitStop = 0.03f;
-		OutResolution.AttackerRecoveryTime = 5.f;
+		OutResolution.AttackerRecoveryTime = .55f;
 		OutResolution.DefenderStunTime = 0.0f;
 		OutResolution.DamageMultiplier = 0.25f;
 		OutResolution.bLeavesAttackerVulnerable = true;

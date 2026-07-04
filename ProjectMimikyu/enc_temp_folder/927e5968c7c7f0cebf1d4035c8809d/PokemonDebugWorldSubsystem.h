@@ -39,7 +39,6 @@ public:
 		const FGameplayTag& CategoryTag, 
 		const FString& Message, 
 		EPokemonDebugOutputMode OutputMode = EPokemonDebugOutputMode::Log,
-		EPokemonDebugLogSeverity LogSeverity = EPokemonDebugLogSeverity::Log,
 		FColor Color = FColor::White, 
 		float ScreenDuration = 3.f,
 		EPokemonDebugVerbosity Verbosity = EPokemonDebugVerbosity::Basic

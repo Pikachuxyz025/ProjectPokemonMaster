@@ -19,17 +19,7 @@ UPokemonDebugWorldSubsystem* UPokemonDebugLibrary::GetDebugSubsystem(const UObje
 	return nullptr;
 }
 
-bool UPokemonDebugLibrary::ToggleCategory(const UObject* WorldContextObject, FGameplayTag CategoryTag)
-{
-	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
-	{
-		return DebugSubsystem->ToggleCategory(CategoryTag);
-	}
-
-	return false;
-}
-
-void UPokemonDebugLibrary::PrintMessage(const UObject* WorldContextObject, FGameplayTag CategoryTag, const FString& Message, EPokemonDebugOutputMode OutputMode, EPokemonDebugLogSeverity LogSeverity, FLinearColor Color, float ScreenDuration, EPokemonDebugVerbosity Verbosity)
+void UPokemonDebugLibrary::PrintMessage(const UObject* WorldContextObject, FGameplayTag CategoryTag, const FString& Message, EPokemonDebugOutputMode OutputMode, FLinearColor Color, float ScreenDuration, EPokemonDebugVerbosity Verbosity)
 {
 	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
 	{
@@ -38,7 +28,6 @@ void UPokemonDebugLibrary::PrintMessage(const UObject* WorldContextObject, FGame
 			CategoryTag,
 			Message,
 			OutputMode,
-			LogSeverity,
 			Color.ToFColor(true),
 			ScreenDuration,
 			Verbosity
