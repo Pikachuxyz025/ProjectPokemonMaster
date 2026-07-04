@@ -10,6 +10,7 @@
 #include "Debugging/PokemonDebugWorldSubsystem.h"
 #include "Characters/TrainerCharacter.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
+#include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "Debugging/PokemonDebugLog.h"
 
@@ -42,40 +43,66 @@ void ATrainerController::FocusNewWidget(UUserWidget* NewWidget)
 	NewWidget->SetFocus();
 }
 
-void ATrainerController::ToggleAIDebug()
+void ATrainerController::DebugToggleAI()
 {
-	if (UWorld* World = GetWorld())
-	{
-		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
-		{
-			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::AI);
-			UE_LOG(LogPokemonDebug, Log, TEXT("AI Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
-		}
-	}
+	const bool bEnabled = UPokemonDebugLibrary::ToggleCategory(
+		this,
+		PokemonDebugTags::AI
+	);
+
+	UE_LOG(LogPokemonDebug, Display, TEXT("Debug.AI %s"),
+		bEnabled ? TEXT("Enabled") : TEXT("Disabled"));
 }
 
-void ATrainerController::ToggleCombatDebug()
+void ATrainerController::DebugToggleCombat()
 {
-	if (UWorld* World = GetWorld())
-	{
-		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
-		{
-			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::Combat);
-			UE_LOG(LogPokemonDebug, Log, TEXT("Combat Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
-		}
-	}
+	const bool bEnabled = UPokemonDebugLibrary::ToggleCategory(
+		this,
+		PokemonDebugTags::Combat
+	);
+
+	UE_LOG(LogPokemonDebug, Display, TEXT("Debug.Combat %s"),
+		bEnabled ? TEXT("Enabled") : TEXT("Disabled"));
 }
 
-void ATrainerController::TogglePokemonDebugAll()
+void ATrainerController::DebugToggleProjectile()
 {
-	if (UWorld* World = GetWorld())
-	{
-		if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>())
-		{
-			const bool bNowEnabled = DebugSubsystem->ToggleCategory(PokemonDebugTags::Debug);
-			UE_LOG(LogPokemonDebug, Log, TEXT("Debug %s"), bNowEnabled ? TEXT("Enabled") : TEXT("Disabled"));
-		}
-	}
+	const bool bEnabled = UPokemonDebugLibrary::ToggleCategory(
+		this,
+		PokemonDebugTags::Projectile
+	);
+
+	UE_LOG(LogPokemonDebug, Display, TEXT("Debug.Projectile %s"),
+		bEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+}
+
+void ATrainerController::DebugToggleNetwork()
+{
+	const bool bEnabled = UPokemonDebugLibrary::ToggleCategory(
+		this,
+		PokemonDebugTags::Network
+	);
+
+	UE_LOG(LogPokemonDebug, Display, TEXT("Debug.Network %s"),
+		bEnabled ? TEXT("Enabled") : TEXT("Disabled"));
+}
+
+void ATrainerController::DebugVerboseBasic()
+{
+	UPokemonDebugLibrary::SetMaxVerbosity(this, EPokemonDebugVerbosity::Basic);
+	UE_LOG(LogPokemonDebug, Display, TEXT("Pokemon debug verbosity set to Basic"));
+}
+
+void ATrainerController::DebugVerboseDetailed()
+{
+	UPokemonDebugLibrary::SetMaxVerbosity(this, EPokemonDebugVerbosity::Detailed);
+	UE_LOG(LogPokemonDebug, Display, TEXT("Pokemon debug verbosity set to Detailed"));
+}
+
+void ATrainerController::DebugVerboseFull()
+{
+	UPokemonDebugLibrary::SetMaxVerbosity(this, EPokemonDebugVerbosity::Verbose);
+	UE_LOG(LogPokemonDebug, Display, TEXT("Pokemon debug verbosity set to Verbose"));
 }
 
 void ATrainerController::BeginPlay()

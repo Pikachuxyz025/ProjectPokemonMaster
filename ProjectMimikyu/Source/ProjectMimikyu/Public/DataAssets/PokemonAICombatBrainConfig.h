@@ -81,7 +81,7 @@ public:
 	TMap<FGameplayTag, float> MoveTagWeights;
 
 	UPROPERTY(EditAnywhere, Category = "MoveScoring", meta = (Categories = "PokemonMoves.MoveType"))
-	TMap<FGameplayTag, float> MoveCategroyWeights;
+	TMap<FGameplayTag, float> MoveCategoryWeights;
 
 	UPROPERTY(EditAnywhere, Category = "MoveScoring", meta = (Categories = "PokemonMoves.MoveType"))
 	TMap<FGameplayTag, float> StatusPreference;

@@ -36,13 +36,25 @@ UFUNCTION(BlueprintCallable)
 	void FocusNewWidget(UUserWidget* NewWidget);
 
 	UFUNCTION(Exec)
-	void ToggleAIDebug();
+	void DebugToggleAI();
 
 	UFUNCTION(Exec)
-	void ToggleCombatDebug();
+	void DebugToggleCombat();
 
 	UFUNCTION(Exec)
-	void TogglePokemonDebugAll();
+	void DebugToggleProjectile();
+
+	UFUNCTION(Exec)
+	void DebugToggleNetwork();
+
+	UFUNCTION(Exec)
+	void DebugVerboseBasic();
+
+	UFUNCTION(Exec)
+	void DebugVerboseDetailed();
+
+	UFUNCTION(Exec)
+	void DebugVerboseFull();
 private:
 
 	UPROPERTY()
