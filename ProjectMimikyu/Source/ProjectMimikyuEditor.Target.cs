@@ -12,6 +12,10 @@ public class ProjectMimikyuEditorTarget : TargetRules
         DefaultBuildSettings = BuildSettingsVersion.V6;
         IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 
-        ExtraModuleNames.Add("ProjectMimikyu");
+        ExtraModuleNames.AddRange(new string[]
+ {
+    "ProjectMimikyu",
+    "ProjectMimikyuEditor"
+ });
     }
 }

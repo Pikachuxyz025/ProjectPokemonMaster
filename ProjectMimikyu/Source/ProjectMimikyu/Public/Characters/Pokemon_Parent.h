@@ -480,6 +480,9 @@ public:
 	UFUNCTION(BlueprintPure,Category = "Combat|Impact")
 	UPokemonImpactResolverComponent* GetImpactResolverComponent() const { return ImpactResolverComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Combat|State")
+	UPokemonCombatStateComponent* GetCombatStateComponent() const { return CombatStateComponent; }
+
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() const;
 
