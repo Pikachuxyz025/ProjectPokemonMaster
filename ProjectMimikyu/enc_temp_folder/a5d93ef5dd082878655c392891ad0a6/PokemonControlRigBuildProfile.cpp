@@ -166,21 +166,15 @@ void UPokemonControlRigBuildProfile::GenerateControlsFromSkeleton()
 
     Modify();
 
-    TMap<FName, FPokemonControlDefinition> ExistingControlsByControlName;
-    TMap<FName, FPokemonControlDefinition> ExistingControlsByBoneName;
+    TMap<FName, FPokemonControlDefinition> ExistingControlsByBone;
 
     if (bPreserveShapeSettingsWhenGeneratingFromSkeleton)
     {
         for (const FPokemonControlDefinition& ExistingControl : Controls)
         {
-            if (!ExistingControl.ControlName.IsNone())
-            {
-                ExistingControlsByControlName.Add(ExistingControl.ControlName, ExistingControl);
-            }
-
             if (!ExistingControl.BoneName.IsNone())
             {
-                ExistingControlsByBoneName.Add(ExistingControl.BoneName, ExistingControl);
+                ExistingControlsByBone.Add(ExistingControl.BoneName, ExistingControl);
             }
         }
     }
@@ -293,18 +287,9 @@ void UPokemonControlRigBuildProfile::GenerateControlsFromSkeleton()
         NewControl.bDriveBoneWithFK = true;
         NewControl.bPropagateToChildren = true;
 
-        if (bPreserveShapeSettingsWhenGeneratingFromSkeleton)
+        if (const FPokemonControlDefinition* ExistingControl = ExistingControlsByBone.Find(BoneName))
         {
-            if (const FPokemonControlDefinition* ExistingByControl =
-                ExistingControlsByControlName.Find(NewControl.ControlName))
-            {
-                CopyShapeSettings(*ExistingByControl, NewControl);
-            }
-            else if (const FPokemonControlDefinition* ExistingByBone =
-                ExistingControlsByBoneName.Find(NewControl.BoneName))
-            {
-                CopyShapeSettings(*ExistingByBone, NewControl);
-            }
+            CopyShapeSettings(*ExistingControl, NewControl);
         }
 
         Controls.Add(NewControl);

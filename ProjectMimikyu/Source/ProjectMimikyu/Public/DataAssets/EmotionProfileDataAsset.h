@@ -20,7 +20,7 @@ struct FPokemonEmotionPose
     TObjectPtr<UAnimSequence> PoseAnimation;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    FVector2D IrisOffset;
+    FVector2D IrisOffset=FVector2D::ZeroVector;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float JawOpenAmount = 0.0f;
