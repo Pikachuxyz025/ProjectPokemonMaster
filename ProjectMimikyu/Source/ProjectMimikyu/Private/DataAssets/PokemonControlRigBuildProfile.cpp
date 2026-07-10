@@ -204,9 +204,18 @@ void UPokemonControlRigBuildProfile::GenerateControlsFromSkeleton()
         GlobalControl.bDriveBoneWithFK = false;
         GlobalControl.bPropagateToChildren = true;
 
-        if (const FPokemonControlDefinition* ExistingControl = ExistingControlsByBone.Find(RootBoneName))
+        if (bPreserveShapeSettingsWhenGeneratingFromSkeleton)
         {
-            CopyShapeSettings(*ExistingControl, GlobalControl);
+            if (const FPokemonControlDefinition* ExistingByControl =
+                ExistingControlsByControlName.Find(GlobalControl.ControlName))
+            {
+                CopyShapeSettings(*ExistingByControl, GlobalControl);
+            }
+            else if (const FPokemonControlDefinition* ExistingByBone =
+                ExistingControlsByBoneName.Find(GlobalControl.BoneName))
+            {
+                CopyShapeSettings(*ExistingByBone, GlobalControl);
+            }
         }
 
         Controls.Add(GlobalControl);
