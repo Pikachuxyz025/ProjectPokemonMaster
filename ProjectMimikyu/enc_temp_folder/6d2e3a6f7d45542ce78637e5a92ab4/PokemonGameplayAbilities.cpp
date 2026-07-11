@@ -3,9 +3,6 @@
 
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "ActorComponents/PokemonCombatStateComponent.h"
-#include "Animation/AnimMontage.h"
-#include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "Characters/Pokemon_Parent.h"
 
 bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
@@ -41,7 +38,6 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	ApplyAbilityCombatStateLock();
 	if (bPlayMontageOnActivate)
 	{
 		PlayAbilityMontage();
@@ -83,83 +79,6 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 		*MontageStartSection.ToString());
 
 	return MontageTask;
-}
-
-void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	ClearAbilityCombatStateLock(bWasCancelled);
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
-
-void UPokemonGameplayAbilities::ApplyAbilityCombatStateLock()
-{
-	if (!bUseAbilityCombatStateLock)
-	{
-		return;
-	}
-
-	APokemon_Parent* AvatarPokemon = GetAvatarPokemon();
-	if (!AvatarPokemon || !AvatarPokemon->HasAuthority())
-	{
-		return;
-	}
-
-	UPokemonCombatStateComponent* CombatStateComponent = AvatarPokemon->GetCombatStateComponent();
-	if (!CombatStateComponent)
-	{
-		return;
-	}
-
-	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
-
-	UE_LOG(LogTemp, Display,
-		TEXT("[PokemonGameplayAbilities] Applying combat state lock. Ability=%s Duration=%.2f"),
-		*GetNameSafe(this),
-		GetAbilityCombatLockDuration());
-
-	CombatStateComponent->SetCombatState(CombatTags.Combat_State_Attacking, GetAbilityCombatLockDuration());
-}
-
-void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
-{
-	if (!bUseAbilityCombatStateLock)
-	{
-		return;
-	}
-
-	APokemon_Parent* AvatarPokemon = GetAvatarPokemon();
-	if (!AvatarPokemon || !AvatarPokemon->HasAuthority())
-	{
-		return;
-	}
-
-	UPokemonCombatStateComponent* CombatStateComponent = AvatarPokemon->GetCombatStateComponent();
-	if (!CombatStateComponent)
-	{
-		return;
-	}
-
-	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
-
-	CombatStateComponent->ClearCombatState(CombatTags.Combat_State_Attacking);
-
-	if (!bWasCancelled && bApplyRecoveryStateOnEnd && MoveTimingSequence.RecoveryDuration > 0.f)
-	{
-		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonGameplayAbilities] Applying recovery state. Ability=%s RecoveryDuration=%.2f"),
-			*GetNameSafe(this),
-			MoveTimingSequence.RecoveryDuration);
-
-		CombatStateComponent->SetCombatState(
-			CombatTags.Combat_State_Recovering,
-			MoveTimingSequence.RecoveryDuration
-		);
-	}
-}
-
-APokemon_Parent* UPokemonGameplayAbilities::GetAvatarPokemon() const
-{
-	return Cast<APokemon_Parent>(GetAvatarActorFromActorInfo());
 }
 
 void UPokemonGameplayAbilities::OnAbilityMontageCompleted()

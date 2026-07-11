@@ -158,7 +158,6 @@ bool UPokemonCombatStateComponent::CanAct() const
 	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
 
 	return
-		!HasCombatState(CombatTags.Combat_State_Attacking) &&
 		!HasCombatState(CombatTags.Combat_State_HitStun) &&
 		!HasCombatState(CombatTags.Combat_State_BlockStun) &&
 		!HasCombatState(CombatTags.Combat_State_Clashing) &&
@@ -172,7 +171,6 @@ bool UPokemonCombatStateComponent::CanMove() const
 	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
 
 	return
-		!HasCombatState(CombatTags.Combat_State_Attacking) &&
 		!HasCombatState(CombatTags.Combat_State_HitStun) &&
 		!HasCombatState(CombatTags.Combat_State_BlockStun) &&
 		!HasCombatState(CombatTags.Combat_State_Clashing) &&

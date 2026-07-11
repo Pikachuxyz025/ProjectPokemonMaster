@@ -8,7 +8,6 @@ using namespace UP;
 #include "PokemonGameplayAbilities.generated.h"
 
 class UAnimMontage;
-class APokemon_Parent;
 class UAbilityTask_PlayMontageAndWait;
 
 USTRUCT(BlueprintType)
@@ -94,27 +93,6 @@ public:
 	FMoveTiming MoveTimingSequence;
 
 protected:
-	virtual void EndAbility(
-		const FGameplayAbilitySpecHandle Handle,
-		const FGameplayAbilityActorInfo* ActorInfo,
-		const FGameplayAbilityActivationInfo ActivationInfo,
-		bool bReplicateEndAbility,
-		bool bWasCancelled
-	) override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat State")
-	bool bUseAbilityCombatStateLock = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat State")
-	bool bApplyRecoveryStateOnEnd = true;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat State", meta = (ClampMin = "0.0"))
-	float MinimumAttackStateDuration = 0.1f;
-
-	void ApplyAbilityCombatStateLock();
-	void ClearAbilityCombatStateLock(bool bWasCancelled);
-	float GetAbilityCombatLockDuration() const;
-	APokemon_Parent* GetAvatarPokemon() const;
 
 	UFUNCTION()
 	void OnAbilityMontageCompleted();
