@@ -157,6 +157,21 @@ void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
 	}
 }
 
+float UPokemonGameplayAbilities::GetAbilityCombatLockDuration() const
+{
+	float Duration =
+		MoveTimingSequence.AnticipationDuration +
+		MoveTimingSequence.ActiveDuration;
+
+	if (AbilityMontage)
+	{
+		const float SafePlayRate = FMath::Max(MontagePlayRate, 0.01f);
+		Duration = FMath::Max(Duration, AbilityMontage->GetPlayLength() / SafePlayRate);
+	}
+
+	return FMath::Max(Duration, MinimumAttackStateDuration);
+}
+
 APokemon_Parent* UPokemonGameplayAbilities::GetAvatarPokemon() const
 {
 	return Cast<APokemon_Parent>(GetAvatarActorFromActorInfo());
