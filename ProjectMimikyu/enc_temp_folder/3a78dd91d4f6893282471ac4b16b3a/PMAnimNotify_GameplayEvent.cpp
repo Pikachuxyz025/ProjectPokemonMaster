@@ -37,16 +37,6 @@ void UPMAnimNotify_GameplayEvent::Notify(
 	Payload.Target = OwnerActor;
 	Payload.EventMagnitude = EventMagnitude;
 
-	if (!UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwnerActor))
-	{
-		UE_LOG(LogTemp, Verbose,
-			TEXT("[PMAnimNotify_GameplayEvent] Skipped gameplay event. Owner has no ASC. Owner=%s EventTag=%s"),
-			*GetNameSafe(OwnerActor),
-			*EventTag.ToString());
-
-		return;
-	}
-
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		OwnerActor,
 		EventTag,
@@ -54,7 +44,7 @@ void UPMAnimNotify_GameplayEvent::Notify(
 	);
 
 	UE_LOG(LogTemp, Display,
-		TEXT("[PMAnimNotify_GameplayEvent] Sent gameplay event. Owner=%s EventTag=%s"),
+		TEXT("[PokemonAnimNotify] Sent gameplay event. Owner=%s EventTag=%s"),
 		*GetNameSafe(OwnerActor),
 		*EventTag.ToString());
 }
