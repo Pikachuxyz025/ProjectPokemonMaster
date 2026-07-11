@@ -7,6 +7,9 @@ using namespace UP;
 #include "Characters/CharacterTypes.h"
 #include "PokemonGameplayAbilities.generated.h"
 
+class UAnimMontage;
+class UAbilityTask_PlayMontageAndWait;
+
 USTRUCT(BlueprintType)
 struct FPokemonInputInfo
 {
@@ -47,10 +50,23 @@ UCLASS()
 class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
+
 public:
 
-	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+	virtual bool CanActivateAbility(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayTagContainer* SourceTags = nullptr,
+		const FGameplayTagContainer* TargetTags = nullptr,
+		OUT FGameplayTagContainer* OptionalRelevantTags = nullptr
+	) const override;
+
+	virtual void ActivateAbility(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo,
+		const FGameplayEventData* TriggerEventData
+	) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	TObjectPtr<UAnimMontage> AbilityMontage = nullptr;
@@ -61,9 +77,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	FName MontageStartSection = NAME_None;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
+	bool bPlayMontageOnActivate = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
+	bool bEndAbilityWhenMontageEnds = true;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation")
+	UAbilityTask_PlayMontageAndWait* PlayAbilityMontage();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGameplayTag InputTag;
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMoveTiming MoveTimingSequence;
+
+protected:
+
+	UFUNCTION()
+	void OnAbilityMontageCompleted();
+
+	UFUNCTION()
+	void OnAbilityMontageBlendOut();
+
+	UFUNCTION()
+	void OnAbilityMontageInterrupted();
+
+	UFUNCTION()
+	void OnAbilityMontageCancelled();
+
+	void EndAbilityFromMontage(bool bWasCancelled);
 };
