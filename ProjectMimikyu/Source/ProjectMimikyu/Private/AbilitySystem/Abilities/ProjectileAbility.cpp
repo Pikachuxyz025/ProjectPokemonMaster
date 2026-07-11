@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/Abilities/ProjectileAbility.h"
+#include "GameplayTags/PokemonGameplayTags.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Interfaces/PokemonCombatInterface.h"
@@ -171,6 +172,69 @@ void UProjectileAbility::SpawnProjectile(const FVector& ProjectileTargetLocation
 		*SocketTag.ToString(),
 		*ProjectileTargetLocation.ToString()
 	);
+}
+
+void UProjectileAbility::OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload)
+{
+	Super::OnAbilityAnimEventReceived_Implementation(Payload);
+
+	if (AbilityAnimEventTag.IsValid() && !Payload.EventTag.MatchesTagExact(AbilityAnimEventTag))
+	{
+		return;
+	}
+
+	AActor* TargetActor = ResolveProjectileTargetActor();
+	const FVector TargetLocation = ResolveProjectileTargetLocation(TargetActor);
+
+	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
+
+	const FGameplayTag SocketTag = AnimEventProjectileSocketTag.IsValid()
+		? AnimEventProjectileSocketTag
+		: PokemonTags.CombatSocket_Projectile;
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[ProjectileAbility] Firing projectile from anim event. Ability=%s EventTag=%s Target=%s TargetLocation=%s SocketTag=%s"),
+		*GetNameSafe(this),
+		*Payload.EventTag.ToString(),
+		*GetNameSafe(TargetActor),
+		*TargetLocation.ToString(),
+		*SocketTag.ToString());
+
+	SpawnProjectile(TargetLocation, SocketTag, TargetActor);
+}
+
+AActor* UProjectileAbility::ResolveProjectileTargetActor() const
+{
+	APokemon_Parent* SourcePokemon = Cast<APokemon_Parent>(GetAvatarActorFromActorInfo());
+	if (!SourcePokemon)
+	{
+		return nullptr;
+	}
+
+	APokemonAIController* PokemonController = Cast<APokemonAIController>(SourcePokemon->GetController());
+	if (!PokemonController)
+	{
+		return nullptr;
+	}
+
+	return PokemonController->GetCombatTarget();
+}
+
+FVector UProjectileAbility::ResolveProjectileTargetLocation(AActor* TargetActor) const
+{
+	if (IsValid(TargetActor))
+	{
+		return TargetActor->GetActorLocation();
+	}
+
+	AActor* SourceActor = GetAvatarActorFromActorInfo();
+	if (!SourceActor)
+	{
+		return FVector::ZeroVector;
+	}
+
+	return SourceActor->GetActorLocation() +
+		SourceActor->GetActorForwardVector() * FallbackProjectileTargetDistance;
 }
 
 #if WITH_EDITOR

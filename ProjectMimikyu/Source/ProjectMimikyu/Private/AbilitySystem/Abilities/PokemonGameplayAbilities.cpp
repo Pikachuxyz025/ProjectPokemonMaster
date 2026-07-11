@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "ActorComponents/PokemonCombatStateComponent.h"
 #include "Animation/AnimMontage.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
@@ -42,10 +43,72 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	ApplyAbilityCombatStateLock();
+
+	if (bListenForAbilityAnimEvent)
+	{
+		ListenForAbilityAnimEvent();
+	}
+
 	if (bPlayMontageOnActivate)
 	{
 		PlayAbilityMontage();
 }
+}
+
+UAbilityTask_WaitGameplayEvent* UPokemonGameplayAbilities::ListenForAbilityAnimEvent()
+{
+	if (!AbilityAnimEventTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] Cannot listen for anim event. Ability=%s EventTag=None"),
+			*GetNameSafe(this));
+
+		return nullptr;
+	}
+
+	UAbilityTask_WaitGameplayEvent* EventTask =
+		UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+			this,
+			AbilityAnimEventTag,
+			nullptr,
+			bOnlyTriggerAnimEventOnce,
+			true
+		);
+
+	if (!EventTask)
+	{
+		return nullptr;
+	}
+
+	EventTask->EventReceived.AddDynamic(
+		this,
+		&UPokemonGameplayAbilities::HandleAbilityAnimEventReceived
+	);
+
+	EventTask->ReadyForActivation();
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonGameplayAbilities] Listening for ability anim event. Ability=%s EventTag=%s"),
+		*GetNameSafe(this),
+		*AbilityAnimEventTag.ToString());
+
+	return EventTask;
+}
+
+void UPokemonGameplayAbilities::HandleAbilityAnimEventReceived(FGameplayEventData Payload)
+{
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonGameplayAbilities] Received ability anim event. Ability=%s EventTag=%s"),
+		*GetNameSafe(this),
+		*Payload.EventTag.ToString());
+
+	OnAbilityAnimEventReceived(Payload);
+}
+
+void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload)
+{
+	// Base ability does nothing by default.
+	// Child abilities can override this in C++ or Blueprint.
 }
 
 UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()

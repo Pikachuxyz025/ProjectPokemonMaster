@@ -10,6 +10,7 @@ using namespace UP;
 class UAnimMontage;
 class APokemon_Parent;
 class UAbilityTask_PlayMontageAndWait;
+class UAbilityTask_WaitGameplayEvent;
 
 USTRUCT(BlueprintType)
 struct FPokemonInputInfo
@@ -68,6 +69,25 @@ public:
 		const FGameplayAbilityActivationInfo ActivationInfo,
 		const FGameplayEventData* TriggerEventData
 	) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Events")
+	bool bListenForAbilityAnimEvent = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Events", meta = (Categories = "Event"))
+	FGameplayTag AbilityAnimEventTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Events")
+	bool bOnlyTriggerAnimEventOnce = true;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation|Events")
+	UAbilityTask_WaitGameplayEvent* ListenForAbilityAnimEvent();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Pokemon|Animation|Events")
+	void OnAbilityAnimEventReceived(FGameplayEventData Payload);
+	virtual void OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void HandleAbilityAnimEventReceived(FGameplayEventData Payload);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	TObjectPtr<UAnimMontage> AbilityMontage = nullptr;

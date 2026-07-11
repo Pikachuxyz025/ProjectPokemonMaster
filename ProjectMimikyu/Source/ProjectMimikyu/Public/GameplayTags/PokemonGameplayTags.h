@@ -95,7 +95,7 @@ public:
 	FGameplayTag Projectiles_Modifier_Scatter;
 	FGameplayTag Projectiles_Modifier_Latch;
 
-
+	FGameplayTag Event_Ability_FireProjectile;
 
 
 	FGameplayTag Abilities_Status_Locked;

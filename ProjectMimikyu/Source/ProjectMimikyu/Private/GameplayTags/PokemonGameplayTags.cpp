@@ -105,6 +105,15 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 	);
 #pragma endregion
 
+#pragma region Ability Events
+
+	GameplayTags.Event_Ability_FireProjectile = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Event.Ability.FireProjectile"),
+		FString("Animation timing event for firing a projectile during an ability montage")
+	);
+
+#pragma endregion
+
 #pragma region Status Effect
 
 	GameplayTags.Damage_Status_Burned = UGameplayTagsManager::Get().AddNativeGameplayTag(

@@ -314,7 +314,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile|Environment", meta = (EditCondition = "EditorMode == EProjectileEditorMode::Drop || EditorMode == EProjectileEditorMode::Erupt ",EditConditionHides))
 	FEnvironmentDropParams EnvironmentDropParams;
 
+	virtual void OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Animation", meta = (Categories = "CombatSocket"))
+	FGameplayTag AnimEventProjectileSocketTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Animation")
+	float FallbackProjectileTargetDistance = 2000.f;
+
+	AActor* ResolveProjectileTargetActor() const;
+	FVector ResolveProjectileTargetLocation(AActor* TargetActor) const;
 public:
 
 
