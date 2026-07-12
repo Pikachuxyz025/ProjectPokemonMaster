@@ -97,6 +97,26 @@ public:
 
 	FGameplayTag Event_Ability_FireProjectile;
 
+#pragma region Ability Window Events
+
+	FGameplayTag Event_Ability_Window_Begin;
+	FGameplayTag Event_Ability_Window_End;
+
+#pragma endregion
+
+#pragma region Ability Windows
+
+	FGameplayTag Ability_Window;
+	FGameplayTag Ability_Window_Startup;
+	FGameplayTag Ability_Window_Active;
+	FGameplayTag Ability_Window_Recovery;
+	FGameplayTag Ability_Window_Cancel;
+	FGameplayTag Ability_Window_Dodge;
+	FGameplayTag Ability_Window_Clashable;
+	FGameplayTag Ability_Window_Tradeable;
+
+#pragma endregion
+
 
 	FGameplayTag Abilities_Status_Locked;
 	FGameplayTag Abilities_Status_Unlocked;

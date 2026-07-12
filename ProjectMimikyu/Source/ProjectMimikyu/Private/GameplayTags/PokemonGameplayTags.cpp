@@ -112,6 +112,60 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 		FString("Animation timing event for firing a projectile during an ability montage")
 	);
 
+	GameplayTags.Event_Ability_Window_Begin = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Event.Ability.Window.Begin"),
+		FString("Animation timing event fired when an ability window begins")
+	);
+
+	GameplayTags.Event_Ability_Window_End = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Event.Ability.Window.End"),
+		FString("Animation timing event fired when an ability window ends")
+	);
+
+#pragma endregion
+
+#pragma region Ability Windows
+
+	GameplayTags.Ability_Window = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window"),
+		FString("Root tag for authored ability montage timing windows")
+	);
+
+	GameplayTags.Ability_Window_Startup = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Startup"),
+		FString("Ability startup or anticipation window")
+	);
+
+	GameplayTags.Ability_Window_Active = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Active"),
+		FString("Ability active/contact window")
+	);
+
+	GameplayTags.Ability_Window_Recovery = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Recovery"),
+		FString("Ability recovery window")
+	);
+
+	GameplayTags.Ability_Window_Cancel = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Cancel"),
+		FString("Window where the ability can be cancelled or chained")
+	);
+
+	GameplayTags.Ability_Window_Dodge = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Dodge"),
+		FString("Window where dodging is allowed")
+	);
+
+	GameplayTags.Ability_Window_Clashable = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Clashable"),
+		FString("Window where this move can participate in a clash")
+	);
+
+	GameplayTags.Ability_Window_Tradeable = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Window.Tradeable"),
+		FString("Window where this move can participate in a trade")
+	);
+
 #pragma endregion
 
 #pragma region Status Effect
