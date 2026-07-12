@@ -5,14 +5,6 @@
 #include "GameplayTagContainer.h"
 #include "PokemonCombatStateComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class ECombatStateApplyPolicy : uint8
-{
-	Override UMETA(DisplayName = "Override"),
-	ExtendIfLonger UMETA(DisplayName = "Extend If Longer"),
-	IgnoreIfAlreadyActive UMETA(DisplayName = "Ignore If Already Active")
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(
 	FPokemonCombatStateChangedSignature,
 	FGameplayTag, StateTag,
