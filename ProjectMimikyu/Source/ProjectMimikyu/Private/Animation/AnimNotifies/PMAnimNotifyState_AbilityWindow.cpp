@@ -67,15 +67,6 @@ void UPMAnimNotifyState_AbilityWindow::SendWindowEvent(USkeletalMeshComponent* M
 		return;
 	}
 
-	if (!AbilityWindowTag.IsValid())
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PMAnimNotifyState_AbilityWindow] Missing AbilityWindowTag. EventTag=%s"),
-			*EventTag.ToString());
-
-		return;
-	}
-
 	AActor* OwnerActor = MeshComp->GetOwner();
 	if (!OwnerActor)
 	{
@@ -89,6 +80,16 @@ void UPMAnimNotifyState_AbilityWindow::SendWindowEvent(USkeletalMeshComponent* M
 			*GetNameSafe(OwnerActor),
 			*EventTag.ToString(),
 			*AbilityWindowTag.ToString());
+
+		return;
+	}
+
+	if (!AbilityWindowTag.IsValid())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PMAnimNotifyState_AbilityWindow] Missing AbilityWindowTag during gameplay-capable notify. Owner=%s EventTag=%s"),
+			*GetNameSafe(OwnerActor),
+			*EventTag.ToString());
 
 		return;
 	}

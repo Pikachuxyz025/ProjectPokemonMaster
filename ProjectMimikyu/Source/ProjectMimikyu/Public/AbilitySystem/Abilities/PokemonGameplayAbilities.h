@@ -84,7 +84,31 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Pokemon|Animation|Events")
 	void OnAbilityAnimEventReceived(FGameplayEventData Payload);
+
 	virtual void OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
+	bool bListenForAbilityWindowEvents = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
+	bool bSuppressEndRecoveryWhenRecoveryWindowAuthored = true;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
+	FGameplayTagContainer ActiveAbilityWindows;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation|Windows")
+	void ListenForAbilityWindowEvents();
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Animation|Windows")
+	bool HasActiveAbilityWindow(FGameplayTag AbilityWindowTag) const;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Pokemon|Animation|Windows")
+	void OnAbilityWindowBegin(FGameplayTag AbilityWindowTag, FGameplayEventData Payload);
+	virtual void OnAbilityWindowBegin_Implementation(FGameplayTag AbilityWindowTag, FGameplayEventData Payload);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Pokemon|Animation|Windows")
+	void OnAbilityWindowEnd(FGameplayTag AbilityWindowTag, FGameplayEventData Payload);
+	virtual void OnAbilityWindowEnd_Implementation(FGameplayTag AbilityWindowTag, FGameplayEventData Payload);
 
 	UFUNCTION()
 	void HandleAbilityAnimEventReceived(FGameplayEventData Payload);
@@ -149,4 +173,17 @@ protected:
 	void OnAbilityMontageCancelled();
 
 	void EndAbilityFromMontage(bool bWasCancelled);
+
+	UFUNCTION()
+	void HandleAbilityWindowBeginEvent(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void HandleAbilityWindowEndEvent(FGameplayEventData Payload);
+
+	bool TryGetAbilityWindowTagFromPayload(const FGameplayEventData& Payload, FGameplayTag& OutAbilityWindowTag) const;
+
+	void ResetAbilityWindowRuntimeState();
+
+	UPROPERTY(Transient)
+	bool bSawRecoveryWindowThisActivation = false;
 };

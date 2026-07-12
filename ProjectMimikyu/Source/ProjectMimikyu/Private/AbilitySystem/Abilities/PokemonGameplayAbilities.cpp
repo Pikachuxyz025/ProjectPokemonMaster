@@ -42,7 +42,14 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	ResetAbilityWindowRuntimeState();
+
 	ApplyAbilityCombatStateLock();
+
+	if (bListenForAbilityWindowEvents)
+	{
+		ListenForAbilityWindowEvents();
+	}
 
 	if (bListenForAbilityAnimEvent)
 	{
@@ -95,6 +102,18 @@ UAbilityTask_WaitGameplayEvent* UPokemonGameplayAbilities::ListenForAbilityAnimE
 	return EventTask;
 }
 
+void UPokemonGameplayAbilities::OnAbilityWindowBegin_Implementation(FGameplayTag AbilityWindowTag, FGameplayEventData Payload)
+{
+	// Base ability does nothing by default.
+	// Child abilities can override this in Blueprint or C++.
+}
+
+void UPokemonGameplayAbilities::OnAbilityWindowEnd_Implementation(FGameplayTag AbilityWindowTag, FGameplayEventData Payload)
+{
+	// Base ability does nothing by default.
+	// Child abilities can override this in Blueprint or C++.
+}
+
 void UPokemonGameplayAbilities::HandleAbilityAnimEventReceived(FGameplayEventData Payload)
 {
 	UE_LOG(LogTemp, Display,
@@ -109,6 +128,61 @@ void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGamep
 {
 	// Base ability does nothing by default.
 	// Child abilities can override this in C++ or Blueprint.
+}
+
+void UPokemonGameplayAbilities::ListenForAbilityWindowEvents()
+{ 
+	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
+
+	UAbilityTask_WaitGameplayEvent* BeginTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+		this,
+		PokemonTags.Event_Ability_Window_Begin,
+		nullptr,
+		false,
+		true
+	);
+
+	if (BeginTask)
+	{
+		BeginTask->EventReceived.AddDynamic(
+			this,
+			&UPokemonGameplayAbilities::HandleAbilityWindowBeginEvent
+		);
+
+		BeginTask->ReadyForActivation();
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] Listening for ability window begin events. Ability=%s EventTag=%s"),
+			*GetNameSafe(this),
+			*PokemonTags.Event_Ability_Window_Begin.ToString());
+	}
+
+	UAbilityTask_WaitGameplayEvent* EndTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+		this,
+		PokemonTags.Event_Ability_Window_End,
+		nullptr,
+		false,
+		true
+	);
+
+	if (EndTask)
+	{
+		EndTask->EventReceived.AddDynamic(
+			this,
+			&UPokemonGameplayAbilities::HandleAbilityWindowEndEvent
+		);
+
+		EndTask->ReadyForActivation();
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] Listening for ability window end events. Ability=%s EventTag=%s"),
+			*GetNameSafe(this),
+			*PokemonTags.Event_Ability_Window_End.ToString());
+	}
+}
+
+bool UPokemonGameplayAbilities::HasActiveAbilityWindow(FGameplayTag AbilityWindowTag) const
+{
+	return AbilityWindowTag.IsValid() && ActiveAbilityWindows.HasTagExact(AbilityWindowTag);
 }
 
 UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
@@ -151,6 +225,9 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	ClearAbilityCombatStateLock(bWasCancelled);
+
+	ResetAbilityWindowRuntimeState();
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -206,10 +283,23 @@ void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
 
 	CombatStateComponent->ClearCombatState(CombatTags.Combat_State_Attacking);
 
-	if (!bWasCancelled && bApplyRecoveryStateOnEnd && MoveTimingSequence.RecoveryDuration > 0.f)
+	// If the montage has an authored Ability.Window.Recovery window :
+	// do not apply extra recovery at montage end.
+
+	// If the montage has no authored recovery window :
+	// use MoveTimingSequence.RecoveryDuration as fallback.
+
+	const bool bShouldSuppressEndRecovery =
+		bSuppressEndRecoveryWhenRecoveryWindowAuthored &&
+		bSawRecoveryWindowThisActivation;
+
+	if (!bWasCancelled &&
+		bApplyRecoveryStateOnEnd &&
+		MoveTimingSequence.RecoveryDuration > 0.f &&
+		!bShouldSuppressEndRecovery)
 	{
 		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonGameplayAbilities] Applying recovery state. Ability=%s RecoveryDuration=%.2f"),
+			TEXT("[PokemonGameplayAbilities] Applying fallback recovery state. Ability=%s RecoveryDuration=%.2f"),
 			*GetNameSafe(this),
 			MoveTimingSequence.RecoveryDuration);
 
@@ -217,6 +307,12 @@ void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
 			CombatTags.Combat_State_Recovering,
 			MoveTimingSequence.RecoveryDuration
 		);
+	}
+	else if (bShouldSuppressEndRecovery)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] Skipping fallback recovery. Authored recovery window was detected. Ability=%s"),
+			*GetNameSafe(this));
 	}
 }
 
@@ -293,4 +389,92 @@ void UPokemonGameplayAbilities::EndAbilityFromMontage(bool bWasCancelled)
 		true,
 		bWasCancelled
 	);
+}
+
+void UPokemonGameplayAbilities::HandleAbilityWindowBeginEvent(FGameplayEventData Payload)
+{
+	FGameplayTag AbilityWindowTag;
+
+	if (!TryGetAbilityWindowTagFromPayload(Payload, AbilityWindowTag))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] Received ability window begin event but could not extract ability window tag. Ability=%s EventTag=%s"),
+			*GetNameSafe(this),
+			*Payload.EventTag.ToString());
+		return;
+	}
+
+	ActiveAbilityWindows.AddTag(AbilityWindowTag);
+
+	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
+
+	if (AbilityWindowTag.MatchesTagExact(PokemonTags.Ability_Window_Recovery))
+	{
+		bSawRecoveryWindowThisActivation = true;
+	}
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonGameplayAbilities] Ability window begin. Ability=%s WindowTag=%s Duration=%.2f ActiveWindows=%s"),
+		*GetNameSafe(this),
+		*AbilityWindowTag.ToString(),
+		Payload.EventMagnitude,
+		*ActiveAbilityWindows.ToStringSimple());
+
+	OnAbilityWindowBegin(AbilityWindowTag, Payload);
+}
+
+void UPokemonGameplayAbilities::HandleAbilityWindowEndEvent(FGameplayEventData Payload)
+{
+	FGameplayTag AbilityWindowTag;
+
+	if (!TryGetAbilityWindowTagFromPayload(Payload, AbilityWindowTag))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] Received ability window end event but could not extract ability window tag. Ability=%s EventTag=%s"),
+			*GetNameSafe(this),
+			*Payload.EventTag.ToString());
+		return;
+	}
+
+	ActiveAbilityWindows.RemoveTag(AbilityWindowTag);
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonGameplayAbilities] Ability window end. Ability=%s WindowTag=%s ActiveWindows=%s"),
+		*GetNameSafe(this),
+		*AbilityWindowTag.ToString(),
+		*ActiveAbilityWindows.ToStringSimple());
+
+	OnAbilityWindowEnd(AbilityWindowTag, Payload);
+}
+
+bool UPokemonGameplayAbilities::TryGetAbilityWindowTagFromPayload(const FGameplayEventData& Payload, FGameplayTag& OutAbilityWindowTag) const
+{
+	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
+
+	TArray<FGameplayTag> CandidateTags;
+	Payload.InstigatorTags.GetGameplayTagArray(CandidateTags);
+
+	TArray<FGameplayTag> TargetTags;
+	Payload.TargetTags.GetGameplayTagArray(TargetTags);
+	CandidateTags.Append(TargetTags);
+
+	for (const FGameplayTag& Tag : CandidateTags)
+	{
+		if (Tag == PokemonTags.Ability_Window)
+		{
+			continue;
+		}
+
+		if (Tag.MatchesTag(PokemonTags.Ability_Window))
+		{
+			OutAbilityWindowTag = Tag;
+			return true;
+		}
+	}
+	return false;
+}
+
+void UPokemonGameplayAbilities::ResetAbilityWindowRuntimeState()
+{
+	ActiveAbilityWindows.Reset();
+	bSawRecoveryWindowThisActivation = false;
 }
