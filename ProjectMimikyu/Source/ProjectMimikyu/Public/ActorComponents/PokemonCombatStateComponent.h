@@ -56,6 +56,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Combat State")
 	bool CanAttack() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Combat State")
+	void PauseCombatStateTimers();
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Combat State")
+	void ResumeCombatStateTimers();
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Combat State")
+	bool AreCombatStateTimersPaused() const
+	{
+		return bStateTimersPaused;
+	}
+
 	UPROPERTY(BlueprintAssignable, Category = "Pokemon|Combat State")
 	FPokemonCombatStateChangedSignature OnCombatStateChanged;
 
@@ -68,4 +80,6 @@ protected:
 
 private:
 	TMap<FGameplayTag, FTimerHandle> ActiveStateTimers;
+
+	bool bStateTimersPaused = false;
 };

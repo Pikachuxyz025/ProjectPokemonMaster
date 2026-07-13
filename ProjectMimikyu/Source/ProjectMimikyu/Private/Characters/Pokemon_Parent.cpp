@@ -17,6 +17,7 @@
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
 #include "ActorComponents/PokemonCombatSocketComponent.h"
 #include "ActorComponents/PokemonCombatStateComponent.h"
+#include "ActorComponents/PokemonHitStopComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -51,6 +52,7 @@ APokemon_Parent::APokemon_Parent()
 	CombatSocketComponent = CreateDefaultSubobject<UPokemonCombatSocketComponent>("Combat Socket Component");
 	ImpactResolverComponent = CreateDefaultSubobject<UPokemonImpactResolverComponent>("Impact Resolver Component");
 	CombatStateComponent = CreateDefaultSubobject<UPokemonCombatStateComponent>("Combat State Component");
+	HitStopComponent = CreateDefaultSubobject<UPokemonHitStopComponent>("Hit Stop Component");
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -614,7 +616,11 @@ bool APokemon_Parent::CanAct() const
 		? CombatStateComponent->CanAct()
 		: true;
 
-	return bCanActFromIncapacitation && bCanActFromCombatState;
+	const bool bCanActFromHitStop = HitStopComponent
+		? !HitStopComponent->IsHitStopActive()
+		: true;
+
+	return bCanActFromIncapacitation && bCanActFromCombatState && bCanActFromHitStop;
 }
 
 bool APokemon_Parent::CanBeCombatTargeted() const

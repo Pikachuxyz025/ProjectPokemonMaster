@@ -83,13 +83,19 @@ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Directi
 float AirSpikeDownInfluence = 1.0f;
 
 UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Direction")
-float GroundedDownwardImpactScalee = 0.25f;
+float GroundedDownwardImpactScale = 0.25f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Application")
 	bool bApplyMovementImpulses = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Application")
 	float MinImpulseToApply = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Hit Stop")
+	bool bApplyHitStop = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Impact|Hit Stop")
+	bool bApplyAttackerHitStopOnProjectileImpact = false;
 
 private:
 	float CalculateImpactScore(const FPokemonMoveContactContext& ContactContext) const;
@@ -111,10 +117,9 @@ private:
 	void ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const;
 	void ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
 
-	void ApplyTimedCombatStateToActor(
-		AActor* TargetActor,
-		const FGameplayTag& StateTag,
-		float Duration,
-		const TCHAR* RoleLabel
-	) const;
+	void ApplyTimedCombatStateToActor(AActor* TargetActor, const FGameplayTag& StateTag, float Duration, const TCHAR* RoleLabel) const;
+
+	void ApplyImpactHitStop(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
+
+	void ApplyHitStopToActor(AActor* TargetActor, float Duration, const TCHAR* RoleLabel) const;
 };

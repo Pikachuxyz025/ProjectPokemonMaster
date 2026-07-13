@@ -41,6 +41,7 @@ class UPokemonFieldPresenceComponent;
 class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
 class UPokemonCombatStateComponent;
+class UPokemonHitStopComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -428,6 +429,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonCombatStateComponent> CombatStateComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonHitStopComponent> HitStopComponent;
 
 	FPokemonInfo SetupPokemonInfo();
 
@@ -472,6 +476,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UPokemonBaseAttributeSet* GetPokemonAS();
+
+	UFUNCTION(BlueprintPure, Category = "Combat|Hit Stop")
+	UPokemonHitStopComponent* GetHitStopComponent() const	{		return HitStopComponent;	}
 
 	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
 

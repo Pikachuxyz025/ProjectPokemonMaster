@@ -137,6 +137,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGameplayTag InputTag;
 
+	/**
+	* Design-time and fallback move timing.
+	* Authored montage windows take precedence for any phase they provide.
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMoveTiming MoveTimingSequence;
 

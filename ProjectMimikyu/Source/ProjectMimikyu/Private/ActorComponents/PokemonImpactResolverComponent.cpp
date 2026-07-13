@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include <GameplayTags/PokemonGameplayTags.h>
+#include <ActorComponents/PokemonHitStopComponent.h>
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonImpactResolver, Log, All);
 
@@ -102,8 +104,12 @@ void UPokemonImpactResolverComponent::ApplyImpactResolution(const FPokemonMoveCo
 		ImpactResolution.DefenderImpulse,
 		TEXT("Defender")
 	);
-
+	
 	ApplyImpactStateConsequences(ContactContext, ImpactResolution);
+
+	// Apply after states so all newly created state timers
+	// are paused for the complete hitstop.
+	ApplyImpactHitStop(ContactContext, ImpactResolution);
 
 	OnImpactResolved.Broadcast(ContactContext, ImpactResolution);
 }
@@ -204,7 +210,7 @@ FVector UPokemonImpactResolverComponent::BuildDefenderImpactImpulse(const FPokem
 			// Grounded target hit from above: do not pop them upward.
 			// This becomes the early version of a crumple/slam/pin reaction
 			FinalDirection = HorizontalImpactDirection;
-			FinalMagnitude *= GroundedDownwardImpactScalee;
+			FinalMagnitude *= GroundedDownwardImpactScale;
 
 			// Highlight this spot. We'll likely use this to trigger a crumple animation or a slam reaction in the future.
 		}
@@ -439,10 +445,7 @@ void UPokemonImpactResolverComponent::ApplyImpactImpulseToActor(AActor* TargetAc
 
 }
 
-void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(
-	const FPokemonMoveContactContext& ContactContext,
-	const FPokemonImpactResolution& ImpactResolution
-) const
+void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(const FPokemonMoveContactContext& ContactContext,	const FPokemonImpactResolution& ImpactResolution) const
 {
 	UE_LOG(
 		LogPokemonImpactResolver,
@@ -490,8 +493,7 @@ void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
 		return;
 	}
 
-	UPokemonCombatStateComponent* CombatStateComponent =
-		TargetActor->FindComponentByClass<UPokemonCombatStateComponent>();
+	UPokemonCombatStateComponent* CombatStateComponent =	TargetActor->FindComponentByClass<UPokemonCombatStateComponent>();
 
 	if (!CombatStateComponent)
 	{
@@ -517,6 +519,70 @@ void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
 		RoleLabel,
 		*GetNameSafe(TargetActor),
 		*StateTag.ToString(),
+		Duration
+	);
+}
+
+void UPokemonImpactResolverComponent::ApplyImpactHitStop(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const
+{
+	if (!bApplyHitStop)
+	{
+		return;
+	}
+
+	const FPokemonGameplayTags& GameplayTags = FPokemonGameplayTags::Get();
+
+	const bool bIsProjectileImpact = ContactContext.MoveActionTag.MatchesTag(GameplayTags.PokemonMoves_MoveAction_Projectile);
+
+	if (!bIsProjectileImpact || bApplyAttackerHitStopOnProjectileImpact)
+	{
+		ApplyHitStopToActor(ContactContext.AttackingActor, ImpactResolution.AttackerHitStop, TEXT("Attacker"));
+	}
+	else
+	{
+		UE_LOG(
+			LogPokemonImpactResolver,
+			Verbose,
+			TEXT("[PokemonImpactResolver] Skipping attacker hitstop for detached projectile impact. Attacker=%s Duration=%.3f"),
+			*GetNameSafe(ContactContext.AttackingActor),
+			ImpactResolution.AttackerHitStop
+		);
+	}
+
+	ApplyHitStopToActor(ContactContext.DefendingActor, ImpactResolution.DefenderHitStop, TEXT("Defender"));
+}
+
+void UPokemonImpactResolverComponent::ApplyHitStopToActor(AActor* TargetActor, float Duration, const TCHAR* RoleLabel) const
+{
+	if (!IsValid(TargetActor) || Duration <= 0.f)
+	{
+		return;
+	}
+
+	UPokemonHitStopComponent* HitStopComponent = TargetActor->FindComponentByClass<		UPokemonHitStopComponent>();
+
+	if (!HitStopComponent)
+	{
+		UE_LOG(
+			LogPokemonImpactResolver,
+			Verbose,
+			TEXT("[PokemonImpactResolver] No HitStopComponent found. Role=%s Actor=%s Duration=%.3f"),
+			RoleLabel,
+			*GetNameSafe(TargetActor),
+			Duration
+		);
+
+		return;
+	}
+
+	HitStopComponent->ApplyHitStop(Duration);
+
+	UE_LOG(
+		LogPokemonImpactResolver,
+		Display,
+		TEXT("[PokemonImpactResolver] Applied hitstop. Role=%s Actor=%s Duration=%.3f"),
+		RoleLabel,
+		*GetNameSafe(TargetActor),
 		Duration
 	);
 }

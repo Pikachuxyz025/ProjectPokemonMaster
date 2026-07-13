@@ -139,6 +139,11 @@ void UPokemonCombatStateComponent::SetCombatState(FGameplayTag StateTag, float D
 
 		TimerManager.SetTimer(NewTimerHandle, TimerDelegate, Duration, false);
 		ActiveStateTimers.Add(StateTag, NewTimerHandle);
+
+		if (bStateTimersPaused)
+		{
+			TimerManager.PauseTimer(NewTimerHandle);
+		}
 	}
 
 	const UEnum* PolicyEnum = StaticEnum<ECombatStateApplyPolicy>();
@@ -296,6 +301,88 @@ bool UPokemonCombatStateComponent::CanMove() const
 bool UPokemonCombatStateComponent::CanAttack() const
 {
 	return CanAct();
+}
+
+void UPokemonCombatStateComponent::PauseCombatStateTimers()
+{
+	AActor* OwnerActor = GetOwner();
+
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	if(bStateTimersPaused)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	bStateTimersPaused = true;
+
+	FTimerManager& TimerManager = World->GetTimerManager();
+
+	for (TPair<FGameplayTag, FTimerHandle>& Pair : ActiveStateTimers)
+	{
+		if (TimerManager.TimerExists(Pair.Value))
+		{
+			TimerManager.PauseTimer(Pair.Value);
+		}
+	}
+
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("Combat state timers paused. Actor=%s ActiveStates=%s"),
+		*GetNameSafe(OwnerActor),
+		*ActiveCombatStates.ToString()
+	);
+}
+
+void UPokemonCombatStateComponent::ResumeCombatStateTimers()
+{
+	AActor* OwnerActor = GetOwner();
+
+	if (OwnerActor && !OwnerActor->HasAuthority())
+	{
+		return;
+	}
+
+	if (!bStateTimersPaused)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	bStateTimersPaused = false;
+
+	FTimerManager& TimerManager = World->GetTimerManager();
+
+	for (TPair<FGameplayTag, FTimerHandle>& Pair : ActiveStateTimers)
+	{
+		if (TimerManager.TimerExists(Pair.Value))
+		{
+			TimerManager.UnPauseTimer(Pair.Value);
+		}
+	}
+
+	UE_LOG(
+		LogPokemonCombatState,
+		Display,
+		TEXT("[PokemonCombatState] Resumed combat-state timers. Actor=%s States=%s"),
+		*GetNameSafe(OwnerActor),
+		*ActiveCombatStates.ToString()
+	);
 }
 
 void UPokemonCombatStateComponent::OnRep_ActiveCombatStates()
