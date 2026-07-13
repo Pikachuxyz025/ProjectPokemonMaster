@@ -96,6 +96,9 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	FGameplayTagContainer ActiveAbilityWindows;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
+	bool bApplyRecoveryStateFromAuthoredWindow = true;
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation|Windows")
 	void ListenForAbilityWindowEvents();
 
@@ -183,6 +186,8 @@ protected:
 	bool TryGetAbilityWindowTagFromPayload(const FGameplayEventData& Payload, FGameplayTag& OutAbilityWindowTag) const;
 
 	void ResetAbilityWindowRuntimeState();
+
+	void ApplyAbilityWindowCombatState(FGameplayTag AbilityWindowTag, float WindowDuration);
 
 	UPROPERTY(Transient)
 	bool bSawRecoveryWindowThisActivation = false;

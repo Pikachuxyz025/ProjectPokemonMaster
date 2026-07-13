@@ -257,7 +257,7 @@ void UPokemonGameplayAbilities::ApplyAbilityCombatStateLock()
 		*GetNameSafe(this),
 		GetAbilityCombatLockDuration());
 
-	CombatStateComponent->SetCombatState(CombatTags.Combat_State_Attacking, GetAbilityCombatLockDuration());
+	CombatStateComponent->SetCombatState(CombatTags.Combat_State_Attacking, GetAbilityCombatLockDuration(), ECombatStateApplyPolicy::Override);
 }
 
 void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
@@ -305,7 +305,8 @@ void UPokemonGameplayAbilities::ClearAbilityCombatStateLock(bool bWasCancelled)
 
 		CombatStateComponent->SetCombatState(
 			CombatTags.Combat_State_Recovering,
-			MoveTimingSequence.RecoveryDuration
+			MoveTimingSequence.RecoveryDuration,
+			ECombatStateApplyPolicy::ExtendIfLonger
 		);
 	}
 	else if (bShouldSuppressEndRecovery)
@@ -413,6 +414,11 @@ void UPokemonGameplayAbilities::HandleAbilityWindowBeginEvent(FGameplayEventData
 		bSawRecoveryWindowThisActivation = true;
 	}
 
+	ApplyAbilityWindowCombatState(
+		AbilityWindowTag,
+		Payload.EventMagnitude
+	);
+
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonGameplayAbilities] Ability window begin. Ability=%s WindowTag=%s Duration=%.2f ActiveWindows=%s"),
 		*GetNameSafe(this),
@@ -477,4 +483,49 @@ void UPokemonGameplayAbilities::ResetAbilityWindowRuntimeState()
 {
 	ActiveAbilityWindows.Reset();
 	bSawRecoveryWindowThisActivation = false;
+}
+
+void UPokemonGameplayAbilities::ApplyAbilityWindowCombatState(FGameplayTag AbilityWindowTag, float WindowDuration)
+{
+	if(!bApplyRecoveryStateFromAuthoredWindow||WindowDuration<=0.f)
+	{
+		return;
+	}
+
+	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
+
+	if (!AbilityWindowTag.MatchesTagExact(PokemonTags.Ability_Window_Recovery))
+	{
+		return;
+	}
+
+	APokemon_Parent* AvatarPokemon = GetAvatarPokemon();
+	if (!AvatarPokemon || !AvatarPokemon->HasAuthority())
+	{
+		return;
+	}
+
+	UPokemonCombatStateComponent* CombatStateComponent = AvatarPokemon->GetCombatStateComponent();
+	if (!CombatStateComponent)
+	{
+		return;
+	}
+
+	const FPokemonCombatGameplayTags& CombatTags = FPokemonCombatGameplayTags::Get();
+
+	CombatStateComponent->SetCombatState(
+		CombatTags.Combat_State_Recovering,
+		WindowDuration,
+		ECombatStateApplyPolicy::ExtendIfLonger
+	);
+
+	UE_LOG(
+		LogTemp,
+		Display,
+		TEXT("[PokemonGameplayAbilities] Applied authored recovery window. Ability=%s WindowDuration=%.2f RemainingRecovery=%.2f"),
+		*GetNameSafe(this),
+		WindowDuration,
+		CombatStateComponent->GetCombatStateRemainingTime(
+			CombatTags.Combat_State_Recovering)
+	);
 }

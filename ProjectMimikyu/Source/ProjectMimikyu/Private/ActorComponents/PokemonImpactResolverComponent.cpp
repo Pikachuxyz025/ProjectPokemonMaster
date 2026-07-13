@@ -508,12 +508,12 @@ void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
 		return;
 	}
 
-	CombatStateComponent->SetCombatState(StateTag, Duration);
+	CombatStateComponent->SetCombatState(StateTag, Duration,ECombatStateApplyPolicy::ExtendIfLonger);
 
 	UE_LOG(
 		LogPokemonImpactResolver,
 		Display,
-		TEXT("Applied impact combat state. Role=%s Actor=%s State=%s Duration=%.2f"),
+		TEXT("Applied impact combat state. Role=%s Actor=%s State=%s Duration=%.2f Policy=ExtendIfLonger"),
 		RoleLabel,
 		*GetNameSafe(TargetActor),
 		*StateTag.ToString(),

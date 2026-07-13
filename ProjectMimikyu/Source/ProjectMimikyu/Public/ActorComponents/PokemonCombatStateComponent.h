@@ -30,7 +30,10 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Combat State")
-	void SetCombatState(FGameplayTag StateTag, float Duration);
+	void SetCombatState(FGameplayTag StateTag, float Duration, ECombatStateApplyPolicy ApplyPolicy = ECombatStateApplyPolicy::Override);
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Combat State")
+	float GetCombatStateRemainingTime(FGameplayTag StateTag) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Combat State")
 	void ClearCombatState(FGameplayTag StateTag);

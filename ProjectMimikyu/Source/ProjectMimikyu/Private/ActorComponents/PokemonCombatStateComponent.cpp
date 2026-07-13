@@ -19,7 +19,7 @@ void UPokemonCombatStateComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UPokemonCombatStateComponent, ActiveCombatStates);
 }
 
-void UPokemonCombatStateComponent::SetCombatState(FGameplayTag StateTag, float Duration)
+void UPokemonCombatStateComponent::SetCombatState(FGameplayTag StateTag, float Duration, ECombatStateApplyPolicy ApplyPolicy)
 {
 	if (!StateTag.IsValid())
 	{
@@ -40,39 +40,153 @@ void UPokemonCombatStateComponent::SetCombatState(FGameplayTag StateTag, float D
 		return;
 	}
 
-	ActiveCombatStates.AddTag(StateTag);
-	OnCombatStateChanged.Broadcast(StateTag, true);
-
-	if (FTimerHandle* ExistingTimer = ActiveStateTimers.Find(StateTag))
+	UWorld* World = GetWorld();
+	if (!World)
 	{
-		if (UWorld* World = GetWorld())
+		return;
+	}
+
+	FTimerManager& TimerManager = World->GetTimerManager();
+
+	const bool bWasAlreadyActive = ActiveCombatStates.HasTagExact(StateTag);
+
+	FTimerHandle* ExistingTimer = ActiveStateTimers.Find(StateTag);
+
+	const bool bHasExistingTimer = ExistingTimer != nullptr;
+
+	const bool bExistingTimerIsActive = bHasExistingTimer && TimerManager.TimerExists(*ExistingTimer);
+
+	const float ExistingRemainingTime = bExistingTimerIsActive ? TimerManager.GetTimerRemaining(*ExistingTimer) : 0.f;
+	
+	// An active state without a timer is undesirable
+	const bool bExistingStateIsIndefinite = bWasAlreadyActive && !bHasExistingTimer;
+
+	if (bWasAlreadyActive)
+	{
+		switch (ApplyPolicy)
 		{
-			World->GetTimerManager().ClearTimer(*ExistingTimer);
+		case ECombatStateApplyPolicy::ExtendIfLonger:
+			// Nothing can extend beyond an indefinite state.
+			if (bExistingStateIsIndefinite)
+			{
+				UE_LOG(
+					LogPokemonCombatState,
+					Verbose,
+					TEXT("[PokemonCombatState] Ignored extension because state is indefinite. Actor=%s State=%s"),
+					*GetNameSafe(OwnerActor),
+					*StateTag.ToString()
+				);
+
+				return;
+			}
+
+			// A non-positive requested duration makes the state indefinite,
+			// so it is always considered longer than a timed state.
+			if (Duration > 0.f &&
+				ExistingRemainingTime >= Duration - KINDA_SMALL_NUMBER)
+			{
+				UE_LOG(
+					LogPokemonCombatState,
+					Verbose,
+					TEXT("[PokemonCombatState] Existing state duration is already longer. Actor=%s State=%s ExistingRemaining=%.2f RequestedDuration=%.2f"),
+					*GetNameSafe(OwnerActor),
+					*StateTag.ToString(),
+					ExistingRemainingTime,
+					Duration
+				);
+
+				return;
+			}
+
+			break;
+		case ECombatStateApplyPolicy::IgnoreIfAlreadyActive:
+			UE_LOG(
+				LogPokemonCombatState,
+				Verbose,
+				TEXT("[PokemonCombatState] Ignored state application because state is already active. Actor=%s State=%s RequestedDuration=%.2f"),
+				*GetNameSafe(OwnerActor),
+				*StateTag.ToString(),
+				Duration
+			);
+
+			return;
+		case ECombatStateApplyPolicy::Override:
+		default:
+			break;
 		}
+	}
+
+	// Remove the previous timer before installing the new duration.
+	if (ExistingTimer)
+	{
+		TimerManager.ClearTimer(*ExistingTimer);
 		ActiveStateTimers.Remove(StateTag);
+	}
+
+	// Only broadcast activation when transitioning from inactive to active.
+	if (!bWasAlreadyActive)
+	{
+		ActiveCombatStates.AddTag(StateTag);
+		OnCombatStateChanged.Broadcast(StateTag, true);
 	}
 
 	if (Duration > 0.f)
 	{
-		FTimerHandle TimerHandle;
-		FTimerDelegate TimerDelegate;
+		FTimerHandle NewTimerHandle;
+		FTimerDelegate TimerDelegate;	
+
 		TimerDelegate.BindUObject(this, &UPokemonCombatStateComponent::ClearCombatState, StateTag);
 
-		if (UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, Duration, false);
-			ActiveStateTimers.Add(StateTag, TimerHandle);
-		}
+		TimerManager.SetTimer(NewTimerHandle, TimerDelegate, Duration, false);
+		ActiveStateTimers.Add(StateTag, NewTimerHandle);
 	}
+
+	const UEnum* PolicyEnum = StaticEnum<ECombatStateApplyPolicy>();
+
+	const FString PolicyName = PolicyEnum ? PolicyEnum->GetNameStringByValue(static_cast<int64>(ApplyPolicy)) : TEXT("Unknown");
 
 	UE_LOG(
 		LogPokemonCombatState,
 		Display,
-		TEXT("[PokemonCombatState] Combat state applied. Actor=%s State=%s Duration=%.2f ActiveStates=%s"),
+		TEXT("[PokemonCombatState] Combat state applied. Actor=%s State=%s Duration=%.2f Policy=%s PreviousRemaining=%.2f ActiveStates=%s"),
 		*GetNameSafe(OwnerActor),
 		*StateTag.ToString(),
 		Duration,
+		*PolicyName,
+		ExistingRemainingTime,
 		*ActiveCombatStates.ToString()
+	);
+}
+
+
+float UPokemonCombatStateComponent::GetCombatStateRemainingTime(FGameplayTag StateTag) const
+{
+	if (!HasCombatState(StateTag))
+	{
+		return 0.f;
+	}
+
+	const FTimerHandle* ExistingTimer =
+		ActiveStateTimers.Find(StateTag);
+
+	// Active but without a timer means indefinite.
+	if (!ExistingTimer)
+	{
+		return -1.f;
+	}
+
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return 0.f;
+	}
+
+	// 0.0 = inactive
+	// - 1.0 = active indefinitely
+	// > 0.0 = remaining timed duration
+	return FMath::Max(
+		0.f,
+		World->GetTimerManager().GetTimerRemaining(*ExistingTimer)
 	);
 }
 
