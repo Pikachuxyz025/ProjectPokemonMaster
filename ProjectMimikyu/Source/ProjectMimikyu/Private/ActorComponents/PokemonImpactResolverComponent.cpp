@@ -500,7 +500,7 @@ void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
 		UE_LOG(
 			LogPokemonImpactResolver,
 			Verbose,
-			TEXT("No CombatStateComponent found. Role=%s Actor=%s State=%s Duration=%.2f"),
+			TEXT("[PokemonImpactResolver]  Applied Timed Combat State To Actor: No CombatStateComponent found. Role=%s Actor=%s State=%s Duration=%.2f"),
 			RoleLabel,
 			*GetNameSafe(TargetActor),
 			*StateTag.ToString(),
@@ -515,7 +515,7 @@ void UPokemonImpactResolverComponent::ApplyTimedCombatStateToActor(
 	UE_LOG(
 		LogPokemonImpactResolver,
 		Display,
-		TEXT("Applied impact combat state. Role=%s Actor=%s State=%s Duration=%.2f Policy=ExtendIfLonger"),
+		TEXT("[PokemonImpactResolver] Applied Timed Combat State To Actor: Role=%s Actor=%s State=%s Duration=%.2f Policy=ExtendIfLonger"),
 		RoleLabel,
 		*GetNameSafe(TargetActor),
 		*StateTag.ToString(),
