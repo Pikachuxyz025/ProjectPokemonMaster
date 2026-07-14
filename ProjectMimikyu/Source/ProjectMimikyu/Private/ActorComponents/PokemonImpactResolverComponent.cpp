@@ -465,6 +465,7 @@ void UPokemonImpactResolverComponent::ApplyImpactStateConsequences(const FPokemo
 		ImpactResolution.AttackerRecoveryTime,
 		TEXT("Attacker")
 	);
+	// for 5.8
 
 	ApplyTimedCombatStateToActor(
 		ContactContext.DefendingActor,
