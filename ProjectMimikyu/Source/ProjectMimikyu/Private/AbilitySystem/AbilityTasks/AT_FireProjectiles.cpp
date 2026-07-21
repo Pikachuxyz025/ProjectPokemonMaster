@@ -67,7 +67,7 @@ void UAT_FireProjectiles::OnEQSFinished(UEnvQueryInstanceBlueprintWrapper* Wrapp
 	// Respect NumProjectiles
 	if (EnvDropParams.NumProjectiles > 0 && AllPoints.Num() > EnvDropParams.NumProjectiles)
 	{
-		AllPoints.SetNum(EnvDropParams.NumProjectiles,/*bAllowShrinking*/false);
+		AllPoints.SetNum(EnvDropParams.NumProjectiles, EAllowShrinking::No);
 	}
 	EnvDropParams.CachedLandingPoints = AllPoints;
 

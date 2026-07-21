@@ -9,8 +9,8 @@ public class ProjectMimikyuEditorTarget : TargetRules
     {
         Type = TargetType.Editor;
 
-        DefaultBuildSettings = BuildSettingsVersion.V6;
-        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+        DefaultBuildSettings = BuildSettingsVersion.V7;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
 
         ExtraModuleNames.AddRange(new string[]
  {
