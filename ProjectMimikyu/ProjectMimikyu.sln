@@ -5,9 +5,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{233774A8-CC9D-3FA9-86D1-90573E92B704}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE5", "Intermediate\ProjectFiles\UE5.vcxproj", "{ACAD5B7F-4491-3088-BC97-1082199B3853}"
-	ProjectSection(ProjectDependencies) = postProject
-		{0C80C972-46A2-3A94-A57B-C65AB13A2B34} = {0C80C972-46A2-3A94-A57B-C65AB13A2B34}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{DE1F8B53-6C02-3C13-9101-A7C8D96F3FF6}"
 EndProject
@@ -31,9 +28,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectMimikyuModuleRules",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Visualizers", "Visualizers", "{1CCEC849-CC72-4C59-8C36-2F7C38706D4C}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natjmc = ..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natjmc
-		..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natstepfilter = ..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natstepfilter
 		..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natvis = ..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natvis
+		..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natstepfilter = ..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natstepfilter
+		..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natjmc = ..\..\..\..\..\..\..\Program Files\Epic Games\UE_5.8\Engine\Extras\VisualStudioDebugging\Unreal.natjmc
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Automation", "Automation", "{0BFBE63A-B98A-3411-8EEB-8918FEC737B3}"

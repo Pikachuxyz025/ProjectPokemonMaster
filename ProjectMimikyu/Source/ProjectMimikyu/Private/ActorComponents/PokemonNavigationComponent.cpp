@@ -2,12 +2,14 @@
 
 
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "DrawDebugHelpers.h"
 #include "GameplayTags/PokemonAITags.h"
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
 
 namespace PokemonNavigationUtils
 {
@@ -87,6 +89,99 @@ const FAgentNavigationRequest& UPokemonNavigationComponent::GetCurrentNavigation
 	return CurrentNavigationRequest;
 }
 
+bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& RawTargetLocation)
+{
+	if (!OwnerPawn)
+	{
+		return false;
+	}
+
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (!NavSystem)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] RequestPlayerMoveToLocation failed because NavSystem is null. Owner=%s"),
+			*GetNameSafe(GetOwner()));
+		return false;
+	}
+
+	FNavLocation ProjectedLocation;;
+
+	const FNavAgentProperties& AgentProperties = OwnerPawn->GetNavAgentPropertiesRef();
+
+	const bool bProjected = NavSystem->ProjectPointToNavigation(
+		RawTargetLocation,
+		ProjectedLocation,
+		PlayerCommandProjectionExtent,
+		&AgentProperties
+	);
+
+	if (!bProjected)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"[PokemonNav] Player Move failed: "
+				"Could not project target to NavMesh. "
+				"Raw=(%.1f, %.1f, %.1f)"
+			),
+			RawTargetLocation.X,
+			RawTargetLocation.Y,
+			RawTargetLocation.Z
+		);
+		return false;
+	}
+
+	FAgentNavigationRequest Request;
+
+	Request.IntentTag = PokemonAITags::NavIntent_PlayerCommand_Move;
+
+	Request.TargetLocation = ProjectedLocation.Location;
+
+	Request.AcceptableRadius = PlayerCommandAcceptableRadius;
+
+	Request.Urgency = 0.8f;
+
+	Request.bAllowSpecialTraversal = true;
+	Request.bAllowGASMovementAbilities = true;
+
+	SetNavigationIntent(Request);
+
+	// Projected navigation destination.
+	DrawDebugSphere(
+		GetWorld(),
+		ProjectedLocation.Location,
+		30.f,
+		16,
+		FColor::Green,
+		false,
+		3.f,
+		0,
+		3.f
+	);
+
+	UE_LOG(
+		LogTemp,
+		Display,
+		TEXT(
+			"[PokemonNav] Player Move accepted | "
+			"Owner=%s | Raw=(%.1f %.1f %.1f) | "
+			"Projected=(%.1f %.1f %.1f)"
+		),
+		*GetNameSafe(OwnerPawn),
+		RawTargetLocation.X,
+		RawTargetLocation.Y,
+		RawTargetLocation.Z,
+		ProjectedLocation.Location.X,
+		ProjectedLocation.Location.Y,
+		ProjectedLocation.Location.Z
+	);
+
+	return true;
+}
+
 void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 {
 	if (!bHasActiveRequest || !CachedAIController)
@@ -153,6 +248,10 @@ void UPokemonNavigationComponent::ProcessNavigationRequest()
 	else if (IntentTag == PokemonAITags::NavIntent_Combat_Reposition)
 	{
 		ProcessCombatReposition();
+	}
+	else if (IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+	{
+		ProcessPlayerCommandMove();
 	}
 }
 
@@ -375,6 +474,45 @@ bool UPokemonNavigationComponent::ProcessCombatReposition()
 	}
 
 	return RequestMoveToLocation(NavLocation.Location, DefaultAcceptableRadius);
+}
+
+bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
+{
+	if(!OwnerPawn)
+	{
+		return false;
+	}
+
+	FVector TargetLocation;
+
+	if (!GetTargetLocation(TargetLocation))
+	{
+		ClearNavigationIntent();
+		return false;
+	}
+
+	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : PlayerCommandAcceptableRadius;
+
+	const float Distance = FVector::Dist(OwnerPawn->GetActorLocation(), TargetLocation);
+
+	if (Distance <= Radius)
+	{
+		UE_LOG(
+			LogTemp,
+			Display,
+			TEXT(
+				"[PokemonNav] Player Move completed | "
+				"Owner=%s | Distance=%.1f"
+			),
+			*GetNameSafe(OwnerPawn),
+			Distance
+		);
+
+		ClearNavigationIntent();
+		return true;
+	}
+
+	return RequestMoveToLocation(TargetLocation, Radius);
 }
 
 bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius)

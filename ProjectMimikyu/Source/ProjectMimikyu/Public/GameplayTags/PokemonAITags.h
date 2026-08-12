@@ -36,6 +36,7 @@ namespace PokemonAITags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(NavIntent_Combat_Dodge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(NavIntent_Combat_KeepDistance);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(NavIntent_Combat_Reposition);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(NavIntent_PlayerCommand_Move);
 
 	// Movement Modes / Locomotion Capabilities
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Movement_Ground);

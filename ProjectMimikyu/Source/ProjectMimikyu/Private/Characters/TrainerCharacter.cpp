@@ -14,6 +14,7 @@
 #include "ActorComponents/TrainerQuickSlotComponent.h"
 #include "ActorComponents/PokeballSummonComponent.h"
 #include "ActorComponents/TrainerThrowableComponent.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
@@ -519,6 +520,7 @@ void ATrainerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		PokemonInput->BindAction(IA_ToggleLockOn, ETriggerEvent::Completed, this, &ATrainerCharacter::Input_ToggleLockOn);
 		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &ATrainerCharacter::Input_BeginFocusAim);
 		PokemonInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &ATrainerCharacter::Input_EndFocusAim);
+		PokemonInput->BindAction(IA_CommandMove, ETriggerEvent::Completed, this, &ATrainerCharacter::CommandPokemonMove);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
@@ -905,9 +907,92 @@ void ATrainerCharacter::ComeOnOut()
 	ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
 }
 
+void ATrainerCharacter::CommandPokemonMove()
+{
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
+
+	if(!CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommandPokemonMove failed: No current Pokemon."));
+		return;
+	}
+
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("CommandPokemonMove rejected: Current Pokemon cannot act. Pokemon=%s"),
+			*GetNameSafe(CurrentPokemon));
+		return;
+	}
+
+	if (!TargetingComponent)
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommandPokemonMove failed: TargetingComponent is null."));
+		return;
+	}
+
+	// Prototype: Move Here is a free-aim command.
+	if (!TargetingComponent->IsInFreeAim())
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommandPokemonMove rejected: Move Here currently requires free aim."));
+		return;
+	}
+
+	const FVector RawAimLocation = TargetingComponent->GetCurrentAimWorldLocation();
+
+	// RAW targeting position.
+	DrawDebugSphere(
+		GetWorld(),
+		RawAimLocation,
+		20.f,
+		12,
+		FColor::Red,
+		false,
+		3.f,
+		0,
+		2.f
+	);
+
+	ServerCommandPokemonMove(RawAimLocation);
+}
+
 void ATrainerCharacter::ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd)
 {
 	HandleSendOutPokemonAtIndex(SelectedPartyIndex, TraceStart, TraceEnd);
+}
+
+void ATrainerCharacter::ServerCommandPokemonMove_Implementation(FVector RequestedLocation)
+{
+
+	if (!CurrentPokemon)
+	{
+		return;
+	}
+	if (!CurrentPokemon->CanAct())
+	{
+		return;
+	}
+
+	UPokemonNavigationComponent* NavigationComponent = CurrentPokemon->GetNavigationComponent();
+
+	if (!NavigationComponent)
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"ServerCommandPokemonMove failed: "
+				"Pokemon has no NavigationComponent."
+			)
+		);
+
+		return;
+	}
+	
+	NavigationComponent->RequestPlayerMoveToLocation(RequestedLocation);
 }
 
 bool ATrainerCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const

@@ -34,6 +34,10 @@ virtual void BeginPlay() override;
 	UFUNCTION(BlueprintPure, Category = "Pokemon|AI|Navigation")
 	const FAgentNavigationRequest& GetCurrentNavigationIntent() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
+	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation);
+
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation")
 	FAgentNavigationRequest CurrentNavigationRequest;
@@ -56,6 +60,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation")
 	float CombatKeepDistance = 700.f;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Player Command")
+	FVector PlayerCommandProjectionExtent = FVector(250.f, 250.f, 500.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Player Command")
+	float PlayerCommandAcceptableRadius = 100.f;
+
 private:
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
@@ -77,6 +88,7 @@ private:
 	bool ProcessReturnToTrainer();
 	bool ProcessCombatKeepDistance();
 	bool ProcessCombatReposition();
+	bool ProcessPlayerCommandMove();
 
 	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius);
 	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius);

@@ -34,6 +34,7 @@ namespace PokemonAITags
 	UE_DEFINE_GAMEPLAY_TAG(NavIntent_Combat_Retreat, "AI.NavIntent.Combat.Retreat");
 	UE_DEFINE_GAMEPLAY_TAG(NavIntent_Combat_Dodge, "AI.NavIntent.Combat.Dodge");
 	UE_DEFINE_GAMEPLAY_TAG(NavIntent_Combat_Reposition, "AI.NavIntent.Combat.Reposition");
+	UE_DEFINE_GAMEPLAY_TAG(NavIntent_PlayerCommand_Move, "AI.NavIntent.PlayerCommand.Move");
 
 	// Movement Modes / Locomotion Capabilities
 	UE_DEFINE_GAMEPLAY_TAG(Movement_Ground, "Movement.Mode.Ground");

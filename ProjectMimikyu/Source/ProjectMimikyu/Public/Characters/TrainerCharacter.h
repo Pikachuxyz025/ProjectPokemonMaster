@@ -99,6 +99,7 @@ protected:
 
 	void CatchPokemon();
 	void ComeOnOut();
+	void CommandPokemonMove();
 
 	void ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd);
 
@@ -140,6 +141,9 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void ServerThrowSelectedPokemon(int32 SelectedPartyIndex, const FAimData& AimData);
+
+	UFUNCTION(Server, Reliable)
+	void ServerCommandPokemonMove(FVector RequestedLocation);
 
 	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
@@ -226,6 +230,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> IA_Aim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_CommandMove;
 
 	// Poké Ball settings
 	UPROPERTY(EditAnywhere, Category = "Items|Pokeball")
