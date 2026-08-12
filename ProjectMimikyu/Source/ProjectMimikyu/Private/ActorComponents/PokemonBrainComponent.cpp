@@ -328,6 +328,11 @@ void UPokemonBrainComponent::UpdateNavigationIntent()
 		return;
 	}
 
+	if (CachedNavigationComponent->HasActiveNavigationRequest() && CachedNavigationComponent->GetCurrentNavigationIntent().IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+	{
+		return;
+	}
+
 	AActor* TargetActor = OwningPokemonController->GetCombatTarget();
 
 	const FPokemonGameplayTags& OldTags = FPokemonGameplayTags::Get();

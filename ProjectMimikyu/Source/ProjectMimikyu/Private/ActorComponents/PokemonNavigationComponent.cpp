@@ -493,7 +493,7 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : PlayerCommandAcceptableRadius;
 
-	const float Distance = FVector::Dist(OwnerPawn->GetActorLocation(), TargetLocation);
+	const float Distance = FVector::Dist2D(OwnerPawn->GetActorLocation(), TargetLocation);
 
 	if (Distance <= Radius)
 	{
