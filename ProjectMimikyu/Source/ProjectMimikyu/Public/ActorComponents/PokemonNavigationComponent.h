@@ -90,7 +90,7 @@ private:
 	bool ProcessCombatReposition();
 	bool ProcessPlayerCommandMove();
 
-	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius);
+	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius,bool bAllowPartialPath=true);
 	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius);
 
 	bool GetTargetLocation(FVector& OutLocation) const;

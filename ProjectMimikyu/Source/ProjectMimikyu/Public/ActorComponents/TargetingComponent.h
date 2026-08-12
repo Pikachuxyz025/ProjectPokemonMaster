@@ -201,6 +201,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Targeting")
 	bool TryGetDirectCrosshairTarget(AActor*& OutTarget, FVector& OutAimLocation) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Targeting|Command")
+	bool TryGetCommandMoveLocation(FVector& OutLocation) const;
 #pragma endregion
 
 protected:
@@ -214,7 +217,7 @@ protected:
 
 #pragma region Queries
 	bool GetViewPoint(FVector& OutLocation, FRotator& OutRotation) const;
-	bool PerformAimTrace(FHitResult& OutHit) const;
+	bool PerformAimTrace(FHitResult& OutHit,const AActor* AdditionalIgnoredActor=nullptr) const;
 	void GatherTargetCandidates(TArray<AActor*>& OutCandidates,EPokemonAimMode QueryAimMode) const;
 	AActor* FindBestLockOnTarget() const;
 	AActor* FindSwitchTarget(bool bSwitchRight) const;

@@ -9,7 +9,7 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
-#include "ActorComponents/PokemonNavigationComponent.h"
+#include "NavigationPath.h"
 
 namespace PokemonNavigationUtils
 {
@@ -131,6 +131,41 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 			RawTargetLocation.Y,
 			RawTargetLocation.Z
 		);
+		return false;
+	}
+
+	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), OwnerPawn->GetActorLocation(), ProjectedLocation.Location, OwnerPawn);
+
+	const bool bHasCompletedGroundPath = GroundPath && GroundPath->IsValid() && !GroundPath->IsPartial();
+
+	if (!bHasCompletedGroundPath)
+	{
+		UE_LOG(
+			LogTemp,
+			Display,
+			TEXT(
+				"[PokemonNav] Player Move projected but is not "
+				"reachable by conventional ground navigation. "
+				"Owner=%s | Projected=(%.1f %.1f %.1f)"
+			),
+			*GetNameSafe(OwnerPawn),
+			ProjectedLocation.Location.X,
+			ProjectedLocation.Location.Y,
+			ProjectedLocation.Location.Z
+		);
+	
+		DrawDebugSphere(
+			GetWorld(),
+			ProjectedLocation.Location,
+			30.f,
+			16,
+			FColor::Yellow,
+			false,
+			3.f,
+			0,
+			3.f
+		);
+
 		return false;
 	}
 
@@ -512,10 +547,10 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 		return true;
 	}
 
-	return RequestMoveToLocation(TargetLocation, Radius);
+	return RequestMoveToLocation(TargetLocation, Radius,false);
 }
 
-bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius)
+bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius,bool bAllowPartialPath)
 {
 	if (!CachedAIController)
 	{
@@ -526,7 +561,7 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	MoveRequest.SetGoalLocation(GoalLocation);
 	MoveRequest.SetAcceptanceRadius(AcceptableRadius);
 	MoveRequest.SetUsePathfinding(true);
-	MoveRequest.SetAllowPartialPath(true);
+	MoveRequest.SetAllowPartialPath(bAllowPartialPath);
 
 	const FPathFollowingRequestResult Result =
 		CachedAIController->MoveTo(MoveRequest);

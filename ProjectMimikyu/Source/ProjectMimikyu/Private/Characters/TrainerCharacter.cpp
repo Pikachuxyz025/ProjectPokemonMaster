@@ -941,7 +941,14 @@ void ATrainerCharacter::CommandPokemonMove()
 		return;
 	}
 
-	const FVector RawAimLocation = TargetingComponent->GetCurrentAimWorldLocation();
+	FVector RawAimLocation;
+
+	if (!TargetingComponent->TryGetCommandMoveLocation(RawAimLocation))
+	{
+		UE_LOG(LogTemp, Display, TEXT("CommandPokemonMove rejected: Could not get command move location from TargetingComponent."));
+		return;
+	}
+
 
 	// RAW targeting position.
 	DrawDebugSphere(

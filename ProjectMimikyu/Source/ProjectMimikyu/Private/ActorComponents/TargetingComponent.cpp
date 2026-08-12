@@ -8,6 +8,7 @@
 #include "Actors/LockOnReticleActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/TrainerHUD.h"
+#include "Characters/Pokemon_Parent.h"
 
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent()
@@ -394,6 +395,33 @@ bool UTargetingComponent::TryGetDirectCrosshairTarget(AActor*& OutTarget, FVecto
 	return true;
 }
 
+bool UTargetingComponent::TryGetCommandMoveLocation(FVector& OutLocation) const
+{
+	OutLocation = FVector::ZeroVector;
+
+	const ATrainerCharacter* Trainer = Cast<ATrainerCharacter>(GetOwner());
+
+	const AActor* PokemonToIgnore = Trainer ? Trainer->GetCurrentPokemon() : nullptr;
+
+	FHitResult Hit;
+
+	if(!PerformAimTrace(Hit,PokemonToIgnore))
+	{
+		return false;
+	}
+
+	// Unlike projectile/free aim, Move Here requires
+	// an actual world-space collision.
+	if (!Hit.bBlockingHit)
+	{
+		return false;
+	}
+
+	OutLocation = Hit.ImpactPoint;
+
+	return true;
+}
+
 void UTargetingComponent::UpdateAimMode()
 {
 	CurrentAimMode = CurrentLockedTarget.IsValid()
@@ -562,7 +590,7 @@ bool UTargetingComponent::GetViewPoint(FVector& OutLocation, FRotator& OutRotati
 	return true;
 }
 
-bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
+bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit,const AActor* AdditionalIgnoredActor) const
 {
 	if (!GetWorld())
 	{
@@ -570,6 +598,7 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 	}
 
 	APlayerController* PC = nullptr;
+
 	if (const APawn* OwnerPawn = Cast<APawn>(GetOwner()))
 	{
 		PC = Cast<APlayerController>(OwnerPawn->GetController());
@@ -581,6 +610,7 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 	}
 
 	FVector2D ViewportSize;
+
 	if (!GEngine || !GEngine->GameViewport)
 	{
 		return false;
@@ -601,6 +631,7 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 		}
 
 	FVector Start = CrosshairWorldLocation;
+
 	if (GetOwner())
 	{
 		const float DistanceToOwner = FVector::Distance(GetOwner()->GetActorLocation(), Start);
@@ -611,23 +642,18 @@ bool UTargetingComponent::PerformAimTrace(FHitResult& OutHit) const
 
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(TargetingAimTrace), false, GetOwner());
 
+	if (IsValid(AdditionalIgnoredActor))
+	{
+		Params.AddIgnoredActor(AdditionalIgnoredActor);
+	}
+
 	const bool bHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, AimTraceChannel, Params);
 
 	if (!bHit)
 	{
 		OutHit.ImpactPoint = End;
 	}
-	//UE_LOG(LogTemp, Warning,
-		//TEXT("[AimTrace] Start=(%.1f %.1f %.1f) End=(%.1f %.1f %.1f) Hit=%d Actor=%s Impact=(%.1f %.1f %.1f)"),
-		//Start.X, Start.Y, Start.Z,
-		//End.X, End.Y, End.Z,
-		//bHit,
-		//*GetNameSafe(OutHit.GetActor()),
-		//OutHit.ImpactPoint.X, OutHit.ImpactPoint.Y, OutHit.ImpactPoint.Z
-	//);
-	// Draw line from owner character to crosshair hit location for debugging
-	//DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), OutHit.ImpactPoint, FColor::Blue, false, 1.f, 0, 1.f);
-	//DrawDebugSphere(GetWorld(), OutHit.ImpactPoint, 10.f, 12, FColor::Blue	, false, 1.f);
+
 	return true;
 }
 
