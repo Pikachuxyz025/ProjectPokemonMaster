@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ActorComponents/PokemonCommandComponent.h"
-
+#include "ActorComponents/PokemonNavigationComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -246,6 +246,11 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 			*GetNameSafe(Pokemon));
 
 		return;
+	}
+
+	if (UPokemonNavigationComponent* NavComp = Pokemon->GetNavigationComponent())
+	{
+		NavComp->ClearNavigationIntent();
 	}
 
 	DodgeDirection = NewDodgeDirection;

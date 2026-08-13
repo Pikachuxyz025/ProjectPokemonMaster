@@ -145,6 +145,9 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerCommandPokemonMove(FVector RequestedLocation);
 
+	UFUNCTION(Server, Reliable)
+	void ServerCommandPokemonDodge(FVector DodgeDirection);
+
 	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;
 	void HandleCatchPokemon(APokemon_Parent* CaughtPokemon, TSubclassOf<APokeBall> PokeballClass);

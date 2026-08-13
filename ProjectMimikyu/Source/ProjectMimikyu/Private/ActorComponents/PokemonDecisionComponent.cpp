@@ -220,7 +220,7 @@ void UPokemonDecisionComponent::RunThink()
 {
 	if (!OwningPokemonController || !ControlledPokemon || !DecisionConfig)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink aborted: missing refs"));
+		UE_LOG(LogTemp, Warning, TEXT("[Decision] RunThink aborted: missing refs"));
 		return;
 	}
 
@@ -229,7 +229,7 @@ void UPokemonDecisionComponent::RunThink()
 	if (!ControlledPokemon->CanAct())
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[Brain] RunThink paused | Owner=%s cannot act | IsFainted=%s"),
+			TEXT("[Decision] RunThink paused | Owner=%s cannot act | IsFainted=%s"),
 			*GetNameSafe(ControlledPokemon),
 			ControlledPokemon->IsFainted() ? TEXT("True") : TEXT("False"));
 
@@ -260,7 +260,7 @@ void UPokemonDecisionComponent::RunThink()
 	if(bEnableNavigationIntentOutput)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[Brain] RunThink | Owner=%s | DesiredCombatMode=%s | HPPercent=%.2f | CanAct=%s | IsFainted=%s | HasTarget=%s | DeltaSinceLast=%.2f"),
+			TEXT("[Decision] RunThink | Owner=%s | DesiredCombatMode=%s | HPPercent=%.2f | CanAct=%s | IsFainted=%s | HasTarget=%s | DeltaSinceLast=%.2f"),
 			*GetNameSafe(ControlledPokemon),
 			*NewDesiredCombatMode.ToString(),
 			HPPercent,
@@ -474,10 +474,4 @@ void UPokemonDecisionComponent::SetDesiredCombatMode(FGameplayTag NewCombatMode)
 	{
 		OwningPokemonController->SetBlackboardDesiredCombatMode(NewCombatMode);
 	}
-
-	/*UE_LOG(LogTemp, Warning,
-		TEXT("[Decision] DesiredCombatMode set to %s | Controller=%s | Pawn=%s"),
-		*DesiredCombatMode.ToString(),
-		*GetNameSafe(OwningPokemonController),
-		*GetNameSafe(ControlledPokemon));*/
 }

@@ -352,6 +352,47 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 
 }
 
+void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FVector DodgeDirection)
+{
+	if(!CurrentPokemon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: No current Pokemon."));
+		return;
+	}
+
+	if (!CurrentPokemon->IsOwnedByTrainer(this))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: Current Pokemon does not belong to this trainer."));
+		return;
+	}
+
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: Current Pokemon cannot act."));
+		return;
+	}
+
+	if (CurrentPokemon->GetIsCommandActive())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: Current Pokemon is already executing a command."));
+		return;
+	}
+
+	if (CurrentPokemon->GetIsDodging())
+	{
+		return;
+	}
+
+	DodgeDirection.Z = 0.f;
+
+	if (!DodgeDirection.Normalize())
+	{
+		return;
+	}
+
+	CurrentPokemon->Dodge(DodgeDirection);
+}
+
 bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
 {
 	OutPokemon = nullptr;
@@ -626,37 +667,42 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 
 void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 {
-	if (!IsLocallyControlled())
+	if (!IsLocallyControlled() || !CurrentPokemon || !InputConfig)
 	{
-		return;
-	}
-
-	if (!CurrentPokemon)
-	{
-		UE_LOG(LogTemp, Display, TEXT("CommandDodge failed: No current Pokemon."));
 		return;
 	}
 
 	if (!CurrentPokemon->CanAct())
 	{
-		UE_LOG(LogTemp, Display,
-			TEXT("CommandDodge rejected: Current Pokemon cannot act. Pokemon=%s"),
-			*GetNameSafe(CurrentPokemon));
-
 		return;
 	}
 
 	if (CurrentPokemon->GetIsCommandActive())
 	{
-		UE_LOG(LogTemp, Display,
-			TEXT("CommandDodge rejected: Current Pokemon has an active command. Pokemon=%s"),
-			*GetNameSafe(CurrentPokemon));
-
 		return;
 	}
 
-	FVector NewDodgeDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
-	CurrentPokemon->Dodge(NewDodgeDirection);
+	const FVector InputDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
+
+	if (InputDirection.IsNearlyZero())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CommandDodge failed: Invalid dodge direction for GameplayTag %s"), *GameplayTag.ToString());
+		return;
+	}
+
+	// Treat input X/Y as Forward/Right
+	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
+
+	const FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+	const FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	FVector WorldDirecton = (Forward * InputDirection.X) + (Right * InputDirection.Y);
+
+	WorldDirecton.Z = 0.f;
+	WorldDirecton.Normalize();
+
+	ServerCommandPokemonDodge(WorldDirecton);
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)

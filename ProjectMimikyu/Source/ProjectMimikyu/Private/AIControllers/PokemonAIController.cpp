@@ -136,7 +136,7 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 
 	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
-	if(AIBehaviorTree)
+	if (AIBehaviorTree)
 	{
 		RunBehaviorTree(AIBehaviorTree);
 	}
@@ -166,8 +166,8 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 
 	if (PokemonDecisionComponent)
 	{
-		PokemonDecisionComponent->SetDecisionConfig(CombatBrainConfig);
 		PokemonDecisionComponent->InitializeDecisionComponent(this);
+		PokemonDecisionComponent->SetDecisionConfig(CombatBrainConfig);
 		PokemonDecisionComponent->StartDecisionMaking();
 	}
 }
