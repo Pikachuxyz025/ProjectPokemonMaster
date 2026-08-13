@@ -23,6 +23,16 @@ EBTNodeResult::Type UBTTask_FollowTrainer::ExecuteTask(UBehaviorTreeComponent& O
 	UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
+
+
+	AActor* Trainer = Cast<AActor>(MyBlackboard->GetValueAsObject(TrainerKey.SelectedKeyName));
+
+	FAIMoveRequest Request;
+	Request.SetGoalActor(Trainer);
+	Request.SetAcceptanceRadius(AcceptableRadius);
+
+	MoveRequest = Request;
+
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(PokemonController->GetPawn());
 
 	if (Pokemon)
@@ -37,16 +47,7 @@ EBTNodeResult::Type UBTTask_FollowTrainer::ExecuteTask(UBehaviorTreeComponent& O
 		}
 	}
 
-	AActor* Trainer = Cast<AActor>(MyBlackboard->GetValueAsObject(TrainerKey.SelectedKeyName));
-
-	FAIMoveRequest Request;
-	Request.SetGoalActor(Trainer);
-	Request.SetAcceptanceRadius(AcceptableRadius);
-
-	MoveRequest = Request;
-
 	return ProcessRequest(PokemonController);
-
 }
 
 void UBTTask_FollowTrainer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

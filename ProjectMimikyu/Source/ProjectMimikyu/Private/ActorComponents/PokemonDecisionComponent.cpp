@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ActorComponents/PokemonBrainComponent.h"
+#include "ActorComponents/PokemonDecisionComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
@@ -44,67 +44,81 @@ static FString PokemonStateToString(EPokemonState State)
 	}
 }
 
-UPokemonBrainComponent::UPokemonBrainComponent()
+UPokemonDecisionComponent::UPokemonDecisionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UPokemonBrainComponent::BeginPlay()
+void UPokemonDecisionComponent::StartDecisionMaking()
 {
-	Super::BeginPlay();
-}
-
-void UPokemonBrainComponent::StartLogic()
-{
-	Super::StartLogic();
-
-	// The StartLogic function is responsible for initializing the brain's thinking process. It checks if the BrainConfig is set, caches necessary references, and sets up the initial timing for thinking.
-	//validate config
-	// set active
-	// schedule first think
-	// emit debug log
-
-	if (!BrainConfig)
+	if (!DecisionConfig)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] StartLogic | No Brain Config set for Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"[Decision] StartDecisionMaking | "
+				"No Decision Config set for Controller=%s | Pawn=%s"
+			),
+			*GetNameSafe(OwningPokemonController),
+			*GetNameSafe(ControlledPokemon)
+		);
+
 		return;
 	}
+
 	CacheReferences();
 
 	if (!OwningPokemonController || !ControlledPokemon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] StartLogic | Missing references for Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"[Decision] StartDecisionMaking | "
+				"Missing references for Controller=%s | Pawn=%s"
+			),
+			*GetNameSafe(OwningPokemonController),
+			*GetNameSafe(ControlledPokemon)
+		);
+
 		return;
 	}
 
-	bBrainActive= true;
+	bDecisionActive = true;
 
 	const float Now = GetCurrentWorldTime();
-	NextThinkTime = Now + GetRandomThinkInterval();
+
+	NextThinkTime =
+		Now + GetRandomThinkInterval();
+
 	CommitUntilTime = Now;
-
-	//UE_LOG(LogTemp, Warning, TEXT("[Brain] StartLogic | Controller=%s | Pawn=%s | Config=%s | NextThinkTime=%.2f"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *GetNameSafe(BrainConfig), NextThinkTime);
 }
 
-void UPokemonBrainComponent::StopLogic(const FString& Reason)
+void UPokemonDecisionComponent::StopDecisionMaking(const FString& Reason)
 {
-	Super::StopLogic(Reason);
+	bDecisionActive = false;
 
-	bBrainActive = false;
-
-	//UE_LOG(LogTemp, Warning, TEXT("[Brain] StopLogic | Controller=%s | Pawn=%s | Reason=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon), *Reason);
+	UE_LOG(
+		LogTemp,
+		Verbose,
+		TEXT(
+			"[Decision] StopDecisionMaking | "
+			"Controller=%s | Pawn=%s | Reason=%s"
+		),
+		*GetNameSafe(OwningPokemonController),
+		*GetNameSafe(ControlledPokemon),
+		*Reason
+	);
 }
 
-void UPokemonBrainComponent::RestartLogic()
+void UPokemonDecisionComponent::RestartDecisionMaking()
 {
-	Super::RestartLogic();
-
-	//UE_LOG(LogTemp, Warning, TEXT("[Brain] RestartLogic | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
-	StopLogic("RestartLogic called");
-	StartLogic();
+	StopDecisionMaking("RestartDecisionMaking called");
+	StartDecisionMaking();
 }
 
-void UPokemonBrainComponent::InitializeBrain(APokemonAIController* InPokemonController)
+void UPokemonDecisionComponent::InitializeDecisionComponent(APokemonAIController* InPokemonController)
 {
 	OwningPokemonController = InPokemonController;
 	CacheReferences();
@@ -118,22 +132,24 @@ void UPokemonBrainComponent::InitializeBrain(APokemonAIController* InPokemonCont
 		EPokemonDebugOutputMode::LogAndScreen);
 }
 
-void UPokemonBrainComponent::SetBrainConfig(UPokemonAICombatBrainConfig* NewConfig)
+void UPokemonDecisionComponent::SetDecisionConfig(UPokemonAICombatBrainConfig* NewConfig)
 {
-	BrainConfig = NewConfig;
+	DecisionConfig = NewConfig;
 
-	UE_LOG(LogTemp, Warning, TEXT("[Brain] SetBrainConfig | Controller=%s | Pawn=%s | Config=%s"),
+	UE_LOG(LogTemp, Warning, TEXT("[Decision] SetDecisionConfig | Controller=%s | Pawn=%s | Config=%s"),
 		*GetNameSafe(OwningPokemonController),
 		*GetNameSafe(ControlledPokemon),
-		*GetNameSafe(BrainConfig));
+		*GetNameSafe(NewConfig));
 }
 
-void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UPokemonDecisionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bBrainActive)
+	if (!bDecisionActive)
+	{
 		return;
+	}
 
 	const float Now = GetCurrentWorldTime();
 
@@ -142,16 +158,16 @@ void UPokemonBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		return;
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("[Brain] TickComponent | Thinking now | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
+	//UE_LOG(LogTemp, Warning, TEXT("[Decision] TickComponent | Thinking now | Controller=%s | Pawn=%s"), *GetNameSafe(OwningPokemonController), *GetNameSafe(ControlledPokemon));
 	RunThink();
 }
 
-bool UPokemonBrainComponent::CanThink() const
+bool UPokemonDecisionComponent::CanThink() const
 {
-	return bBrainActive && BrainConfig && ControlledPokemon;
+	return bDecisionActive && DecisionConfig && ControlledPokemon;
 }
 
-bool UPokemonBrainComponent::ShouldThinkNow(float CurrentTime) const
+bool UPokemonDecisionComponent::ShouldThinkNow(float CurrentTime) const
 {
 	if (!CanThink())
 	{
@@ -171,17 +187,17 @@ bool UPokemonBrainComponent::ShouldThinkNow(float CurrentTime) const
 	return true;
 }
 
-bool UPokemonBrainComponent::HasUrgentInterrupt() const
+bool UPokemonDecisionComponent::HasUrgentInterrupt() const
 {
 	return bUrgentInterruptedRequested;
 }
 
-void UPokemonBrainComponent::ClearUrgentInterrupt()
+void UPokemonDecisionComponent::ClearUrgentInterrupt()
 {
 	bUrgentInterruptedRequested = false;
 }
 
-void UPokemonBrainComponent::CacheReferences()
+void UPokemonDecisionComponent::CacheReferences()
 {
 	if (!OwningPokemonController) return;
 
@@ -200,9 +216,9 @@ void UPokemonBrainComponent::CacheReferences()
 //it can read the pawn / controller
 //it can branch on simple combat info
 //it uses the config values 
-void UPokemonBrainComponent::RunThink()
+void UPokemonDecisionComponent::RunThink()
 {
-	if (!OwningPokemonController || !ControlledPokemon || !BrainConfig)
+	if (!OwningPokemonController || !ControlledPokemon || !DecisionConfig)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[Brain] RunThink aborted: missing refs"));
 		return;
@@ -269,33 +285,33 @@ void UPokemonBrainComponent::RunThink()
 	UPokemonDebugLibrary::PrintMessage(ControlledPokemon, PokemonDebugTags::AI, TEXT("AI thinking. This should only be seen it there is no observer object or if this is the observer object"),EPokemonDebugOutputMode::LogAndScreen);
 }
 
-void UPokemonBrainComponent::DebugLogState() const
+void UPokemonDecisionComponent::DebugLogState() const
 {
 }
 
-float UPokemonBrainComponent::GetCurrentWorldTime() const
+float UPokemonDecisionComponent::GetCurrentWorldTime() const
 {
 	const UWorld* World = GetWorld();
 	return World ? World->GetTimeSeconds() : 0.0f;
 }
 
-float UPokemonBrainComponent::GetRandomThinkInterval() const
+float UPokemonDecisionComponent::GetRandomThinkInterval() const
 {
-	if (!BrainConfig)
+	if (!DecisionConfig)
 		return 1.f;
 
-	return FMath::RandRange(BrainConfig->ThinkIntervalMin, BrainConfig->ThinkIntervalMax);
+	return FMath::RandRange(DecisionConfig->ThinkIntervalMin, DecisionConfig->ThinkIntervalMax);
 }
 
-float UPokemonBrainComponent::GetRandomCommitTime() const
+float UPokemonDecisionComponent::GetRandomCommitTime() const
 {
-	if (!BrainConfig)
+	if (!DecisionConfig)
 		return .5f;
 
-	return FMath::RandRange(BrainConfig->CommitTimeMin, BrainConfig->CommitTimeMax);
+	return FMath::RandRange(DecisionConfig->CommitTimeMin, DecisionConfig->CommitTimeMax);
 }
 
-float UPokemonBrainComponent::GetHPPercent() const
+float UPokemonDecisionComponent::GetHPPercent() const
 {
 	if (!ControlledPokemon)
 		return 1.f;
@@ -303,7 +319,7 @@ float UPokemonBrainComponent::GetHPPercent() const
 	return ControlledPokemon->GetPokemonUIInfo(false).PokemonHPPercent;
 }
 
-bool UPokemonBrainComponent::HasCombatTarget() const
+bool UPokemonDecisionComponent::HasCombatTarget() const
 {
 	if (!OwningPokemonController || !ControlledPokemon || !ControlledPokemon->CanAct())
 	{
@@ -321,7 +337,7 @@ bool UPokemonBrainComponent::HasCombatTarget() const
 	return TargetPokemon->CanBeCombatTargeted();
 }
 
-void UPokemonBrainComponent::UpdateNavigationIntent()
+void UPokemonDecisionComponent::UpdateNavigationIntent()
 {
 	if (!CachedNavigationComponent || !OwningPokemonController)
 	{
@@ -374,7 +390,7 @@ void UPokemonBrainComponent::UpdateNavigationIntent()
 	RequestIdleNavigation();
 }
 
-void UPokemonBrainComponent::RequestIdleNavigation()
+void UPokemonDecisionComponent::RequestIdleNavigation()
 {
 	if (!CachedNavigationComponent)
 		return;
@@ -382,7 +398,7 @@ void UPokemonBrainComponent::RequestIdleNavigation()
 	CachedNavigationComponent->ClearNavigationIntent();
 }
 
-void UPokemonBrainComponent::RequestEngageNavigation(AActor* TargetActor)
+void UPokemonDecisionComponent::RequestEngageNavigation(AActor* TargetActor)
 {
 	if (!CachedNavigationComponent || !TargetActor)
 	{
@@ -399,7 +415,7 @@ void UPokemonBrainComponent::RequestEngageNavigation(AActor* TargetActor)
 	CachedNavigationComponent->SetNavigationIntent(Request);
 }
 
-void UPokemonBrainComponent::RequestDefensiveNavigation(AActor* TargetActor)
+void UPokemonDecisionComponent::RequestDefensiveNavigation(AActor* TargetActor)
 {
 	if (!CachedNavigationComponent || !TargetActor)
 	{
@@ -416,7 +432,7 @@ void UPokemonBrainComponent::RequestDefensiveNavigation(AActor* TargetActor)
 	CachedNavigationComponent->SetNavigationIntent(Request);
 }
 
-void UPokemonBrainComponent::RequestFleeNavigation(AActor* TargetActor)
+void UPokemonDecisionComponent::RequestFleeNavigation(AActor* TargetActor)
 {
 	if (!CachedNavigationComponent || !TargetActor)
 	{
@@ -433,24 +449,24 @@ void UPokemonBrainComponent::RequestFleeNavigation(AActor* TargetActor)
 	CachedNavigationComponent->SetNavigationIntent(Request);
 }
 
-FGameplayTag UPokemonBrainComponent::DetermineDesiredCombatMode(float HPPercent, bool bHasTarget) const
+FGameplayTag UPokemonDecisionComponent::DetermineDesiredCombatMode(float HPPercent, bool bHasTarget) const
 {
 	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
 
 	if (!bHasTarget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Brain] DetermineDesiredCombatMode | No target | HPPercent=%.2f"), HPPercent);
+		UE_LOG(LogTemp, Warning, TEXT("[Decision] DetermineDesiredCombatMode | No target | HPPercent=%.2f"), HPPercent);
 		return Tags.AI_Decision_Combat_Idle;
 	}
 
-	if (HPPercent < .25f && BrainConfig && BrainConfig->RiskToTolerance < .4f)
+	if (HPPercent < .25f && DecisionConfig && DecisionConfig->RiskToTolerance < .4f)
 		return Tags.AI_Decision_Combat_Flee;
 
 	// Defensive can be added later with richer conditions
 	return Tags.AI_Decision_Combat_Engage;
 }
 
-void UPokemonBrainComponent::SetDesiredCombatMode(FGameplayTag NewCombatMode)
+void UPokemonDecisionComponent::SetDesiredCombatMode(FGameplayTag NewCombatMode)
 {
 	DesiredCombatMode = NewCombatMode;
 
@@ -460,7 +476,7 @@ void UPokemonBrainComponent::SetDesiredCombatMode(FGameplayTag NewCombatMode)
 	}
 
 	/*UE_LOG(LogTemp, Warning,
-		TEXT("[Brain] DesiredCombatMode set to %s | Controller=%s | Pawn=%s"),
+		TEXT("[Decision] DesiredCombatMode set to %s | Controller=%s | Pawn=%s"),
 		*DesiredCombatMode.ToString(),
 		*GetNameSafe(OwningPokemonController),
 		*GetNameSafe(ControlledPokemon));*/

@@ -167,7 +167,7 @@ void UPokemonIncapacitationComponent::StopCombatAndMovement()
 	{
 		PokemonController->ClearCombatTarget();
 		PokemonController->SetPokemonState(EPokemonState::EPS_Fainted);
-		PokemonController->StopPokemonBrain(TEXT("Pokemon Incapacitated"));
+		PokemonController->StopPokemonDecisionMaking(TEXT("Pokemon Incapacitated"));
 		PokemonController->StopMovement();
 	}
 }

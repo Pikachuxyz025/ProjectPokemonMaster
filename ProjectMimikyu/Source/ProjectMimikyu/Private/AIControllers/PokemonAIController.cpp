@@ -9,7 +9,7 @@
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "GameplayTags/PokemonGameplayTags.h"
-#include "ActorComponents/PokemonBrainComponent.h"
+#include "ActorComponents/PokemonDecisionComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -17,7 +17,7 @@
 
 APokemonAIController::APokemonAIController()
 {
-	PokemonBrainComponent = CreateDefaultSubobject<UPokemonBrainComponent>(TEXT("PokemonBrainComponent"));
+	PokemonDecisionComponent = CreateDefaultSubobject<UPokemonDecisionComponent>(TEXT("PokemonDecisionComponent"));
 }
 
 void APokemonAIController::SetPokemonState(EPokemonState NewPokemonState)
@@ -65,12 +65,12 @@ void APokemonAIController::ClearCombatTarget()
 	ClearFocus(EAIFocusPriority::Gameplay);
 }
 
-void APokemonAIController::StopPokemonBrain(const FString& Reason)
+void APokemonAIController::StopPokemonDecisionMaking(const FString& Reason)
 {
-	if (PokemonBrainComponent)
+	if (PokemonDecisionComponent)
 	{
-		PokemonBrainComponent->StopLogic(Reason);
-}
+		PokemonDecisionComponent->StopDecisionMaking(Reason);
+	}
 }
 
 void APokemonAIController::EndCombat()
@@ -164,20 +164,20 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 		SetPokemonStatus(ControlledPokemon->GetPokemonStatus());
 	}
 
-	if (PokemonBrainComponent)
+	if (PokemonDecisionComponent)
 	{
-		PokemonBrainComponent->SetBrainConfig(CombatBrainConfig);
-		PokemonBrainComponent->InitializeBrain(this);
-		PokemonBrainComponent->StartLogic();
+		PokemonDecisionComponent->SetDecisionConfig(CombatBrainConfig);
+		PokemonDecisionComponent->InitializeDecisionComponent(this);
+		PokemonDecisionComponent->StartDecisionMaking();
 	}
 }
 
 void APokemonAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
-	if (PokemonBrainComponent)
+	if (PokemonDecisionComponent)
 	{
-		PokemonBrainComponent->StopLogic(TEXT("UnPossess"));
+		PokemonDecisionComponent->StopDecisionMaking(TEXT("UnPossess"));
 	}
 }
 

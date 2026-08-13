@@ -11,7 +11,7 @@ using namespace UP;
 class UPokemonAbilitySystemComponent;
 class APokemon_Parent;
 class UAIPerceptionComponent;
-class UPokemonBrainComponent;
+class UPokemonDecisionComponent;
 class UPokemonAICombatBrainConfig;
 class UBehaviorTree;
 
@@ -35,7 +35,7 @@ protected:
 	UAIPerceptionComponent* AIPerception;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Brain")
-	TObjectPtr<UPokemonBrainComponent> PokemonBrainComponent;
+	TObjectPtr<UPokemonDecisionComponent> PokemonDecisionComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Brain")
 	TObjectPtr<UPokemonAICombatBrainConfig> CombatBrainConfig;
@@ -113,7 +113,7 @@ public:
 	void ClearCombatTarget();
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Brain")
-	void StopPokemonBrain(const FString& Reason);
+	void StopPokemonDecisionMaking(const FString& Reason);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Combat")
 	void EndCombat();
