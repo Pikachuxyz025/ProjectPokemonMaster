@@ -32,6 +32,4 @@ protected:
 	UPROPERTY()
 	class	APokemonAIController* PokemonController;
 
-	UPROPERTY()
-	class APokemon_Parent* Pokemon;
 };

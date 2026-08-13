@@ -6,8 +6,9 @@
 #include "Characters/Pokemon_Parent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "GameplayTags/PokemonAITags.h"
 
 UBTTask_FollowTrainer::UBTTask_FollowTrainer()
 {
@@ -22,6 +23,20 @@ EBTNodeResult::Type UBTTask_FollowTrainer::ExecuteTask(UBehaviorTreeComponent& O
 	UBlackboardComponent* MyBlackboard = OwnerComp.GetBlackboardComponent();
 
 	PokemonController = Cast<APokemonAIController>(OwnerComp.GetAIOwner());
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(PokemonController->GetPawn());
+
+	if (Pokemon)
+	{
+		if (UPokemonNavigationComponent* NavComp = Pokemon->GetNavigationComponent())
+		{
+			if (NavComp->HasActiveNavigationRequest() && NavComp->GetCurrentNavigationIntent().IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+			{
+				// Player currently owns locomotion
+				return EBTNodeResult::InProgress;
+			}
+		}
+	}
+
 	AActor* Trainer = Cast<AActor>(MyBlackboard->GetValueAsObject(TrainerKey.SelectedKeyName));
 
 	FAIMoveRequest Request;
@@ -38,7 +53,26 @@ void UBTTask_FollowTrainer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	if (PokemonController && MoveRequest.IsValid())
+	if (!PokemonController)
+	{
+		return;
+	}
+
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(PokemonController->GetPawn());
+
+	if (Pokemon)
+	{
+		if (UPokemonNavigationComponent* NavComp = Pokemon->GetNavigationComponent())
+		{
+			if (NavComp->HasActiveNavigationRequest() && NavComp->GetCurrentNavigationIntent().IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+			{
+				// Player currently owns locomotion
+				return;
+			}
+		}
+	}
+
+	if (MoveRequest.IsValid())
 	{
 		FinishLatentTask(OwnerComp, ProcessRequest(PokemonController));
 	}
