@@ -173,6 +173,9 @@ virtual	void AttackEnded();
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
+	UPROPERTY(EditAnywhere, Category = "Abilities|Mobility")
+	TSubclassOf<UPokemonGameplayAbilities> DodgeAbility;
+
 	UPROPERTY()
 	 FActiveGameplayEffectHandle CurrentStatHandle;
 	 UPROPERTY()

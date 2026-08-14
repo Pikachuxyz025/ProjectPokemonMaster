@@ -41,5 +41,5 @@ const FVector UPokemonInputConfig::FindInputActionForDodgeDirection(FGameplayTag
 		return FVector::BackwardVector;
 	}
 
-	return FVector::UpVector;
+	return FVector::ZeroVector;
 }

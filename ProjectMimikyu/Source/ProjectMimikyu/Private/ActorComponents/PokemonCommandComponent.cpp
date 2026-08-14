@@ -241,10 +241,65 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 
 	if (!Pokemon->CanAct())
 	{
-		UE_LOG(LogTemp, Display,
-			TEXT("Dodge rejected: Pokemon cannot act. Pokemon=%s"),
-			*GetNameSafe(Pokemon));
+		UE_LOG(LogTemp, Display, TEXT("Dodge rejected: Pokemon cannot act. Pokemon=%s"), *GetNameSafe(Pokemon));
 
+		return;
+	}
+
+	if (bIsDodging)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("Dodge ignored: already dodging."));
+		return;
+	}
+
+	FVector SafeDirection = NewDodgeDirection;
+
+	SafeDirection.Z = 0.f;
+
+	if (!SafeDirection.Normalize())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dodge rejected: Invalid dodge direction."));
+		return;
+	}
+
+	UPokemonAbilitySystemComponent* PASC = Pokemon->GetPokemonASC();
+
+	if (!PASC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Dodge failed: PokemonASC is null."));
+		return;
+	}
+
+	// The ability reads this during ActivateAbility().
+	DodgeDirection = SafeDirection;
+
+	// Mark the requested state before TryActivateAbility() so that ability cleanup can safely unwind it if CommitAbility fails.
+	bIsDodging = true;
+
+	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
+	{
+		PokemonController->SetBlackboardActionState(EMoveAction::EMA_Dodging);
+	}
+
+	const bool bActivated = PASC->ActivateAbilityByTag(FPokemonGameplayTags::Get().InputTag_Dodge);
+
+	if(!bActivated)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dodge ability activation failed."));
+		bIsDodging = false;
+		DodgeDirection = FVector::ZeroVector;
+
+		if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
+		{
+			PokemonController->SetBlackboardActionState(EMoveAction::EMA_None);
+		}
+		return;
+	}
+
+	// Don't destroy a valid Move Here request unless the dodge actually activated.
+	if (!bIsDodging)
+	{
+		// Ability started but immediately terminated during activation/commit.
 		return;
 	}
 
@@ -253,30 +308,46 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 		NavComp->ClearNavigationIntent();
 	}
 
-	DodgeDirection = NewDodgeDirection;
-	bIsDodging = true;
-
-	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
-	{
-		PokemonController->SetBlackboardActionState(EMoveAction::EMA_Dodging);
-	}
+	UE_LOG(
+		LogTemp,
+		Display,
+		TEXT(
+			"[PokemonDodge] Command accepted | "
+			"Pokemon=%s | "
+			"Direction=(%.2f %.2f %.2f)"
+		),
+		*GetNameSafe(Pokemon),
+		SafeDirection.X,
+		SafeDirection.Y,
+		SafeDirection.Z
+	);
 }
 
 void UPokemonCommandComponent::EndDodge()
 {
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
+
 	if (!Pokemon)
 	{
 		return;
 	}
 
+	// Avoid broadcasting the end event multiple times if cancellation and task completion happen close together.
+	if (!bIsDodging)
+	{
+		DodgeDirection = FVector::ZeroVector;
+		return;
+	}																
+
 	bIsDodging = false;
+	DodgeDirection = FVector::ZeroVector;
 
 	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 	{
 		PokemonController->SetBlackboardActionState(EMoveAction::EMA_None);
 	}
 
+	UE_LOG(LogTemp, Display, TEXT("[PokemonDodge] Dodge ended | Pokemon=%s"), *GetNameSafe(Pokemon));
 	Pokemon->OnDodgeEnd.Broadcast();
 }
 

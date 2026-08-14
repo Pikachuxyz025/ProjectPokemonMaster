@@ -24,7 +24,7 @@
 #include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
-#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
+#include "AbilitySystem/Abilities/PokemonDodgeGameplayAbility.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
@@ -56,7 +56,7 @@ APokemon_Parent::APokemon_Parent()
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-
+	DodgeAbility = UPokemonDodgeGameplayAbility::StaticClass();
 
 	GetMesh()->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
@@ -111,25 +111,42 @@ void APokemon_Parent::BeginPlay()
 
 void APokemon_Parent::AddPokemonAbilities()
 {
-	if (HasAuthority())
+	if (!HasAuthority())
 	{
-		GetPokemonASC()->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
-
-		// Passive Event Check Should be active only if the pokemon has a player trainer 
-		// We'll Keep at just trainer for now
-		if(HasTrainer())
-		{
-			GetPokemonASC()->AddCharacterPassiveAbilities(StartupPassiveAbilities);
-		}
-		UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::Ability, true);
+		return;
 	}
+
+	UPokemonAbilitySystemComponent* PASC = GetPokemonASC();
+
+	if (!PASC)
+	{
+		return;
+	}
+
+	// Standard move-slot abilities
+	PASC->AddCharacterAbilities(MovesetComponent->CurrentPokemonMoves);
+
+	// Universal Pokemon mobility ability
+	if (DodgeAbility)
+	{
+		PASC->AddSingleAbility(DodgeAbility, GameplayTags.InputTag_Dodge);
+	}
+
+	// Passive Event Check should currently only be
+	// active for Pokemon owned by a trainer.
+	if (HasTrainer())
+	{
+		PASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
+	}
+
+	UPokemonDebugLibrary::SetCategoryEnabled(this, PokemonDebugTags::Ability, true);
 }
 
-void APokemon_Parent::AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility,FGameplayTag AbilityInputTag)
+void APokemon_Parent::AddNewPokemonAbility(TSubclassOf<UPokemonGameplayAbilities> NewAbility, FGameplayTag AbilityInputTag)
 {
 	if (HasAuthority())
 	{
-		GetPokemonASC()->AddSingleAbility(NewAbility,AbilityInputTag);
+		GetPokemonASC()->AddSingleAbility(NewAbility, AbilityInputTag);
 	}
 }
 
@@ -138,7 +155,7 @@ void APokemon_Parent::SetupPokemonUIInfo()
 	PokemonUIInfo.PokemonLevel = CurrentLevel;
 	PokemonUIInfo.PokemonName = PokemonDataAsset->Name;
 	PokemonUIInfo.PokemonSpriteImage = PokemonDataAsset->SpriteImage;
-	
+
 	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();//DamageSystem->GetHealthPercent();
 }
 
@@ -172,7 +189,7 @@ void APokemon_Parent::SetPokemonStartup(const FPokemonInfo SetupInfo)
 
 void APokemon_Parent::SetCommandTarget(const FPokemonCommandTarget& NewCommandTarget)
 {
-	if(CommandComponent)
+	if (CommandComponent)
 	{
 		CommandComponent->SetCommandTarget(NewCommandTarget);
 	}
@@ -194,7 +211,7 @@ const FPokemonCommandTarget& APokemon_Parent::GetCommandTarget() const
 
 FPokemonCommandTarget APokemon_Parent::BuildCommandTargetFromHit(const FHitResult& Hit)
 {
-	if(CommandComponent)
+	if (CommandComponent)
 	{
 		return CommandComponent->BuildCommandTargetFromHit(Hit);
 	}
@@ -362,7 +379,7 @@ FActiveGameplayEffectHandle APokemon_Parent::ApplyEffectToSelf(TSubclassOf<UGame
 	EffectContext.AddSourceObject(this);
 	const FGameplayEffectSpecHandle SpecsHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContext);
 
-	if (GameplayEffectClass == DefaultStatAttributes&& SpecsHandle.IsValid())
+	if (GameplayEffectClass == DefaultStatAttributes && SpecsHandle.IsValid())
 	{
 		SpecsHandle.Data->SetSetByCallerMagnitude(GameplayTags.Attributes_Stats_Level, (float)CurrentLevel);
 		SpecsHandle.Data->SetSetByCallerMagnitude(GameplayTags.Attributes_Stats_XP, (float)CurrentXP);
@@ -585,7 +602,7 @@ void APokemon_Parent::EnterCollapsedFaint()
 
 void APokemon_Parent::BeginManualReturnAfterFaint()
 {
-	if(IncapacitationComponent)
+	if (IncapacitationComponent)
 	{
 		IncapacitationComponent->BeginManualReturn();
 	}
@@ -743,7 +760,7 @@ void APokemon_Parent::AwardDefeatXPTo(AActor* DefeatingActor)
 	if (!DefeatingActor)
 	{
 		return;
-}
+	}
 
 	if (!DefeatingActor->Implements<UPokemonCombatInterface>())
 	{
@@ -960,12 +977,12 @@ int32 APokemon_Parent::GetXPBaseReward()
 
 int32 APokemon_Parent::GetExperienceNeededAtLevel(int32 Level)
 {
-	return UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(this, Level, PokemonDataAsset->XpStyle);	
+	return UPokemonAbilitySystemLibrary::GetNeededPokemonXPAtLevel(this, Level, PokemonDataAsset->XpStyle);
 }
 
 int32 APokemon_Parent::GetExperienceAtLevel(int32 Level)
 {
-	return UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(this,Level,PokemonDataAsset->XpStyle);
+	return UPokemonAbilitySystemLibrary::GetPokemonXPAtLevel(this, Level, PokemonDataAsset->XpStyle);
 }
 
 void APokemon_Parent::UpdatePokemonInfoInParty_Implementation()
@@ -985,8 +1002,8 @@ bool APokemon_Parent::IsTargetable_Implementation() const
 
 bool APokemon_Parent::CanBeLockOnTargeted_Implementation(EAimContext AimContext) const
 {
-	if(ITargetableInterface::Execute_IsFaintedForTargeting(this))
-		{
+	if (ITargetableInterface::Execute_IsFaintedForTargeting(this))
+	{
 		return false;
 	}
 
@@ -1059,7 +1076,7 @@ bool APokemon_Parent::IsHostileToActor_Implementation(const AActor* RequestingAc
 	// Replace with your ownership/team comparison
 	// Wild pokemon: probably hostile to player in combat context
 	// Trainer-owned: compare trainer/team/faction
-	return RequestingActor!=this;
+	return RequestingActor != this;
 }
 
 bool APokemon_Parent::IsCatchableTarget_Implementation() const

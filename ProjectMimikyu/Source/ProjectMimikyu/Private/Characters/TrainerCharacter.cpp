@@ -697,12 +697,12 @@ void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 
 	const FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-	FVector WorldDirecton = (Forward * InputDirection.X) + (Right * InputDirection.Y);
+	FVector WorldDirection = (Forward * InputDirection.X) + (Right * InputDirection.Y);
 
-	WorldDirecton.Z = 0.f;
-	WorldDirecton.Normalize();
+	WorldDirection.Z = 0.f;
+	WorldDirection.Normalize();
 
-	ServerCommandPokemonDodge(WorldDirecton);
+	ServerCommandPokemonDodge(WorldDirection);
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)
