@@ -95,6 +95,21 @@ void APokemon_Parent::BeginPlay()
 		CurrentLevel,
 		CurrentXP);
 
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		UE_LOG(LogTemp, Warning, TEXT(
+			"[PokemonCollision] %s | Profile=%s | Enabled=%d | "
+			"ObjectType=%d | ResponseToPawn=%d"
+		),
+			*GetName(),
+			*Capsule->GetCollisionProfileName().ToString(),
+			static_cast<int32>(Capsule->GetCollisionEnabled()),
+			static_cast<int32>(Capsule->GetCollisionObjectType()),
+			static_cast<int32>(
+				Capsule->GetCollisionResponseToChannel(ECC_Pawn))
+		);
+	}
+
 	if (!bSpawnedFromPartyStartup)
 	{
 		UE_LOG(LogTemp, Warning,

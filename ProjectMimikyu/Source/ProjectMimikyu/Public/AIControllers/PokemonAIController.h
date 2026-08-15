@@ -21,7 +21,7 @@ class PROJECTMIMIKYU_API APokemonAIController : public AAIController
 	GENERATED_BODY()
 
 public:
-	APokemonAIController();
+	APokemonAIController(const FObjectInitializer& ObjectInitializer);
 
 protected:
 

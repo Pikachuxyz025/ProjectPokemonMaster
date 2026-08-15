@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Interfaces/PlayerInterface.h"
+#include "Navigation/CrowdAgentInterface.h"
 #include "ActorComponents/TargetingType.h"
 #include "GameplayTagContainer.h"
 #include "Characters/CharacterTypes.h"
@@ -37,7 +38,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,const FHitResult
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
 UCLASS(config = Game)
-class ATrainerCharacter : public ACharacter, public IPlayerInterface
+class ATrainerCharacter : public ACharacter, public IPlayerInterface,public ICrowdAgentInterface
 {
 	GENERATED_BODY()
 
@@ -79,6 +80,7 @@ public:
 protected:
 	// Unreal lifecycle
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -168,7 +170,7 @@ private:
 
 	FPokemonInfo GetCurrentPokemonInfo();
 	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
-
+	virtual void GetCrowdAgentCollision(float& CylinderRadius, float& CylinderHalfHeight) const override;
 	// Cached getters
 	ATrainerController* GetTC();
 	ATrainerPlayerState* GetTPS();
@@ -294,6 +296,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Movement|Aim")
 	float WalkSpeedInterpSpeed = 8.f;
+
+	// Crowd agent settings
+	UPROPERTY(EditAnywhere, Category = "Navigation|Crowd")
+	float CrowdPersonalSpacePadding = 75.f;
 
 	// Runtime state
 	UPROPERTY()

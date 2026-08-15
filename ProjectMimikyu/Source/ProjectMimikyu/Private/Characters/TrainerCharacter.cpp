@@ -27,6 +27,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Net/UnrealNetwork.h"
+#include "Navigation/CrowdManager.h"	
 #include "Items/PokeBall.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "Debugging/PokemonDebugLibrary.h"
@@ -140,6 +141,39 @@ void ATrainerCharacter::BeginPlay()
 			TrainerController->HandleGameHasStarted();
 		}
 	}
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"[TrainerCollision] %s | Profile=%s | Enabled=%d | "
+				"ObjectType=%d | ResponseToPawn=%d"
+			),
+			*GetName(),
+			*Capsule->GetCollisionProfileName().ToString(),
+			static_cast<int32>(Capsule->GetCollisionEnabled()),
+			static_cast<int32>(Capsule->GetCollisionObjectType()),
+			static_cast<int32>(
+				Capsule->GetCollisionResponseToChannel(ECC_Pawn)
+				)
+		);
+	}
+
+	if(UCrowdManager* CrowdManager = UCrowdManager::GetCurrent(this))
+	{
+		CrowdManager->RegisterAgent(this);
+	}
+}
+
+void ATrainerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UCrowdManager* CrowdManager = UCrowdManager::GetCurrent(this))
+	{
+		CrowdManager->UnregisterAgent(this);
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void ATrainerCharacter::Tick(float DeltaTime)
@@ -509,6 +543,21 @@ void ATrainerCharacter::BasicLineTrace(FHitResult& OutHit, const FVector& Start,
 		End,
 		ECollisionChannel::ECC_Visibility
 	);
+}
+
+void ATrainerCharacter::GetCrowdAgentCollision(float& CylinderRadius, float& CylinderHalfHeight) const
+{
+	const UCapsuleComponent* Capsule = GetCapsuleComponent();
+
+	if (!Capsule)
+	{
+		CylinderRadius = 0.f;
+		CylinderHalfHeight = 0.f;
+		return;
+	}
+
+	CylinderRadius = Capsule->GetScaledCapsuleRadius() + CrowdPersonalSpacePadding;
+	CylinderHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
 }
 
 

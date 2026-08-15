@@ -12,10 +12,12 @@
 #include "ActorComponents/PokemonDecisionComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Navigation/CrowdFollowingComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 
-APokemonAIController::APokemonAIController()
+APokemonAIController::APokemonAIController(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT("PathFollowingComponent")))
 {
 	PokemonDecisionComponent = CreateDefaultSubobject<UPokemonDecisionComponent>(TEXT("PokemonDecisionComponent"));
 }
@@ -134,6 +136,19 @@ void APokemonAIController::SetBlackboardAttackTarget()
 void APokemonAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+
+	if(UCrowdFollowingComponent* CrowdComp=Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
+	{
+		CrowdComp->SetCrowdObstacleAvoidance(true,true);
+		CrowdComp->SetCrowdSeparation(true, true);
+		CrowdComp->SetCrowdAnticipateTurns(true, true);
+
+		CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High, true);
+	
+		CrowdComp->SetCrowdCollisionQueryRange(500.f, true);
+
+		CrowdComp->SetCrowdSeparationWeight(2.f, true);
+	}
 
 	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
 	if (AIBehaviorTree)
