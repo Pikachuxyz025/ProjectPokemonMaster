@@ -37,14 +37,6 @@ virtual void BeginPlay() override;
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
 	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation);
 
-	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
-	void SuspendNavigation();
-
-	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
-	void ResumeNavigation();
-
-	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
-	bool IsNavigationSuspended() const { return bNavigationSuspended; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation")
@@ -83,8 +75,6 @@ private:
 	TObjectPtr<AAIController> CachedAIController;
 	
 	float TimeSinceLastNavigationThink = 0.f;
-
-	bool bNavigationSuspended = false;
 
 	void TickNavigation(float DeltaTime);
 

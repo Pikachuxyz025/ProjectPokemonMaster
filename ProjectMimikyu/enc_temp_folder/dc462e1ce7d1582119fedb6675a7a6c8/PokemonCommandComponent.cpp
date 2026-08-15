@@ -392,7 +392,7 @@ void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag)
 
 	if (UPokemonNavigationComponent* NavComp = Pokemon->GetNavigationComponent())
 	{
-		NavComp->SuspendNavigation();
+		NavComp->ClearNavigationIntent();
 	}
 
 	UE_LOG(
@@ -432,13 +432,6 @@ void UPokemonCommandComponent::EndDodge()
 	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 	{
 		PokemonController->SetBlackboardActionState(EMoveAction::EMA_None);
-	}
-
-	// Temporary action is finished.
-	// The old high-level navigation intent may continue
-	if (UPokemonNavigationComponent* NavComp = Pokemon->GetNavigationComponent())
-	{
-		NavComp->ResumeNavigation();
 	}
 
 	UE_LOG(LogTemp, Display, TEXT("[PokemonDodge] Dodge ended | Pokemon=%s"), *GetNameSafe(Pokemon));

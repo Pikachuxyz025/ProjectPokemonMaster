@@ -144,7 +144,7 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
 	{
 		bSavedOrientRotationToMovement = MoveComp->bOrientRotationToMovement;
-		bSavedUseControllerDesiredRotation = MoveComp->bUseControllerDesiredRotation;
+		bSavedOrientRotationToMovement = MoveComp->bUseControllerDesiredRotation;
 		bSavedUseControllerRotationYaw = Pokemon->bUseControllerRotationYaw;
 		bSavedRotationSettings = true;
 
@@ -236,7 +236,7 @@ void UPokemonDodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle H
 		if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
 		{
 			MoveComp->bOrientRotationToMovement = bSavedOrientRotationToMovement;
-			MoveComp->bUseControllerDesiredRotation = bSavedUseControllerDesiredRotation;
+			MoveComp->bUseControllerDesiredRotation = bSavedUseControllerRotationYaw;
 		}	
 		Pokemon->bUseControllerRotationYaw = bSavedUseControllerRotationYaw;
 

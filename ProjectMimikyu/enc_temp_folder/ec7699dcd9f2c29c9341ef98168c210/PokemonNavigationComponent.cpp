@@ -217,58 +217,9 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 	return true;
 }
 
-void UPokemonNavigationComponent::SuspendNavigation()
-{
-	if (bNavigationSuspended)
-	{
-		return;
-	}
-
-	bNavigationSuspended = true;
-
-	// Stop the current path-following execution but KEEP CurrentNavigationRequest.
-	if (CachedAIController)
-	{
-		CachedAIController->StopMovement();
-	}
-
-	UE_LOG(LogTemp, Display, TEXT(
-		"[PokemonNav] Navigation suspended | "	
-		"Owner=%s | Intent=%s"), 
-		*GetNameSafe(GetOwner()),
-		*CurrentNavigationRequest.IntentTag.ToString());
-}
-
-void UPokemonNavigationComponent::ResumeNavigation()
-{
-	if (!bNavigationSuspended)
-	{
-		return;
-	}
-
-	bNavigationSuspended = false;
-
-	// Force the retained request to be reconsidered immediately on the next navigation tick.
-	TimeSinceLastNavigationThink = NavigationThinkInterval;
-
-	UE_LOG(LogTemp, Display, TEXT(
-		"[PokemonNav] Navigation resumed | "
-		"Owner=%s | HasRequest=%s | Intent=%s"),
-		*GetNameSafe(GetOwner()),
-		bHasActiveRequest ? TEXT("true") : TEXT("false"),
-		*CurrentNavigationRequest.IntentTag.ToString());
-}
-
 void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 {
 	if (!bHasActiveRequest || !CachedAIController)
-	{
-		return;
-	}
-
-	// A transient action such as Dodge owns locomotion right now.
-	// Preserve the navigation request without executing it.
-	if (bNavigationSuspended)
 	{
 		return;
 	}
