@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/PokemonDodgeGameplayAbility.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "GameFramework/RootMotionSource.h"
 
@@ -140,6 +141,20 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 
 	const ERootMotionFinishVelocityMode FinishMode = bStopOnFinish ? ERootMotionFinishVelocityMode::SetVelocity : ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity;
 
+	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
+	{
+		bSavedOrientRotationToMovement = MoveComp->bOrientRotationToMovement;
+		bSavedOrientRotationToMovement = MoveComp->bUseControllerDesiredRotation;
+		bSavedUseControllerRotationYaw = Pokemon->bUseControllerRotationYaw;
+		bSavedRotationSettings = true;
+
+		// Remove residual navigation movement so the root-motion direction begins cleanly
+		MoveComp->StopMovementImmediately();
+		MoveComp->bOrientRotationToMovement = false;
+		MoveComp->bUseControllerDesiredRotation = false;
+		Pokemon->bUseControllerRotationYaw = false;
+	}
+
 	UAbilityTask_ApplyRootMotionConstantForce* DodgeTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
 		this,
 		FName("PokemonDodge"),
@@ -215,6 +230,18 @@ void UPokemonDodgeGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle H
      * dodge ability as genuinely inactive.
      */
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (Pokemon && bSavedRotationSettings)
+	{
+		if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
+		{
+			MoveComp->bOrientRotationToMovement = bSavedOrientRotationToMovement;
+			MoveComp->bUseControllerDesiredRotation = bSavedUseControllerRotationYaw;
+		}	
+		Pokemon->bUseControllerRotationYaw = bSavedUseControllerRotationYaw;
+
+		bSavedRotationSettings = false;
+	}
 
 	if(bShouldEndDodgeState)
 	{

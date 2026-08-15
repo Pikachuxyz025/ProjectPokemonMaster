@@ -56,4 +56,10 @@ protected:
 	// By default the Pokemon does not retain the dash velocity after the dodge finishes
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dodge|Movement")
 	bool bStopOnFinish = true;
+
+private:
+	bool bSavedOrientRotationToMovement = false;
+	bool bSavedUseControllerDesiredRotation = false;
+	bool bSavedUseControllerRotationYaw = false;
+	bool bSavedRotationSettings = false;
 };

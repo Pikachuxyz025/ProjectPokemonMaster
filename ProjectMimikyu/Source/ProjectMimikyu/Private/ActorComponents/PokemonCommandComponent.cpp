@@ -231,7 +231,52 @@ void UPokemonCommandComponent::AttackEnded()
 	Pokemon->OnAttackEnd.Broadcast();
 }
 
-void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
+bool UPokemonCommandComponent::ResolveDodgeDirection(FGameplayTag DirectionTag, FVector& OutWorldDirection) const
+{
+	OutWorldDirection = FVector::ZeroVector;
+
+	APokemon_Parent* Pokemon = GetOwnerPokemon();
+
+	if (!Pokemon)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ResolveDodgeDirection failed: OwnerPokemon is null."));
+		return false;
+	}
+
+	FVector Forward = Pokemon->GetActorForwardVector();
+	FVector Right = Pokemon->GetActorRightVector();
+
+	Forward.Z = 0.f;
+	Right.Z = 0.f;
+
+	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
+
+	if (DirectionTag == Tags.InputTag_Dodge_Left)
+	{
+		OutWorldDirection = -Right;
+	}
+	else if (DirectionTag == Tags.InputTag_Dodge_Right)
+	{
+		OutWorldDirection = Right;
+	}
+	else if (DirectionTag == Tags.InputTag_Dodge_Forward)
+	{
+		OutWorldDirection = Forward;
+	}
+	else if (DirectionTag == Tags.InputTag_Dodge_Backward)
+	{
+		OutWorldDirection = -Forward;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ResolveDodgeDirection failed: Unrecognized dodge direction tag '%s'."), *DirectionTag.ToString());
+		return false;
+	}
+
+	return OutWorldDirection.Normalize();
+}
+
+void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag)
 {
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
 	if (!Pokemon)
@@ -252,15 +297,54 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 		return;
 	}
 
-	FVector SafeDirection = NewDodgeDirection;
+	FVector SafeDirection;
 
-	SafeDirection.Z = 0.f;
-
-	if (!SafeDirection.Normalize())
+	if(!ResolveDodgeDirection(NewDodgeDirectionTag, SafeDirection))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Dodge rejected: Invalid dodge direction."));
+		UE_LOG(LogTemp, Warning, TEXT("Dodge rejected: Failed To Resolve. Direction | Pokemon=%s | Tag=%s"), *GetNameSafe(Pokemon), *NewDodgeDirectionTag.ToString());
 		return;
 	}
+
+	DrawDebugDirectionalArrow(
+		GetWorld(),
+		Pokemon->GetActorLocation()
+		+ FVector(0.f, 0.f, 100.f),
+
+		Pokemon->GetActorLocation()
+		+ FVector(0.f, 0.f, 100.f)
+		+ SafeDirection * 350.f,
+
+		60.f,
+		FColor::Cyan,
+		false,
+		1.5f,
+		0,
+		5.f
+	);
+
+	UE_LOG(
+		LogTemp,
+		Display,
+		TEXT(
+			"[PokemonDodge] Resolved | "
+			"Pokemon=%s | "
+			"Tag=%s | "
+			"PokemonForward=(%.2f %.2f) | "
+			"PokemonRight=(%.2f %.2f) | "
+			"Dodge=(%.2f %.2f)"
+		),
+		*GetNameSafe(Pokemon),
+		*NewDodgeDirectionTag.ToString(),
+
+		Pokemon->GetActorForwardVector().X,
+		Pokemon->GetActorForwardVector().Y,
+
+		Pokemon->GetActorRightVector().X,
+		Pokemon->GetActorRightVector().Y,
+
+		SafeDirection.X,
+		SafeDirection.Y
+	);
 
 	UPokemonAbilitySystemComponent* PASC = Pokemon->GetPokemonASC();
 
@@ -272,6 +356,8 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 
 	// The ability reads this during ActivateAbility().
 	DodgeDirection = SafeDirection;
+
+	DodgeDirectionTag = NewDodgeDirectionTag;
 
 	// Mark the requested state before TryActivateAbility() so that ability cleanup can safely unwind it if CommitAbility fails.
 	bIsDodging = true;
@@ -288,6 +374,7 @@ void UPokemonCommandComponent::Dodge(const FVector& NewDodgeDirection)
 		UE_LOG(LogTemp, Warning, TEXT("Dodge ability activation failed."));
 		bIsDodging = false;
 		DodgeDirection = FVector::ZeroVector;
+		DodgeDirectionTag = FGameplayTag::EmptyTag;
 
 		if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 		{

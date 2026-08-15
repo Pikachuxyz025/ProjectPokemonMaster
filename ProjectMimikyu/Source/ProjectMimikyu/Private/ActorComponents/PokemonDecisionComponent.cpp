@@ -349,6 +349,11 @@ void UPokemonDecisionComponent::UpdateNavigationIntent()
 		return;
 	}
 
+	if (ControlledPokemon && ControlledPokemon->GetIsDodging())
+	{
+		return;
+	}
+
 	AActor* TargetActor = OwningPokemonController->GetCombatTarget();
 
 	const FPokemonGameplayTags& OldTags = FPokemonGameplayTags::Get();

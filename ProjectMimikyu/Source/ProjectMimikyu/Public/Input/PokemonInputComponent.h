@@ -54,7 +54,7 @@ template<class UserClass, typename PressedFuncType>
 		 {
 			 if (PressedFunc)
 			 {
-				 BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag);
+				 BindAction(Action.InputAction, ETriggerEvent::Started, Object, PressedFunc, Action.InputTag);
 			 }
 		 }
 	 }

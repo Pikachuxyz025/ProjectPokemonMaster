@@ -40,11 +40,13 @@ public:
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
 	void SetCommandTargetFromHit(const FHitResult& Hit);
 
+	bool ResolveDodgeDirection(FGameplayTag DirectionTag, FVector& OutWorldDirection) const;
+
 	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData) const;
 	void SetCommandTargetFromAimData(const FAimData& AimData);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
-	void Dodge(const FVector& NewDodgeDirection);
+	void Dodge(FGameplayTag DodgeDirectionTag);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	void EndDodge();
@@ -73,6 +75,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
 	FVector GetDodgeDirection() const { return DodgeDirection; }
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FGameplayTag GetDodgeDirectionTag() const { return DodgeDirectionTag; }
+
 private:
 	APokemon_Parent* GetOwnerPokemon() const;
 
@@ -97,6 +102,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
 	FVector DodgeDirection = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Command", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag DodgeDirectionTag;
 
 	FTimerHandle ChargeTimer;
 };

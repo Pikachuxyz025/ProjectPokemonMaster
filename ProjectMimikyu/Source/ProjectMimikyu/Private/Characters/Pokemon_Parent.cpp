@@ -288,11 +288,11 @@ void APokemon_Parent::ClearActiveCommandState()
 	}
 }
 
-void APokemon_Parent::Dodge(const FVector NewDodgeDirection)
+void APokemon_Parent::Dodge(const FGameplayTag DodgeDirectionTag)
 {
 	if (CommandComponent)
 	{
-		CommandComponent->Dodge(NewDodgeDirection);
+		CommandComponent->Dodge(DodgeDirectionTag);
 	}
 }
 

@@ -289,7 +289,7 @@ public:
 
 	void ClearActiveCommandState();
 
-	void Dodge(const FVector NewDodgeDirection);
+	void Dodge(const FGameplayTag DodgeDirectionTag);
 
 	UFUNCTION(BlueprintCallable)
 	void EndDodge();

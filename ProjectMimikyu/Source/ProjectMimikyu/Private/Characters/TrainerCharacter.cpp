@@ -352,7 +352,7 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 
 }
 
-void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FVector DodgeDirection)
+void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag DodgeDirectionTag)
 {
 	if(!CurrentPokemon)
 	{
@@ -382,15 +382,16 @@ void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FVector DodgeDi
 	{
 		return;
 	}
+	const FPokemonGameplayTags& InputTags = FPokemonGameplayTags::Get();
+	const bool bIsValidDodgeDirection = DodgeDirectionTag.MatchesTag(InputTags.InputTag_Dodge);
 
-	DodgeDirection.Z = 0.f;
-
-	if (!DodgeDirection.Normalize())
+	if (!bIsValidDodgeDirection)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: Invalid dodge direction tag."));
 		return;
 	}
 
-	CurrentPokemon->Dodge(DodgeDirection);
+	CurrentPokemon->Dodge(DodgeDirectionTag);
 }
 
 bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
@@ -682,27 +683,17 @@ void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 		return;
 	}
 
-	const FVector InputDirection = InputConfig->FindInputActionForDodgeDirection(GameplayTag);
+	const FPokemonGameplayTags& InputTags = FPokemonGameplayTags::Get();
 
-	if (InputDirection.IsNearlyZero())
+	const bool bIsValidDodgeDirection = GameplayTag.MatchesTag(InputTags.InputTag_Dodge);
+
+	if (!bIsValidDodgeDirection)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CommandDodge failed: Invalid dodge direction for GameplayTag %s"), *GameplayTag.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("CommandDodge failed: Invalid dodge direction tag=%s."), *GameplayTag.ToString());
 		return;
 	}
 
-	// Treat input X/Y as Forward/Right
-	const FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
-
-	const FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-	const FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	FVector WorldDirection = (Forward * InputDirection.X) + (Right * InputDirection.Y);
-
-	WorldDirection.Z = 0.f;
-	WorldDirection.Normalize();
-
-	ServerCommandPokemonDodge(WorldDirection);
+	ServerCommandPokemonDodge(GameplayTag);
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)
