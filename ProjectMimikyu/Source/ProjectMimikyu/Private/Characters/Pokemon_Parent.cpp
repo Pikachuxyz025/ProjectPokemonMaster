@@ -61,6 +61,11 @@ APokemon_Parent::APokemon_Parent()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Melee, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Ignore);
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->CanCharacterStepUpOn = ECB_No;
+	}
 }
 
 #if WITH_EDITOR

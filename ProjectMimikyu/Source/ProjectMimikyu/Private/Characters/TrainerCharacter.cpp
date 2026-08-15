@@ -43,7 +43,7 @@ ATrainerCharacter::ATrainerCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -66,7 +66,7 @@ ATrainerCharacter::ATrainerCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 150.0f; // The camera follows at this distance behind the character
-	CameraBoom->SocketOffset=FVector(0, 50.f, 50.f);
+	CameraBoom->SocketOffset = FVector(0, 50.f, 50.f);
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
@@ -82,6 +82,11 @@ ATrainerCharacter::ATrainerCharacter()
 	bReplicates = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->CanCharacterStepUpOn = ECB_No;
+	}
 }
 
 void ATrainerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
