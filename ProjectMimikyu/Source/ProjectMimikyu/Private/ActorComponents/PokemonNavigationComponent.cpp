@@ -562,7 +562,7 @@ bool UPokemonNavigationComponent::ProcessCombatReposition()
 
 bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 {
-	if(!OwnerPawn)
+	if (!OwnerPawn)
 	{
 		return false;
 	}
@@ -596,10 +596,22 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 		return true;
 	}
 
-	return RequestMoveToLocation(TargetLocation, Radius,false);
+	UE_LOG(
+		LogTemp,
+		VeryVerbose,
+		TEXT(
+			"[PokemonNav] Player Move active | "
+			"Owner=%s | Distance=%.1f | Radius=%.1f"
+		),
+		*GetNameSafe(OwnerPawn),
+		Distance,
+		Radius
+	);
+
+	return RequestMoveToLocation(TargetLocation, Radius, false, false);
 }
 
-bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius,bool bAllowPartialPath)
+bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath, bool bIncludeAgentRadius)
 {
 	if (!CachedAIController)
 	{
@@ -612,8 +624,9 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	MoveRequest.SetUsePathfinding(true);
 	MoveRequest.SetAllowPartialPath(bAllowPartialPath);
 
-	const FPathFollowingRequestResult Result =
-		CachedAIController->MoveTo(MoveRequest);
+	MoveRequest.SetReachTestIncludesAgentRadius(bIncludeAgentRadius);
+
+	const FPathFollowingRequestResult Result = CachedAIController->MoveTo(MoveRequest);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
