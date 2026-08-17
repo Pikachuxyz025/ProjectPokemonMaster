@@ -393,7 +393,7 @@ bool UPokemonNavigationComponent::ProcessFollow()
 		return true;
 	}
 
-	return RequestMoveToActor(FollowTarget, DesiredDistance);
+	return RequestMoveToActor(FollowTarget, DesiredDistance,false);
 }
 
 bool UPokemonNavigationComponent::ProcessChase()
@@ -419,7 +419,7 @@ bool UPokemonNavigationComponent::ProcessChase()
 
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : 100.f;
 
-	return RequestMoveToActor(TargetActor, Radius);
+	return RequestMoveToActor(TargetActor, Radius,false);
 }
 
 bool UPokemonNavigationComponent::ProcessApproach()
@@ -444,7 +444,7 @@ bool UPokemonNavigationComponent::ProcessApproach()
 
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : DefaultAcceptableRadius;
 
-	return RequestMoveToActor(TargetActor, Radius);
+	return RequestMoveToActor(TargetActor, Radius,false);
 }
 
 bool UPokemonNavigationComponent::ProcessFlee()
@@ -477,7 +477,7 @@ bool UPokemonNavigationComponent::ProcessReturnToTrainer()
 
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : 150.f;
 
-	return RequestMoveToActor(TrainerActor, Radius);
+	return RequestMoveToActor(TrainerActor, Radius,false);
 }
 
 bool UPokemonNavigationComponent::ProcessCombatKeepDistance()
@@ -631,7 +631,7 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
 
-bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float AcceptableRadius)
+bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float AcceptableRadius, bool bCanStrafe)
 {
 	if (!CachedAIController || !TargetActor|| !OwnerPawn)
 	{
@@ -652,8 +652,10 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 	MoveRequest.SetUsePathfinding(true);
 	MoveRequest.SetAllowPartialPath(true);
 
-	const FPathFollowingRequestResult Result =
-		CachedAIController->MoveTo(MoveRequest);
+	// IMPORTANT
+	MoveRequest.SetCanStrafe(bCanStrafe);
+
+	const FPathFollowingRequestResult Result =	CachedAIController->MoveTo(MoveRequest);
 
 	UE_LOG(LogTemp, Warning,
 		TEXT("[PokemonNav] MoveToActor | Owner=%s | Target=%s | Distance=%.1f | Radius=%.1f | Result=%s"),

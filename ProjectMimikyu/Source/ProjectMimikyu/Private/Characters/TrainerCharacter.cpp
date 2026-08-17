@@ -856,6 +856,17 @@ void ATrainerCharacter::ThrowPokeballForSummon(TSubclassOf<AProjectile> Projecti
 
 void ATrainerCharacter::ThrowQuickSlotInput()
 {
+	UE_LOG(LogTemp, Warning,
+		TEXT(
+			"[TrainerInput] ThrowQuickSlotInput | "
+			"Frame=%llu | Time=%.3f"
+		),
+		GFrameCounter,
+		GetWorld()
+		? GetWorld()->GetTimeSeconds()
+		: -1.f
+	);
+
 	if(!QuickSlotComponent)
 	{
 		return;

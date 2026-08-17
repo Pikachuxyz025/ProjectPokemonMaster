@@ -146,9 +146,6 @@ virtual	void AttackEnded();
 	FPokemonUIInfo PokemonUIInfo;
 	FPokemonInfo PokemonInfo;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Navigation",meta = (Categories ="Movement.Mode"))
-	FGameplayTag NavigationMovementMode;
-
 #pragma region Attributes Setup
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -186,6 +183,11 @@ virtual	void AttackEnded();
 #pragma endregion
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Pokemon|Navigation")
+	int32 ReflectionTest = 12345;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Navigation",meta = (Categories ="Movement.Mode"))
+	FGameplayTag NavigationMovementMode;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Ownership")
 	void SetIsCaught(bool bNewIsCaught);

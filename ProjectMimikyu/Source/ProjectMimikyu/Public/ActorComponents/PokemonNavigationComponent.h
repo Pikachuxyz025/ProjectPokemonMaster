@@ -101,7 +101,7 @@ private:
 	bool ProcessPlayerCommandMove();
 
 	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius,bool bAllowPartialPath=true,bool bIncludeAgentRadius=true);
-	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius);
+	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius,bool bCanStrafe=false);
 
 	bool GetTargetLocation(FVector& OutLocation) const;
 	FVector GetFleeLocationFromTarget(const FVector& ThreatLocation) const;

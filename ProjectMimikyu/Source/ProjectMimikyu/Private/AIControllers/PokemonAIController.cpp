@@ -335,7 +335,14 @@ void APokemonAIController::ConfigureCrowdNavigation()
 
 	const bool bUsesGroundCrowd = ControlledPokemon->UsesGroundCrowdNavigation();
 
+	// Locomotion-facing behavior.
+	// Do this for ALL Pokemon using this path-following component,
+	// including Crobat.
+	CrowdComp->SetCrowdRotateToVelocity(true);
+
 	CrowdComp->SetCrowdObstacleAvoidance(bUsesGroundCrowd, false);
+
+	CrowdComp->SetCrowdAnticipateTurns(bUsesGroundCrowd, false);
 
 	CrowdComp->SetCrowdSeparation(bUsesGroundCrowd, false);
 
