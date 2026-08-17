@@ -96,7 +96,7 @@ public:
 	void SetTrainer(AActor* NewTrainer);
 	void SetCombatTarget(AActor* NewTarget);
 	void SetTree(UBehaviorTree* NewBehaviorTree, APokemon_Parent* NewPokemon);
-
+	void ConfigureCrowdNavigation();
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE AActor* GetCombatTarget() { return CombatTarget; }
 
@@ -117,7 +117,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Combat")
 	void EndCombat();
-
 private:
 
 	UPROPERTY()

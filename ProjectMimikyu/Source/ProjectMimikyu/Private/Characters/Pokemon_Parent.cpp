@@ -27,6 +27,7 @@
 #include "AbilitySystem/Abilities/PokemonDodgeGameplayAbility.h"
 #include "Debugging/PokemonDebugLibrary.h"
 #include "GameplayTags/PokemonDebugTags.h"
+#include "GameplayTags/PokemonAITags.h"
 #include "ActorComponents/PokemonIncapacitationComponent.h"
 #include "ActorComponents/PokemonImpactResolverComponent.h"
 #include "ProjectMimikyu/ProjectMimikyu.h"
@@ -182,6 +183,16 @@ void APokemon_Parent::SetupPokemonUIInfo()
 void APokemon_Parent::UpdatePokemonUIInfo()
 {
 	PokemonUIInfo.PokemonHPPercent = GetPokemonAS()->GetHealth() / GetPokemonAS()->GetMaxHealth();//DamageSystem->GetHealthPercent();
+}
+
+bool APokemon_Parent::UsesGroundCrowdNavigation() const
+{
+	// Treat unconfigured Pokemon as ground agents for backwards compatibility.
+	if (!NavigationMovementMode.IsValid())
+	{
+		return true;
+	}
+	return NavigationMovementMode.MatchesTagExact(PokemonAITags::Movement_Ground);
 }
 
 FPokemonInfo APokemon_Parent::GetPokemonInfo()

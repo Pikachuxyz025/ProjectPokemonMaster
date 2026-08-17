@@ -146,6 +146,9 @@ virtual	void AttackEnded();
 	FPokemonUIInfo PokemonUIInfo;
 	FPokemonInfo PokemonInfo;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Navigation",meta = (Categories ="Movement.Mode"))
+	FGameplayTag NavigationMovementMode;
+
 #pragma region Attributes Setup
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -450,6 +453,12 @@ protected:
 	void SelectRandomMove();
 
 public:
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Navigation")
+	bool UsesGroundCrowdNavigation() const;
+
+	const FGameplayTag& GetNavigationMovementMode() const { return NavigationMovementMode; }
+
 	FPokemonInfo GetPokemonInfo();
 
 	UFUNCTION(BlueprintCallable)

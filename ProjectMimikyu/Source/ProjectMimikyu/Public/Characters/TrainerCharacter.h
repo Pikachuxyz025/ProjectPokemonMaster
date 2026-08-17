@@ -170,7 +170,7 @@ private:
 
 	FPokemonInfo GetCurrentPokemonInfo();
 	void BasicLineTrace(FHitResult& OutHit, const FVector& Start, const FVector& End) const;
-	virtual void GetCrowdAgentCollision(float& CylinderRadius, float& CylinderHalfHeight) const override;
+	virtual void GetCrowdAgentCollisions(float& CylinderRadius, float& CylinderHalfHeight) const override;
 	// Cached getters
 	ATrainerController* GetTC();
 	ATrainerPlayerState* GetTPS();

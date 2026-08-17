@@ -545,7 +545,7 @@ void ATrainerCharacter::BasicLineTrace(FHitResult& OutHit, const FVector& Start,
 	);
 }
 
-void ATrainerCharacter::GetCrowdAgentCollision(float& CylinderRadius, float& CylinderHalfHeight) const
+void ATrainerCharacter::GetCrowdAgentCollisions(float& CylinderRadius, float& CylinderHalfHeight) const
 {
 	const UCapsuleComponent* Capsule = GetCapsuleComponent();
 

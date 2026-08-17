@@ -137,20 +137,8 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	if(UCrowdFollowingComponent* CrowdComp=Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
-	{
-		CrowdComp->SetCrowdObstacleAvoidance(true,true);
-		CrowdComp->SetCrowdSeparation(true, true);
-		CrowdComp->SetCrowdAnticipateTurns(true, true);
-
-		CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High, true);
-	
-		CrowdComp->SetCrowdCollisionQueryRange(500.f, true);
-
-		CrowdComp->SetCrowdSeparationWeight(2.f, true);
-	}
-
 	ControlledPokemon = Cast<APokemon_Parent>(InPawn);
+
 	if (AIBehaviorTree)
 	{
 		RunBehaviorTree(AIBehaviorTree);
@@ -161,6 +149,8 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 		UE_LOG(LogTemp, Error, TEXT("OnPossess failed: InPawn is not APokemon_Parent."));
 		return;
 	}
+
+	ConfigureCrowdNavigation();
 
 	UBlackboardComponent* BB = GetBlackboardComponent();
 	if (!BB)
@@ -331,6 +321,43 @@ void APokemonAIController::SetTree(UBehaviorTree* NewBehaviorTree, APokemon_Pare
 {
 	AIBehaviorTree = NewBehaviorTree;
 	ControlledPokemon = NewPokemon;
+}
+
+void APokemonAIController::ConfigureCrowdNavigation()
+{
+	UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
+
+	if (!CrowdComp || !ControlledPokemon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ConfigureCrowdNavigation skipped: CrowdFollowingComponent or ControlledPokemon is null."));
+		return;
+	}
+
+	const bool bUsesGroundCrowd = ControlledPokemon->UsesGroundCrowdNavigation();
+
+	CrowdComp->SetCrowdObstacleAvoidance(bUsesGroundCrowd, false);
+
+	CrowdComp->SetCrowdSeparation(bUsesGroundCrowd, false);
+
+	if (bUsesGroundCrowd)
+	{
+		CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High, false);
+
+		CrowdComp->SetCrowdCollisionQueryRange(500.f, false);
+
+		CrowdComp->SetCrowdSeparationWeight(2.f, false);
+	}
+
+	CrowdComp->UpdateCrowdAgentParams();
+
+	UE_LOG(LogTemp, Warning, TEXT(
+		"[PokemonCrowd] Owner=%s | Mode=%s | "
+		"GroundCrowd=%s"
+	),
+		*GetNameSafe(ControlledPokemon),
+		*ControlledPokemon->GetNavigationMovementMode().ToString(),
+		bUsesGroundCrowd ? TEXT("True") : TEXT("False")
+	);
 }
 
 EPokemonState APokemonAIController::GetPokemonState() const
