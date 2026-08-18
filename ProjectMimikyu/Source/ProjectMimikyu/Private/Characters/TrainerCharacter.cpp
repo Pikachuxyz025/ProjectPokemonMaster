@@ -15,6 +15,8 @@
 #include "ActorComponents/PokeballSummonComponent.h"
 #include "ActorComponents/TrainerThrowableComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
+#include "ActorComponents/CrowdObstacleAgentComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
@@ -79,6 +81,7 @@ ATrainerCharacter::ATrainerCharacter()
 	TargetingComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("Targeting Component"));
 	QuickSlotComponent = CreateDefaultSubobject<UTrainerQuickSlotComponent>(TEXT("Quick Slot Component"));
 	ThrowableComponent = CreateDefaultSubobject<UTrainerThrowableComponent>(TEXT("Throwable Component"));
+	CrowdObstacleAgentComponent = CreateDefaultSubobject<UCrowdObstacleAgentComponent>(TEXT("Crowd Obstacle Agent Component"));
 
 	bReplicates = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 

@@ -183,10 +183,8 @@ virtual	void AttackEnded();
 #pragma endregion
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = "Pokemon")
-	int32 ReflectionTest = 12345;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon",meta = (Categories ="Movement.Mode"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Movement",meta = (Categories ="Movement.Mode"))
 	FGameplayTag NavigationMovementMode;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Ownership")
@@ -415,9 +413,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Stats")
 	int32 CurrentXP = 0; 
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int32 CurrentXPShere = 0;
 #pragma endregion
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

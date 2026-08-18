@@ -6,6 +6,15 @@
 #include "GameplayTagContainer.h"
 #include "PokemonAITypes.generated.h"
 
+namespace PokemonCrowdGroups
+{
+	inline constexpr int32 GroundPokemon = 1 << 0;
+	inline constexpr int32 Trainer = 1 << 1;
+
+	inline constexpr int32 GroundAvoidance = GroundPokemon | Trainer;
+}
+
+
 USTRUCT(BlueprintType)
 struct FAgentNavigationRequest
 {

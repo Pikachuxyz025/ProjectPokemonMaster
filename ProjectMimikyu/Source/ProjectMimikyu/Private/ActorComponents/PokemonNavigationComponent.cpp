@@ -475,7 +475,7 @@ bool UPokemonNavigationComponent::ProcessReturnToTrainer()
 		return false;
 	}
 
-	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : 150.f;
+	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : 250.f;
 
 	return RequestMoveToActor(TrainerActor, Radius,false);
 }
