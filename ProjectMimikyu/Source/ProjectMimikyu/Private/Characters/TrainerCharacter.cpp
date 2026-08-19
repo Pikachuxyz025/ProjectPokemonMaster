@@ -534,23 +534,6 @@ void ATrainerCharacter::BasicLineTrace(FHitResult& OutHit, const FVector& Start,
 	);
 }
 
-void ATrainerCharacter::GetCrowdAgentCollisions(float& CylinderRadius, float& CylinderHalfHeight) const
-{
-	const UCapsuleComponent* Capsule = GetCapsuleComponent();
-
-	if (!Capsule)
-	{
-		CylinderRadius = 0.f;
-		CylinderHalfHeight = 0.f;
-		return;
-	}
-
-	CylinderRadius = Capsule->GetScaledCapsuleRadius() + CrowdPersonalSpacePadding;
-	CylinderHalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-}
-
-
-
 //////////////////////////////////////////////////////////////////////////
 // Input
 
