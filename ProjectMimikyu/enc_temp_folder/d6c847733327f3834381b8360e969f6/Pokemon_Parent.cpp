@@ -67,20 +67,6 @@ APokemon_Parent::APokemon_Parent()
 	{
 		CapsuleComp->CanCharacterStepUpOn = ECB_No;
 	}
-
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationRoll = false;
-	bUseControllerRotationYaw = false;
-
-	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-	{
-		// Let the AI Controller / Path Following system determine
-		// which direction the Pokemon should face.
-		MoveComp->bOrientRotationToMovement = false;
-		MoveComp->bUseControllerDesiredRotation = true;
-
-		MoveComp->RotationRate = FRotator(0.f, 540.f, 0.f);
-	}
 }
 
 #if WITH_EDITOR

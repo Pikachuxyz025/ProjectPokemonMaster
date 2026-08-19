@@ -163,6 +163,20 @@ void ATrainerCharacter::BeginPlay()
 				)
 		);
 	}
+
+	if(UCrowdManager* CrowdManager = UCrowdManager::GetCurrent(this))
+	{
+		CrowdManager->RegisterAgent(this);
+	}
+}
+
+void ATrainerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UCrowdManager* CrowdManager = UCrowdManager::GetCurrent(this))
+	{
+		CrowdManager->UnregisterAgent(this);
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 void ATrainerCharacter::Tick(float DeltaTime)

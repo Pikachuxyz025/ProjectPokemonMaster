@@ -626,9 +626,6 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 
 	MoveRequest.SetReachTestIncludesAgentRadius(bIncludeAgentRadius);
 
-	// Normal locomotion should face its travel direction
-	MoveRequest.SetCanStrafe(false);
-
 	const FPathFollowingRequestResult Result = CachedAIController->MoveTo(MoveRequest);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
