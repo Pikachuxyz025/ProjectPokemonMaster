@@ -328,6 +328,9 @@ public:
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit);
 
 	void SetCommandTargetFromHit(const FHitResult& Hit);
+
+	void UseTravelFacing();
+	void UseTargetFacing();
 protected:
 
 #pragma region Damage Component

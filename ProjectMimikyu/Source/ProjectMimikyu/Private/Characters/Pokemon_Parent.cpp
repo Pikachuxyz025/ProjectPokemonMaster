@@ -74,10 +74,10 @@ APokemon_Parent::APokemon_Parent()
 
 	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
 	{
-		// Let the AI Controller / Path Following system determine
-		// which direction the Pokemon should face.
-		MoveComp->bOrientRotationToMovement = false;
-		MoveComp->bUseControllerDesiredRotation = true;
+		// Default Pokemon locomotion:
+		// face the direction the Pokemon is actually moving.
+		MoveComp->bOrientRotationToMovement = true;
+		MoveComp->bUseControllerDesiredRotation = false;
 
 		MoveComp->RotationRate = FRotator(0.f, 540.f, 0.f);
 	}
@@ -268,6 +268,28 @@ void APokemon_Parent::SetCommandTargetFromHit(const FHitResult& Hit)
 	if (CommandComponent)
 	{
 		CommandComponent->SetCommandTargetFromHit(Hit);
+	}
+}
+
+void APokemon_Parent::UseTravelFacing()
+{
+	bUseControllerRotationYaw =false;
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->bOrientRotationToMovement = true;
+		MoveComp->bUseControllerDesiredRotation = false;
+	}
+}
+
+void APokemon_Parent::UseTargetFacing()
+{ 
+	bUseControllerRotationYaw = false;
+
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		MoveComp->bOrientRotationToMovement = false;
+		MoveComp->bUseControllerDesiredRotation = true;
 	}
 }
 

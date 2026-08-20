@@ -107,8 +107,8 @@ void APokemonAIController::EndCombat()
 
 	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
 	{
-		MoveComp->bOrientRotationToMovement = false;
-		MoveComp->bUseControllerDesiredRotation = true;
+		MoveComp->bOrientRotationToMovement = true;
+		MoveComp->bUseControllerDesiredRotation = false;
 	}
 }
 
