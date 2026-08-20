@@ -44,7 +44,7 @@ public:
 
 #pragma region Resources
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Power Points", meta = (ClampMin = "1", UIMin = "1"));
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Power Points", meta = (ClampMin = "1", UIMin = "1"))
 	int32 BaseMaxPowerPoints = 3;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Power Points", meta = (ClampMin = "0.0", UIMin = "0.0"))
