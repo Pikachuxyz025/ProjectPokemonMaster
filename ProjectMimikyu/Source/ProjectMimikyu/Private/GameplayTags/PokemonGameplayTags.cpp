@@ -21,6 +21,16 @@ void FPokemonGameplayTags::InitializeNativeGameplayTags()
 
 #pragma region Stat Attributes
 
+	GameplayTags.Attributes_Vital_Stamina = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Attributes.Vital.Stamina"),
+			FString("Current stamina available to the Pokemon")
+		);
+
+	GameplayTags.Attributes_Stats_MaxStamina = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Attributes.Stats.MaxStamina"),
+			FString("Maximum stamina available to the Pokemon")
+		);
+
 	GameplayTags.Attributes_Stats_MaxHP = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Stats.MaxHP"),
 		FString("The max amount of damage a Pokemon can take before death")
@@ -506,6 +516,16 @@ GameplayTags.Cooldown_InputTag = UGameplayTagsManager::Get().AddNativeGameplayTa
 		FName("Data.CooldownDuration"),
 		FString("Cooldown Duration Tag")
 	);
+
+	GameplayTags.Data_StaminaCost = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Data.StaminaCost"),
+			FString("Immediate stamina cost of an action")
+		);
+
+	GameplayTags.Data_StaminaDrainPerSecond = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Data.StaminaDrainPerSecond"),
+			FString("Sustained stamina drain per second")
+		);
 
 	GameplayTags.Cooldown_InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.InputTag.1"),

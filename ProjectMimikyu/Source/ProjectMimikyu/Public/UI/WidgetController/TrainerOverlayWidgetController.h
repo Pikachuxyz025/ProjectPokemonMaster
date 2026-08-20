@@ -67,6 +67,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnPokemonStatChangedSignature OnMaxPowerPointsChanged;
 
+	UPROPERTY(BlueprintAssignable,Category= "GAS|Attributes")
+	FOnPokemonStatChangedSignature OnStaminaChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnPokemonStatChangedSignature OnExperienceChanged;
+
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonUIInfoSignature PokemonUI_InfoDelegate;
 
@@ -125,6 +131,8 @@ protected:
 	FDelegateHandle PowerPointsChangedHandle;
 	FDelegateHandle MaxPowerPointsChangedHandle;
 	FDelegateHandle LevelChangedHandle;
+	FDelegateHandle StaminaChangedHandle;
+	FDelegateHandle MaxStaminaChangedHandle;
 
 	void UnbindPokemonCallbacksFromDependencies();
 	void RebindActivePokemon(APokemon_Parent* ActivePokemon);

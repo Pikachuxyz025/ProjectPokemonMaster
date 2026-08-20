@@ -41,7 +41,21 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UPokemonGameplayAbilities> Ability;
-private:
 
+#pragma region Resources
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Power Points", meta = (ClampMin = "1", UIMin = "1"));
+	int32 BaseMaxPowerPoints = 3;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Power Points", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float PowerPointRechargeDuration = 8.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Stamina", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float BaseStaminaCost = 10.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Resources|Stamina", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float SustainedStaminaCostPerSecond = 0.f;
+
+#pragma endregion
 
 };

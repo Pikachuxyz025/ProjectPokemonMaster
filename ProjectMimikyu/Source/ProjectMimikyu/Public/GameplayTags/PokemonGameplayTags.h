@@ -16,6 +16,7 @@ public:
 
 	FGameplayTag Attributes_Vital_HP;
 	FGameplayTag Attributes_Vital_PP;
+	FGameplayTag Attributes_Vital_Stamina;
 
 	FGameplayTag Attributes_Stats_MaxHP;
 	FGameplayTag Attributes_Stats_Attack;
@@ -26,6 +27,7 @@ public:
 	FGameplayTag Attributes_Stats_XP;
 	FGameplayTag Attributes_Stats_Level;
 	FGameplayTag Attributes_Stats_FriendshipLevel;
+	FGameplayTag Attributes_Stats_MaxStamina;
 
 	FGameplayTag Attributes_Secondary_ExertionChance;
 
@@ -194,6 +196,9 @@ public:
 
 	FGameplayTag Data_PowerPointCost;
 	FGameplayTag Data_CooldownDuration;
+	FGameplayTag Data_StaminaCost;
+	FGameplayTag Data_StaminaDrainPerSecond;
+
 	TMap<FGameplayTag, FGameplayTag> InputsToCooldowns;
 	TMap<FGameplayTag, FGameplayTag> CooldownsToInputs;
 private:

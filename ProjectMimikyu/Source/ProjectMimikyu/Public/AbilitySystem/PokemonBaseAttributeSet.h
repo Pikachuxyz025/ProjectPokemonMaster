@@ -106,6 +106,13 @@ public:
 	FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, Speed);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Vital Stat Attributes")
+	FGameplayAttributeData Stamina;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, Stamina);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Vital Stat Attributes")
+	FGameplayAttributeData MaxStamina;
+	ATTRIBUTE_ACCESSORS(UPokemonBaseAttributeSet, MaxStamina);
 #pragma endregion
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_DodgeForce, Category = "Secondary Stat Attributes")
@@ -185,6 +192,12 @@ public:
 
 	UFUNCTION()
 	void OnRep_DodgeForce(const FGameplayAttributeData& OldDodgeForce) const;
+
+	UFUNCTION()
+	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+
+	UFUNCTION()	
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	void HandleIncomingXP(const FEffectProperties& Props);

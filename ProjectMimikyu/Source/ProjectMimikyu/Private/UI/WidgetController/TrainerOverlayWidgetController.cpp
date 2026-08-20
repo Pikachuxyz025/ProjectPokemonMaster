@@ -117,6 +117,23 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 				OnLevelChanged.Broadcast((int32)Data.NewValue);
 			}
 		);
+
+	MaxStaminaChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetMaxStaminaAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				GetPAS()->SetStamina(Data.NewValue);
+				OnStaminaChanged.Broadcast((int32)Data.NewValue);
+			}
+		);
+
+	StaminaChangedHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetStaminaAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnStaminaChanged.Broadcast((int32)Data.NewValue);
+			}
+		);
 }
 
 void UTrainerOverlayWidgetController::HandleQuickSlotModeChanged(ESlotType NewMode)
@@ -179,12 +196,18 @@ void UTrainerOverlayWidgetController::UnbindPokemonCallbacksFromDependencies()
 		GetPAS()->GetPowerPointsAttribute()).Remove(PowerPointsChangedHandle);
 	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
 		GetPAS()->GetCurrentLevelAttribute()).Remove(LevelChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetMaxStaminaAttribute()).Remove(MaxStaminaChangedHandle);
+	BoundPokemonASC->GetGameplayAttributeValueChangeDelegate(
+		GetPAS()->GetStaminaAttribute()).Remove(StaminaChangedHandle);
 
 	HealthChangedHandle.Reset();
 	MaxHealthChangedHandle.Reset();
 	PowerPointsChangedHandle.Reset();
 	MaxPowerPointsChangedHandle.Reset();
 	LevelChangedHandle.Reset();
+	StaminaChangedHandle.Reset();
+	MaxStaminaChangedHandle.Reset();
 
 	BoundPokemonASC = nullptr;
 }

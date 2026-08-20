@@ -23,9 +23,12 @@ UPokemonBaseAttributeSet::UPokemonBaseAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_MaxHP, GetMaxHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_XP, GetXPAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Stats_Level, GetCurrentLevelAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Stats_FriendshipLevel, GetFriendshipLevelAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Stats_MaxStamina, GetMaxStaminaAttribute);
 
 	TagsToAttributes.Add(GameplayTags.Attributes_Vital_HP, GetHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Vital_PP, GetPowerPointsAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Vital_Stamina, GetStaminaAttribute);
 }
 
 void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -44,6 +47,8 @@ void UPokemonBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, CurrentLevel , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, PowerPoints , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, MaxPowerPoints , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, Stamina , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, MaxStamina , COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, ExertionChance , COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UPokemonBaseAttributeSet, FriendshipLevel , COND_None, REPNOTIFY_Always);
@@ -65,6 +70,11 @@ void UPokemonBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	if (Attribute == GetCurrentLevelAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0, 100);
+	}
+
+	if (Attribute == GetStaminaAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0, GetMaxStamina());
 	}
 }
 
@@ -103,6 +113,11 @@ void UPokemonBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		float PriorXP = GetXP();
 		HandleIncomingXP(Props);
 		UE_LOG(LogTemp, Warning, TEXT("Changed XP on %s. XP was %f, is now %f"), *Props.TargetAvatarActor->GetName(), PriorXP, GetXP());
+	}
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		SetStamina(FMath::Clamp(GetStamina(), 0, GetMaxStamina()));
 	}
 }
 
@@ -203,6 +218,16 @@ void UPokemonBaseAttributeSet::OnRep_Defense(const FGameplayAttributeData& OldDe
 void UPokemonBaseAttributeSet::OnRep_DodgeForce(const FGameplayAttributeData& OldDodgeForce) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, DodgeForce, OldDodgeForce);
+}
+
+void UPokemonBaseAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, Stamina, OldStamina);
+}
+
+void UPokemonBaseAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UPokemonBaseAttributeSet, MaxStamina, OldMaxStamina);
 }
 
 void UPokemonBaseAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
