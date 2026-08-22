@@ -158,6 +158,12 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 		return false;
 	}
 
+	if (!MovesetComponent->CanUseMove(SelectedMove))
+	{
+		UE_LOG(LogTemp, Display, TEXT("TryCallCommand rejected: Move '%s' cannot be used."), *SelectedMove->MoveName.ToString());
+		return false;
+	}
+
 	UPokemonAbilitySystemComponent* PASC = Pokemon->GetPokemonASC();
 	if (!PASC)
 	{

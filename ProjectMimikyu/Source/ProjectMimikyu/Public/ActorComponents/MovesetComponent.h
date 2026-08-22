@@ -8,7 +8,7 @@ using namespace UP;
 #include "MovesetComponent.generated.h"
 
 class UPokemonMoveDataAsset;
-class 	UPokemonDataAsset;
+class UPokemonDataAsset;
 struct FPokemonMovesetList;
 class UPokemonGameplayAbilities;
 
@@ -63,6 +63,29 @@ public:
 	TArray<FPokemonMoveRuntimeState> MoveRuntimeStates;
 
 	void SetupMoveset(TArray< UPokemonMoveDataAsset*> NewMoveset);
+
 	void SpawnWithDataMoveSet(int32 CurrentPokemonLevel, UPokemonDataAsset* PokemonMoveList);
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Resources")
+	bool CanUseMove(const UPokemonMoveDataAsset* MoveData) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Resources")
+	bool ConsumePowerPoint(const UPokemonMoveDataAsset* MoveData);
+
+	const FPokemonMoveRuntimeState* FindRuntimeState(const UPokemonMoveDataAsset* MoveData) const;
+	FPokemonMoveRuntimeState* FindRuntimeState(const UPokemonMoveDataAsset* MoveData);
+
+protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+private:
+	void InitializeMoveRuntimeStates();
+
+	void StartPowerPointRecharge(FPokemonMoveRuntimeState& RuntimeState);
+
+	void CompletePowerPointRecharge(FGameplayTag InputTag);
+
+	float GetServerWorldTimeSeconds() const;
 };	

@@ -20,7 +20,8 @@ void UPokemonAbilitySystemComponent::AddCharacterAbilities(const TArray<UPokemon
 		{
 			continue;
 		}
-		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1);
+
+		FGameplayAbilitySpec AbilitySpec(Move->Ability, 1, INDEX_NONE, Move);
 
 		if (Move->InputTag.IsValid())
 		{

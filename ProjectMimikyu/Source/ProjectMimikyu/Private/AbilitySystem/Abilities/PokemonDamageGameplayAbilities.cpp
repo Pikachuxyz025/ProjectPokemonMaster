@@ -3,6 +3,9 @@
 
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "ActorComponents/PokemonImpactResolverComponent.h"
+#include "ActorComponents/MovesetComponent.h"
+#include "DataAssets/PokemonMoveDataAsset.h"
+#include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemComponent.h"
@@ -244,29 +247,48 @@ TArray<EDirectionPoint> UPokemonDamageGameplayAbilities::GetKeySequenceFromTag(c
 
 void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("ApplyCost CALLED on %s"), *GetName());
-	//Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
-	if (!CostGameplayEffectClass)
+	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: CostGameplayEffectClass is null for [%s]."), *GetNameSafe(this));
-		return;
-	}
-	FGameplayTag CostTag = FPokemonGameplayTags::Get().Data_PowerPointCost;
-
-	UE_LOG(LogTemp, Warning, TEXT("ApplyCost START on %s"), *GetNameSafe(this));
-	FGameplayEffectSpecHandle CostSpecHandle = MakeOutgoingGameplayEffectSpec(CostGameplayEffectClass, GetAbilityLevel());
-
-	UE_LOG(LogTemp, Warning, TEXT("ApplyCost AFTER MakeOutgoingGameplayEffectSpec on %s"), *GetNameSafe(this));
-	if (!CostSpecHandle.IsValid() || !CostSpecHandle.Data.IsValid())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: Invalid cost spec for [%s]."), *GetNameSafe(this));
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: ActorInfo or AvatarActor is null for [%s]."), *GetNameSafe(this));
 		return;
 	}
 
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get());
 
-	CostSpecHandle.Data->SetSetByCallerMagnitude(CostTag, -PowerPointCost);
-	UE_LOG(LogTemp, Warning, TEXT("ApplyCost AFTER SetSetByCallerMagnitude on %s"), *GetNameSafe(this));
-	ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, CostSpecHandle);
+	if (!Pokemon || !Pokemon->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: Pokemon is null or does not have authority for [%s]."), *GetNameSafe(this));
+		return;
+	}
+
+	UPokemonMoveDataAsset* MoveData = Cast<UPokemonMoveDataAsset>(GetSourceObject(Handle, ActorInfo));
+
+	if (!MoveData)
+	{
+		return; 
+	}
+
+	UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
+
+	if (!MovesetComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCost failed: MovesetComponent is null for [%s]."), *GetNameSafe(this));
+		return;
+	}
+
+	if (!MovesetComponent->ConsumePowerPoint(MoveData))
+	{
+		UE_LOG(
+			LogTemp,
+			Warning,
+			TEXT(
+				"[PokemonPP] ApplyCost failed | "
+				"Pokemon=%s | Move=%s"
+			),
+			*GetNameSafe(Pokemon),
+			*MoveData->MoveName.ToString()
+		);
+	}
 }
 
 void UPokemonDamageGameplayAbilities::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
@@ -313,22 +335,35 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 		return false;
 	}
 
-	const UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
+	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get());
 
-	const UPokemonBaseAttributeSet* PAS = ASC->GetSet<UPokemonBaseAttributeSet>();
-	if (!PAS)
+	if (!Pokemon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: PAS is null on [%s]."), *GetNameSafe(this));
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: AvatarActor is not a Pokemon_Parent on [%s]."), *GetNameSafe(this));
 		return false;
 	}
 
-	const float CurrentPowerPoints = PAS->GetPowerPoints();
-	if (CurrentPowerPoints < PowerPointCost)
+	const UPokemonMoveDataAsset* MoveData = Cast<UPokemonMoveDataAsset>(GetSourceObject(Handle, ActorInfo));
+
+	if (!MoveData)
 	{
-		UE_LOG(LogTemp, Display, TEXT("[PokemonDamageGameplayAbilities] CheckCost blocked: Not enough PP (%.1f/%.1f) for [%s]."), CurrentPowerPoints, PowerPointCost, *GetNameSafe(this));
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: MoveData is null on [%s]."), *GetNameSafe(this));
 		return false;
 	}
-	
+
+	const UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
+	if (!MovesetComponent	)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: MovesetComponent is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	if (!MovesetComponent->CanUseMove(MoveData))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: MovesetComponent cannot use move [%s] on [%s]."), *GetNameSafe(MoveData), *GetNameSafe(this));
+		return false;
+	}
+
 	return true;
 }
 
