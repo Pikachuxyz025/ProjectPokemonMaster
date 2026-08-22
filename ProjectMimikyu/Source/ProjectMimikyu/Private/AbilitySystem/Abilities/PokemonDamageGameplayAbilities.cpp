@@ -265,7 +265,8 @@ void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle
 
 	if (!MoveData)
 	{
-		return; 
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonPP] ApplyCost failed: SourceObject is not a PokemonMoveDataAsset | Ability=%s"), *GetNameSafe(this));
+		return;
 	}
 
 	UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
