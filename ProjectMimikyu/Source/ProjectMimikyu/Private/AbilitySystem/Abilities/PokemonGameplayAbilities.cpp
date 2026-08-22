@@ -42,6 +42,19 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	// Run the Blueprint Event ActivateAbility first.
+	// This gives the Blueprint a chance to CommitPokemonMove().
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	// CommitPokemonMove may have failed and the Blueprint may
+	// have called EndAbility().
+	if (!IsActive())
+	{
+		UE_LOG(LogTemp, Display, TEXT("[PokemonGameplayAbilities] Activation ended during Blueprint activation. Ability=%s"), *GetNameSafe(this));
+
+		return;
+	}
+
 	ResetAbilityWindowRuntimeState();
 
 	ApplyAbilityCombatStateLock();
@@ -59,7 +72,7 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (bPlayMontageOnActivate)
 	{
 		PlayAbilityMontage();
-}
+	}
 }
 
 UAbilityTask_WaitGameplayEvent* UPokemonGameplayAbilities::ListenForAbilityAnimEvent()

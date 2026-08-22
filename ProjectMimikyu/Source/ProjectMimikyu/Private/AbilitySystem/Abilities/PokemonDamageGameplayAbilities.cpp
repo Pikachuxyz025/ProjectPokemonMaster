@@ -370,6 +370,13 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 {
+	UE_LOG(LogTemp,Warning,TEXT("[PokemonPP] CommitPokemonMove ENTERED | Ability=%s | Authority=%d"),
+		*GetNameSafe(this),
+		GetAvatarActorFromActorInfo()
+		? GetAvatarActorFromActorInfo()->HasAuthority()
+		: false
+	);
+
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
 	if (!ASC)
 	{
