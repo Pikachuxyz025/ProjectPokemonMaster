@@ -164,6 +164,7 @@ void ATrainerCharacter::BeginPlay()
 				)
 		);
 	}
+
 }
 
 void ATrainerCharacter::Tick(float DeltaTime)

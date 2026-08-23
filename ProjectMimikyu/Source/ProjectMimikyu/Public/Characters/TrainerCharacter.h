@@ -37,6 +37,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPartyUpdated,TArray<APokemon_Pare
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetRegistered,const FHitResult&,CombatHitResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonSentOut, AActor*, NewPokemon);
 
+UENUM()
+enum class EPokemonFieldTransition :uint8
+{
+	None,
+	SendingOut,
+	Returning
+};
+
 UCLASS(config = Game)
 class ATrainerCharacter : public ACharacter, public IPlayerInterface
 {

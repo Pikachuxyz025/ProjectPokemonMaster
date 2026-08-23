@@ -168,7 +168,7 @@ void ATrainerPlayerState::PokemonReturned(APokemon_Parent* ReturnedPokemon)
 
 	if (ReturnedPokemon != ActivePokemon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PokemonReturned failed: %s is not the %s."), *ReturnedPokemon->GetName(), *ActivePokemon->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("PokemonReturned failed: %s is not the %s."), *GetNameSafe(ReturnedPokemon), *GetNameSafe(ActivePokemon));
 		return;
 	}
 
@@ -180,6 +180,16 @@ void ATrainerPlayerState::PokemonReturned(APokemon_Parent* ReturnedPokemon)
 	}
 
 	// Snapshot runtime attribute BEFORE the actor disappears.
+	UE_LOG(LogTemp, Display, TEXT(
+		"[PokemonField] Snapshot before recall | "
+		"Pokemon=%s | Slot=%d | HP=%.1f | Stamina=%.1f/%.1f"
+	),
+		*GetNameSafe(ReturnedPokemon),
+		ActivePokemonPartyIndex,
+		ReturnedPokemon->GetPokemonAS()->GetHealth(),
+		ReturnedPokemon->GetPokemonAS()->GetStamina(),
+		ReturnedPokemon->GetPokemonAS()->GetMaxStamina()
+	);
 	UpdatePokemonInfoInParty(ReturnedPokemon);
 
 	CurrentPartyInfo[ActivePokemonPartyIndex].PartyMode = EPartyStatus::EPS_Ready;

@@ -533,15 +533,19 @@ void APokemon_Parent::InitializeAttributesFromStartupData()
 		PAS->SetHealth(StoredMaxHealth);
 	}
 
-	UE_LOG(LogTemp, Warning,
-		TEXT("InitializeAttributesFromStartupData on %s | Level=%d XP=%d HP=%.2f/%.2f PP=%.2f/%.2f"),
+	UE_LOG(LogTemp, Warning, TEXT(
+		"InitializeAttributesFromStartupData on %s | "
+		"Level=%d XP=%d | HP=%.2f/%.2f | "
+		"Stamina=%.2f/%.2f"
+	),
 		*GetName(),
 		CurrentLevel,
 		CurrentXP,
 		PAS->GetHealth(),
 		PAS->GetMaxHealth(),
-		PAS->GetPowerPoints(),
-		PAS->GetMaxPowerPoints());
+		PAS->GetStamina(),
+		PAS->GetMaxStamina()
+	);
 }
 
 void APokemon_Parent::ReinitializeDefaultAttributes()

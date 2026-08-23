@@ -209,9 +209,15 @@ void UTrainerOverlayWidgetController::RebindActivePokemon(APokemon_Parent* Activ
 {
 	if (!IsValid(ActivePokemon))
 	{
+		// Recall is a legitimate state
+		UnbindPokemonCallbacksFromDependencies();
+
+		FWidgetControllerParams EmptyPokemonParams;
+		SetUpPokemonAbilitySystem(EmptyPokemonParams);
+
 		UE_LOG(LogTemp, Warning, TEXT("RebindActivePokemon failed: ActivePokemon invalid"));
 		return;
-}
+	}
 
 	UAbilitySystemComponent* PASC = ActivePokemon->GetAbilitySystemComponent();
 	UAttributeSet* PAS = ActivePokemon->GetAttributeSet();

@@ -20,6 +20,12 @@ void UPokemonWidgetController::SetUpPokemonAbilitySystem(const FWidgetController
 {
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;
 	AttributeSet = WCParams.AttributeSet;
+
+	// Invalidate cached objects from the previous Pokémon.
+	PokemonAbilitySystemComponent = nullptr;
+	PokemonAttributeSet = nullptr;
+	Pokemon = nullptr;
+	PokemonData = nullptr;
 }
 
 void UPokemonWidgetController::BroadcastInitialValues()
