@@ -16,6 +16,8 @@ void UTrainerOverlayWidgetController::BroadcastInitialValues()
 	OnHealthChanged.Broadcast(GetPAS()->GetHealth());
 	OnMaxPowerPointsChanged.Broadcast(GetPAS()->GetMaxPowerPoints());
 	OnPowerPointsChanged.Broadcast(GetPAS()->GetPowerPoints());
+	OnMaxStaminaChanged.Broadcast(GetPAS()->GetMaxStamina());
+	OnStaminaChanged.Broadcast(GetPAS()->GetStamina());
 }
 
 void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
@@ -123,7 +125,7 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 			[this](const FOnAttributeChangeData& Data)
 			{
 				GetPAS()->SetStamina(Data.NewValue);
-				OnStaminaChanged.Broadcast((int32)Data.NewValue);
+				OnMaxStaminaChanged.Broadcast((int32)Data.NewValue);
 			}
 		);
 

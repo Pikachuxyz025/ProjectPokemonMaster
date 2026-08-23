@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "ActorComponents/PokemonImpactResolverComponent.h"
+#include "ActorComponents/PokemonStaminaComponent.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "Characters/Pokemon_Parent.h"
@@ -269,6 +270,21 @@ void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle
 		return;
 	}
 
+	UPokemonStaminaComponent* StaminaComponent =Pokemon->GetStaminaComponent();
+
+	if (!StaminaComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT(
+			"[PokemonStamina] ApplyCost failed: "
+			"StaminaComponent missing | Pokemon=%s | Move=%s"
+		),
+			*GetNameSafe(Pokemon),
+			*MoveData->MoveName.ToString()
+		);
+
+		return;
+	}
+
 	UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
 
 	if (!MovesetComponent)
@@ -290,6 +306,22 @@ void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle
 			*MoveData->MoveName.ToString()
 		);
 	}
+
+	const float StaminaCost = FMath::Max(0.f, MoveData->BaseStaminaCost);
+
+	if (!StaminaComponent->TrySpendStamina(StaminaCost))
+	{
+		UE_LOG(LogTemp,Error,TEXT(
+				"[PokemonStamina] Unexpected spend failure after "
+				"CheckCost | Pokemon=%s | Move=%s | Cost=%.1f"
+			),
+			*GetNameSafe(Pokemon),
+			*MoveData->MoveName.ToString(),
+			StaminaCost
+		);
+
+		return;
+	}	
 }
 
 void UPokemonDamageGameplayAbilities::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
@@ -362,6 +394,29 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 	if (!MovesetComponent->CanUseMove(MoveData))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: MovesetComponent cannot use move [%s] on [%s]."), *GetNameSafe(MoveData), *GetNameSafe(this));
+		return false;
+	}
+	
+	const UPokemonStaminaComponent* StaminaComponent = Pokemon->GetStaminaComponent();
+	if (!StaminaComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDamageGameplayAbilities] CheckCost failed: StaminaComponent is null on [%s]."), *GetNameSafe(this));
+		return false;
+	}
+
+	const float StaminaCost = FMath::Max(0.f, MoveData->BaseStaminaCost);
+
+	if (!StaminaComponent->CanSpendStamina(StaminaCost))
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[PokemonStamina] Move rejected: insufficient stamina | "
+			"Pokemon=%s | Move=%s | Required=%.1f | Current=%.1f"
+		),
+			*GetNameSafe(Pokemon),
+			*MoveData->MoveName.ToString(),
+			StaminaCost,
+			StaminaComponent->GetStamina()
+		);
 		return false;
 	}
 

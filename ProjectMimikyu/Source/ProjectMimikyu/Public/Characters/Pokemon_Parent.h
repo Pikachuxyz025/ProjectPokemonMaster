@@ -42,6 +42,7 @@ class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
 class UPokemonCombatStateComponent;
 class UPokemonHitStopComponent;
+class UPokemonStaminaComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInterface, public IAbilitySystemInterface, public IPokemonCombatInterface, public ITargetableInterface
@@ -442,6 +443,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonHitStopComponent> HitStopComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components",meta=(AllowPrivateAccess="true"))
+	TObjectPtr<UPokemonStaminaComponent> StaminaComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -456,6 +460,9 @@ protected:
 	void SelectRandomMove();
 
 public:
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Stamina")
+	UPokemonStaminaComponent* GetStaminaComponent() const { return StaminaComponent; }
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Navigation")
 	bool UsesGroundCrowdNavigation() const;

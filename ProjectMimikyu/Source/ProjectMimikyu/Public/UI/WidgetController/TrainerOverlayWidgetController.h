@@ -69,6 +69,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable,Category= "GAS|Attributes")
 	FOnPokemonStatChangedSignature OnStaminaChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnPokemonStatChangedSignature OnMaxStaminaChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnPokemonStatChangedSignature OnExperienceChanged;
