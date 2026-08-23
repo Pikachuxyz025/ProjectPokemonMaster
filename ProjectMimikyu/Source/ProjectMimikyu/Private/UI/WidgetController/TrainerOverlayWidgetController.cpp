@@ -11,13 +11,26 @@
 
 void UTrainerOverlayWidgetController::BroadcastInitialValues()
 {
-	UE_LOG(LogTemp, Display, TEXT("Broadcast"));
-	OnMaxHealthChanged.Broadcast(GetPAS()->GetMaxHealth());
-	OnHealthChanged.Broadcast(GetPAS()->GetHealth());
-	OnMaxPowerPointsChanged.Broadcast(GetPAS()->GetMaxPowerPoints());
-	OnPowerPointsChanged.Broadcast(GetPAS()->GetPowerPoints());
-	OnMaxStaminaChanged.Broadcast(GetPAS()->GetMaxStamina());
-	OnStaminaChanged.Broadcast(GetPAS()->GetStamina());
+	UPokemonBaseAttributeSet* PAS = GetPAS();
+
+	if (!PAS)
+	{
+		return;
+	}
+
+	OnMaxHealthChanged.Broadcast(PAS->GetMaxHealth());
+	OnHealthChanged.Broadcast(PAS->GetHealth());
+
+	OnMaxStaminaChanged.Broadcast(PAS->GetMaxStamina());
+	OnStaminaChanged.Broadcast(PAS->GetStamina());
+
+	OnLevelChanged.Broadcast(
+		static_cast<int32>(PAS->GetCurrentLevel())
+	);
+
+	// Temporary until global PowerPoints are removed.
+	OnMaxPowerPointsChanged.Broadcast(PAS->GetMaxPowerPoints());
+	OnPowerPointsChanged.Broadcast(PAS->GetPowerPoints());
 }
 
 void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
@@ -76,7 +89,7 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 		GetPAS()->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnHealthChanged.Broadcast((int32)Data.NewValue);
+				OnHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
 
@@ -84,7 +97,7 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 		GetPAS()->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxHealthChanged.Broadcast((int32)Data.NewValue);
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
 
@@ -116,7 +129,7 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 		GetPAS()->GetMaxStaminaAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnMaxStaminaChanged.Broadcast((int32)Data.NewValue);
+				OnMaxStaminaChanged.Broadcast(Data.NewValue);
 			}
 		);
 
@@ -124,7 +137,7 @@ void UTrainerOverlayWidgetController::BindPokemonCallbacksToDependencies()
 		GetPAS()->GetStaminaAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
-				OnStaminaChanged.Broadcast((int32)Data.NewValue);
+				OnStaminaChanged.Broadcast(Data.NewValue);
 			}
 		);
 }

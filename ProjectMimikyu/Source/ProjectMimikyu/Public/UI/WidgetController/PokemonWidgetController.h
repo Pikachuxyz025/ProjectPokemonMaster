@@ -16,7 +16,8 @@ class APokemon_Parent;
 class UPokemonDataAsset;
 class ATrainerController;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonStatChangedSignature, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonLevelChangedSignature, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPokemonAttributeChangedSignature, float, NewValue);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams

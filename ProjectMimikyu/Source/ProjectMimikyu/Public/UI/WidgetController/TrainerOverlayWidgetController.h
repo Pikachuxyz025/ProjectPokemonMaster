@@ -53,28 +53,28 @@ public:
 	void BindPokemonCallbacksToDependencies();
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnHealthChanged;
+	FOnPokemonAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnLevelChanged;
+	FOnPokemonLevelChangedSignature OnLevelChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnMaxHealthChanged;
+	FOnPokemonAttributeChangedSignature OnMaxHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnPowerPointsChanged;
+	FOnPokemonLevelChangedSignature OnPowerPointsChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnMaxPowerPointsChanged;
+	FOnPokemonLevelChangedSignature OnMaxPowerPointsChanged;
 
 	UPROPERTY(BlueprintAssignable,Category= "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnStaminaChanged;
+	FOnPokemonAttributeChangedSignature OnStaminaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnMaxStaminaChanged;
+	FOnPokemonAttributeChangedSignature OnMaxStaminaChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPokemonStatChangedSignature OnExperienceChanged;
+	FOnPokemonLevelChangedSignature OnExperienceChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FPokemonUIInfoSignature PokemonUI_InfoDelegate;
