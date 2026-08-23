@@ -48,6 +48,9 @@ private:
 
 	int32 PartyIndex = 0;
 
+	UPROPERTY(VisibleInstanceOnly, Category = "Pokemon Party")
+	int32 ActivePokemonPartyIndex = INDEX_NONE;
+
 	UPROPERTY(ReplicatedUsing=OnRep_ActivePokemon,VisibleAnywhere, Category = "Pokemon Party")
 	TObjectPtr<APokemon_Parent> ActivePokemon;
 
@@ -77,6 +80,7 @@ public:
 	FPokemonInfo GetCurrentPokemonInfo();
 	void PokemonIsOut(APokemon_Parent* PokemonOut);
 	void UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon);
+	void PokemonReturned(APokemon_Parent* ReturnedPokemon);
 	void SetTrainerIsInCombat(AActor* CombatTarget);
 	bool IsCurrentPartyEmpty() const { return CurrentPartyInfo.Num() == 0; }
 };

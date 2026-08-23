@@ -129,26 +129,68 @@ void ATrainerPlayerState::PokemonIsOut(APokemon_Parent* PokemonOut)
 			PartyIndex, CurrentPartyInfo.Num());
 		return;
 	}
+	ActivePokemonPartyIndex = PartyIndex;
 
 	CurrentPartyInfo[PartyIndex].PartyMode = EPartyStatus::EPS_Out;
 
 	ActivePokemon = PokemonOut;
-	ActivePokemonInfo = CurrentPartyInfo[PartyIndex];
 
-	UE_LOG(LogTemp, Warning, TEXT("PokemonIsOut broadcasting. HasAuthority=%d LocalRole=%d PartyIndex=%d ActivePokemon=%s"),
-		HasAuthority() ? 1 : 0,
-		(int32)GetLocalRole(),
-		PartyIndex,
-		*GetNameSafe(ActivePokemon));
+	ActivePokemonInfo = CurrentPartyInfo[ActivePokemonPartyIndex];
+
 	OnPokemonActiveDelegate.Broadcast(ActivePokemon);
 }
 
 void ATrainerPlayerState::UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon)
 {
-	if (AlteredPokemon == ActivePokemon)
+	if (AlteredPokemon != ActivePokemon)
 	{
-		CurrentPartyInfo[PartyIndex].UpdateStoredAttributeValues(ActivePokemon->GetPokemonAS()->GetAttributeTagValues());
+		return;
 	}
+
+	if (!CurrentPartyInfo.IsValidIndex(ActivePokemonPartyIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UpdatePokemonInfoInParty failed: invalid ActivePokemonPartyIndex %d, PartySize %d"),
+			ActivePokemonPartyIndex, CurrentPartyInfo.Num());
+		return;
+	}
+
+	CurrentPartyInfo[ActivePokemonPartyIndex].UpdateStoredAttributeValues(ActivePokemon->GetPokemonAS()->GetAttributeTagValues());
+
+	ActivePokemonInfo = CurrentPartyInfo[ActivePokemonPartyIndex];
+}
+
+void ATrainerPlayerState::PokemonReturned(APokemon_Parent* ReturnedPokemon)
+{
+	if (!HasAuthority() || !IsValid(ReturnedPokemon))
+	{
+		return;
+	}
+
+	if (ReturnedPokemon != ActivePokemon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PokemonReturned failed: %s is not the %s."), *ReturnedPokemon->GetName(), *ActivePokemon->GetName());
+		return;
+	}
+
+	if (!CurrentPartyInfo.IsValidIndex(ActivePokemonPartyIndex))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PokemonReturned failed: invalid ActivePokemonPartyIndex %d, PartySize %d"),
+			ActivePokemonPartyIndex, CurrentPartyInfo.Num());
+		return;
+	}
+
+	// Snapshot runtime attribute BEFORE the actor disappears.
+	UpdatePokemonInfoInParty(ReturnedPokemon);
+
+	CurrentPartyInfo[ActivePokemonPartyIndex].PartyMode = EPartyStatus::EPS_Ready;
+
+	ActivePokemon = nullptr;
+	ActivePokemonInfo = FPokemonInfo();
+
+	ActivePokemonPartyIndex = INDEX_NONE;
+
+	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
+	OnPokemonActiveDelegate.Broadcast(nullptr);
 }
 
 void ATrainerPlayerState::SetTrainerIsInCombat(AActor* CombatTarget)

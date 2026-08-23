@@ -102,6 +102,7 @@ void ATrainerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void ATrainerCharacter::OnRep_CurrentPokemon()
 {
+	PokemonASC = nullptr;
 }
 
 void ATrainerCharacter::SetOverlappingItem(AItem* NewItem)
@@ -223,6 +224,7 @@ void ATrainerCharacter::ServerRequestReturnCurrentPokemon_Implementation()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerRequestReturnCurrentPokemon failed: No current Pokemon to return."));
 		CurrentPokemon = nullptr;
+		PokemonASC = nullptr;
 		return;
 	}
 
@@ -232,15 +234,15 @@ void ATrainerCharacter::ServerRequestReturnCurrentPokemon_Implementation()
 		return;
 	}
 
+	APokemon_Parent* PokemonToReturn = CurrentPokemon;
 
-	ATrainerPlayerState* TPS = GetTPS();
-	if (TPS)
+	if (ATrainerPlayerState* TPS = GetTPS())
 	{
-		//TPS->PokemonReturned(CurrentPokemon);
+		TPS->PokemonReturned(PokemonToReturn);
 	}
 
-	APokemon_Parent* PokemonToReturn = CurrentPokemon;
 	CurrentPokemon = nullptr;
+	PokemonASC = nullptr;
 
 	PokemonToReturn->Return();
 }
@@ -895,42 +897,58 @@ void ATrainerCharacter::ThrowSelectedInventoryItemInput()
 
 void ATrainerCharacter::ThrowSelectedPokemonInput()
 {
-	if (!IsLocallyControlled() || !QuickSlotComponent||!FollowCamera)
+	if (!IsLocallyControlled() || !QuickSlotComponent)
 	{
 		return;
 	}
 
 	if (QuickSlotComponent->GetCurrentSlotMode() != ESlotType::EST_PokemonParty)
 	{
-		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedPokemonInput failed: Current Quick Slot is not set to Pokemon Party"));
+		UE_LOG(LogTemp, Display, TEXT(
+			"ThrowSelectedPokemonInput failed: "
+			"Current Quick Slot is not set to Pokemon Party"
+		)
+		);
+
+		return;
+	}
+
+	// The Pokémon Party action is a toggle.
+	//
+	// Active Pokémon: recall it.
+	//
+	// No active Pokémon: throw the selected Pokémon's ball.
+
+	if (IsValid(CurrentPokemon))
+	{
+		ServerRequestReturnCurrentPokemon();
+		return;
+	}
+
+	// Everything below this point belongs to SEND OUT only.
+
+	if (!FollowCamera || !TargetingComponent)
+	{
 		return;
 	}
 
 	if (!QuickSlotComponent->HasSelectedPokemonInfo())
 	{
-		UE_LOG(LogTemp, Display, TEXT("ThrowSelectedPokemonInput failed: No Pokemon in selected Quick Slot"));
+		UE_LOG(LogTemp, Display, TEXT(
+			"ThrowSelectedPokemonInput failed: "
+			"No Pokemon in selected Quick Slot"
+		)
+		);
 		return;
 	}
 
-	//FVector Start = GetActorLocation();
-	//FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
-
-	//ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
-
-	const FVector SpawnLocation = 
-		GetActorLocation() + GetActorForwardVector() * PokeballSpawnForwardOffset + FVector::UpVector * PokeballSpawnUpOffset;
+	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * PokeballSpawnForwardOffset + FVector::UpVector * PokeballSpawnUpOffset;
 
 	FAimData AimData;
-	TargetingComponent->BuildProjectileAimData
-	(
-		SpawnLocation,
-		PokeballThrowSpeed,
-		PokeballCollisionRadius,
-		AimData
-	);
+
+	TargetingComponent->BuildProjectileAimData(SpawnLocation, PokeballThrowSpeed, PokeballCollisionRadius, AimData);
 
 	ServerThrowSelectedPokemon(QuickSlotComponent->GetPartyIndex(), AimData);
-
 }
 
 void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName ItemID, const FAimData& AimData)
@@ -969,16 +987,7 @@ void ATrainerCharacter::ServerThrowSelectedInventoryItem_Implementation(FName It
 	FPokeballThrowRequest ThrowRequest;
 	ThrowRequest.UseMode = EPokeballUseMode::Capture;
 	
-	ThrowThrowableProjectile(ItemInfo->ProjectileClass,AimData,ThrowRequest);
-}
-
-void ATrainerCharacter::ComeOnOut()
-{
-	if (!IsLocallyControlled())
-		return;
-	FVector Start = GetActorLocation();
-	FVector End = Start + (FollowCamera->GetForwardVector() * CatchingDistance);
-	ServerRequestSendOutPokemon(QuickSlotComponent->GetPartyIndex(), Start, End);
+	ThrowThrowableProjectile(ItemInfo->ProjectileClass, AimData, ThrowRequest);
 }
 
 void ATrainerCharacter::CommandPokemonMove()
@@ -1171,6 +1180,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
+	PokemonASC = nullptr;
 
 	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);

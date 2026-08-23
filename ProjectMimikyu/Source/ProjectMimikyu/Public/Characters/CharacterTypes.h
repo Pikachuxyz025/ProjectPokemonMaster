@@ -540,6 +540,19 @@ struct FPokemonInfo
 		return 0;
 	}
 
+	bool HasStoredAttributeValue(const FGameplayTag& InTag) const
+	{
+		for (const FGameplayTagFloatPair& Pair : StoredAttributeValues)
+		{
+			if (Pair.Tag == InTag)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	float GetStoredAttributeValue(const FGameplayTag& InTag) const
 	{
 		for (const FGameplayTagFloatPair& Pair : StoredAttributeValues)

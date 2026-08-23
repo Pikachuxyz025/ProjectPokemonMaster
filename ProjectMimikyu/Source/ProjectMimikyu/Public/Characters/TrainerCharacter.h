@@ -99,7 +99,6 @@ protected:
 	void ThrowSelectedPokemonInput();
 
 	void CatchPokemon();
-	void ComeOnOut();
 	void CommandPokemonMove();
 
 	void ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd);
