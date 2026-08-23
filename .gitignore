@@ -367,3 +367,6 @@ ProjectMimikyu/Binaries/
 ProjectMimikyu/DerivedDataCache/
 ProjectMimikyu/Intermediate/
 ProjectMimikyu/Saved/
+
+# Unreal / Live Coding temporary files
+ProjectMimikyu/enc_temp_folder/

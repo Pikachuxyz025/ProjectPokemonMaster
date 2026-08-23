@@ -471,6 +471,7 @@ void APokemon_Parent::InitializeAttributesFromStartupData()
 		InitializeDefaultAttributes();
 		return;
 	}
+
 	CurrentLevel = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
 	CurrentXP = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
 	EffortLevelBaseMap = StartupPokemonInfo.GetStoredEffortLevelBaseValuesMap();
@@ -490,6 +491,7 @@ void APokemon_Parent::InitializeAttributesFromStartupData()
 	const float StoredMaxHealth = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_MaxHP);
 	const float StoredLevel = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_Level);
 	const float StoredXP = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Stats_XP);
+	const float StoredStamina = StartupPokemonInfo.GetStoredAttributeValue(GameplayTags.Attributes_Vital_Stamina);
 
 	// Restore values that should persist from party state.
 	// Only set them if they exist in the stored data.
@@ -508,6 +510,11 @@ void APokemon_Parent::InitializeAttributesFromStartupData()
 	if (StoredMaxHealth > 0.f)
 	{
 		PAS->SetMaxHealth(StoredMaxHealth);
+	}
+
+	if (StoredStamina > 0.f)
+	{
+		PAS->SetStamina(FMath::Clamp(StoredStamina, 0.f, PAS->GetMaxStamina()));
 	}
 
 	if (StoredHealth > 0.f)

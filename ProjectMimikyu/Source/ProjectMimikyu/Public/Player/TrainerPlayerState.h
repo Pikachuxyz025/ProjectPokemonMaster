@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	void OnRep_CurrentPartyInfo();
 
+	UFUNCTION()
+	void OnRep_ActivePokemon();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private:
 
@@ -45,7 +48,7 @@ private:
 
 	int32 PartyIndex = 0;
 
-	UPROPERTY(Replicated,VisibleAnywhere, Category = "Pokemon Party")
+	UPROPERTY(ReplicatedUsing=OnRep_ActivePokemon,VisibleAnywhere, Category = "Pokemon Party")
 	TObjectPtr<APokemon_Parent> ActivePokemon;
 
 	UPROPERTY(Replicated, VisibleAnywhere, Category = "Pokemon Party")

@@ -23,6 +23,11 @@ void ATrainerPlayerState::OnRep_CurrentPartyInfo()
 	OnPartyInfoUpdatedDelegate.Broadcast(CurrentPartyInfo);
 }
 
+void ATrainerPlayerState::OnRep_ActivePokemon()
+{
+	OnPokemonActiveDelegate.Broadcast(ActivePokemon);
+}
+
 void ATrainerPlayerState::AddToParty(APokemon_Parent* NewPokemon, TSubclassOf<APokeBall> PokeballClass)
 {
 	if (!HasAuthority() || !IsValid(NewPokemon))
@@ -126,14 +131,16 @@ void ATrainerPlayerState::PokemonIsOut(APokemon_Parent* PokemonOut)
 	}
 
 	CurrentPartyInfo[PartyIndex].PartyMode = EPartyStatus::EPS_Out;
+
 	ActivePokemon = PokemonOut;
 	ActivePokemonInfo = CurrentPartyInfo[PartyIndex];
+
 	UE_LOG(LogTemp, Warning, TEXT("PokemonIsOut broadcasting. HasAuthority=%d LocalRole=%d PartyIndex=%d ActivePokemon=%s"),
 		HasAuthority() ? 1 : 0,
 		(int32)GetLocalRole(),
 		PartyIndex,
 		*GetNameSafe(ActivePokemon));
-	//OnPokemonActiveDelegate.Broadcast(ActivePokemon);
+	OnPokemonActiveDelegate.Broadcast(ActivePokemon);
 }
 
 void ATrainerPlayerState::UpdatePokemonInfoInParty(APokemon_Parent* AlteredPokemon)
