@@ -162,7 +162,7 @@ virtual	void AttackEnded();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultStatAttributes;
-
+// needed an ex
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DependentStatAttributes;
 
