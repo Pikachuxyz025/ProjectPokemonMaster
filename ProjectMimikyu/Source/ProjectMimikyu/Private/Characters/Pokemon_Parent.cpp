@@ -547,11 +547,13 @@ void APokemon_Parent::InitAbilityActorInfo()
 		return;
 	}
 
-	InitializeDefaultAttributes();
-
 	if (bSpawnedFromPartyStartup && bHasStartupPokemonInfo)
 	{
 		InitializeAttributesFromStartupData();
+	}
+	else
+	{
+		InitializeDefaultAttributes();
 	}
 }
 

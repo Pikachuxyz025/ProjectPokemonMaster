@@ -29,6 +29,13 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 		}
 	);
 
+	//GetTPS()->OnPartyInfoUpdatedDelegate.AddLambda(
+	//	[this](TArray<FPokemonInfo> PokemonParty)
+	//	{
+	//		PokemonInfoDelegate.Broadcast(PokemonParty);
+	//	}
+	//);
+
 	GetTPS()->OnPokemonActiveDelegate.AddLambda(
 		[this](APokemon_Parent* ActivePokemon)
 		{

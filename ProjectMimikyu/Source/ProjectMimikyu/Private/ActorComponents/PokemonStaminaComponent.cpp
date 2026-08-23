@@ -77,7 +77,6 @@ bool  UPokemonStaminaComponent::CanSpendStamina(float Cost) const
 
 bool UPokemonStaminaComponent::TrySpendStamina(float Cost)
 {
-
 	AActor* Owner = GetOwner();
 
 	if (!Owner || !Owner->HasAuthority())
@@ -103,6 +102,7 @@ bool UPokemonStaminaComponent::TrySpendStamina(float Cost)
 			SafeCost,
 			GetStamina()
 		);
+		return false;
 	}
 
 	AbilitySystemComponent->ApplyModToAttribute(UPokemonBaseAttributeSet::GetStaminaAttribute(), EGameplayModOp::Additive, -SafeCost);
@@ -187,7 +187,7 @@ void UPokemonStaminaComponent::RegenerateStamina()
 		return;
 	}
 
-	const float TickInterval = StaminaRegenRate * FMath::Max(0.01f, StaminaRegenTickInterval);
+	const float TickInterval = FMath::Max(0.01f, StaminaRegenTickInterval);
 
 	const float RegenAmount = StaminaRegenRate * TickInterval;
 
