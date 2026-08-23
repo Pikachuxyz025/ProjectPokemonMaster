@@ -164,6 +164,7 @@ private:
 	void ThrowThrowableProjectile(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, const FPokeballThrowRequest& ThrowRequest);
 	void ThrowPokeballForCapture(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, EPokeballType PokeballType);
 	void ThrowPokeballForSummon(TSubclassOf<AProjectile> ProjectileClass, const FAimData& AimData, int32 PartySlotIndex);
+	void ResetPokemonFieldTransition(const TCHAR* Reason);
 
 	bool TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const;
 

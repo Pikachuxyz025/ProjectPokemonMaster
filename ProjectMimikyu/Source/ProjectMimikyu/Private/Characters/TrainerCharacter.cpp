@@ -105,6 +105,16 @@ void ATrainerCharacter::OnRep_CurrentPokemon()
 	PokemonASC = nullptr;
 }
 
+void ATrainerCharacter::ResetPokemonFieldTransition(const TCHAR* Reason)
+{
+	UE_LOG(LogTemp, Display, TEXT("[PokemonField] Transition reset | Previous=%d | Reason=%s"),
+		static_cast<int32>(PokemonFieldTransitionState),
+		Reason
+	);
+
+	PokemonFieldTransitionState = EPokemonFieldTransition::None;
+}
+
 void ATrainerCharacter::SetOverlappingItem(AItem* NewItem)
 {
 	OverlappingItem = NewItem;
@@ -750,13 +760,16 @@ void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> Projec
 	if (!ProjectileClass || !TargetingComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: ProjectileClass or TargetingComponent is null."));
+
+		if (ThrowRequest.UseMode == EPokeballUseMode::Summon)
+		{
+			ResetPokemonFieldTransition(TEXT("Summon projectile prerequisites are invalid"));
+		}
+
 		return;
 	}
 
-	const FVector SpawnLocation =
-		GetActorLocation()
-		+ GetActorForwardVector() * PokeballSpawnForwardOffset
-		+ FVector::UpVector * PokeballSpawnUpOffset;
+	const FVector SpawnLocation =GetActorLocation()+ GetActorForwardVector() * PokeballSpawnForwardOffset+ FVector::UpVector * PokeballSpawnUpOffset;
 
 	FVector LaunchVelocity;
 
@@ -785,31 +798,67 @@ void ATrainerCharacter::ThrowThrowableProjectile(TSubclassOf<AProjectile> Projec
 	if (!Projectile)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerThrowPokeball failed: Could not spawn projectile."));
+
+		if (ThrowRequest.UseMode == EPokeballUseMode::Summon)
+		{
+			ResetPokemonFieldTransition(TEXT("Summon projectile spawn failed"));
+		}
+
 		return;
 	}
 
-	// If projectile is a Pokeball, initialize it for the capture component
-	if (APokeBall* Pokeball = Cast<APokeBall>(Projectile))
+	APokeBall* Pokeball = Cast<APokeBall>(Projectile);
+
+	if (Pokeball)
 	{
 		Pokeball->SetPokeballType(ThrowRequest.PokeballType);
+	}
 
-		switch (ThrowRequest.UseMode)
+	switch (ThrowRequest.UseMode)
+	{
+	case EPokeballUseMode::Capture:
+	{
+		if (Pokeball)
 		{
-		case EPokeballUseMode::Capture:
 			Pokeball->InitializeForCapture(this);
-			break;
-
-		case EPokeballUseMode::Summon:
-			Pokeball->InitializeForSummon(this, ThrowRequest.SummonTargetLocation,ThrowRequest.PartySlotIndex);
-			if (UPokeballSummonComponent* SummonComponent = Pokeball->GetSummonComponent())
-			{
-				SummonComponent->OnPokeBallSummonLanded.AddDynamic(this, &ATrainerCharacter::HandlePokeballSummonLanded);
-			}
-			break;
-
-		default:
-			break;
 		}
+		break;
+	}
+
+	case EPokeballUseMode::Summon:
+	{
+		if (!Pokeball)
+		{
+			UE_LOG(LogTemp, Error,TEXT("[PokemonField] Summon failed: Projectile is not an APokeBall."));
+
+			Projectile->Destroy();
+			ResetPokemonFieldTransition(TEXT("Summon projectile is not an APokeBall"));
+
+			return;
+		}
+
+		Pokeball->InitializeForSummon(this,ThrowRequest.SummonTargetLocation,ThrowRequest.PartySlotIndex);
+
+		UPokeballSummonComponent* SummonComponent =
+			Pokeball->GetSummonComponent();
+
+		if (!SummonComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("[PokemonField] Summon failed: Pokeball has no SummonComponent."));
+
+			Projectile->Destroy();
+			ResetPokemonFieldTransition(TEXT("Summon Pokeball has no SummonComponent"));
+
+			return;
+		}
+
+		SummonComponent->OnPokeBallSummonLanded.AddDynamic(this,&ATrainerCharacter::HandlePokeballSummonLanded);
+
+		break;
+	}
+
+	default:
+		break;
 	}
 
 	// If Projectile has LaunchProjectile function, call it with the calculated LaunchVelocity
@@ -1060,6 +1109,18 @@ void ATrainerCharacter::CommandPokemonMove()
 
 void ATrainerCharacter::ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (PokemonFieldTransitionState != EPokemonFieldTransition::None)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerRequestSendOutPokemon failed: Pokemon field transition is already in progress. %d"), static_cast<int32>(PokemonFieldTransitionState));
+		return;
+	}
+
+	PokemonFieldTransitionState = EPokemonFieldTransition::SendingOut;
 	HandleSendOutPokemonAtIndex(SelectedPartyIndex, TraceStart, TraceEnd);
 }
 
@@ -1136,6 +1197,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	if (!TPS || TPS->IsCurrentPartyEmpty() || CurrentPokemon)
 	{
 		UE_LOG(LogTemp, Display, TEXT("No Pokemon To Throw"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out has no available Pokemon"));
 		return;
 	}
 
@@ -1144,12 +1206,14 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Invalid Party Index"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out party index is invalid"));
 		return;
 	}
 
 	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Pokemon Not Ready"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out Pokemon is not ready"));
 		return;
 	}
 
@@ -1158,12 +1222,14 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	if (!TryBuildPokemonSpawnTransform(TraceStart, TraceEnd, SpawnTransform))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Invalid Spawn Location"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out spawn location is invalid"));
 		return;
 	}
 
 	if (!PokemonOut.StoredPokemonDataAsset || !PokemonOut.StoredPokemonDataAsset->StoredPokemonClass)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Invalid Pokemon Data Asset"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out Pokemon data is invalid"));
 		return;
 	}
 
@@ -1181,6 +1247,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	if (!IChooseYou)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Failed to spawn Pokemon"));
+		ResetPokemonFieldTransition(TEXT("Legacy send-out Pokemon actor spawn failed"));
 		return;
 	}
 
@@ -1194,7 +1261,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);
 
-	PokemonFieldTransitionState = EPokemonFieldTransition::None;
+	ResetPokemonFieldTransition(TEXT("Legacy send-out completed"));
 }
 
 void ATrainerCharacter::HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal)
@@ -1231,6 +1298,8 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 	if (!TPS || TPS->IsCurrentPartyEmpty() || CurrentPokemon)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: No Pokemon To Throw"));
+		ResetPokemonFieldTransition(TEXT("Send-out has no available Pokemon"));
+
 		return;
 	}
 
@@ -1239,18 +1308,21 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 	if (!TPS->GetPokemonInfoAtPartyIndex(SelectedPartyIndex, PokemonOut))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Invalid Party Index"));
+		ResetPokemonFieldTransition(TEXT("Send-out party index is invalid"));
 		return;
 	}
 
 	if (PokemonOut.PartyMode != EPartyStatus::EPS_Ready)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Pokemon Not Ready"));
+		ResetPokemonFieldTransition(TEXT("Send-out Pokemon is not ready"));
 		return;
 	}
 
 	if (!PokemonOut.StoredPokemonDataAsset || !PokemonOut.StoredPokemonDataAsset->StoredPokemonClass)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Invalid Pokemon Data Asset"));
+		ResetPokemonFieldTransition(TEXT("Send-out Pokemon data is invalid"));
 		return;
 	}
 
@@ -1268,6 +1340,7 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 	if (!IChooseYou)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[TrainerCharacter] HandleSendOutPokemonAtTransform: Failed to spawn Pokemon"));
+		ResetPokemonFieldTransition(TEXT("Send-out Pokemon actor spawn failed"));
 		return;
 	}
 
@@ -1276,9 +1349,12 @@ void ATrainerCharacter::HandleSendOutPokemonAtTransform(int32 SelectedPartyIndex
 	IChooseYou->FinishSpawning(SpawnTransform);
 
 	CurrentPokemon = IChooseYou;
+	PokemonASC = nullptr;
 
 	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);
+
+	ResetPokemonFieldTransition(TEXT("Send-out completed"));
 }
 
 #pragma endregion
