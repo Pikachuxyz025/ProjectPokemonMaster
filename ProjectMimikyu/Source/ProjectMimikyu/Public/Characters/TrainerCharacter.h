@@ -327,6 +327,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Pokemon Party")
 	bool bHasPokemon = false;
 
+	EPokemonFieldTransition PokemonFieldTransitionState = EPokemonFieldTransition::None;
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<AItem> OverlappingItem;
 

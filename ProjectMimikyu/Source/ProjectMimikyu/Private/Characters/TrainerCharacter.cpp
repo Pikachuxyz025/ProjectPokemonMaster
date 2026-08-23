@@ -356,6 +356,12 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 		return;
 	}
 
+	if (PokemonFieldTransitionState != EPokemonFieldTransition::None)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedPokemon failed: Pokemon field transition is already in progress. %d"), static_cast<int32>(PokemonFieldTransitionState));
+		return;
+	}
+
 	if (IsValid(CurrentPokemon))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerThrowSelectedPokemon failed: Current Pokemon is already out."));
@@ -378,6 +384,8 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 
 	// TODO: Replace this with PokemonOut.CaptureBallType once that exist
 	const EPokeballType CaptureBallType = EPokeballType::EPT_None;
+
+	PokemonFieldTransitionState = EPokemonFieldTransition::SendingOut;
 
 	ThrowPokeballForSummon(PokemonOut.CapturedBallClass, AimData, SelectedPartyIndex);
 
@@ -1185,6 +1193,8 @@ void ATrainerCharacter::HandleSendOutPokemonAtIndex(int32 SelectedPartyIndex, co
 
 	TPS->SetPartyIndexClamped(SelectedPartyIndex);
 	TPS->PokemonIsOut(IChooseYou);
+
+	PokemonFieldTransitionState = EPokemonFieldTransition::None;
 }
 
 void ATrainerCharacter::HandleSendOutPokemonAtLanding(int32 SelectedPartyIndex, const FVector& LandingLocation, const FVector& LandingNormal)
