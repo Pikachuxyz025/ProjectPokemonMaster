@@ -568,6 +568,7 @@ void APokemon_Parent::InitAbilityActorInfo()
 	if (bSpawnedFromPartyStartup && bHasStartupPokemonInfo)
 	{
 		InitializeAttributesFromStartupData();
+		StaminaComponent->RefreshRegenerationState();
 	}
 	else
 	{

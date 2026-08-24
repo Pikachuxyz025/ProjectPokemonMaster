@@ -32,6 +32,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Stamina")
 	bool IsRegenerating() const;
 
+	void RefreshRegenerationState();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

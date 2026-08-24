@@ -223,6 +223,31 @@ void UPokemonStaminaComponent::StopRegeneration()
 	GetWorld()->GetTimerManager().ClearTimer(RegenTickTimerHandle);
 }
 
+void UPokemonStaminaComponent::RefreshRegenerationState()
+{
+	const UPokemonBaseAttributeSet* AttributeSet = GetStaminaAttributesSet();
+
+	if (!AbilitySystemComponent || !AttributeSet)
+	{
+		return;
+	}
+
+	const float CurrentStamina = AttributeSet->GetStamina();
+	const float MaxStamina = AttributeSet->GetMaxStamina();
+
+	if (MaxStamina <= 0.0f)
+	{
+		return;
+	}
+
+	if (CurrentStamina >= MaxStamina)
+	{
+		StopRegeneration();
+		return;
+	}
+	BeginRegeneration();
+}
+
 bool UPokemonStaminaComponent::IsRegenerating() const
 {
 	return GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(RegenTickTimerHandle);

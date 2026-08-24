@@ -98,7 +98,7 @@ public:
 	FOnEventActivatedSignature SwapSlotModesDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnEventActivatedSignature PokemonActivatedDelegate;
+	FOnEventActivatedSignature PokemonBattleReadyDelegate;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnKeyInputSignature KeyDirectionDelegate;

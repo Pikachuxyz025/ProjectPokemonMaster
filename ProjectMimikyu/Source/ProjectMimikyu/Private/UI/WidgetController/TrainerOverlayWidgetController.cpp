@@ -52,7 +52,7 @@ void UTrainerOverlayWidgetController::BindCallbacksToDependencies()
 	GetTPS()->PokemonActiveInCombat.AddLambda(
 		[this]()
 		{
-			PokemonActivatedDelegate.Broadcast();
+			PokemonBattleReadyDelegate.Broadcast();
 		}
 	);
 
