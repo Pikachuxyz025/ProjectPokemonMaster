@@ -40,13 +40,13 @@ public:
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
 	void SetCommandTargetFromHit(const FHitResult& Hit);
 
-	bool ResolveDodgeDirection(FGameplayTag DirectionTag, FVector& OutWorldDirection) const;
+	bool ResolveDodgeDirection(FGameplayTag DirectionTag, const FVector& ReferenceForward, FVector& OutWorldDirection) const;
 
 	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData) const;
 	void SetCommandTargetFromAimData(const FAimData& AimData);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
-	void Dodge(FGameplayTag DodgeDirectionTag);
+	void Dodge(FGameplayTag NewDodgeDirectionTag,const FVector& ReferenceForward);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	void EndDodge();

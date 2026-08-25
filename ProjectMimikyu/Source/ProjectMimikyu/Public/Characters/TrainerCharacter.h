@@ -154,7 +154,7 @@ private:
 	void ServerCommandPokemonMove(FVector RequestedLocation);
 
 	UFUNCTION(Server, Reliable)
-	void ServerCommandPokemonDodge(FGameplayTag DodgeDirectionTag);
+	void ServerCommandPokemonDodge(FGameplayTag DodgeDirectionTag,FVector ReferenceForward);
 
 	// Server gameplay implementation
 	bool TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const;

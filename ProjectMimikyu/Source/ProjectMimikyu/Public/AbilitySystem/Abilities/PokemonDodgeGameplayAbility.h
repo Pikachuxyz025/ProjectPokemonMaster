@@ -18,6 +18,9 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const override;
+
+	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
 protected:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
@@ -56,6 +59,9 @@ protected:
 	// By default the Pokemon does not retain the dash velocity after the dodge finishes
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dodge|Movement")
 	bool bStopOnFinish = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dodge|Stamina",meta =(ClampMin="0.0"))
+	float DodgeStaminaCost = 20.f;
 
 private:
 	bool bSavedOrientRotationToMovement = false;

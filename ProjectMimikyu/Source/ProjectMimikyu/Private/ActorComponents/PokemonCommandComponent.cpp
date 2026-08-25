@@ -237,23 +237,20 @@ void UPokemonCommandComponent::AttackEnded()
 	Pokemon->OnAttackEnd.Broadcast();
 }
 
-bool UPokemonCommandComponent::ResolveDodgeDirection(FGameplayTag DirectionTag, FVector& OutWorldDirection) const
+bool UPokemonCommandComponent::ResolveDodgeDirection(FGameplayTag DirectionTag, const FVector& ReferenceForward, FVector& OutWorldDirection) const
 {
 	OutWorldDirection = FVector::ZeroVector;
 
-	APokemon_Parent* Pokemon = GetOwnerPokemon();
+	FVector Forward = ReferenceForward;	
+	Forward.Z = 0.f;
 
-	if (!Pokemon)
+	if (!Forward.Normalize())
 	{
-		UE_LOG(LogTemp, Error, TEXT("ResolveDodgeDirection failed: OwnerPokemon is null."));
+		UE_LOG(LogTemp, Warning, TEXT("ResolveDodgeDirection failed: ReferenceForward is zero vector."));
 		return false;
 	}
 
-	FVector Forward = Pokemon->GetActorForwardVector();
-	FVector Right = Pokemon->GetActorRightVector();
-
-	Forward.Z = 0.f;
-	Right.Z = 0.f;
+	const FVector Right = FVector::CrossProduct(FVector::UpVector, Forward).GetSafeNormal();
 
 	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
 
@@ -282,7 +279,7 @@ bool UPokemonCommandComponent::ResolveDodgeDirection(FGameplayTag DirectionTag, 
 	return OutWorldDirection.Normalize();
 }
 
-void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag)
+void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag, const FVector& ReferenceForward)
 {
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
 	if (!Pokemon)
@@ -305,7 +302,7 @@ void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag)
 
 	FVector SafeDirection;
 
-	if(!ResolveDodgeDirection(NewDodgeDirectionTag, SafeDirection))
+	if(!ResolveDodgeDirection(NewDodgeDirectionTag, ReferenceForward, SafeDirection))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Dodge rejected: Failed To Resolve. Direction | Pokemon=%s | Tag=%s"), *GetNameSafe(Pokemon), *NewDodgeDirectionTag.ToString());
 		return;

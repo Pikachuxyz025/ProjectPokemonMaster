@@ -401,7 +401,7 @@ void ATrainerCharacter::ServerThrowSelectedPokemon_Implementation(int32 Selected
 
 }
 
-void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag DodgeDirectionTag)
+void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag DodgeDirectionTag, FVector ReferenceForward)
 {
 	if(!CurrentPokemon)
 	{
@@ -440,7 +440,15 @@ void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag Do
 		return;
 	}
 
-	CurrentPokemon->Dodge(DodgeDirectionTag);
+	ReferenceForward.Z = 0.f;
+
+	if (!ReferenceForward.Normalize())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerCommandPokemonDodge failed: invalid reference direction."));
+		return;
+	}
+
+	CurrentPokemon->Dodge(DodgeDirectionTag, ReferenceForward);
 }
 
 bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
@@ -740,7 +748,13 @@ void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 		return;
 	}
 
-	ServerCommandPokemonDodge(GameplayTag);
+	FRotator ViewRotation = GetControlRotation();
+	ViewRotation.Pitch = 0.f;
+	ViewRotation.Roll = 0.f;
+
+	const FVector ViewForward = ViewRotation.Vector().GetSafeNormal2D();
+
+	ServerCommandPokemonDodge(GameplayTag, ViewForward);
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)

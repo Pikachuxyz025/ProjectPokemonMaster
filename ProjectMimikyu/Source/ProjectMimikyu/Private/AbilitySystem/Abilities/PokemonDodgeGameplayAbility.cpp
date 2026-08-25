@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/PokemonDodgeGameplayAbility.h"
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "ActorComponents/PokemonStaminaComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "GameFramework/RootMotionSource.h"
@@ -185,6 +186,74 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 	DodgeTask->ReadyForActivation();
 
 	UE_LOG(LogTemp, Display, TEXT("[PokemonDodgeGameplayAbility] ActivateAbility succeeded: DodgeTask started on [%s]. | Pokemon=%s | Direction=(%.2f %.2f %.2f) | Strength=%.1f | Duration=%.2f"), *GetNameSafe(this), *GetNameSafe(Pokemon), DodgeDirection.X, DodgeDirection.Y, DodgeDirection.Z, DodgeStrength, DodgeDuration);
+}
+
+bool UPokemonDodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if(!Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid())
+	{
+		return false;
+	}
+
+	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get());
+
+	if (!Pokemon)
+	{
+		return false;
+	}
+
+	const UPokemonStaminaComponent* StaminaComp = Pokemon->GetStaminaComponent();
+
+	if (!StaminaComp)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[PokemonDodgeGameplayAbility] CheckCost failed: StaminaComponent is null on [%s]."), *GetNameSafe(Pokemon));
+		return false;
+	}
+
+	const float SafeCost = FMath::Max(0.f, DodgeStaminaCost);
+
+	if (!StaminaComp->CanSpendStamina(SafeCost))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDodgeGameplayAbility] CheckCost failed: Not enough stamina on [%s]. | Cost=%.1f | CurrentStamina=%.1f"), *GetNameSafe(Pokemon), SafeCost, StaminaComp->GetStamina());
+		return false;
+	}
+
+	return true;
+}
+
+void UPokemonDodgeGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
+	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
+
+	if(!ActorInfo||!ActorInfo->AvatarActor.IsValid())
+	{
+		return;
+	}
+
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get());
+	if (!Pokemon||!Pokemon->HasAuthority())
+	{
+		return;
+	}
+
+	UPokemonStaminaComponent* StaminaComp = Pokemon->GetStaminaComponent();
+
+	if (!StaminaComp)
+	{
+		return;
+	}
+
+	const float SafeCost = FMath::Max(0.f, DodgeStaminaCost);
+
+	if (!StaminaComp->TrySpendStamina(SafeCost))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[PokemonDodgeGameplayAbility] ApplyCost failed: Not enough stamina on [%s]. | Cost=%.1f | CurrentStamina=%.1f"), *GetNameSafe(Pokemon), SafeCost, StaminaComp->GetStamina());
+	}
 }
 
 float UPokemonDodgeGameplayAbility::ResolveDodgeStrength(APokemon_Parent* Pokemon) const
