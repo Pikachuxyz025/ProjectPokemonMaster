@@ -206,12 +206,29 @@ void UProjectileAbility::OnAbilityAnimEventReceived_Implementation(FGameplayEven
 AActor* UProjectileAbility::ResolveProjectileTargetActor() const
 {
 	APokemon_Parent* SourcePokemon = Cast<APokemon_Parent>(GetAvatarActorFromActorInfo());
+
 	if (!SourcePokemon)
 	{
 		return nullptr;
 	}
 
+	const FPokemonCommandTarget& CommandTarget = SourcePokemon->GetCommandTarget();
+
+	if (CommandTarget.IsValidTarget())
+	{
+		if (CommandTarget.HasTargetActor())
+		{
+			return CommandTarget.TargetActor;
+		}
+
+		// A valid Location/Environment command deliberately
+		// does not require an actor.
+		return nullptr;
+	}
+
+	// AI / Legacy fallback: If the source Pokemon has a combat target, use that.
 	APokemonAIController* PokemonController = Cast<APokemonAIController>(SourcePokemon->GetController());
+
 	if (!PokemonController)
 	{
 		return nullptr;
@@ -222,19 +239,32 @@ AActor* UProjectileAbility::ResolveProjectileTargetActor() const
 
 FVector UProjectileAbility::ResolveProjectileTargetLocation(AActor* TargetActor) const
 {
+	APokemon_Parent* SourcePokemon = Cast<APokemon_Parent>(GetAvatarActorFromActorInfo());
+
+	if (SourcePokemon)
+	{
+		const FPokemonCommandTarget& CommandTarget = SourcePokemon->GetCommandTarget();
+
+		if (CommandTarget.IsValidTarget())
+		{
+			return CommandTarget.TargetLocation;
+		}
+	}
+
+	// AI / Legacy fallback: If the source Pokemon has a combat target, use that.
 	if (IsValid(TargetActor))
 	{
 		return TargetActor->GetActorLocation();
 	}
 
 	AActor* SourceActor = GetAvatarActorFromActorInfo();
+
 	if (!SourceActor)
 	{
 		return FVector::ZeroVector;
 	}
 
-	return SourceActor->GetActorLocation() +
-		SourceActor->GetActorForwardVector() * FallbackProjectileTargetDistance;
+	return SourceActor->GetActorLocation() + SourceActor->GetActorForwardVector() * FallbackProjectileTargetDistance;
 }
 
 #if WITH_EDITOR

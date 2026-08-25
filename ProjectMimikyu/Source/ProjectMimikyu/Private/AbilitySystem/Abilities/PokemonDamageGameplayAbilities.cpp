@@ -123,8 +123,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 
 	const FPokemonGameplayTags& GameplayTags = FPokemonGameplayTags::Get();
 
-	const FGameplayTag EffectiveMoveTypeTag =
-		MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.MoveTypeTag;
+	const FGameplayTag EffectiveMoveTypeTag = MoveTypeTag.IsValid() ? MoveTypeTag : DamageEffectParams.MoveTypeTag;
 
 	float SourceOffenseStat = 0.f;
 	float TargetDefenseStat = 0.f;
@@ -295,13 +294,10 @@ void UPokemonDamageGameplayAbilities::ApplyCost(const FGameplayAbilitySpecHandle
 
 	if (!MovesetComponent->ConsumePowerPoint(MoveData))
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT(
-				"[PokemonPP] ApplyCost failed | "
-				"Pokemon=%s | Move=%s"
-			),
+		UE_LOG(LogTemp, Warning, TEXT(
+			"[PokemonPP] ApplyCost failed | "
+			"Pokemon=%s | Move=%s"
+		),
 			*GetNameSafe(Pokemon),
 			*MoveData->MoveName.ToString()
 		);
