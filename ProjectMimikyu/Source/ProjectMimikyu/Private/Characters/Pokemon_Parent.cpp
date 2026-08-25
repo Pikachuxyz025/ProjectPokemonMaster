@@ -315,6 +315,8 @@ void APokemon_Parent::CallCommand(int32 MoveIndex)
 		return;
 	}
 
+	UE_LOG(LogTemp, Display, TEXT("CallCommand: Pokemon=%s MoveIndex=%d"), *GetNameSafe(this), MoveIndex);
+
 	if (CommandComponent)
 	{
 		CommandComponent->TryCallCommand(MoveIndex);

@@ -183,6 +183,7 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 
 	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 	{
+		UE_LOG(LogTemp, Display, TEXT("TryCallCommand: Setting current move in PokemonController's blackboard. Move='%s'"), *SelectedMove->MoveName.ToString());
 		PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
 	}
 	else
