@@ -212,6 +212,8 @@ public:
 	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData);
 	void SetCommandTargetFromAimData(const FAimData& AimData);
 
+
+
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()
 	void PrepareForFieldRemoval();

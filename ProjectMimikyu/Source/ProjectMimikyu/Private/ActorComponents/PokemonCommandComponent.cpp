@@ -226,7 +226,9 @@ void UPokemonCommandComponent::AttackEnded()
 
 	ActivePokemonMove = nullptr;
 
-	UE_LOG(LogTemp, Display, TEXT("Attack Ended"));
+	ClearCommandTarget();
+
+	UE_LOG(LogTemp, Display, TEXT("[PokemonCommand] Attack ended | Pokemon=%s | Command target cleared"), *GetNameSafe(Pokemon));
 
 	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 	{
@@ -302,7 +304,7 @@ void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag, co
 
 	FVector SafeDirection;
 
-	if(!ResolveDodgeDirection(NewDodgeDirectionTag, ReferenceForward, SafeDirection))
+	if (!ResolveDodgeDirection(NewDodgeDirectionTag, ReferenceForward, SafeDirection))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Dodge rejected: Failed To Resolve. Direction | Pokemon=%s | Tag=%s"), *GetNameSafe(Pokemon), *NewDodgeDirectionTag.ToString());
 		return;
@@ -325,28 +327,17 @@ void UPokemonCommandComponent::Dodge(const FGameplayTag NewDodgeDirectionTag, co
 		5.f
 	);
 
-	UE_LOG(
-		LogTemp,
-		Display,
-		TEXT(
-			"[PokemonDodge] Resolved | "
-			"Pokemon=%s | "
-			"Tag=%s | "
-			"PokemonForward=(%.2f %.2f) | "
-			"PokemonRight=(%.2f %.2f) | "
-			"Dodge=(%.2f %.2f)"
-		),
+	UE_LOG(LogTemp, Display, TEXT(
+		"[PokemonDodge] Dodge requested | "
+		"Pokemon=%s | "
+		"Direction=(%.2f %.2f %.2f) | "
+		"Tag=%s"
+	),
 		*GetNameSafe(Pokemon),
-		*NewDodgeDirectionTag.ToString(),
-
-		Pokemon->GetActorForwardVector().X,
-		Pokemon->GetActorForwardVector().Y,
-
-		Pokemon->GetActorRightVector().X,
-		Pokemon->GetActorRightVector().Y,
-
 		SafeDirection.X,
-		SafeDirection.Y
+		SafeDirection.Y,
+		SafeDirection.Z,
+		*NewDodgeDirectionTag.ToString()
 	);
 
 	UPokemonAbilitySystemComponent* PASC = Pokemon->GetPokemonASC();

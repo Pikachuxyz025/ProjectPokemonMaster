@@ -718,6 +718,27 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		return;
 	}
 
+	CurrentPokemon->SetCommandTargetFromAimData(AimData);
+
+	const FPokemonCommandTarget& CommandTarget = CurrentPokemon->GetCommandTarget();
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[PokemonAimCommand] Accepted | "
+		"Pokemon=%s | "
+		"MoveIndex=%d | "
+		"AimMode=%d | "
+		"TargetType=%d | "
+		"TargetActor=%s | "
+		"TargetLocation=%s"
+	),
+		*GetNameSafe(CurrentPokemon),
+		MoveIndex,
+		static_cast<int32>(AimData.AimMode),
+		static_cast<int32>(CommandTarget.TargetType),
+		*GetNameSafe(CommandTarget.TargetActor),
+		*CommandTarget.TargetLocation.ToString()
+	);
+
 	CurrentPokemon->CallCommand(MoveIndex);
 }
 
