@@ -115,6 +115,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Brain")
 	void StopPokemonDecisionMaking(const FString& Reason);
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Brain")
+	void RestartPokemonDecisionMaking();
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Combat")
 	void EndCombat();
 private:

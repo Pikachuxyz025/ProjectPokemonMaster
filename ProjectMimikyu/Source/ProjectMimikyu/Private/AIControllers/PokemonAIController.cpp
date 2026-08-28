@@ -75,6 +75,14 @@ void APokemonAIController::StopPokemonDecisionMaking(const FString& Reason)
 	}
 }
 
+void APokemonAIController::RestartPokemonDecisionMaking()
+{
+	if (PokemonDecisionComponent)
+	{
+		PokemonDecisionComponent->RestartDecisionMaking();
+	}
+}
+
 void APokemonAIController::EndCombat()
 {
 	ClearCombatTarget();

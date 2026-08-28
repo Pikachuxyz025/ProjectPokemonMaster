@@ -8,7 +8,9 @@
 #include "Characters/TrainerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "AIControllers/TrainerController.h"
+#include "AIControllers/PokemonAIController.h"
 #include "DataAssets/PokemonDataAsset.h"
+
 #include "ActorComponents/TargetingComponent.h"
 #include "ActorComponents/InventorySystemComponent.h"
 #include "ActorComponents/TrainerQuickSlotComponent.h"
@@ -17,6 +19,7 @@
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/CrowdObstacleAgentComponent.h"
+
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
@@ -451,6 +454,71 @@ void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag Do
 	CurrentPokemon->Dodge(DodgeDirectionTag, ReferenceForward);
 }
 
+void ATrainerCharacter::ServerTogglePokemonCombatMode_Implementation()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!IsValid(CurrentPokemon))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerTogglePokemonCombatMode failed: No current Pokemon."));
+		return;
+	}
+
+	if (!CurrentPokemon->IsOwnedByTrainer(this))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerTogglePokemonCombatMode failed: Current Pokemon does not belong to this trainer."));
+		return;
+	}
+
+	if (!CurrentPokemon->CanAct())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerTogglePokemonCombatMode failed: Current Pokemon cannot act."));
+		return;
+	}
+
+	if (CurrentPokemon->GetIsCommandActive())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerTogglePokemonCombatMode failed: Current Pokemon is already executing a command."));
+		return;
+	}
+
+	APokemonAIController* PokemonController = CurrentPokemon->GetPokemonController();
+
+	if (!PokemonController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerTogglePokemonCombatMode failed: Current Pokemon does not have a valid AI Controller."));
+		return;
+	}
+
+	const EPokemonState CurrentState = PokemonController->GetPokemonState();
+
+	const FPokemonGameplayTags& StateTags = FPokemonGameplayTags::Get();
+
+	// 
+	// COMBATIVE -> PASSIVE
+	//
+	if (CurrentState == EPokemonState::EPS_Combative)
+	{
+		PokemonController->EndCombat();
+		PokemonController->RestartPokemonDecisionMaking();
+
+		UE_LOG(LogTemp, Display, TEXT("Pokemon %s has been set to PASSIVE mode."), *CurrentPokemon->GetName());
+	}
+	//
+	// ANY NORMAL NON-COMBATIVE STATE -> COMBATIVE
+	//
+	PokemonController->StopPokemonDecisionMaking(TEXT("Trainer manual combat mode test"));
+
+	PokemonController->SetPokemonState(EPokemonState::EPS_Combative);
+
+	PokemonController->SetBlackboardDesiredCombatMode(StateTags.AI_Decision_Combat_Engage);
+
+	UE_LOG(LogTemp, Display, TEXT("[PokemonMode] Manual mode changed | Pokemon=%s | Mode=Combative | DesiredCombatMode=%s"), *GetNameSafe(CurrentPokemon), *StateTags.AI_Decision_Combat_Engage.ToString());
+}
+
 bool ATrainerCharacter::TryGetCatchTarget(const FVector& TraceStart, const FVector& TraceEnd, APokemon_Parent*& OutPokemon) const
 {
 	OutPokemon = nullptr;
@@ -621,6 +689,11 @@ void ATrainerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
 		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
+
+		if (IA_TogglePokemonCombatMode)
+		{
+			PokemonInput->BindAction(IA_TogglePokemonCombatMode, ETriggerEvent::Completed, this, &ATrainerCharacter::TogglePokemonCombatMode);	
+		}
 	}
 }
 
@@ -1140,6 +1213,21 @@ void ATrainerCharacter::CommandPokemonMove()
 	);
 
 	ServerCommandPokemonMove(RawAimLocation);
+}
+
+void ATrainerCharacter::TogglePokemonCombatMode()
+{
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
+
+	if(!IsValid(CurrentPokemon))
+	{
+		UE_LOG(LogTemp, Display, TEXT("TogglePokemonCombatMode failed: No current Pokemon."));
+		return;
+	}
+	ServerTogglePokemonCombatMode();
 }
 
 void ATrainerCharacter::ServerRequestSendOutPokemon_Implementation(int32 SelectedPartyIndex, FVector TraceStart, FVector TraceEnd)
