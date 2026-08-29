@@ -104,6 +104,8 @@ FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromAimData(co
 	}
 
 	Result.TargetType = EPokemonCommandTargetType::None;
+	Result.TargetPointTag = AimData.TargetPointTag;
+
 	return Result;
 }
 

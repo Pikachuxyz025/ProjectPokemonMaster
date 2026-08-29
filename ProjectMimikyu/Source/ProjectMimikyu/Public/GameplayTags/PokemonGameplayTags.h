@@ -106,6 +106,16 @@ public:
 
 #pragma endregion
 
+#pragma region Target Points
+
+	FGameplayTag Target_Point_Head;
+	FGameplayTag Target_Point_Torso;
+	FGameplayTag Target_Point_Rear;
+	FGameplayTag Target_Point_Left;
+	FGameplayTag Target_Point_Right;
+
+#pragma endregion
+
 #pragma region Ability Windows
 
 	FGameplayTag Ability_Window;

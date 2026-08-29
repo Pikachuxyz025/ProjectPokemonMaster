@@ -41,6 +41,9 @@ public:
 	TObjectPtr<AActor> TargetActor = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pokemon|Command")
+	FGameplayTag TargetPointTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pokemon|Command")
 	FVector TargetLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pokemon|Command")

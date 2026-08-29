@@ -32,6 +32,9 @@ struct FAimData
 	EAimContext AimContext = EAimContext::Combat;
 
 	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag TargetPointTag;
+
+	UPROPERTY(BlueprintReadOnly)
 	TWeakObjectPtr<AActor> TargetActor = nullptr;
 
 	UPROPERTY(BlueprintReadOnly)

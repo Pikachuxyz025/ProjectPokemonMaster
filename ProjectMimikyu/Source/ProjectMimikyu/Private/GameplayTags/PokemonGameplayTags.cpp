@@ -704,25 +704,34 @@ GameplayTags.XP_Fluctuating = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FString("Continuous drop over time")
 	);
 
-	//GameplayTags.PokemonMoves_Spread_Formation = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	//	FName("PokemonMoves.Spread.Formation"),
-	//	FString("Formation/Summon-Based Moves")
-	//);
+#pragma region Target Points
 
-	//GameplayTags.PokemonMoves_Spread_Formation_Clone = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	//	FName("PokemonMoves.Spread.Formation.Clone"),
-	//	FString("Double Team, Illusion-like effects")
-	//);
+	GameplayTags.Target_Point_Head = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Target.Point.Head"),
+			FString("Primary head strike point")
+		);
 
-	//GameplayTags.PokemonMoves_Spread_Formation_Circle = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	//	FName("PokemonMoves.Spread.Formation.Circle"),
-	//	FString("Summons in a circle around user")
-	//);
+	GameplayTags.Target_Point_Torso = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Target.Point.Torso"),
+			FString("Primary torso strike point")
+		);
 
-	//GameplayTags.PokemonMoves_Spread_Formation_Line = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	//	FName("PokemonMoves.Spread.Formation.Line"),
-	//	FString("Summons in a line formation")
-	//);
+	GameplayTags.Target_Point_Rear = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Target.Point.Rear"),
+			FString("Rear body strike point")
+		);
+
+	GameplayTags.Target_Point_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Target.Point.Left"),
+			FString("Generic left-side strike point")
+		);
+
+	GameplayTags.Target_Point_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Target.Point.Right"),
+			FString("Generic right-side strike point")
+		);
+
+#pragma endregion
 
 	GameplayTags.Projectiles_Modifier = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Projectiles.Modifier"),

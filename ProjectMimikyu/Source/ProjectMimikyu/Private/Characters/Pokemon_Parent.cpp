@@ -19,6 +19,7 @@
 #include "ActorComponents/PokemonCombatStateComponent.h"
 #include "ActorComponents/PokemonHitStopComponent.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
+#include "ActorComponents/TargetableComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -56,6 +57,7 @@ APokemon_Parent::APokemon_Parent()
 	CombatStateComponent = CreateDefaultSubobject<UPokemonCombatStateComponent>("Combat State Component");
 	HitStopComponent = CreateDefaultSubobject<UPokemonHitStopComponent>("Hit Stop Component");
 	StaminaComponent = CreateDefaultSubobject<UPokemonStaminaComponent>("Stamina Component");
+	TargetComponent = CreateDefaultSubobject<UTargetableComponent>("Target Component");
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
