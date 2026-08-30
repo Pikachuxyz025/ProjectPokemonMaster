@@ -16,7 +16,7 @@ struct FPokemonTargetPointDefinition
 
     // Stable gameplay identity:
 	// Target.Point.Head, Target.Point.Torso, etc.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Point")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting|Point",meta = (Categories = "Target.Point"))
 	FGameplayTag PointTag;
 
 	// Can be either a socket or a skeletal bone.
@@ -68,6 +68,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Targeting|Points")
 	bool GetTargetPointWorldLocation(const FGameplayTag& PointTag, FVector& OutWorldLocation) const;
 
+	UFUNCTION(BlueprintCallable, Category = "Targeting|Points|Debug")
+	void DebugDrawTargetPoints(float Duration = 5.f) const;
 protected:
 
 	virtual void BeginPlay() override;

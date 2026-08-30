@@ -4,6 +4,7 @@
 UTargetableComponent::UTargetableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
 }
 
 void UTargetableComponent::BeginPlay()
@@ -16,6 +17,8 @@ void UTargetableComponent::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TargetableComponent: No SkeletalMeshComponent found on %s"), *GetOwner()->GetName());
 	}
+
+	DebugDrawTargetPoints(5.f);
 }
 
 bool UTargetableComponent::ResolveDefinitionLocation(const FPokemonTargetPointDefinition& Definition, FVector& OutWorldLocation) const
@@ -101,4 +104,26 @@ bool UTargetableComponent::GetTargetPointWorldLocation(const FGameplayTag& Point
 	}
 
 	return false;
+}
+
+void UTargetableComponent::DebugDrawTargetPoints(float Duration) const
+{
+	if(!GetWorld())
+	{
+		return;
+	}
+
+	for (const FPokemonTargetPointDefinition& Point : TargetPoints)
+	{
+		FVector WorldLocation;
+		if (!ResolveDefinitionLocation(Point, WorldLocation))
+		{
+			continue;
+		}
+		const FColor DrawColor = Point.bEnabled ? FColor::Green : FColor::Red;
+
+		DrawDebugSphere(GetWorld(), WorldLocation, 10.f, 12, DrawColor, false, Duration);
+
+		DrawDebugString(GetWorld(), WorldLocation + FVector(0.f, 0.f, 20.f), Point.PointTag.ToString(), nullptr, FColor::White, Duration, false, 1.f);
+	}
 }
