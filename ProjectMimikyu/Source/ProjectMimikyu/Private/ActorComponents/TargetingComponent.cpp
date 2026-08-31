@@ -2,6 +2,7 @@
 
 
 #include "ActorComponents/TargetingComponent.h"
+#include "ActorComponents/TargetableComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Interfaces/TargetableInterface.h"
 #include "Characters/TrainerCharacter.h"
@@ -181,9 +182,44 @@ FAimData UTargetingComponent::BuildAimData() const
 
 		if (TryGetDirectCrosshairTarget(CrosshairTarget, CrosshairAimLocation))
 		{
+			const FVector RawAimLocation = CrosshairAimLocation;
+
 			AimData.TargetActor = CrosshairTarget;
-			AimData.AimWorldLocation = CrosshairAimLocation;
-			AimData.AimDirection = (CrosshairAimLocation - GetOwner()->GetActorLocation()).GetSafeNormal();
+			AimData.AimWorldLocation = RawAimLocation;
+
+			//
+			// Semantic actor target:
+			// attempt to snap the player's raw mesh hit
+			// to an authored target point.
+			if (UTargetableComponent* Targetable = CrosshairTarget->FindComponentByClass<UTargetableComponent>())
+			{
+				FResolvedPokemonTargetPoint ResolvedPoint;
+
+				if (Targetable->ResolveNearestTargetPoint(RawAimLocation, ResolvedPoint))
+				{
+					AimData.TargetPointTag = ResolvedPoint.PointTag;
+
+					AimData.AimWorldLocation = ResolvedPoint.WorldLocation;
+
+					UE_LOG(LogTemp, Display, TEXT("[TargetPoint] Resolved | Actor=%s | Raw=(%.1f %.1f %.1f) | Point=%s | Resolved=(%.1f %.1f %.1f)"),
+						*GetNameSafe(CrosshairTarget),
+
+						RawAimLocation.X,
+						RawAimLocation.Y,
+						RawAimLocation.Z,
+
+						*ResolvedPoint
+						.PointTag
+						.ToString(),
+
+						ResolvedPoint.WorldLocation.X,
+						ResolvedPoint.WorldLocation.Y,
+						ResolvedPoint.WorldLocation.Z
+					);
+				}
+			}
+
+			AimData.AimDirection = (AimData.AimWorldLocation - GetOwner()->GetActorLocation()).GetSafeNormal();
 			AimData.bHasValidTarget = true;
 			AimData.bUsingAimAssist = false;
 

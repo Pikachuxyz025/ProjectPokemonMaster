@@ -64,7 +64,7 @@ bool UTargetableComponent::ResolveNearestTargetPoint(const FVector& RawAimLocati
 
 		const float DistanceSquared = FVector::DistSquared(RawAimLocation, PointLocation);
 
-		if (Point.SelectionRadius > 0.f || DistanceSquared > FMath::Square(Point.SelectionRadius))
+		if (Point.SelectionRadius > 0.f && DistanceSquared > FMath::Square(Point.SelectionRadius))
 		{
 			continue;
 		}

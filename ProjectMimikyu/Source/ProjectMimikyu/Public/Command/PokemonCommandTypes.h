@@ -90,10 +90,15 @@ public:
 	void Clear()
 	{
 		TargetType = EPokemonCommandTargetType::None;
+
 		TargetActor = nullptr;
+
 		TargetLocation = FVector::ZeroVector;
 		ImpactNormal = FVector::UpVector;
+
 		CommandTag = FGameplayTag();
+		TargetPointTag = FGameplayTag();
+
 		bHasHitResult = false;
 		HitResult = FHitResult();
 	}
