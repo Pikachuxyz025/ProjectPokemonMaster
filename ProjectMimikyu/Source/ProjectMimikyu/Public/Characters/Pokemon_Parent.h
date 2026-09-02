@@ -213,7 +213,8 @@ public:
 	FPokemonCommandTarget BuildCommandTargetFromAimData(const FAimData& AimData);
 	void SetCommandTargetFromAimData(const FAimData& AimData);
 
-
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	bool ResolveCurrrentCommandTargetLocation(FVector& OutTargetLocation) const;
 
 #pragma region Server-Authoritative Gameplay
 	UFUNCTION()

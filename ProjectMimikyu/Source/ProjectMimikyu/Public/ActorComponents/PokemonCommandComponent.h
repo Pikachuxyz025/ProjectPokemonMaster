@@ -37,6 +37,9 @@ public:
 
 	const FPokemonCommandTarget& GetCommandTarget() const { return CurrentCommandTarget; }
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	bool ResolveCurrentCommandTargetLocation(FVector& OutTargetLocation) const;
+
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit) const;
 	void SetCommandTargetFromHit(const FHitResult& Hit);
 

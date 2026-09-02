@@ -243,11 +243,11 @@ FVector UProjectileAbility::ResolveProjectileTargetLocation(AActor* TargetActor)
 
 	if (SourcePokemon)
 	{
-		const FPokemonCommandTarget& CommandTarget = SourcePokemon->GetCommandTarget();
+		FVector ResolvedCommandLocation;
 
-		if (CommandTarget.IsValidTarget())
+		if (SourcePokemon->ResolveCurrrentCommandTargetLocation(ResolvedCommandLocation))
 		{
-			return CommandTarget.TargetLocation;
+			return ResolvedCommandLocation;
 		}
 	}
 

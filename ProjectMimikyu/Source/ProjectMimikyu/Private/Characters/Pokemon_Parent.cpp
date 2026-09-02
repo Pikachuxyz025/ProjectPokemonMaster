@@ -662,6 +662,17 @@ void APokemon_Parent::SetCommandTargetFromAimData(const FAimData& AimData)
 	}
 }
 
+bool APokemon_Parent::ResolveCurrrentCommandTargetLocation(FVector& OutTargetLocation) const
+{
+	if (!CommandComponent)
+	{
+		OutTargetLocation = FVector::ZeroVector;
+		return false;
+	}
+
+	return CommandComponent->ResolveCurrentCommandTargetLocation(OutTargetLocation);
+}
+
 void APokemon_Parent::PrepareForFieldRemoval()
 {
 	if (FieldPresenceComponent)

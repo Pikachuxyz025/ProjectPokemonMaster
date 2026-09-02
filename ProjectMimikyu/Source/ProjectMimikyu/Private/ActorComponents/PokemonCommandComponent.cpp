@@ -2,6 +2,7 @@
 
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/TargetableComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -35,6 +36,82 @@ void UPokemonCommandComponent::SetCommandTarget(const FPokemonCommandTarget& New
 void UPokemonCommandComponent::ClearCommandTarget()
 {
 	CurrentCommandTarget.Clear();
+}
+
+bool UPokemonCommandComponent::ResolveCurrentCommandTargetLocation(FVector& OutTargetLocation) const
+{
+	OutTargetLocation = FVector::ZeroVector;
+
+	if (!CurrentCommandTarget.IsValidTarget())
+	{
+		return false;
+	}
+
+	AActor* TargetActor = CurrentCommandTarget.TargetActor.Get();
+
+	//
+	// Actor + semantic target point:
+	// preserve the point identity from command time,
+	// but resolve it's CURRENT world transform
+	//
+	if (IsValid(TargetActor) && CurrentCommandTarget.TargetPointTag.IsValid())
+	{
+		if (UTargetableComponent* Targetable = TargetActor->FindComponentByClass<UTargetableComponent>())
+		{
+			FVector CurrentPointLocation;
+
+			if (Targetable->GetTargetPointWorldLocation(CurrentCommandTarget.TargetPointTag, CurrentPointLocation))
+			{
+				OutTargetLocation = CurrentPointLocation;
+				UE_LOG(LogTemp, Display, TEXT(
+					"[PokemonCommandTarget] "
+					"Dynamic point resolved | "
+					"Target=%s | Point=%s | "
+					"CommandLocation=%s | "
+					"CurrentLocation=%s"
+				),
+					*GetNameSafe(TargetActor),
+					*CurrentCommandTarget.TargetPointTag.ToString(),
+					*CurrentCommandTarget.TargetLocation.ToString(),
+					*OutTargetLocation.ToString()
+				);
+				return true;
+			}
+		}
+
+		//
+        // The point disappeared or became invalid.
+        // Fall back to the command-time location rather
+        // than invalidating the entire move.
+        //
+
+		if (CurrentCommandTarget.HasTargetLocation())
+		{
+			OutTargetLocation = CurrentCommandTarget.TargetLocation;
+			return true;
+		}
+	}
+
+	//
+    // Location / Environment command:
+    // world-space snapshot remains authoritative.
+    //
+	if (CurrentCommandTarget.HasTargetLocation())
+	{
+		OutTargetLocation =	CurrentCommandTarget.TargetLocation;
+		return true;
+	}
+
+	//
+	// Last actor-only fallback.
+	//
+	if (IsValid(TargetActor))
+	{
+		OutTargetLocation =	TargetActor->GetActorLocation();
+		return true;
+	}
+
+	return false;
 }
 
 FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromHit(const FHitResult& Hit) const

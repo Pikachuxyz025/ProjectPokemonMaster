@@ -802,6 +802,7 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		"AimMode=%d | "
 		"TargetType=%d | "
 		"TargetActor=%s | "
+		"TargetPoint=%s | "
 		"TargetLocation=%s"
 	),
 		*GetNameSafe(CurrentPokemon),
@@ -809,6 +810,7 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		static_cast<int32>(AimData.AimMode),
 		static_cast<int32>(CommandTarget.TargetType),
 		*GetNameSafe(CommandTarget.TargetActor),
+		*CommandTarget.TargetPointTag.ToString(),
 		*CommandTarget.TargetLocation.ToString()
 	);
 
