@@ -654,7 +654,35 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	// Normal locomotion should face its travel direction
 	MoveRequest.SetCanStrafe(false);
 
-	const FPathFollowingRequestResult Result = CachedAIController->MoveTo(MoveRequest);
+	FNavPathSharedPtr DebugPath;
+
+	const FPathFollowingRequestResult Result = CachedAIController->MoveTo(MoveRequest, &DebugPath);
+
+	const TCHAR* ResultName = 
+		Result.Code == EPathFollowingRequestResult::Failed ? TEXT("Failed")
+		: Result.Code == EPathFollowingRequestResult::AlreadyAtGoal 
+		         ? TEXT("AlreadyAtGoal")
+		         : TEXT("RequestSuccessful");
+
+	const FString PathEnd = DebugPath.IsValid() && DebugPath->GetPathPoints().Num() > 0
+		? DebugPath->GetEndLocation().ToString()
+		: TEXT("None");
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] MoveToLocation | Owner=%s | Result=%s | ")
+		TEXT("RawGoal=%s | MoveGoal=%s | PathEnd=%s | ")
+		TEXT("Distance2D=%.2f | Radius=%.2f | Speed2D=%.2f"),
+		*GetNameSafe(OwnerPawn),
+		ResultName,
+		*GoalLocation.ToString(),
+		*MoveRequest.GetGoalLocation().ToString(),
+		*PathEnd,
+		OwnerPawn
+		? FVector::Dist2D(OwnerPawn->GetActorLocation(), GoalLocation)
+		: -1.0,
+		AcceptableRadius,
+		OwnerPawn ? OwnerPawn->GetVelocity().Size2D() : 0.0
+	);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
