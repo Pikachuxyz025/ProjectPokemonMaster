@@ -75,6 +75,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Player Command")
 	float PlayerCommandAcceptableRadius = 100.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Approach", meta = (ClampMin = "0.0"))
+	FVector ApproachProjectionExtent = FVector(250.f, 250.f, 500.f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Approach", meta = (ClampMin = "0.0"))
+	float ApproachArrivalMargin = 5.f;
+
 private:
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
@@ -100,8 +106,10 @@ private:
 	bool ProcessCombatReposition();
 	bool ProcessPlayerCommandMove();
 
-	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius,bool bAllowPartialPath=true,bool bIncludeAgentRadius=true);
-	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius,bool bCanStrafe=false);
+	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath = true, bool bIncludeAgentRadius = true, bool bProjectGoalLocation = true);
+	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius, bool bCanStrafe = false);
+
+	bool TryProjectNavigationGoal(const FVector& RawGoal, const FVector& ProjectionExtent, FVector& OutProjectedGoal) const;
 
 	bool GetTargetLocation(FVector& OutLocation) const;
 	FVector GetFleeLocationFromTarget(const FVector& ThreatLocation) const;

@@ -11,6 +11,7 @@
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
 #include "NavigationPath.h"
+#include "NavigationData.h"
 
 namespace PokemonNavigationUtils
 {
@@ -425,7 +426,7 @@ bool UPokemonNavigationComponent::ProcessChase()
 
 bool UPokemonNavigationComponent::ProcessApproach()
 {
-	if (!OwnerPawn)
+	if (!OwnerPawn || !CachedAIController)
 	{
 		return false;
 	}
@@ -469,7 +470,59 @@ bool UPokemonNavigationComponent::ProcessApproach()
 		return true;
 	}
 
-	return RequestMoveToLocation(TargetLocation, Radius, false, false);
+	FVector ProjectedGoal;
+
+	if (!TryProjectNavigationGoal(TargetLocation, ApproachProjectionExtent, ProjectedGoal))
+	{
+		// Retry on the next navigation think tick.
+		// The ability task still owns the timeout.
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Approach request failed because target location could not be projected to NavMesh. Owner=%s Target=%s"),
+			*GetNameSafe(OwnerPawn),
+			*GetNameSafe(CurrentNavigationRequest.TargetActor.Get()));
+		return false;
+	}
+
+	const float ProjectionOffset2D = static_cast<float>(FVector::Dist2D(ProjectedGoal, TargetLocation));
+
+	const float NavigationRadius = Radius - ProjectionOffset2D - FMath::Max(0.f, ApproachArrivalMargin);
+
+	if (NavigationRadius <= 0.f)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] ApproachGoalRejected | Owner=%s | RequestId=%s | ")
+			TEXT("Reason=NoPositiveAcceptanceRadius | ")
+			TEXT("Offset2D=%.2f | Range=%.2f | Margin=%.2f"),
+			*GetNameSafe(OwnerPawn),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			ProjectionOffset2D,
+			Radius,
+			ApproachArrivalMargin);
+
+		return false;
+	}
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] ApproachGoal | Owner=%s | RequestId=%s | ")
+		TEXT("RawTarget=%s | NavGoal=%s | RawDistance2D=%.2f | ")
+		TEXT("Offset2D=%.2f | ApproachRange=%.2f | NavigationRadius=%.2f"),
+		*GetNameSafe(OwnerPawn),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*TargetLocation.ToString(),
+		*ProjectedGoal.ToString(),
+		Distance,
+		ProjectionOffset2D,
+		Radius,
+		NavigationRadius);
+
+	// Preserve the original command target.
+	// Only the movement request uses this projected destination.
+	return RequestMoveToLocation(
+		ProjectedGoal,
+		NavigationRadius,
+		false, // Require a complete path.
+		false, // Exclude agent radius from acceptance.
+		false); // Destination has already been projected.
 }
 
 bool UPokemonNavigationComponent::ProcessFlee()
@@ -636,7 +689,7 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 	return RequestMoveToLocation(TargetLocation, Radius, false, false);
 }
 
-bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath, bool bIncludeAgentRadius)
+bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath, bool bIncludeAgentRadius, bool bProjectGoalLocation)
 {
 	if (!CachedAIController)
 	{
@@ -646,12 +699,10 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalLocation(GoalLocation);
 	MoveRequest.SetAcceptanceRadius(AcceptableRadius);
+	MoveRequest.SetProjectGoalLocation(bProjectGoalLocation);
 	MoveRequest.SetUsePathfinding(true);
 	MoveRequest.SetAllowPartialPath(bAllowPartialPath);
-
 	MoveRequest.SetReachTestIncludesAgentRadius(bIncludeAgentRadius);
-
-	// Normal locomotion should face its travel direction
 	MoveRequest.SetCanStrafe(false);
 
 	FNavPathSharedPtr DebugPath;
@@ -668,21 +719,30 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 		? DebugPath->GetEndLocation().ToString()
 		: TEXT("None");
 
+	const TCHAR* PathState = 
+		!DebugPath.IsValid() ? TEXT("None")
+		: !DebugPath->IsValid() ? TEXT("Invalid")
+		: DebugPath->IsPartial() ? TEXT("Partial")
+		: TEXT("Complete");
+
 	UE_LOG(LogTemp, Display,
-		TEXT("[PokemonNav] MoveToLocation | Owner=%s | Result=%s | ")
-		TEXT("RawGoal=%s | MoveGoal=%s | PathEnd=%s | ")
-		TEXT("Distance2D=%.2f | Radius=%.2f | Speed2D=%.2f"),
+		TEXT("[PokemonNav] MoveToLocation | Owner=%s | RequestId=%s | ")
+		TEXT("Result=%s | AutoProject=%s | ")
+		TEXT("InputGoal=%s | MoveGoal=%s | PathState=%s | PathEnd=%s | ")
+		TEXT("DistanceToInputGoal2D=%.2f | Radius=%.2f | Speed2D=%.2f"),
 		*GetNameSafe(OwnerPawn),
+		*CurrentNavigationRequest.RequestId.ToString(),
 		ResultName,
+		bProjectGoalLocation ? TEXT("true") : TEXT("false"),
 		*GoalLocation.ToString(),
 		*MoveRequest.GetGoalLocation().ToString(),
+		PathState,
 		*PathEnd,
 		OwnerPawn
 		? FVector::Dist2D(OwnerPawn->GetActorLocation(), GoalLocation)
 		: -1.0,
 		AcceptableRadius,
-		OwnerPawn ? OwnerPawn->GetVelocity().Size2D() : 0.0
-	);
+		OwnerPawn ? OwnerPawn->GetVelocity().Size2D() : 0.0);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
@@ -723,6 +783,54 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 	);
 
 	return Result.Code != EPathFollowingRequestResult::Failed;
+}
+
+bool UPokemonNavigationComponent::TryProjectNavigationGoal(const FVector& RawGoal, const FVector& ProjectionExtent, FVector& OutProjectedGoal) const
+{
+	OutProjectedGoal = FVector::ZeroVector;
+
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (!OwnerPawn || !NavSystem)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] ProjectionUnavailable | ")
+			TEXT("Owner=%s | HasPawn=%s | HasNavSystem=%s"),
+			*GetNameSafe(GetOwner()),
+			OwnerPawn ? TEXT("true") : TEXT("false"),
+			NavSystem ? TEXT("true") : TEXT("false"));
+		return false;
+	}
+
+	FNavLocation ProjectedLocation;
+
+	const FNavAgentProperties& AgentProperties = OwnerPawn->GetNavAgentPropertiesRef();
+
+	const bool bProjected = NavSystem->ProjectPointToNavigation(
+		RawGoal,
+		ProjectedLocation,
+		ProjectionExtent,
+		&AgentProperties
+	);
+
+	if (bProjected)
+	{
+		OutProjectedGoal = ProjectedLocation.Location;
+	}
+
+	const FString ProjectedGoalText = bProjected ? OutProjectedGoal.ToString() : TEXT("None");
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] Projection | Owner=%s | RequestId=%s | ")
+		TEXT("Result=%s | RawGoal=%s | NavGoal=%s | Extent=%s"),
+		*GetNameSafe(OwnerPawn),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		bProjected ? TEXT("ProjectionSucceeded") : TEXT("ProjectionFailed"),
+		*RawGoal.ToString(),
+		*ProjectedGoalText,
+		*ProjectionExtent.ToString());
+
+	return bProjected;
 }
 
 bool UPokemonNavigationComponent::GetTargetLocation(FVector& OutLocation) const
