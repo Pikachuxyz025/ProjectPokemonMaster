@@ -33,6 +33,9 @@ struct FAgentNavigationRequest
 	TObjectPtr<AActor> TargetActor = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag TargetPointTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DesiredDistance = 300.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -2,6 +2,8 @@
 
 
 #include "AbilitySystem/AbilityTasks/AT_CombatApproach.h"
+#include "ActorComponents/PokemonNavigationComponent.h"
+#include "GameplayTags/PokemonAITags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -28,6 +30,7 @@ UAT_CombatApproach* UAT_CombatApproach::CreateCombatApproachTask(UGameplayAbilit
 void UAT_CombatApproach::Activate()
 {
 	Super::Activate();
+
 	if (!Ability)
 	{
 		FinishFailure();
@@ -36,7 +39,9 @@ void UAT_CombatApproach::Activate()
 
 	AvatarPawn = Cast<APawn>(GetAvatarActor());
 	AvatarCharacter = Cast<ACharacter>(AvatarPawn.Get());
-	AvatarController = AvatarPawn ? AvatarPawn->GetController() : nullptr;
+	AvatarPokemon = Cast<APokemon_Parent>(AvatarPawn.Get());
+
+	NavigationComponent = AvatarPokemon ? AvatarPokemon->GetNavigationComponent() : nullptr;
 
 	if (!IsValidSetup())
 	{
@@ -44,18 +49,18 @@ void UAT_CombatApproach::Activate()
 		return;
 	}
 
-	if (AvatarCharacter)
-	{
-		APokemon_Parent* AvatarPokemon = Cast<APokemon_Parent>(AvatarCharacter);
-		AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, MoveSpeedMultiplier);
-			//CachedOriginalMaxWalkSpeed = AvatarCharacter->GetCharacterMovement()->MaxWalkSpeed;
-		//AvatarCharacter->GetCharacterMovement()->MaxWalkSpeed *= MoveSpeedMultiplier;
-		//bCachedWalkSpeed = true;
-	}
+	AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, MoveSpeedMultiplier);
 
 	if (HasReachedDesiredRange())
 	{
 		FinishSuccess();
+		return;
+	}
+
+	if (!SubmitNavigationRequest())
+	{
+		FinishFailure();
+		return;
 	}
 }
 
@@ -87,23 +92,38 @@ void UAT_CombatApproach::TickTask(float DeltaTime)
 		FaceTarget(DeltaTime);
 	}
 
-	MoveTowardsTarget(DeltaTime);
 }
 
 bool UAT_CombatApproach::IsValidSetup() const
 {
-	return Ability && AvatarPawn && TargetActor && !TargetActor->IsPendingKillPending();
-}
-
-bool UAT_CombatApproach::HasReachedDesiredRange() const
-{
-	if (!AvatarPawn || !TargetActor)
+	if (!Ability || !AvatarPawn || !TargetActor || !NavigationComponent)
 	{
 		return false;
 	}
 
-	const float DistanceToTarget = FVector::Dist(AvatarPawn->GetActorLocation(), TargetActor->GetActorLocation());
+	FVector TargetLocation;
+
+	return ResolveApproahTargetLocation(TargetLocation);
+}
+
+bool UAT_CombatApproach::HasReachedDesiredRange() const
+{
+	if (!AvatarPawn)
+	{
+		return false;
+	}
+
+	FVector TargetLocation;
+
+	if (!ResolveApproahTargetLocation(TargetLocation))
+	{
+		return false;
+	}
+
+	const float DistanceToTarget = FVector::Dist2D(AvatarPawn->GetActorLocation(), TargetLocation);
+
 	UE_LOG(LogTemp, Warning, TEXT("Distance to target %f, Desired Range %f"), DistanceToTarget, DesiredRange);
+	
 	return DistanceToTarget <= DesiredRange;
 }
 
@@ -125,26 +145,92 @@ void UAT_CombatApproach::FinishFailure()
 	EndTask();
 }
 
-void UAT_CombatApproach::MoveTowardsTarget(float DeltaTime)
+bool UAT_CombatApproach::ResolveApproahTargetLocation(FVector& OutTargetLocation) const
 {
-	if (!AvatarPawn || !TargetActor)
-	{
-		return;
-	}
-	const FVector ToTarget = (TargetActor->GetActorLocation() - AvatarPawn->GetActorLocation()).GetSafeNormal2D();
+	OutTargetLocation = FVector::ZeroVector;
 
-	// Character movement-friendly input
-	if (AvatarCharacter)
+	//
+	// Player-command path:
+	// use dynamic TargetPointTag resolution too
+	//
+	if (AvatarPokemon)
 	{
-		AvatarCharacter->AddMovementInput(ToTarget, 1.f);
+		if (AvatarPokemon->ResolveCurrrentCommandTargetLocation(OutTargetLocation))
+		{
+			return true;
+		}
+	}
+
+	//
+	// AI / legacy actor fallback.
+	//
+	if (IsValid(TargetActor))
+	{
+		OutTargetLocation = TargetActor->GetActorLocation();
+		return true;
+	}
+
+	return false;
+}
+
+bool UAT_CombatApproach::SubmitNavigationRequest()
+{
+	if (!AvatarPokemon || !NavigationComponent)
+	{
+		return false;
+	}
+
+	FAgentNavigationRequest Request;
+
+	Request.IntentTag = PokemonAITags::NavIntent_Approach;
+
+	Request.DesiredDistance = DesiredRange;
+
+	Request.AcceptableRadius = DesiredRange;
+
+	Request.Urgency = 0.5f;
+
+	Request.bAllowSpecialTraversal = true;
+	Request.bAllowGASMovementAbilities = true;
+
+	const FPokemonCommandTarget& CommandTarget = AvatarPokemon->GetCommandTarget();
+
+	if (CommandTarget.IsValidTarget())
+	{
+		Request.TargetActor = CommandTarget.TargetActor;
+		Request.TargetPointTag = CommandTarget.TargetPointTag;
+		Request.TargetLocation = CommandTarget.TargetLocation;
 
 	}
-	else
+	else if (IsValid(TargetActor))
 	{
-		// Generic Fallback for non-character pawns
-		const FVector NewLocation = AvatarPawn->GetActorLocation() + (ToTarget * 300.f * MoveSpeedMultiplier * DeltaTime);
-		AvatarPawn->SetActorLocation(NewLocation, true);
+		Request.TargetActor = TargetActor;
 	}
+	else 
+	{
+		return false;
+	}
+
+	SubmittedTargetActor = Request.TargetActor;
+
+	SubmittedTargetPointTag = Request.TargetPointTag;
+
+	SubmittedTargetLocation = Request.TargetLocation;
+
+	NavigationComponent->SetNavigationIntent(Request);
+
+	bSubmittedNavigationRequest = true;
+
+	UE_LOG(LogTemp,Display,TEXT("[CombatApproach] Submitted | Pokemon=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+		*GetNameSafe(AvatarPokemon),
+		*GetNameSafe(Request.TargetActor.Get()),
+		*Request.TargetPointTag.ToString(),
+		*Request.TargetLocation.ToString(),
+		DesiredRange
+	);
+
+
+	return true;
 }
 
 void UAT_CombatApproach::FaceTarget(float DeltaTime) const
@@ -165,7 +251,7 @@ void UAT_CombatApproach::OnDestroy(bool bInOwnerFinished)
 {
 	if (AvatarCharacter)
 	{
-		APokemon_Parent* AvatarPokemon = Cast<APokemon_Parent>(AvatarCharacter);
+		AvatarPokemon = Cast<APokemon_Parent>(AvatarCharacter);
 		AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Running, MoveSpeedMultiplier);
 	}
 	Super::OnDestroy(bInOwnerFinished);

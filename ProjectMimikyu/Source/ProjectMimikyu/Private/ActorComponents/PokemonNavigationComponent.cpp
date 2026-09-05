@@ -2,6 +2,7 @@
 
 
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/TargetableComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameplayTags/PokemonAITags.h"
 #include "AIController.h"
@@ -424,15 +425,18 @@ bool UPokemonNavigationComponent::ProcessChase()
 
 bool UPokemonNavigationComponent::ProcessApproach()
 {
-	AActor* TargetActor = CurrentNavigationRequest.TargetActor.Get();
-
-	if (!TargetActor)
+	if (!OwnerPawn)
 	{
-		ClearNavigationIntent();
 		return false;
 	}
 
-	if(PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
+	AActor* TargetActor = CurrentNavigationRequest.TargetActor.Get();
+
+	// 
+	// Only perform actor-specific validity checks
+	// if this request actually has an actor
+	//
+	if (IsValid(TargetActor) && PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonNav] Clearing Approach request because target cannot be combat targeted. Owner=%s Target=%s"),
@@ -442,9 +446,30 @@ bool UPokemonNavigationComponent::ProcessApproach()
 		return false;
 	}
 
+	FVector TargetLocation;
+
+	if (!GetTargetLocation(TargetLocation))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Clearing Approach request because target location is invalid. Owner=%s Target=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(TargetActor));
+
+		ClearNavigationIntent();
+		return false;
+	}
+
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : DefaultAcceptableRadius;
 
-	return RequestMoveToActor(TargetActor, Radius,false);
+	const float Distance = FVector::Dist2D(OwnerPawn->GetActorLocation(), TargetLocation);
+
+	if (Distance <= Radius)
+	{
+		CachedAIController->StopMovement();
+		return true;
+	}
+
+	return RequestMoveToLocation(TargetLocation, Radius, false, true);
 }
 
 bool UPokemonNavigationComponent::ProcessFlee()
@@ -674,15 +699,37 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 
 bool UPokemonNavigationComponent::GetTargetLocation(FVector& OutLocation) const
 {
-	if (AActor* TargetActor = CurrentNavigationRequest.TargetActor.Get())
-	{
-		OutLocation = TargetActor->GetActorLocation();
-		return true;
-	}
+	AActor* TargetActor = CurrentNavigationRequest.TargetActor.Get();
 
+    //
+	// Actor + semantic body point
+	//
+	if (IsValid(TargetActor) && CurrentNavigationRequest.TargetPointTag.IsValid())
+	{
+		if(UTargetableComponent* Targetable=TargetActor->FindComponentByClass<UTargetableComponent>())
+		{
+			if (Targetable->GetTargetPointWorldLocation(CurrentNavigationRequest.TargetPointTag, OutLocation))
+			{
+				return true;
+			}
+		}
+	}
+	
+	//
+	// Explicit location or command-time fallback
+	//
 	if (!CurrentNavigationRequest.TargetLocation.IsNearlyZero())
 	{
 		OutLocation = CurrentNavigationRequest.TargetLocation;
+		return true;
+	}
+
+	//
+	// Actor fallback
+	//
+	if (IsValid(TargetActor))
+	{
+		OutLocation = TargetActor->GetActorLocation();
 		return true;
 	}
 

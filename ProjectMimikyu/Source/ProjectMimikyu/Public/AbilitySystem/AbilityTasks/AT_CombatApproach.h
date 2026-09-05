@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
+#include "GameplayTagContainer.h"
 #include "AT_CombatApproach.generated.h"
  
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatApproachSimpleDelegate);
 
+class APokemon_Parent;
+class UPokemonNavigationComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API UAT_CombatApproach : public UAbilityTask
@@ -44,7 +47,11 @@ protected:
 	bool HasReachedDesiredRange() const;
 	void FinishSuccess();
 	void FinishFailure();
-	void MoveTowardsTarget(float DeltaTime);
+
+	bool ResolveApproahTargetLocation(FVector& OutTargetLocation) const;
+	bool SubmitNavigationRequest();
+	bool IsCurrentNavigationRequestOwnedByTask() const;
+	void ClearOwnedNavigationRequest();
 	void FaceTarget(float DeltaTime) const;
 
 protected:
@@ -58,8 +65,19 @@ protected:
 	TObjectPtr<ACharacter> AvatarCharacter;
 
 	UPROPERTY()
-	TObjectPtr<AController> AvatarController;
+	TObjectPtr<APokemon_Parent> AvatarPokemon;
 
+	UPROPERTY()
+	TObjectPtr<UPokemonNavigationComponent> NavigationComponent;
+
+	UPROPERTY()
+	TObjectPtr<AActor> SubmittedTargetActor;
+
+	FGameplayTag SubmittedTargetPointTag;
+
+	FVector SubmittedTargetLocation=FVector::ZeroVector;
+
+	bool bSubmittedNavigationRequest = false;
 	float DesiredRange = 100.f;
 	float MoveSpeedMultiplier = 1.f;
 	float Timeout = 3.f;
