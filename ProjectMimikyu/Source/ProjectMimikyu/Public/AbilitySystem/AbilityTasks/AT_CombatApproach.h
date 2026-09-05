@@ -80,6 +80,9 @@ protected:
 	UPROPERTY(Transient)
 	FPokemonMeleeApproachSnapshot MeleeApproach;
 
+	UPROPERTY(Transient)
+	FPokemonMeleeApproachProfile MeleeApproachProfile;
+
 	FGameplayTag SubmittedTargetPointTag;
 
 	FVector SubmittedTargetLocation=FVector::ZeroVector;

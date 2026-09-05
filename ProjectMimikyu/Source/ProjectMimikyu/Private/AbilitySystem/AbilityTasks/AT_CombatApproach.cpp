@@ -29,6 +29,7 @@ UAT_CombatApproach* UAT_CombatApproach::CreateCombatApproachTask(UGameplayAbilit
 	if (const UPokemonDamageGameplayAbilities* Move = Cast<UPokemonDamageGameplayAbilities>(OwningAbility))
 	{
 		Task->MeleeContact = Move->MeleeContact;
+		Task->MeleeApproachProfile = Move->MeleeApproachProfile;
 	}
 
 	return Task;
@@ -148,12 +149,15 @@ bool UAT_CombatApproach::HasReachedDesiredRange() const
 		{
 			UE_LOG(LogTemp, Display,
 				TEXT("[CombatApproach] MeleeExecutionReached | RequestId=%s | ")
-				TEXT("Target=%s | PlannedCenter=%s | Distance3D=%.2f | Radius=%.2f"),
+				TEXT("Target=%s | PlannedCenter=%s | Distance3D=%.2f | Radius=%.2f | ")
+				TEXT("Source=%s | Profile=%s"),
 				*SubmitNavigationRequestId.ToString(),
 				*TargetLocation.ToString(),
 				*Candidate.PlannedContactCenter.ToString(),
 				Distance,
-				Candidate.Radius);
+				Candidate.Radius,
+				*UEnum::GetValueAsString(MeleeApproach.Source),
+				*MeleeApproach.ProfileId.ToString());
 
 			return true;
 		}
@@ -236,34 +240,6 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 
 	Request.MeleeContact = MeleeContact;
 
-	MeleeApproach = FPokemonMeleeApproachSnapshot();
-
-	if (MeleeContact.SocketTag.IsValid())
-	{
-		if (!UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AvatarPokemon.Get(), MeleeContact, MeleeApproach))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[CombatApproach] Failed to capture melee approach snapshot | Pokemon=%s | RequestId=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
-				*GetNameSafe(AvatarPokemon),
-				*Request.RequestId.ToString(),
-				*GetNameSafe(Request.TargetActor.Get()),
-				*Request.TargetPointTag.ToString(),
-				*Request.TargetLocation.ToString(),
-				DesiredRange
-			);
-			return false;
-		}
-	}
-
-	Request.MeleeApproach = MeleeApproach;
-
-	UE_LOG(LogTemp, Display,
-		TEXT("[CombatApproach] MeleePlanCaptured | RequestId=%s | ")
-		TEXT("Tag=%s | Offset=%s | Radius=%.2f"),
-		*Request.RequestId.ToString(),
-		*MeleeContact.SocketTag.ToString(),
-		*MeleeApproach.RootSpaceContactOffset.ToString(),
-		MeleeApproach.Radius);
-
 	Request.Urgency = 0.5f;
 
 	Request.bAllowSpecialTraversal = true;
@@ -284,6 +260,41 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 	else 
 	{
 		return false;
+	}
+
+	MeleeApproach = FPokemonMeleeApproachSnapshot();
+
+	if (MeleeContact.SocketTag.IsValid())
+	{
+		FName CaptureFailure;
+
+		if (!UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AvatarPokemon.Get(),MeleeContact,MeleeApproachProfile,MeleeApproach,CaptureFailure))
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[CombatApproach] MeleePlanCaptureFailed | RequestId=%s | ")
+				TEXT("Move=%s | Source=%s | Profile=%s | Reason=%s"),
+				*Request.RequestId.ToString(),
+				*GetNameSafe(Ability),
+				*UEnum::GetValueAsString(MeleeApproachProfile.Source),
+				*MeleeApproachProfile.ProfileId.ToString(),
+				*CaptureFailure.ToString());
+
+			return false;
+		}
+
+		Request.MeleeApproach = MeleeApproach;
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[CombatApproach] MeleePlanCaptured | RequestId=%s | ")
+			TEXT("Move=%s | Source=%s | Profile=%s | Tag=%s | ")
+			TEXT("PlanOffset=%s | Radius=%.2f | Units=WorldCm | Space=ActorRotationFrame"),
+			*Request.RequestId.ToString(),
+			*GetNameSafe(Ability),
+			*UEnum::GetValueAsString(MeleeApproach.Source),
+			*MeleeApproach.ProfileId.ToString(),
+			*MeleeContact.SocketTag.ToString(),
+			*MeleeApproach.RootSpaceContactOffset.ToString(),
+			MeleeApproach.Radius);
 	}
 
 	SubmittedTargetActor = Request.TargetActor;

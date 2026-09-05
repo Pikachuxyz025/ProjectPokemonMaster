@@ -27,6 +27,35 @@ struct PROJECTMIMIKYU_API FPokemonMeleeContactSettings
 	float Radius = 25.0f;
 };
 
+UENUM(BlueprintType)
+enum class EPokemonMeleeApproachSource :uint8
+{
+	None,
+	AuthoredProfile,
+	LiveSocketSnapshot
+};
+
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonMeleeApproachProfile
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Melee")
+	EPokemonMeleeApproachSource Source = EPokemonMeleeApproachSource::AuthoredProfile;
+
+	// Name/version of this execution-geometry definition.
+	// None means it has not been configured.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Melee")
+	FName ProfileId = NAME_None;
+
+	// Intended contact CENTER relative to the root where the attack begins.
+	// World cm in the actor's rotation frame:
+	// +X forward, +Y right, +Z up.
+	// Actor/mesh scale must not be applied again.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Melee", meta = (EditCondition = "Source == EPokemonMeleeApproachSource::AuthoredProfile"))
+	FVector RootSpaceContactOffset = FVector::ZeroVector;
+};
+
 // Fixed geometry for one approach request.
 // Offset is in world centimeters, expressed in the actor's rotation frame.
 USTRUCT(BlueprintType)
@@ -37,6 +66,12 @@ struct PROJECTMIMIKYU_API FPokemonMeleeApproachSnapshot
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
 	FVector RootSpaceContactOffset = FVector::ZeroVector;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Melee")
+	EPokemonMeleeApproachSource Source = EPokemonMeleeApproachSource::None;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
+	FName ProfileId = NAME_None;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
 	float Radius = 0.f;
 
@@ -46,6 +81,9 @@ struct PROJECTMIMIKYU_API FPokemonMeleeApproachSnapshot
 	bool IsValid() const
 	{
 		return bIsSet
+			&& !ProfileId.IsNone()
+			&& (Source == EPokemonMeleeApproachSource::AuthoredProfile
+				|| Source == EPokemonMeleeApproachSource::LiveSocketSnapshot)
 			&& !RootSpaceContactOffset.ContainsNaN()
 			&& FMath::IsFinite(Radius)
 			&& Radius > 0.f;
@@ -86,12 +124,12 @@ public:
 		FPokemonMeleeExecutionCandidate& OutCandidate
 	);
 
-	static bool CaptureMeleeApproachSnapshot
-	(
+	static bool CaptureMeleeApproachSnapshot(
 		AActor* Attacker,
 		const FPokemonMeleeContactSettings& Settings,
-		FPokemonMeleeApproachSnapshot& OutSnapshot
-	);
+		const FPokemonMeleeApproachProfile& Profile,
+		FPokemonMeleeApproachSnapshot& OutSnapshot,
+		FName& OutFailureReason);
 
 
 };

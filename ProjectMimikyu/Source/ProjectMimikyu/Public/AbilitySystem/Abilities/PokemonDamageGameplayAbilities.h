@@ -95,6 +95,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee")
 	FPokemonMeleeContactSettings MeleeContact;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach")
+	FPokemonMeleeApproachProfile MeleeApproachProfile;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

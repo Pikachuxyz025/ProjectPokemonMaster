@@ -542,6 +542,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
+	const FPokemonMeleeApproachSnapshot& Plan = CurrentNavigationRequest.MeleeApproach;
+
 	FPokemonMeleeExecutionCandidate Candidate;
 
 	if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(
@@ -550,6 +552,12 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		TargetLocation,
 		Candidate))
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] MeleeCandidateFailed | RequestId=%s | ")
+			TEXT("Source=%s | Profile=%s | Reason=InvalidSnapshotOrCandidate"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*UEnum::GetValueAsString(Plan.Source),
+			*Plan.ProfileId.ToString());
 		CachedAIController->StopMovement();
 		return false;
 	}
@@ -569,6 +577,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
 	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] GroundCandidateRejected | Stage=Projection | ")
+			TEXT("RequestId=%s | Source=%s | Profile=%s | RequiredRoot=%s"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*UEnum::GetValueAsString(Plan.Source),
+			*Plan.ProfileId.ToString(),
+			*Candidate.RootLocation.ToString());
 		CachedAIController->StopMovement();
 		return false;
 	}
@@ -576,7 +591,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	const FVector GroundRoot = NavGoal + RootAboveFeet;
 
 	// Recover the sampled contact offset in the actor's rotation frame.
-	const FVector& RootSpaceContactOffset = CurrentNavigationRequest.MeleeApproach.RootSpaceContactOffset;
+	const FVector& RootSpaceContactOffset = Plan.RootSpaceContactOffset;
 
 	// Predict how the task would face that target from the projected root.
 	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
@@ -602,7 +617,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
 		TEXT("Target=%s | RequiredRoot=%s | GroundRoot=%s | ")
 		TEXT("GroundContact=%s | Error3D=%.2f | VerticalError=%.2f | ")
-		TEXT("ContactRadius=%.2f | NavRadius=%.2f | PlanOffset=%s"),
+		TEXT("ContactRadius=%.2f | NavRadius=%.2f | PlanOffset=%s | ")
+		TEXT("Source=%s | Profile=%s"),
 		*CurrentNavigationRequest.RequestId.ToString(),
 		*TargetLocation.ToString(),
 		*Candidate.RootLocation.ToString(),
@@ -612,7 +628,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		GroundContact.Z - TargetLocation.Z,
 		Candidate.Radius,
 		NavigationRadius,
-		*RootSpaceContactOffset.ToString());
+		*RootSpaceContactOffset.ToString(),
+		*UEnum::GetValueAsString(Plan.Source),
+		*Plan.ProfileId.ToString());
 
 	if (NavigationRadius <= 0.f)
 	{
@@ -620,11 +638,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 		UE_LOG(LogTemp, Display,
 			TEXT("[PokemonNav] GroundCandidateRejected | ")
-			TEXT("RequestId=%s | Reason=%s"),
+			TEXT("RequestId=%s | Reason=%s | Source=%s | Profile=%s"),
 			*CurrentNavigationRequest.RequestId.ToString(),
 			ContactError > Candidate.Radius
 			? TEXT("ContactOutsideGroundReach")
-			: TEXT("NoContactArrivalMargin"));
+			: TEXT("NoContactArrivalMargin"),
+			*UEnum::GetValueAsString(Plan.Source),
+			*Plan.ProfileId.ToString());
 
 		return false;
 	}
@@ -632,6 +652,14 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	if (!RequestMoveToLocation(NavGoal, NavigationRadius, false, false, false))
 	{
 		CachedAIController->StopMovement();
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] MeleeMoveRequestRejected | ")
+			TEXT("RequestId=%s | Source=%s | Profile=%s"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*UEnum::GetValueAsString(Plan.Source),
+			*Plan.ProfileId.ToString());
+
 		return false;
 	}
 

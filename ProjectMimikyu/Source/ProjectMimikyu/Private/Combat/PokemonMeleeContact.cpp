@@ -76,33 +76,69 @@ bool UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AActor* Attacker,con
 	return true;
 }
 
-bool UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AActor* Attacker, const FPokemonMeleeContactSettings& Settings, FPokemonMeleeApproachSnapshot& OutSnapshot)
+bool UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AActor* Attacker, const FPokemonMeleeContactSettings& Settings, const FPokemonMeleeApproachProfile& Profile, FPokemonMeleeApproachSnapshot& OutSnapshot, FName& OutFailureReason)
 {
 	OutSnapshot = FPokemonMeleeApproachSnapshot();
+	OutFailureReason = NAME_None;
 
-	FVector Center;
-	float Radius = 0.f;
-
-	if (!IsValid(Attacker) || !ResolveMeleeContactSphere(Attacker, Settings, Center, Radius))
+	if (!IsValid(Attacker))
 	{
+		OutFailureReason = FName(TEXT("InvalidAttacker"));
 		return false;
 	}
 
-	// Scale is already represented in the sampled world-space position.
-	const FVector Offset = Attacker->GetActorQuat().UnrotateVector(Center - Attacker->GetActorLocation());
+	if (Profile.ProfileId.IsNone())
+	{
+		OutFailureReason = FName(TEXT("MissingProfileId"));
+		return false;
+	}
+
+	// Preserve the existing radius.
+	// The profile supplies the intended contact-center offset.
+	if (!FMath::IsFinite(Settings.Radius) || Settings.Radius <= 0.f)
+	{
+		OutFailureReason = FName(TEXT("InvalidContactRadius"));
+		return false;
+	}
+
+	FVector Offset = FVector::ZeroVector;
+	float Radius = Settings.Radius;
+
+	switch (Profile.Source)
+	{
+	case EPokemonMeleeApproachSource::AuthoredProfile:
+		Offset = Profile.RootSpaceContactOffset;
+		break;
+
+	case EPokemonMeleeApproachSource::LiveSocketSnapshot:
+	{
+		FVector Center;
+
+		if (!ResolveMeleeContactSphere(Attacker, Settings, Center, Radius))
+		{
+			OutFailureReason = FName(TEXT("FailedToResolveLiveSocket"));
+			return false;
+		}
+
+		Offset = Attacker->GetActorQuat().UnrotateVector(Center - Attacker->GetActorLocation());
+		break;
+	}
+
+	default:
+		OutFailureReason = FName(TEXT("UnsupportedProfileSource"));
+		return false;
+	}
 
 	if(Offset.ContainsNaN())
 	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[MeleeContact] InvalidSnapshot | Attacker=%s | ")
-			TEXT("Tag=%s | Offset=NaN"),
-			*GetNameSafe(Attacker),
-			*Settings.SocketTag.ToString());
+		OutFailureReason = FName(TEXT("InvalidContactOffset"));
 		return false;
 	}
 
 	OutSnapshot.RootSpaceContactOffset = Offset;
 	OutSnapshot.Radius = Radius;
+	OutSnapshot.Source = Profile.Source;
+	OutSnapshot.ProfileId = Profile.ProfileId;
 	OutSnapshot.bIsSet = true;
 	return true;
 }
