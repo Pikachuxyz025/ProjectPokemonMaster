@@ -3,6 +3,7 @@
 
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/TargetableComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameplayTags/PokemonAITags.h"
 #include "AIController.h"
@@ -460,6 +461,11 @@ bool UPokemonNavigationComponent::ProcessApproach()
 		return false;
 	}
 
+	if (CurrentNavigationRequest.MeleeContact.SocketTag.IsValid())
+	{
+		return ProcessMeleeApproach(TargetLocation);
+	}
+
 	const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f ? CurrentNavigationRequest.AcceptableRadius : DefaultAcceptableRadius;
 
 	const float Distance = FVector::Dist2D(OwnerPawn->GetActorLocation(), TargetLocation);
@@ -523,6 +529,95 @@ bool UPokemonNavigationComponent::ProcessApproach()
 		false, // Require a complete path.
 		false, // Exclude agent radius from acceptance.
 		false); // Destination has already been projected.
+}
+
+bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLocation)
+{
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	UCapsuleComponent* Capsule = IsValid(Pokemon) ? Pokemon->GetCapsuleComponent() : nullptr;
+
+	if (!IsValid(Capsule) || !CachedAIController)
+	{
+		return false;
+	}
+
+	FPokemonMeleeExecutionCandidate Candidate;
+
+	if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(
+		Pokemon,
+		CurrentNavigationRequest.MeleeContact,
+		TargetLocation,
+		Candidate))
+	{
+		CachedAIController->StopMovement();
+		return false;
+	}
+
+	if (FVector::DistSquared(Candidate.CurrentContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
+	{
+		CachedAIController->StopMovement();
+		return true;
+	}
+
+	// Navigation location describes feet; execution location describes root
+	const FVector RootAboveFeet(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight());
+
+	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
+
+	FVector NavGoal;
+
+	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
+	{
+		CachedAIController->StopMovement();
+		return false;
+	}
+
+	const FVector GroundRoot = NavGoal + RootAboveFeet;
+
+	const FVector GroundContact = GroundRoot + (TargetLocation - Candidate.RootLocation);
+
+	const float ContactError = static_cast<float>(FVector::Dist(GroundContact, TargetLocation));
+
+	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
+		TEXT("Target=%s | RequiredRoot=%s | GroundRoot=%s | ")
+		TEXT("GroundContact=%s | Error3D=%.2f | VerticalError=%.2f | ")
+		TEXT("ContactRadius=%.2f | NavRadius=%.2f"),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*TargetLocation.ToString(),
+		*Candidate.RootLocation.ToString(),
+		*GroundRoot.ToString(),
+		*GroundContact.ToString(),
+		ContactError,
+		GroundContact.Z - TargetLocation.Z,
+		Candidate.Radius,
+		NavigationRadius);
+
+	if (NavigationRadius <= 0.f)
+	{
+		CachedAIController->StopMovement();
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] GroundCandidateRejected | ")
+			TEXT("RequestId=%s | Reason=%s"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			ContactError > Candidate.Radius
+			? TEXT("ContactOutsideGroundReach")
+			: TEXT("NoContactArrivalMargin"));
+
+		return false;
+	}
+
+	if (!RequestMoveToLocation(NavGoal, NavigationRadius, false, false, false))
+	{
+		CachedAIController->StopMovement();
+		return false;
+	}
+
+	return true;
 }
 
 bool UPokemonNavigationComponent::ProcessFlee()

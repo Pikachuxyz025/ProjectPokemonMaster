@@ -474,6 +474,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Targeting")
 	UTargetableComponent* GetTargetComponent() const { return TargetComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|CombatSocket")
+	UPokemonCombatSocketComponent* GetCombatSocketComponent() const { return CombatSocketComponent; }
+
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Navigation")
 	bool UsesGroundCrowdNavigation() const;
 

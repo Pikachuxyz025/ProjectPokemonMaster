@@ -7,6 +7,7 @@
 #include "Characters/CharacterTypes.h"
 #include "Combat/PokemonImpactTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
+#include "Combat/PokemonMeleeContact.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
 
 /**
@@ -18,8 +19,6 @@ class PROJECTMIMIKYU_API UPokemonDamageGameplayAbilities : public UPokemonGamepl
 	GENERATED_BODY()
 	
 public:
-
-
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
@@ -92,6 +91,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool CommitPokemonMove();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee")
+	FPokemonMeleeContactSettings MeleeContact;
 
 protected:
 

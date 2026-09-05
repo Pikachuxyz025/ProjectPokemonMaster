@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AbilityTasks/AT_CombatApproach.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "GameplayTags/PokemonAITags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -24,6 +25,12 @@ UAT_CombatApproach* UAT_CombatApproach::CreateCombatApproachTask(UGameplayAbilit
 	Task->MoveSpeedMultiplier = InMoveSpeedMultiplier;
 	Task->Timeout = ReachBeforeThisTimeLimit;
 	Task->bFaceTarget = bInFaceTarget;
+
+	if (const UPokemonDamageGameplayAbilities* Move = Cast<UPokemonDamageGameplayAbilities>(OwningAbility))
+	{
+		Task->MeleeContact = Move->MeleeContact;
+	}
+
 	return Task;
 }
 
@@ -50,16 +57,16 @@ void UAT_CombatApproach::Activate()
 	}
 
 	AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, MoveSpeedMultiplier);
+	
+	if (!SubmitNavigationRequest())
+	{
+		FinishFailure();
+		return;
+	}
 
 	if (HasReachedDesiredRange())
 	{
 		FinishSuccess();
-		return;
-	}
-
-	if (!SubmitNavigationRequest())
-	{
-		FinishFailure();
 		return;
 	}
 }
@@ -103,6 +110,17 @@ bool UAT_CombatApproach::IsValidSetup() const
 
 	FVector TargetLocation;
 
+	if (MeleeContact.SocketTag.IsValid())
+	{
+		FVector	Center;
+		float Radius;
+
+		if (!UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AvatarPawn.Get(), MeleeContact, Center, Radius))
+		{
+			return false;
+		}
+	}
+
 	return ResolveApproachTargetLocation(TargetLocation);
 }
 
@@ -117,6 +135,34 @@ bool UAT_CombatApproach::HasReachedDesiredRange() const
 
 	if (!ResolveApproachTargetLocation(TargetLocation))
 	{
+		return false;
+	}
+
+	if (MeleeContact.SocketTag.IsValid())
+	{
+		FVector	Center;
+		float Radius;
+
+		if (!UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AvatarPawn.Get(), MeleeContact, Center, Radius))
+		{
+			return false;
+		}
+
+		const double ContactDistance = FVector::Dist(Center,TargetLocation);
+
+		if (ContactDistance <= Radius)
+		{
+			UE_LOG(LogTemp, Display,
+				TEXT("[CombatApproach] MeleeContactReached | RequestId=%s | ")
+				TEXT("Target=%s | Center=%s | Distance3D=%.2f | Radius=%.2f"),
+				*SubmitNavigationRequestId.ToString(),
+				*TargetLocation.ToString(),
+				*Center.ToString(),
+				ContactDistance,
+				Radius);
+			return true;
+		}
+
 		return false;
 	}
 
@@ -189,6 +235,8 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 	Request.AcceptableRadius = DesiredRange;
 
 	Request.RequestId = FGuid::NewGuid();
+
+	Request.MeleeContact = MeleeContact;
 
 	Request.Urgency = 0.5f;
 
@@ -303,7 +351,19 @@ void UAT_CombatApproach::FaceTarget(float DeltaTime) const
 	}
 
 	const FRotator CurrentRotation = AvatarPawn->GetActorRotation();
-	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(AvatarPawn->GetActorLocation(), TargetLocation);
+	 FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(AvatarPawn->GetActorLocation(), TargetLocation);
+	
+	if (MeleeContact.SocketTag.IsValid())
+	{
+		FPokemonMeleeExecutionCandidate Candidate;
+
+		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(AvatarPokemon.Get(), MeleeContact, TargetLocation, Candidate))
+		{
+			return;
+		}
+		TargetRotation = Candidate.Facing;
+	}
+
 	const FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10.f);
 	AvatarPawn->SetActorRotation(FRotator(0.f, NewRotation.Yaw, 0.f));
 }

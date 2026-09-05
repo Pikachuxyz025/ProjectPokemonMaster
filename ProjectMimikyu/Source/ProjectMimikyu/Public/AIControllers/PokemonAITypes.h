@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "Combat/PokemonMeleeContact.h"
 #include "PokemonAITypes.generated.h"
 
 namespace PokemonCrowdGroups
@@ -37,6 +38,9 @@ struct FAgentNavigationRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag TargetPointTag;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FPokemonMeleeContactSettings MeleeContact;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DesiredDistance = 300.f;

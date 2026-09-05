@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "GameplayTagContainer.h"
+#include "Combat/PokemonMeleeContact.h"
 #include "AT_CombatApproach.generated.h"
  
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatApproachSimpleDelegate);
@@ -72,6 +73,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AActor> SubmittedTargetActor;
+
+	UPROPERTY(Transient)
+	FPokemonMeleeContactSettings MeleeContact;
 
 	FGameplayTag SubmittedTargetPointTag;
 

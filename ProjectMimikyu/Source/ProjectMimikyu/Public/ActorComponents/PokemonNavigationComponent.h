@@ -100,6 +100,7 @@ private:
 	bool ProcessFollow();
 	bool ProcessChase();
 	bool ProcessApproach();
+	bool ProcessMeleeApproach(const FVector& TargetLocation);
 	bool ProcessFlee();
 	bool ProcessReturnToTrainer();
 	bool ProcessCombatKeepDistance();
