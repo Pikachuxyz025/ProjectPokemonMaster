@@ -96,14 +96,14 @@ void UAT_CombatApproach::TickTask(float DeltaTime)
 
 bool UAT_CombatApproach::IsValidSetup() const
 {
-	if (!Ability || !AvatarPawn || !TargetActor || !NavigationComponent)
+	if (!Ability || !AvatarPawn || !AvatarPokemon|| !NavigationComponent)
 	{
 		return false;
 	}
 
 	FVector TargetLocation;
 
-	return ResolveApproahTargetLocation(TargetLocation);
+	return ResolveApproachTargetLocation(TargetLocation);
 }
 
 bool UAT_CombatApproach::HasReachedDesiredRange() const
@@ -115,7 +115,7 @@ bool UAT_CombatApproach::HasReachedDesiredRange() const
 
 	FVector TargetLocation;
 
-	if (!ResolveApproahTargetLocation(TargetLocation))
+	if (!ResolveApproachTargetLocation(TargetLocation))
 	{
 		return false;
 	}
@@ -145,7 +145,7 @@ void UAT_CombatApproach::FinishFailure()
 	EndTask();
 }
 
-bool UAT_CombatApproach::ResolveApproahTargetLocation(FVector& OutTargetLocation) const
+bool UAT_CombatApproach::ResolveApproachTargetLocation(FVector& OutTargetLocation) const
 {
 	OutTargetLocation = FVector::ZeroVector;
 
@@ -188,6 +188,8 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 
 	Request.AcceptableRadius = DesiredRange;
 
+	Request.RequestId = FGuid::NewGuid();
+
 	Request.Urgency = 0.5f;
 
 	Request.bAllowSpecialTraversal = true;
@@ -200,7 +202,6 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 		Request.TargetActor = CommandTarget.TargetActor;
 		Request.TargetPointTag = CommandTarget.TargetPointTag;
 		Request.TargetLocation = CommandTarget.TargetLocation;
-
 	}
 	else if (IsValid(TargetActor))
 	{
@@ -217,12 +218,15 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 
 	SubmittedTargetLocation = Request.TargetLocation;
 
+	SubmitNavigationRequestId = Request.RequestId;
+
 	NavigationComponent->SetNavigationIntent(Request);
 
 	bSubmittedNavigationRequest = true;
 
-	UE_LOG(LogTemp,Display,TEXT("[CombatApproach] Submitted | Pokemon=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+	UE_LOG(LogTemp,Display,TEXT("[CombatApproach] Submitted | Pokemon=%s | RequestId=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
 		*GetNameSafe(AvatarPokemon),
+		*SubmitNavigationRequestId.ToString(),
 		*GetNameSafe(Request.TargetActor.Get()),
 		*Request.TargetPointTag.ToString(),
 		*Request.TargetLocation.ToString(),
@@ -233,26 +237,85 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 	return true;
 }
 
+bool UAT_CombatApproach::IsCurrentNavigationRequestOwnedByTask() const
+{
+	if (!NavigationComponent || !bSubmittedNavigationRequest || !SubmitNavigationRequestId.IsValid())
+	{
+		return false;
+	}
+
+	if (!NavigationComponent->HasActiveNavigationRequest())
+	{
+		return false;
+	}
+
+	const FAgentNavigationRequest& CurrentRequest = NavigationComponent->GetCurrentNavigationIntent();
+
+	return CurrentRequest.RequestId == SubmitNavigationRequestId;
+}
+
+void UAT_CombatApproach::ClearOwnedNavigationRequest()
+{
+	if (!NavigationComponent || !bSubmittedNavigationRequest)
+	{
+		return;
+	}
+
+	if (IsCurrentNavigationRequestOwnedByTask())
+	{
+		UE_LOG(LogTemp, Display, TEXT("[CombatApproach] Clearing navigation request | Pokemon=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+			*GetNameSafe(AvatarPokemon),
+			*GetNameSafe(SubmittedTargetActor.Get()),
+			*SubmittedTargetPointTag.ToString(),
+			*SubmittedTargetLocation.ToString(),
+			DesiredRange
+		);
+
+		NavigationComponent->ClearNavigationIntent();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("[CombatApproach] Not clearing navigation request because it is no longer owned by this task | Pokemon=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+			*GetNameSafe(AvatarPokemon),
+			*GetNameSafe(SubmittedTargetActor.Get()),
+			*SubmittedTargetPointTag.ToString(),
+			*SubmittedTargetLocation.ToString(),
+			DesiredRange
+		);
+	}
+
+	bSubmittedNavigationRequest = false;
+	SubmitNavigationRequestId.Invalidate();
+}
+
 void UAT_CombatApproach::FaceTarget(float DeltaTime) const
 {
-	if(!AvatarPawn||!TargetActor)
+	if(!AvatarPawn)
+	{
+		return;
+	}
+
+	FVector TargetLocation;
+
+	if (!ResolveApproachTargetLocation(TargetLocation))
 	{
 		return;
 	}
 
 	const FRotator CurrentRotation = AvatarPawn->GetActorRotation();
-	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(AvatarPawn->GetActorLocation(), TargetActor->GetActorLocation());
+	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(AvatarPawn->GetActorLocation(), TargetLocation);
 	const FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10.f);
 	AvatarPawn->SetActorRotation(FRotator(0.f, NewRotation.Yaw, 0.f));
-
 }
 
 void UAT_CombatApproach::OnDestroy(bool bInOwnerFinished)
 {
-	if (AvatarCharacter)
+	ClearOwnedNavigationRequest();
+
+	if (AvatarPokemon)
 	{
-		AvatarPokemon = Cast<APokemon_Parent>(AvatarCharacter);
-		AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Running, MoveSpeedMultiplier);
+		AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Running);
 	}
+
 	Super::OnDestroy(bInOwnerFinished);
 }

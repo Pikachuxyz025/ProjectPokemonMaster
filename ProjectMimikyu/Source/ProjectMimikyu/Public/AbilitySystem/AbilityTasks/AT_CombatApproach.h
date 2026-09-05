@@ -48,7 +48,7 @@ protected:
 	void FinishSuccess();
 	void FinishFailure();
 
-	bool ResolveApproahTargetLocation(FVector& OutTargetLocation) const;
+	bool ResolveApproachTargetLocation(FVector& OutTargetLocation) const;
 	bool SubmitNavigationRequest();
 	bool IsCurrentNavigationRequestOwnedByTask() const;
 	void ClearOwnedNavigationRequest();
@@ -76,6 +76,8 @@ protected:
 	FGameplayTag SubmittedTargetPointTag;
 
 	FVector SubmittedTargetLocation=FVector::ZeroVector;
+
+	FGuid SubmitNavigationRequestId;
 
 	bool bSubmittedNavigationRequest = false;
 	float DesiredRange = 100.f;

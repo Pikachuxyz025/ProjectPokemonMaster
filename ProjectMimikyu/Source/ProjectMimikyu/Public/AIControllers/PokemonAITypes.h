@@ -20,6 +20,9 @@ struct FAgentNavigationRequest
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid RequestId;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag IntentTag;
 
@@ -58,5 +61,10 @@ struct FAgentNavigationRequest
 	bool HasTargetActor() const
 	{
 		return TargetActor != nullptr;
+	}
+
+	bool HasValidRequestId() const
+	{
+		return RequestId.IsValid();
 	}
 };
