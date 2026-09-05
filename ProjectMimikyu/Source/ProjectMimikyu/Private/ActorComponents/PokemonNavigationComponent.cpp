@@ -469,7 +469,7 @@ bool UPokemonNavigationComponent::ProcessApproach()
 		return true;
 	}
 
-	return RequestMoveToLocation(TargetLocation, Radius, false, true);
+	return RequestMoveToLocation(TargetLocation, Radius, false, false);
 }
 
 bool UPokemonNavigationComponent::ProcessFlee()

@@ -344,9 +344,24 @@ void UPokemonDecisionComponent::UpdateNavigationIntent()
 		return;
 	}
 
-	if (CachedNavigationComponent->HasActiveNavigationRequest() && CachedNavigationComponent->GetCurrentNavigationIntent().IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+	if (CachedNavigationComponent->HasActiveNavigationRequest())
 	{
-		return;
+		const FAgentNavigationRequest& ActiveRequest = CachedNavigationComponent->GetCurrentNavigationIntent();
+		
+		//
+        // A move/task currently owns locomotion.
+        // Autonomous decision navigation must not
+        // overwrite it.
+        //
+		if (ActiveRequest.RequestId.IsValid())
+		{
+			return;
+		}
+
+		if (ActiveRequest.IntentTag == PokemonAITags::NavIntent_PlayerCommand_Move)
+		{
+			return;
+		}
 	}
 
 	if (ControlledPokemon && ControlledPokemon->GetIsDodging())

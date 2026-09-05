@@ -213,7 +213,18 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 
 	if (IsCommandActive())
 	{
-		UE_LOG(LogTemp, Verbose, TEXT("TryCallCommand ignored: command already active."));
+
+		UE_LOG(LogTemp,Display,TEXT(
+				"[PokemonCommand] Command rejected | "
+				"Pokemon=%s | "
+				"RequestedIndex=%d | "
+				"Reason=CommandAlreadyActive | "
+				"ActiveMove=%s"
+			),
+			*GetNameSafe(Pokemon),
+			MoveIndex,
+			*GetNameSafe(ActivePokemonMove)
+		);
 		return false;
 	}
 
