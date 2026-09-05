@@ -76,35 +76,56 @@ bool UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AActor* Attacker,con
 	return true;
 }
 
-bool UPokemonMeleeContactLibrary::BuildExecutionCandidate(AActor* Attacker, const FPokemonMeleeContactSettings& Settings, const FVector& TargetLocation, FPokemonMeleeExecutionCandidate& OutCandidate)
+bool UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AActor* Attacker, const FPokemonMeleeContactSettings& Settings, FPokemonMeleeApproachSnapshot& OutSnapshot)
 {
-	OutCandidate = FPokemonMeleeExecutionCandidate();
+	OutSnapshot = FPokemonMeleeApproachSnapshot();
 
 	FVector Center;
-	float Radius;
+	float Radius = 0.f;
 
-	if (TargetLocation.ContainsNaN()||!ResolveMeleeContactSphere(Attacker, Settings, Center, Radius))
+	if (!IsValid(Attacker) || !ResolveMeleeContactSphere(Attacker, Settings, Center, Radius))
+	{
+		return false;
+	}
+
+	// Scale is already represented in the sampled world-space position.
+	const FVector Offset = Attacker->GetActorQuat().UnrotateVector(Center - Attacker->GetActorLocation());
+
+	if(Offset.ContainsNaN())
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[MeleeContact] InvalidCandidate | Attacker=%s | ")
-			TEXT("Tag=%s | TargetLocation=NaN"),
+			TEXT("[MeleeContact] InvalidSnapshot | Attacker=%s | ")
+			TEXT("Tag=%s | Offset=NaN"),
 			*GetNameSafe(Attacker),
 			*Settings.SocketTag.ToString());
 		return false;
 	}
 
-	// World-centimeter offset expressed in the actor's rotation frame.
-	// Scale is already represented in the sampled socket position.
-	const FVector ContactOffset = Attacker->GetActorQuat().UnrotateVector(Center - Attacker->GetActorLocation());
+	OutSnapshot.RootSpaceContactOffset = Offset;
+	OutSnapshot.Radius = Radius;
+	OutSnapshot.bIsSet = true;
+	return true;
+}
 
-	FVector Direction = (TargetLocation - Attacker->GetActorLocation()).GetSafeNormal2D();
+bool UPokemonMeleeContactLibrary::BuildExecutionCandidate(AActor* Attacker, const FPokemonMeleeApproachSnapshot& Snapshot, const FVector& TargetLocation, FPokemonMeleeExecutionCandidate& OutCandidate)
+{
+	OutCandidate = FPokemonMeleeExecutionCandidate();
+
+	if (!IsValid(Attacker) || !Snapshot.IsValid() || TargetLocation.ContainsNaN())
+	{
+		return false;
+	}
+
+	const FVector ActorLocation = Attacker->GetActorLocation();
+	const FVector& ContactOffset = Snapshot.RootSpaceContactOffset;
+
+	FVector Direction = (TargetLocation - ActorLocation).GetSafeNormal2D();
 
 	if (Direction.IsNearlyZero())
 	{
 		Direction = Attacker->GetActorForwardVector().GetSafeNormal2D();
 	}
-
-	if(Direction.IsNearlyZero())
+	if (Direction.IsNearlyZero())
 	{
 		Direction = FVector::ForwardVector;
 	}
@@ -118,8 +139,9 @@ bool UPokemonMeleeContactLibrary::BuildExecutionCandidate(AActor* Attacker, cons
 
 	OutCandidate.RootLocation = TargetLocation - OutCandidate.Facing.RotateVector(ContactOffset);
 
-	OutCandidate.CurrentContactCenter = Center;
-	OutCandidate.Radius = Radius;
+	OutCandidate.PlannedContactCenter = ActorLocation+Attacker->GetActorQuat().RotateVector(ContactOffset);
 
-	return true;
+	OutCandidate.Radius = Snapshot.Radius;
+
+	return !OutCandidate.RootLocation.ContainsNaN() && !OutCandidate.PlannedContactCenter.ContainsNaN();
 }

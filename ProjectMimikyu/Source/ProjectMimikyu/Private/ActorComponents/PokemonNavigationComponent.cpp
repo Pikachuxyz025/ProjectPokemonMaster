@@ -546,7 +546,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(
 		Pokemon,
-		CurrentNavigationRequest.MeleeContact,
+		CurrentNavigationRequest.MeleeApproach,
 		TargetLocation,
 		Candidate))
 	{
@@ -554,7 +554,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
-	if (FVector::DistSquared(Candidate.CurrentContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
+	if (FVector::DistSquared(Candidate.PlannedContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
 	{
 		CachedAIController->StopMovement();
 		return true;
@@ -576,7 +576,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	const FVector GroundRoot = NavGoal + RootAboveFeet;
 
 	// Recover the sampled contact offset in the actor's rotation frame.
-	const FVector RootSpaceContactOffset = Candidate.Facing.Quaternion().UnrotateVector(TargetLocation - Candidate.RootLocation);
+	const FVector& RootSpaceContactOffset = CurrentNavigationRequest.MeleeApproach.RootSpaceContactOffset;
 
 	// Predict how the task would face that target from the projected root.
 	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
@@ -602,7 +602,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
 		TEXT("Target=%s | RequiredRoot=%s | GroundRoot=%s | ")
 		TEXT("GroundContact=%s | Error3D=%.2f | VerticalError=%.2f | ")
-		TEXT("ContactRadius=%.2f | NavRadius=%.2f"),
+		TEXT("ContactRadius=%.2f | NavRadius=%.2f | PlanOffset=%s"),
 		*CurrentNavigationRequest.RequestId.ToString(),
 		*TargetLocation.ToString(),
 		*Candidate.RootLocation.ToString(),
@@ -611,7 +611,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		ContactError,
 		GroundContact.Z - TargetLocation.Z,
 		Candidate.Radius,
-		NavigationRadius);
+		NavigationRadius,
+		*RootSpaceContactOffset.ToString());
 
 	if (NavigationRadius <= 0.f)
 	{

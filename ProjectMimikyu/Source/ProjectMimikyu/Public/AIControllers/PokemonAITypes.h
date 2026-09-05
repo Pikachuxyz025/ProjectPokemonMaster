@@ -43,6 +43,9 @@ struct FAgentNavigationRequest
 	FPokemonMeleeContactSettings MeleeContact;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPokemonMeleeApproachSnapshot MeleeApproach;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DesiredDistance = 300.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

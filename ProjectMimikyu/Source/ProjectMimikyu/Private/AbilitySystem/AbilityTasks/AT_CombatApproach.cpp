@@ -103,25 +103,20 @@ void UAT_CombatApproach::TickTask(float DeltaTime)
 
 bool UAT_CombatApproach::IsValidSetup() const
 {
-	if (!Ability || !AvatarPawn || !AvatarPokemon|| !NavigationComponent)
+	if (!Ability || !AvatarPawn || !AvatarPokemon || !NavigationComponent)
+	{
+		return false;
+	}
+
+	// Before submission, capture validates the contact configuration.
+	// Afterwards, validate the snapshot and request ownership.
+	if (bSubmittedNavigationRequest && (!IsCurrentNavigationRequestOwnedByTask() || (MeleeContact.SocketTag.IsValid() && !MeleeApproach.IsValid())))
 	{
 		return false;
 	}
 
 	FVector TargetLocation;
-
-	if (MeleeContact.SocketTag.IsValid())
-	{
-		FVector	Center;
-		float Radius;
-
-		if (!UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AvatarPawn.Get(), MeleeContact, Center, Radius))
-		{
-			return false;
-		}
-	}
-
-	return ResolveApproachTargetLocation(TargetLocation);
+	return ResolveApproachTargetLocation(TargetLocation) && !TargetLocation.ContainsNaN();
 }
 
 bool UAT_CombatApproach::HasReachedDesiredRange() const
@@ -140,26 +135,26 @@ bool UAT_CombatApproach::HasReachedDesiredRange() const
 
 	if (MeleeContact.SocketTag.IsValid())
 	{
-		FVector	Center;
-		float Radius;
+		FPokemonMeleeExecutionCandidate Candidate;
 
-		if (!UPokemonMeleeContactLibrary::ResolveMeleeContactSphere(AvatarPawn.Get(), MeleeContact, Center, Radius))
+		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(	AvatarPawn.Get(), MeleeApproach, TargetLocation, Candidate))
 		{
 			return false;
 		}
 
-		const double ContactDistance = FVector::Dist(Center,TargetLocation);
+		const double Distance = FVector::Dist(Candidate.PlannedContactCenter, TargetLocation);
 
-		if (ContactDistance <= Radius)
+		if (Distance <= Candidate.Radius)
 		{
 			UE_LOG(LogTemp, Display,
-				TEXT("[CombatApproach] MeleeContactReached | RequestId=%s | ")
-				TEXT("Target=%s | Center=%s | Distance3D=%.2f | Radius=%.2f"),
+				TEXT("[CombatApproach] MeleeExecutionReached | RequestId=%s | ")
+				TEXT("Target=%s | PlannedCenter=%s | Distance3D=%.2f | Radius=%.2f"),
 				*SubmitNavigationRequestId.ToString(),
 				*TargetLocation.ToString(),
-				*Center.ToString(),
-				ContactDistance,
-				Radius);
+				*Candidate.PlannedContactCenter.ToString(),
+				Distance,
+				Candidate.Radius);
+
 			return true;
 		}
 
@@ -175,10 +170,13 @@ bool UAT_CombatApproach::HasReachedDesiredRange() const
 
 void UAT_CombatApproach::FinishSuccess()
 {
+	ClearOwnedNavigationRequest();
+
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
 		OnReachedRange.Broadcast();
 	}
+
 	EndTask();
 }
 
@@ -237,6 +235,34 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 	Request.RequestId = FGuid::NewGuid();
 
 	Request.MeleeContact = MeleeContact;
+
+	MeleeApproach = FPokemonMeleeApproachSnapshot();
+
+	if (MeleeContact.SocketTag.IsValid())
+	{
+		if (!UPokemonMeleeContactLibrary::CaptureMeleeApproachSnapshot(AvatarPokemon.Get(), MeleeContact, MeleeApproach))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[CombatApproach] Failed to capture melee approach snapshot | Pokemon=%s | RequestId=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+				*GetNameSafe(AvatarPokemon),
+				*Request.RequestId.ToString(),
+				*GetNameSafe(Request.TargetActor.Get()),
+				*Request.TargetPointTag.ToString(),
+				*Request.TargetLocation.ToString(),
+				DesiredRange
+			);
+			return false;
+		}
+	}
+
+	Request.MeleeApproach = MeleeApproach;
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[CombatApproach] MeleePlanCaptured | RequestId=%s | ")
+		TEXT("Tag=%s | Offset=%s | Radius=%.2f"),
+		*Request.RequestId.ToString(),
+		*MeleeContact.SocketTag.ToString(),
+		*MeleeApproach.RootSpaceContactOffset.ToString(),
+		MeleeApproach.Radius);
 
 	Request.Urgency = 0.5f;
 
@@ -357,7 +383,7 @@ void UAT_CombatApproach::FaceTarget(float DeltaTime) const
 	{
 		FPokemonMeleeExecutionCandidate Candidate;
 
-		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(AvatarPokemon.Get(), MeleeContact, TargetLocation, Candidate))
+		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(AvatarPokemon.Get(), MeleeApproach, TargetLocation, Candidate))
 		{
 			return;
 		}

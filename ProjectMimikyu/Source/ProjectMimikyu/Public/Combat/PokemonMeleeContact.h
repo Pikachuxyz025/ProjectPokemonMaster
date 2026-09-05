@@ -27,13 +27,38 @@ struct PROJECTMIMIKYU_API FPokemonMeleeContactSettings
 	float Radius = 25.0f;
 };
 
-// A candidate based on the current pose.
+// Fixed geometry for one approach request.
+// Offset is in world centimeters, expressed in the actor's rotation frame.
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonMeleeApproachSnapshot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
+	FVector RootSpaceContactOffset = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
+	float Radius = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Melee")
+	bool bIsSet = false;
+
+	bool IsValid() const
+	{
+		return bIsSet
+			&& !RootSpaceContactOffset.ContainsNaN()
+			&& FMath::IsFinite(Radius)
+			&& Radius > 0.f;
+	}
+};
+
+// A candidate based on the frozen approach geometry.
 // Ground and path validity are evaluated separately.
 struct PROJECTMIMIKYU_API FPokemonMeleeExecutionCandidate
 {
 	FVector RootLocation = FVector::ZeroVector;
 	FRotator Facing = FRotator::ZeroRotator;
-	FVector CurrentContactCenter = FVector::ZeroVector;
+	FVector PlannedContactCenter = FVector::ZeroVector;
 	float Radius = 0.f;
 };
 
@@ -56,8 +81,17 @@ public:
 	static bool BuildExecutionCandidate
 	(
 		AActor* Attacker,
-		const FPokemonMeleeContactSettings& Settings,
+		const FPokemonMeleeApproachSnapshot& Settings,
 		const FVector& TargetLocation,
 		FPokemonMeleeExecutionCandidate& OutCandidate
 	);
+
+	static bool CaptureMeleeApproachSnapshot
+	(
+		AActor* Attacker,
+		const FPokemonMeleeContactSettings& Settings,
+		FPokemonMeleeApproachSnapshot& OutSnapshot
+	);
+
+
 };
