@@ -575,7 +575,24 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const FVector GroundRoot = NavGoal + RootAboveFeet;
 
-	const FVector GroundContact = GroundRoot + (TargetLocation - Candidate.RootLocation);
+	// Recover the sampled contact offset in the actor's rotation frame.
+	const FVector RootSpaceContactOffset = Candidate.Facing.Quaternion().UnrotateVector(TargetLocation - Candidate.RootLocation);
+
+	// Predict how the task would face that target from the projected root.
+	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
+
+	FRotator GroundFacing = Candidate.Facing;
+
+	if (!GroundDirection.IsNearlyZero())
+	{
+		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
+			? RootSpaceContactOffset.Rotation().Yaw
+			: 0.f;
+
+		GroundFacing = FRotator(0.f, FRotator::NormalizeAxis(GroundDirection.Rotation().Yaw - ContactYaw), 0.f);
+	}
+
+	const FVector GroundContact = GroundRoot + GroundFacing.RotateVector(RootSpaceContactOffset);
 
 	const float ContactError = static_cast<float>(FVector::Dist(GroundContact, TargetLocation));
 
