@@ -11,6 +11,8 @@
 
 class AAIController;
 class APawn;
+class APokemonJumpNavLink;
+class UPokemonJumpExecutionComponent;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
@@ -40,6 +42,11 @@ virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|AI|Traversal|Debug",meta = (DevelopmentOnly))
 	bool DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance, bool bDestinationSupportConfirmed);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|AI|Traversal|Debug", meta = (DevelopmentOnly))
+	bool DebugExecuteRetainedTraversal();
+
+	void HandleJumpLinkReached(APokemonJumpNavLink* Link, const FVector& DestinationFeet);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
 	void SuspendNavigation();
@@ -104,6 +111,19 @@ private:
 	float TimeSinceLastNavigationThink = 0.f;
 
 	bool bNavigationSuspended = false;
+	bool bTraversalPlanReady = false;
+	bool bReachingTakeoff = false;
+	bool bRequestJumpConsumed = false;
+	float TakeoffApproachElapsed = 0.f;
+	FPokemonTraversalRequirement PendingTraversalRequirement;
+	TWeakObjectPtr<APokemonJumpNavLink> ActiveJumpLink;
+
+	bool IsAttackJumpConsumed() const;
+	void RefreshTraversalAuthorization();
+	void StartPreparedTraversal();
+	void TickTakeoffApproach(float DeltaTime);
+	void HandleJumpTakeoff(FGuid RequestId);
+	void HandleJumpFinished(FGuid RequestId, bool bLandedAtDestination, FName Reason);
 
 	void TickNavigation(float DeltaTime);
 

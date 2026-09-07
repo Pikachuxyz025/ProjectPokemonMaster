@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Combat/PokemonMeleeContact.h"
+#include "Navigation/PokemonTraversalTypes.h"
 #include "PokemonAITypes.generated.h"
 
 namespace PokemonCrowdGroups
@@ -60,7 +61,24 @@ struct FAgentNavigationRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAllowGASMovementAbilities = true;
 
-	// Conservative parent-completion policy; 0.1 does not execute traversal.
+	// Execution modality is independent of Physical/Special damage category.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traversal")
+	EPokemonJumpTrajectoryPreference JumpTrajectoryPreference = EPokemonJumpTrajectoryPreference::Direct;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal")
+	bool bIsAttackTraversal = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal")
+	FGuid ParentAttackCommandId;
+
+	// Explicit parent authorization; this vector is bounded by actual aligned velocity.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal")
+	bool bTrainerAuthorizedMoveMomentum = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal")
+	FVector AuthorizedMoveMomentum = FVector::ZeroVector;
+
+	// Conservative parent-completion policy, extensible by later airborne actions.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bTraversalRequiresLanding = true;
 

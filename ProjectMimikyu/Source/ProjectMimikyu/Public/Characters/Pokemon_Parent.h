@@ -36,6 +36,7 @@ class UBehaviorTree;
 class APokemonAIController;
 struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
+class UPokemonJumpExecutionComponent;
 class UPokemonCommandComponent;
 class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
@@ -59,6 +60,14 @@ public:
 	FPokemonTraversalCapabilities TraversalCapabilities;
 
 	const FPokemonTraversalCapabilities& GetTraversalCapabilities() const { return TraversalCapabilities; }
+
+	// Current effective Speed conversion, excluding an attack's movement multiplier.
+	float GetNaturalTraversalMovementSpeed();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Traversal")
+	TObjectPtr<UPokemonJumpExecutionComponent> JumpExecutionComponent;
+
+	EMovementSpeed TraversalMovementSpeedMode = EMovementSpeed::EMS_Running;
 
 #pragma region Event Calls
 	UPROPERTY(BlueprintReadOnly, BlueprintAssignable)

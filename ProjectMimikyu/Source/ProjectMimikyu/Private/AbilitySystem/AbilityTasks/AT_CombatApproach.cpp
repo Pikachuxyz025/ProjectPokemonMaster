@@ -9,6 +9,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Characters/Pokemon_Parent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
+#include "ActorComponents/PokemonJumpExecutionComponent.h"
+#include "AbilitySystem/Abilities/ProjectileAbility.h"
 
 
 UAT_CombatApproach::UAT_CombatApproach()
@@ -122,6 +125,11 @@ bool UAT_CombatApproach::IsValidSetup() const
 
 bool UAT_CombatApproach::HasReachedDesiredRange() const
 {
+	// Retain task ownership through preparation/flight; live attack contact is unchanged.
+	if (AvatarPokemon && AvatarPokemon->JumpExecutionComponent && AvatarPokemon->JumpExecutionComponent->IsBusy())
+	{
+		return false;
+	}
 	if (!AvatarPawn)
 	{
 		return false;
@@ -237,6 +245,13 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 	Request.AcceptableRadius = DesiredRange;
 
 	Request.RequestId = FGuid::NewGuid();
+	Request.bIsAttackTraversal = true;
+	Request.JumpTrajectoryPreference = Cast<UProjectileAbility>(Ability)
+		? EPokemonJumpTrajectoryPreference::Projectile : EPokemonJumpTrajectoryPreference::Direct;
+	if (const UPokemonCommandComponent* Command = AvatarPokemon->FindComponentByClass<UPokemonCommandComponent>())
+	{
+		Request.ParentAttackCommandId = Command->GetActiveTrainerCommandId();
+	}
 
 	Request.MeleeContact = MeleeContact;
 

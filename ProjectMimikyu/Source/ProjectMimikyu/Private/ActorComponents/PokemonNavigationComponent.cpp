@@ -10,6 +10,12 @@
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Navigation/PokemonTraversalEvaluator.h"
+#include "Navigation/PokemonJumpSolver.h"
+#include "Navigation/PokemonJumpTrajectoryValidator.h"
+#include "Navigation/PokemonJumpNavLink.h"
+#include "ActorComponents/PokemonJumpExecutionComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
+#include "NavLinkCustomComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
@@ -46,6 +52,11 @@ void UPokemonNavigationComponent::BeginPlay()
 	{
 		CachedAIController = Cast<AAIController>(OwnerPawn->GetController());
 	}
+	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	{
+		Executor->OnJumpTakeoff.AddUObject(this, &UPokemonNavigationComponent::HandleJumpTakeoff);
+		Executor->OnJumpFinished.AddUObject(this, &UPokemonNavigationComponent::HandleJumpFinished);
+	}
 }
 
 
@@ -58,6 +69,18 @@ void UPokemonNavigationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 
 void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequest& NewRequest)
 {
+	const bool bSameRequest = NewRequest.RequestId.IsValid() && NewRequest.RequestId == CurrentNavigationRequest.RequestId;
+	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	{
+		Executor->CancelBeforeTakeoff(FName(TEXT("ParentReplaced")));
+	}
+	bTraversalPlanReady = false;
+	bReachingTakeoff = false;
+	ActiveJumpLink.Reset();
+	if (!bSameRequest)
+	{
+		bRequestJumpConsumed = false;
+	}
 	CurrentNavigationRequest = NewRequest;
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
 
@@ -86,6 +109,13 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 
 void UPokemonNavigationComponent::ClearNavigationIntent()
 {
+	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	{
+		Executor->CancelBeforeTakeoff(FName(TEXT("ParentCleared")));
+	}
+	bTraversalPlanReady = false;
+	bReachingTakeoff = false;
+	ActiveJumpLink.Reset();
 	CurrentNavigationRequest = FAgentNavigationRequest();
 	bHasActiveRequest = false;
 	bPlayerMovePlanningOnly = false;
@@ -200,6 +230,12 @@ void UPokemonNavigationComponent::SuspendNavigation()
 	}
 
 	bNavigationSuspended = true;
+	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	{
+		Executor->CancelBeforeTakeoff(FName(TEXT("NavigationSuspended")));
+	}
+	// Preparation may be retried after the dodge, with a fresh start and no reserved momentum.
+	bTraversalPlanReady = false;
 
 	// Stop the current path-following execution but KEEP CurrentNavigationRequest.
 	if (CachedAIController)
@@ -224,6 +260,13 @@ void UPokemonNavigationComponent::ResumeNavigation()
 	}
 
 	bNavigationSuspended = false;
+	if (bPlayerMovePlanningOnly && !IsAttackJumpConsumed()
+		&& LastTraversalRequirement.Circumstance != EPokemonTraversalCircumstance::Unclassified)
+	{
+		PendingTraversalRequirement = LastTraversalRequirement;
+		bReachingTakeoff = true;
+		TakeoffApproachElapsed = 0.f;
+	}
 
 	// Force the retained request to be reconsidered immediately on the next navigation tick.
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
@@ -241,6 +284,14 @@ void UPokemonNavigationComponent::ResumeNavigation()
 
 void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 {
+	if (!GetOwner() || !GetOwner()->HasAuthority())
+	{
+		return;
+	}
+	if (OwnerPawn && !CachedAIController)
+	{
+		CachedAIController = Cast<AAIController>(OwnerPawn->GetController());
+	}
 	if (!bHasActiveRequest || !CachedAIController)
 	{
 		return;
@@ -258,6 +309,24 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 	if (!OwnerPokemon || !OwnerPokemon->CanAct())
 	{
 		ClearNavigationIntent();
+		return;
+	}
+	if (OwnerPokemon->JumpExecutionComponent && OwnerPokemon->JumpExecutionComponent->IsBusy())
+	{
+		return;
+	}
+	if (bReachingTakeoff)
+	{
+		TickTakeoffApproach(DeltaTime);
+		return;
+	}
+	if (bTraversalPlanReady)
+	{
+		StartPreparedTraversal();
+		return;
+	}
+	if (bPlayerMovePlanningOnly)
+	{
 		return;
 	}
 
@@ -766,7 +835,7 @@ bool UPokemonNavigationComponent::ProcessCombatReposition()
 
 bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 {
-	// 0.1 retains the command for planning; no special-traversal executor exists.
+	// A failed route remains retained until a validated executable plan is available.
 	if (bPlayerMovePlanningOnly)
 	{
 		return false;
@@ -876,6 +945,10 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 		AcceptableRadius,
 		OwnerPawn ? OwnerPawn->GetVelocity().Size2D() : 0.0);
 
+	if (Result.Code == EPathFollowingRequestResult::Failed || (DebugPath.IsValid() && DebugPath->IsPartial()))
+	{
+		EvaluateGroundTraversalFailure(GoalLocation, FName(TEXT("GroundRouteInadequate")));
+	}
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
 
@@ -903,7 +976,8 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 	// IMPORTANT
 	MoveRequest.SetCanStrafe(bCanStrafe);
 
-	const FPathFollowingRequestResult Result =	CachedAIController->MoveTo(MoveRequest);
+	FNavPathSharedPtr TraversalPath;
+	const FPathFollowingRequestResult Result = CachedAIController->MoveTo(MoveRequest, &TraversalPath);
 
 	UE_LOG(LogTemp, Warning,
 		TEXT("[PokemonNav] MoveToActor | Owner=%s | Target=%s | Distance=%.1f | Radius=%.1f | Result=%s"),
@@ -914,6 +988,18 @@ bool UPokemonNavigationComponent::RequestMoveToActor(AActor* TargetActor, float 
 		*UEnum::GetValueAsString(Result.Code)
 	);
 
+	if (Result.Code == EPathFollowingRequestResult::Failed || (TraversalPath.IsValid() && TraversalPath->IsPartial()))
+	{
+		FVector DestinationFeet = TargetActor->GetActorLocation();
+		if (const ACharacter* Character = Cast<ACharacter>(TargetActor))
+		{
+			DestinationFeet.Z -= Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+		}
+		// Persistent follow/chase lands beside the target rather than inside its capsule.
+		const FVector Away = (OwnerPawn->GetActorLocation() - DestinationFeet).GetSafeNormal2D();
+		DestinationFeet += Away * AcceptableRadius;
+		EvaluateGroundTraversalFailure(DestinationFeet, FName(TEXT("ActorGroundRouteInadequate")));
+	}
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
 
@@ -1142,98 +1228,119 @@ bool UPokemonNavigationComponent::BuildTraversalRequirement(
 	return true;
 }
 
-void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(
-	const FVector& DestinationFeet, FName Trigger)
+void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(const FVector& DestinationFeet, FName Trigger)
 {
-	if (!CurrentNavigationRequest.bAllowSpecialTraversal)
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+	if (!Pokemon || !Pokemon->HasAuthority() || bNavigationSuspended || bReachingTakeoff
+		|| bTraversalPlanReady || !CurrentNavigationRequest.bAllowSpecialTraversal
+		|| (Pokemon->JumpExecutionComponent && Pokemon->JumpExecutionComponent->IsBusy()))
 	{
-		UE_LOG(LogTemp, Display,
-			TEXT("[Traversal] EvaluationSkipped | RequestId=%s | ")
-			TEXT("Reason=SpecialTraversalDisabled | Trigger=%s"),
-			*CurrentNavigationRequest.RequestId.ToString(),
-			*Trigger.ToString());
-
 		return;
 	}
-
 	FPokemonTraversalRequirement Requirement;
-
-	if (BuildTraversalRequirement(DestinationFeet, Trigger, Requirement))
+	if (!BuildTraversalRequirement(DestinationFeet, Trigger, Requirement))
+	{
+		return;
+	}
+	// For a partial ground route, approach its reachable endpoint before jumping.
+	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+		GetWorld(), Pokemon->GetActorLocation(), DestinationFeet, OwnerPawn);
+	if (GroundPath && GroundPath->IsValid() && GroundPath->IsPartial() && GroundPath->PathPoints.Num() > 1)
+	{
+		const FVector Endpoint = GroundPath->PathPoints.Last();
+		if (FVector::Dist2D(Endpoint, DestinationFeet) + 10.f < FVector::Dist2D(Requirement.StartFeetLocation, DestinationFeet))
+		{
+			FName Failure;
+			FVector SupportedEndpoint;
+			if (FPokemonJumpTrajectoryValidator::ResolveLanding(*Pokemon, Endpoint, SupportedEndpoint, Failure))
+			{
+				Requirement.StartFeetLocation = SupportedEndpoint;
+				Requirement.bStartSupportKnown = true;
+			}
+		}
+	}
+	FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(*Pokemon, Requirement.StartFeetLocation, DestinationFeet, Requirement);
+	bPlayerMovePlanningOnly = true;
+	LastTraversalRequirement = Requirement;
+	if (Requirement.Circumstance != EPokemonTraversalCircumstance::Unclassified && !IsAttackJumpConsumed())
+	{
+		PendingTraversalRequirement = Requirement;
+		bReachingTakeoff = true;
+		TakeoffApproachElapsed = 0.f;
+	}
+	else
 	{
 		EvaluateTraversalRequirement(Requirement);
+		if (CachedAIController)
+		{
+			CachedAIController->StopMovement();
+		}
 	}
 }
 
 void UPokemonNavigationComponent::EvaluateTraversalRequirement(const FPokemonTraversalRequirement& Requirement)
 {
-	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
-
-	if (!IsValid(Pokemon)|| !bHasActiveRequest|| !CurrentNavigationRequest.bAllowSpecialTraversal|| Requirement.ParentRequestId != CurrentNavigationRequest.RequestId)
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+	if (!Pokemon || !Pokemon->HasAuthority() || !bHasActiveRequest
+		|| !CurrentNavigationRequest.bAllowSpecialTraversal || Requirement.ParentRequestId != CurrentNavigationRequest.RequestId)
 	{
 		return;
 	}
-
 	LastTraversalRequirement = Requirement;
-
-	const FPokemonTraversalCapabilities& Capabilities =Pokemon->GetTraversalCapabilities();
-
-	LastTraversalCandidate =FPokemonTraversalEvaluator::Evaluate(Requirement, Capabilities);
-
-	UE_LOG(LogTemp, Display,
-		TEXT("[Traversal] RequirementBuilt | RequestId=%s | Intent=%s | ")
-		TEXT("Circumstance=%s | Evidence=%s | Trigger=%s | ")
-		TEXT("StartFeet=%s | DestinationFeet=%s | Horizontal=%.2f | Vertical=%.2f | ")
-		TEXT("StartSupportKnown=%d | DestinationSupportKnown=%d | ")
-		TEXT("LandingRequired=%d | AirborneParentCompletion=%d"),
-		*Requirement.ParentRequestId.ToString(),
-		*CurrentNavigationRequest.IntentTag.ToString(),
-		*UEnum::GetValueAsString(Requirement.Circumstance),
-		*UEnum::GetValueAsString(Requirement.Evidence),
-		*Requirement.Trigger.ToString(),
-		*Requirement.StartFeetLocation.ToString(),
-		*Requirement.DestinationFeetLocation.ToString(),
-		Requirement.HorizontalSeparation(),
-		Requirement.VerticalSeparation(),
-		Requirement.bStartSupportKnown,
-		Requirement.bDestinationSupportKnown,
-		Requirement.bLandingRequired,
-		Requirement.bParentMayCompleteWhileAirborne);
-
-	if (Requirement.Circumstance ==	EPokemonTraversalCircumstance::Unclassified)
+	LastTraversalCandidate = FPokemonTraversalCandidate();
+	LastTraversalCandidate.ParentRequestId = Requirement.ParentRequestId;
+	LastTraversalCandidate.StartFeetLocation = Requirement.StartFeetLocation;
+	LastTraversalCandidate.DestinationFeetLocation = Requirement.DestinationFeetLocation;
+	if (IsAttackJumpConsumed())
 	{
-		UE_LOG(LogTemp, Display,
-			TEXT("[Traversal] RequirementUnclassified | RequestId=%s | Trigger=%s | ")
-			TEXT("Missing=VerifiedCircumstanceAndDestinationSupport"),
-			*Requirement.ParentRequestId.ToString(),
-			*Requirement.Trigger.ToString());
+		LastTraversalCandidate.FailureReason = FName(TEXT("AttackJumpAlreadyConsumed"));
+		return;
 	}
-
-	const FPokemonTraversalCandidate& Result = LastTraversalCandidate;
-	const FPokemonProvisionalJumpEnvelope& Envelope =	Capabilities.ProvisionalJump;
-
-	const bool bValid = Result.IsValidForPlanning();
-
-	UE_LOG(LogTemp, Display,
-		TEXT("[Traversal] %s | RequestId=%s | Intent=%s | Solution=%s | ")
-		TEXT("Result=%s | Reason=%s | CapabilityProfile=%s | ")
-		TEXT("NaturalJump=%d | ModelEnabled=%d | ")
-		TEXT("MaxHorizontal=%.2f | MaxRise=%.2f | MaxDrop=%.2f | ")
-		TEXT("Validation=%s | Executable=false"),
-		bValid ? TEXT("CandidateEvaluated") : TEXT("NoSolution"),
-		*Result.ParentRequestId.ToString(),
-		*CurrentNavigationRequest.IntentTag.ToString(),
-		*UEnum::GetValueAsString(Result.Solution),
-		bValid ? TEXT("Valid") : TEXT("Invalid"),
-		*Result.FailureReason.ToString(),
-		*Result.CapabilityProfileId.ToString(),
-		Capabilities.bCanNaturallyJump,
-		Envelope.bEnabled,
-		Envelope.MaxHorizontalSpan,
-		Envelope.MaxRise,
-		Envelope.MaxDrop,
-		bValid ? TEXT("ProvisionalEnvelopeOnly") : TEXT("NotValidated"));
+	RefreshTraversalAuthorization();
+	FPokemonTraversalRequirement ResolvedRequirement = Requirement;
+	FName LandingFailure;
+	FVector LandingFeet;
+	if (FPokemonJumpTrajectoryValidator::ResolveLanding(*Pokemon, Requirement.DestinationFeetLocation, LandingFeet, LandingFailure))
+	{
+		ResolvedRequirement.DestinationFeetLocation = LandingFeet;
+		ResolvedRequirement.bDestinationSupportKnown = true;
+	}
+	else
+	{
+		ResolvedRequirement.bDestinationSupportKnown = false;
+		LastTraversalCandidate.FailureReason = LandingFailure;
+	}
+	LastTraversalRequirement = ResolvedRequirement;
+	const FPokemonJumpCapabilitySnapshot Capability = FPokemonJumpSolver::CaptureCapabilities(
+		*Pokemon, CurrentNavigationRequest, (ResolvedRequirement.DestinationFeetLocation - ResolvedRequirement.StartFeetLocation).GetSafeNormal2D());
+	if (ResolvedRequirement.bDestinationSupportKnown)
+	{
+		const TArray<FPokemonTraversalCandidate> Candidates = FPokemonJumpSolver::Solve(
+			ResolvedRequirement, Capability, CurrentNavigationRequest.JumpTrajectoryPreference);
+		for (FPokemonTraversalCandidate Candidate : Candidates)
+		{
+			LastTraversalCandidate = Candidate;
+			if (Candidate.IsValidForPlanning() && FPokemonJumpTrajectoryValidator::Validate(*Pokemon, Candidate))
+			{
+				LastTraversalCandidate = Candidate;
+				break;
+			}
+			LastTraversalCandidate = Candidate;
+		}
+	}
+	if (FPokemonJumpSolver::IsDebugEnabled())
+	{
+		const FPokemonTraversalCandidate& C = LastTraversalCandidate;
+		UE_LOG(LogTemp, Display, TEXT("[Jump02] Plan | RequestId=%s | Evidence=%s | Circumstance=%s | Trigger=%s | StartFeet=%s | DestinationFeet=%s | SpeedAttribute=%.2f | MovementSpeed=%.2f | BaseV=%.2f | Attack=%.2f | AttackDV=(%.2f,%.2f) | Inherited=%.2f | AuthorizedMove=%.2f | Gravity=%.2f | FlightTime=%.3f | RequiredHV=(%.2f,%.2f) | Launch=%s | Preference=%s | Capsule=%d | Landing=%d | Executable=%d | Reason=%s | Tuning=Provisional"),
+			*C.ParentRequestId.ToString(), *UEnum::GetValueAsString(Requirement.Evidence), *UEnum::GetValueAsString(Requirement.Circumstance),
+			*Requirement.Trigger.ToString(), *C.StartFeetLocation.ToString(), *C.DestinationFeetLocation.ToString(), Capability.EffectiveSpeedAttribute,
+			Capability.EffectiveMovementSpeed, Capability.BaseVerticalLaunchVelocity, Capability.EffectiveAttack, Capability.AttackHorizontalDeltaV,
+			Capability.AttackVerticalDeltaV, Capability.InheritedAlignedSpeed, Capability.AuthorizedMoveAlignedSpeed, Capability.GravityMagnitude,
+			C.FlightTime, C.RequiredHorizontalLaunchSpeed, C.RequiredVerticalLaunchSpeed, *C.FinalLaunchVelocity.ToString(),
+			*UEnum::GetValueAsString(CurrentNavigationRequest.JumpTrajectoryPreference), C.bCapsuleClearanceValidated, C.bLandingValidated,
+			C.IsExecutable(), *C.FailureReason.ToString());
+	}
 }
-
 bool UPokemonNavigationComponent::DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance,bool bDestinationSupportConfirmed)
 {
 	if (!GetOwner()|| !GetOwner()->HasAuthority()|| !bHasActiveRequest|| !bPlayerMovePlanningOnly|| !CurrentNavigationRequest.bAllowSpecialTraversal|| !CurrentNavigationRequest.IntentTag.MatchesTagExact(PokemonAITags::NavIntent_PlayerCommand_Move))
@@ -1261,4 +1368,168 @@ bool UPokemonNavigationComponent::DebugEvaluateRetainedMoveTraversal(EPokemonTra
 
 	// A valid candidate does not release the planning-only hold.
 	return LastTraversalCandidate.IsValidForPlanning();
+}
+
+bool UPokemonNavigationComponent::IsAttackJumpConsumed() const
+{
+	if (!CurrentNavigationRequest.bIsAttackTraversal)
+	{
+		return false;
+	}
+	const UPokemonCommandComponent* Command = GetOwner()->FindComponentByClass<UPokemonCommandComponent>();
+	return bRequestJumpConsumed || (Command && Command->HasConsumedAttackJump(CurrentNavigationRequest.ParentAttackCommandId));
+}
+
+void UPokemonNavigationComponent::RefreshTraversalAuthorization()
+{
+	CurrentNavigationRequest.AuthorizedMoveMomentum = FVector::ZeroVector;
+	CurrentNavigationRequest.bTrainerAuthorizedMoveMomentum = false;
+	if (CurrentNavigationRequest.bIsAttackTraversal)
+	{
+		if (const UPokemonCommandComponent* Command = GetOwner()->FindComponentByClass<UPokemonCommandComponent>())
+		{
+			CurrentNavigationRequest.AuthorizedMoveMomentum = Command->GetAuthorizedTraversalMomentum(CurrentNavigationRequest.ParentAttackCommandId);
+			CurrentNavigationRequest.bTrainerAuthorizedMoveMomentum = !CurrentNavigationRequest.AuthorizedMoveMomentum.IsNearlyZero();
+		}
+	}
+}
+
+void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
+{
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+	if (!Pokemon || PendingTraversalRequirement.ParentRequestId != CurrentNavigationRequest.RequestId || IsAttackJumpConsumed())
+	{
+		bReachingTakeoff = false;
+		return;
+	}
+	TakeoffApproachElapsed += DeltaTime;
+	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+	if (FVector::Dist(CurrentFeet, PendingTraversalRequirement.StartFeetLocation) <= 10.f)
+	{
+		bReachingTakeoff = false;
+		PendingTraversalRequirement.StartFeetLocation = CurrentFeet;
+		PendingTraversalRequirement.bStartSupportKnown = Pokemon->GetCharacterMovement()->IsMovingOnGround()
+			&& Pokemon->GetCharacterMovement()->CurrentFloor.IsWalkableFloor();
+		EvaluateTraversalRequirement(PendingTraversalRequirement);
+		// Snapshot useful velocity before StopMovement clears path-following acceleration.
+		bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+		CachedAIController->StopMovement();
+		return;
+	}
+	if (TakeoffApproachElapsed > 8.f)
+	{
+		bReachingTakeoff = false;
+		LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachTimeout"));
+		CachedAIController->StopMovement();
+		if (FPokemonJumpSolver::IsDebugEnabled())
+		{
+			UE_LOG(LogTemp, Display, TEXT("[Jump02] Rejected | RequestId=%s | Reason=TakeoffApproachTimeout"), *CurrentNavigationRequest.RequestId.ToString());
+		}
+		return;
+	}
+	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
+	{
+		FAIMoveRequest Approach;
+		const FVector TakeoffRoot = PendingTraversalRequirement.StartFeetLocation
+			+ FVector::UpVector * Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+		Approach.SetGoalLocation(TakeoffRoot);
+		Approach.SetAcceptanceRadius(5.f);
+		Approach.SetReachTestIncludesAgentRadius(false);
+		Approach.SetProjectGoalLocation(false);
+		Approach.SetAllowPartialPath(false);
+		if (CachedAIController->MoveTo(Approach).Code == EPathFollowingRequestResult::Failed)
+		{
+			bReachingTakeoff = false;
+			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+		}
+	}
+}
+
+void UPokemonNavigationComponent::StartPreparedTraversal()
+{
+	bTraversalPlanReady = false;
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+	if (!Pokemon || bNavigationSuspended || IsAttackJumpConsumed() || !LastTraversalCandidate.IsExecutable()
+		|| LastTraversalCandidate.ParentRequestId != CurrentNavigationRequest.RequestId || !Pokemon->JumpExecutionComponent)
+	{
+		return;
+	}
+	Pokemon->JumpExecutionComponent->PrepareJump(LastTraversalCandidate, LastTraversalRequirement, CurrentNavigationRequest);
+}
+
+bool UPokemonNavigationComponent::DebugExecuteRetainedTraversal()
+{
+	if (!GetOwner()->HasAuthority() || bNavigationSuspended || !bHasActiveRequest
+		|| !bPlayerMovePlanningOnly || !LastTraversalCandidate.IsExecutable() || IsAttackJumpConsumed())
+	{
+		return false;
+	}
+	bReachingTakeoff = false;
+	bTraversalPlanReady = true;
+	return true;
+}
+
+void UPokemonNavigationComponent::HandleJumpLinkReached(APokemonJumpNavLink* Link, const FVector& DestinationFeet)
+{
+	if (!GetOwner()->HasAuthority() || !CachedAIController)
+	{
+		return;
+	}
+	if (!bHasActiveRequest || bNavigationSuspended || !CurrentNavigationRequest.bAllowSpecialTraversal)
+	{
+		CachedAIController->StopMovement();
+		return;
+	}
+	FPokemonTraversalRequirement Requirement;
+	if (!BuildTraversalRequirement(DestinationFeet, FName(TEXT("AuthoredSmartJumpLink")), Requirement))
+	{
+		CachedAIController->StopMovement();
+		return;
+	}
+	Requirement.Evidence = EPokemonTraversalEvidence::AuthoredJumpLink;
+	Requirement.Circumstance = FMath::Abs(Requirement.VerticalSeparation()) > 1.f
+		? EPokemonTraversalCircumstance::VerticalAccess : EPokemonTraversalCircumstance::GapTraversal;
+	ActiveJumpLink = Link;
+	bPlayerMovePlanningOnly = true;
+	EvaluateTraversalRequirement(Requirement);
+	bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+	// Unreal has already reached the Smart Link entry. Retire this path while retaining its parent.
+	CachedAIController->StopMovement();
+}
+
+void UPokemonNavigationComponent::HandleJumpTakeoff(FGuid RequestId)
+{
+	if (RequestId != CurrentNavigationRequest.RequestId)
+	{
+		return;
+	}
+	if (CurrentNavigationRequest.bIsAttackTraversal)
+	{
+		bRequestJumpConsumed = true;
+		if (UPokemonCommandComponent* Command = GetOwner()->FindComponentByClass<UPokemonCommandComponent>())
+		{
+			Command->ConsumeAttackJump(CurrentNavigationRequest.ParentAttackCommandId);
+		}
+	}
+}
+
+void UPokemonNavigationComponent::HandleJumpFinished(FGuid RequestId, bool bLandedAtDestination, FName Reason)
+{
+	if (!bHasActiveRequest || RequestId != CurrentNavigationRequest.RequestId)
+	{
+		return;
+	}
+	bTraversalPlanReady = false;
+	ActiveJumpLink.Reset();
+	if (bLandedAtDestination)
+	{
+		bPlayerMovePlanningOnly = false;
+		TimeSinceLastNavigationThink = NavigationThinkInterval;
+	}
+	// Failed flight or interrupted preparation stays retained. No automatic repeat jump.
+	if (FPokemonJumpSolver::IsDebugEnabled())
+	{
+		UE_LOG(LogTemp, Display, TEXT("[Jump02] Parent | RequestId=%s | Event=%s | Reason=%s | AttackAttemptConsumed=%d | PlanningOnly=%d"),
+			*RequestId.ToString(), bLandedAtDestination ? TEXT("Resumed") : TEXT("Retained"), *Reason.ToString(), bRequestJumpConsumed, bPlayerMovePlanningOnly);
+	}
 }

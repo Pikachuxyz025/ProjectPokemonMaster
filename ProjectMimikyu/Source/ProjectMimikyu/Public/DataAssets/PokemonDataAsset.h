@@ -53,6 +53,10 @@ class PROJECTMIMIKYU_API UPokemonDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 public:
 
+	// Species takeoff capability in cm/s. Zero disables physical jump execution.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Traversal|Jump", meta = (ClampMin = "0.0", Units = "cm/s"))
+	float BaseVerticalLaunchVelocity = 0.f;
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APokemon_Parent> StoredPokemonClass;
 

@@ -12,6 +12,7 @@
 
 #include "ActorComponents/MovesetComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/PokemonJumpExecutionComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonOwnershipComponent.h"
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
@@ -48,6 +49,7 @@ APokemon_Parent::APokemon_Parent()
 	IncapacitationComponent = CreateDefaultSubobject<UPokemonIncapacitationComponent>(TEXT("Incapacitation Component"));
 	AbilitySystemComponent = CreateDefaultSubobject<UPokemonAbilitySystemComponent>("Ability System Component");
 	NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
+	JumpExecutionComponent = CreateDefaultSubobject<UPokemonJumpExecutionComponent>(TEXT("Jump Execution Component"));
 	CommandComponent = CreateDefaultSubobject<UPokemonCommandComponent>(TEXT("Command Component"));
 	OwnershipComponent = CreateDefaultSubobject<UPokemonOwnershipComponent>(TEXT("Ownership Component"));
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
@@ -908,6 +910,7 @@ void APokemon_Parent::SetupPokemonOnSpawn(UPokemonDataAsset* ResetAsset)
 
 void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier)
 {
+	TraversalMovementSpeedMode = NewMovementSpeed;
 	float NewSpeed = 0.0f;
 	switch (NewMovementSpeed)
 	{
@@ -932,6 +935,25 @@ void APokemon_Parent::SetMovementSpeed(EMovementSpeed NewMovementSpeed, float Mo
 		break;
 	}
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+}
+
+float APokemon_Parent::GetNaturalTraversalMovementSpeed()
+{
+	if (!GetPokemonAS())
+	{
+		return 0.f;
+	}
+	float NaturalSpeed = GetRunningSpeed(); // Idle still has a physical forward-jump capability.
+	if (TraversalMovementSpeedMode == EMovementSpeed::EMS_Walking)
+	{
+		NaturalSpeed = GetWalkingSpeed();
+	}
+	else if (TraversalMovementSpeedMode == EMovementSpeed::EMS_Engaging)
+	{
+		NaturalSpeed = GetEngagedSpeed(1.f);
+	}
+	const float CurrentMax = GetCharacterMovement()->MaxWalkSpeed;
+	return FMath::Max(0.f, CurrentMax > 0.f ? FMath::Min(CurrentMax, NaturalSpeed) : NaturalSpeed);
 }
 
 #pragma region IPokemonCombatInterface

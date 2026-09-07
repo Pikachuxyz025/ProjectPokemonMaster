@@ -12,10 +12,13 @@ enum class EPokemonTraversalCircumstance :uint8
 };
 
 UENUM(BlueprintType)
+
 enum class EPokemonTraversalEvidence :uint8
 {
 	NavigationFailure,
-	SuppliedMeasurement
+	SuppliedMeasurement,
+	MeasuredDiscontinuity,
+	AuthoredJumpLink
 };
 
 UENUM(BlueprintType)
@@ -23,6 +26,14 @@ enum class EPokemonTraversalSolutionType :uint8
 {
 	NoSolution,
 	Jump
+};
+
+// Execution modality, independent of Physical/Special damage category.
+UENUM(BlueprintType)
+enum class EPokemonJumpTrajectoryPreference : uint8
+{
+	Direct,
+	Projectile
 };
 
 // Spatial problem only. All positions use world-space capsule-feet coordinates.
@@ -74,8 +85,8 @@ struct PROJECTMIMIKYU_API FPokemonTraversalRequirement
 	}
 };
 
-// Temporary, explicitly enabled capability model.
-// These are not Character Movement or jump-physics settings.
+// Deprecated Traversal 0.1 planning/debug model; never authorizes execution.
+// Kept to preserve existing authored Blueprint data during migration to 0.2.
 USTRUCT(BlueprintType)
 struct PROJECTMIMIKYU_API FPokemonProvisionalJumpEnvelope
 {
@@ -109,7 +120,50 @@ struct PROJECTMIMIKYU_API FPokemonTraversalCapabilities
 	FPokemonProvisionalJumpEnvelope ProvisionalJump;
 };
 
-// A planning candidate, never permission to execute a jump in 0.1.
+// Per-plan effective physical inputs. All speeds are cm/s, gravity is cm/s^2.
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonJumpCapabilitySnapshot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	bool bCanNaturallyJump = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float EffectiveSpeedAttribute = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float EffectiveMovementSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float BaseVerticalLaunchVelocity = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float EffectiveAttack = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float AttackHorizontalDeltaV = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float AttackVerticalDeltaV = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float InheritedAlignedSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float AuthorizedMoveAlignedSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float GravityMagnitude = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float AvailableHorizontalSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float AvailableVerticalSpeed = 0.f;
+};
+
+// A ballistic plan becomes executable only after capsule and landing validation.
 USTRUCT(BlueprintType)
 struct PROJECTMIMIKYU_API FPokemonTraversalCandidate
 {
@@ -136,10 +190,54 @@ struct PROJECTMIMIKYU_API FPokemonTraversalCandidate
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal")
 	bool bRequiresPhysicsValidation = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float FlightTime = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float RequiredHorizontalLaunchSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float RequiredVerticalLaunchSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	FVector FinalLaunchVelocity = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	float GravityMagnitude = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	FPokemonJumpCapabilitySnapshot CapabilitySnapshot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	EPokemonJumpTrajectoryPreference TrajectoryPreference = EPokemonJumpTrajectoryPreference::Direct;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	FName TrajectoryReason = NAME_None;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	bool bAuthorizedMoveMomentumContributed = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	bool bPhysicsValidated = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	bool bCapsuleClearanceValidated = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|Jump")
+	bool bLandingValidated = false;
+
 	bool IsValidForPlanning() const
 	{
 		return ParentRequestId.IsValid()
 			&& Solution == EPokemonTraversalSolutionType::Jump
 			&& FailureReason.IsNone();
+	}
+
+	bool IsExecutable() const
+	{
+		return IsValidForPlanning() && bPhysicsValidated && !bRequiresPhysicsValidation
+			&& bCapsuleClearanceValidated && bLandingValidated
+			&& FMath::IsFinite(FlightTime) && FlightTime > 0.f
+			&& !FinalLaunchVelocity.ContainsNaN();
 	}
 };

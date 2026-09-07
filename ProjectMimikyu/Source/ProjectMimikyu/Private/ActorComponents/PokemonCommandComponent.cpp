@@ -271,6 +271,9 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 	}
 
 	ActivePokemonMove = SelectedMove;
+	ActiveTrainerCommandId = FGuid::NewGuid();
+	bAttackJumpConsumed = false;
+	AuthorizedTraversalMomentum = FVector::ZeroVector;
 
 	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
 	{
@@ -287,6 +290,8 @@ bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
 
 void UPokemonCommandComponent::AttackEnded()
 {
+	ActiveTrainerCommandId.Invalidate();
+	AuthorizedTraversalMomentum = FVector::ZeroVector;
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
 	if (!Pokemon)
 	{
@@ -540,4 +545,37 @@ void UPokemonCommandComponent::SelectRandomMove()
 void UPokemonCommandComponent::ClearActiveMove()
 {
 	ActivePokemonMove = nullptr;
+	ActiveTrainerCommandId.Invalidate();
+	AuthorizedTraversalMomentum = FVector::ZeroVector;
+}
+
+bool UPokemonCommandComponent::HasConsumedAttackJump(FGuid CommandId) const
+{
+	return CommandId.IsValid() && CommandId == ActiveTrainerCommandId && bAttackJumpConsumed;
+}
+
+void UPokemonCommandComponent::ConsumeAttackJump(FGuid CommandId)
+{
+	if (CommandId.IsValid() && CommandId == ActiveTrainerCommandId)
+	{
+		bAttackJumpConsumed = true;
+	}
+}
+
+FVector UPokemonCommandComponent::GetAuthorizedTraversalMomentum(FGuid CommandId) const
+{
+	return IsCommandActive() && CommandId.IsValid() && CommandId == ActiveTrainerCommandId
+		? AuthorizedTraversalMomentum : FVector::ZeroVector;
+}
+
+bool UPokemonCommandComponent::AuthorizeTraversalMomentum(FGuid CommandId, FVector ExistingMoveMomentum)
+{
+	if (!GetOwner() || !GetOwner()->HasAuthority() || !IsCommandActive()
+		|| !CommandId.IsValid() || CommandId != ActiveTrainerCommandId || ExistingMoveMomentum.ContainsNaN())
+	{
+		return false;
+	}
+	ExistingMoveMomentum.Z = 0.f;
+	AuthorizedTraversalMomentum = ExistingMoveMomentum;
+	return true;
 }

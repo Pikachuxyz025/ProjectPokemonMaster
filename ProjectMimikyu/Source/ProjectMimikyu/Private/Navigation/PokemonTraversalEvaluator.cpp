@@ -9,6 +9,7 @@ FPokemonTraversalCandidate FPokemonTraversalEvaluator::Evaluate(const FPokemonTr
 	Result.ParentRequestId = Requirement.ParentRequestId;
 	Result.StartFeetLocation = Requirement.StartFeetLocation;
 	Result.DestinationFeetLocation = Requirement.DestinationFeetLocation;
+	Result.TrajectoryReason = TEXT("DeprecatedProvisionalPlanningOnly");
 
 	const FPokemonProvisionalJumpEnvelope& Envelope = Capabilities.ProvisionalJump;
 	Result.CapabilityProfileId = Envelope.ProfileId;
@@ -102,6 +103,6 @@ FPokemonTraversalCandidate FPokemonTraversalEvaluator::Evaluate(const FPokemonTr
 	Result.Solution = EPokemonTraversalSolutionType::Jump;
 	Result.FailureReason = NAME_None;
 
-	// bRequiresPhysicsValidation remains true.
+	// Legacy planning never sets physical/body/landing validation or authorizes execution.
 	return Result;
 }

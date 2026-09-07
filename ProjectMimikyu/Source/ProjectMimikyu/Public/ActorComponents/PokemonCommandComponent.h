@@ -66,6 +66,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
 	bool IsCommandActive() const { return ActivePokemonMove != nullptr; }
 
+	FGuid GetActiveTrainerCommandId() const { return ActiveTrainerCommandId; }
+	bool HasConsumedAttackJump(FGuid CommandId) const;
+	void ConsumeAttackJump(FGuid CommandId);
+	FVector GetAuthorizedTraversalMomentum(FGuid CommandId) const;
+
+	// The executing trainer-commanded action reports its existing momentum, never a desired boost.
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|Command|Traversal")
+	bool AuthorizeTraversalMomentum(FGuid CommandId, FVector ExistingMoveMomentum);
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command|Traversal")
+	FGuid GetTrainerCommandIdForTraversal() const { return ActiveTrainerCommandId; }
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	void SetIsDodging(bool bNewDodging) { bIsDodging = bNewDodging; }
 
@@ -110,4 +122,8 @@ private:
 	FGameplayTag DodgeDirectionTag;
 
 	FTimerHandle ChargeTimer;
+
+	FGuid ActiveTrainerCommandId;
+	bool bAttackJumpConsumed = false;
+	FVector AuthorizedTraversalMomentum = FVector::ZeroVector;
 };
