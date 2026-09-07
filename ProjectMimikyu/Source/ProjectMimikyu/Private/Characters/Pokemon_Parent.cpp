@@ -258,12 +258,6 @@ const FPokemonCommandTarget& APokemon_Parent::GetCommandTarget() const
 	return CommandComponent->GetCommandTarget();
 }
 
-void APokemon_Parent::Debug_EvaluateNavigation()
-{
-	check(NavigationComponent);
-	NavigationComponent->DebugEvaluateRetainedMoveTraversal()
-}
-
 FPokemonCommandTarget APokemon_Parent::BuildCommandTargetFromHit(const FHitResult& Hit)
 {
 	if (CommandComponent)
