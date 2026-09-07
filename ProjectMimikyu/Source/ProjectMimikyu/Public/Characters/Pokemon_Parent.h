@@ -314,9 +314,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UMovesetComponent* MovesetComponent;
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UPokemonNavigationComponent> NavigationComponent;
-
 	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
@@ -458,6 +455,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Targeting")
 	TObjectPtr<UTargetableComponent> TargetComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonNavigationComponent> NavigationComponent;
 
 	FPokemonInfo SetupPokemonInfo();
 
