@@ -60,6 +60,13 @@ struct FAgentNavigationRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAllowGASMovementAbilities = true;
 
+	// Conservative parent-completion policy; 0.1 does not execute traversal.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bTraversalRequiresLanding = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bParentMayCompleteWhileAirborne = false;
+
 	bool HasValidIntent() const
 	{
 		return IntentTag.IsValid();

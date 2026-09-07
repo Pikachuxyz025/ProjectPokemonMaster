@@ -11,6 +11,7 @@
 #include "AbilitySystemInterface.h"
 #include "ActorComponents/TargetingType.h"
 #include "GameplayTags/PokemonGameplayTags.h"
+#include"Navigation/PokemonTraversalTypes.h"
 #include "GameplayTagContainer.h"
 #include "Command/PokemonCommandTypes.h"
 #include "Pokemon_Parent.generated.h"
@@ -53,6 +54,11 @@ class PROJECTMIMIKYU_API APokemon_Parent : public ACharacter, public IDamageInte
 public:
 
 	APokemon_Parent();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|Traversal")
+	FPokemonTraversalCapabilities TraversalCapabilities;
+
+	const FPokemonTraversalCapabilities& GetTraversalCapabilities() const { return TraversalCapabilities; }
 
 #pragma region Event Calls
 	UPROPERTY(BlueprintReadOnly, BlueprintAssignable)

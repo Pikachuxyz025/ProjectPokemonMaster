@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "AIControllers/PokemonAITypes.h"
+#include "Navigation/PokemonTraversalTypes.h"
 #include "GameplayTagContainer.h"
 #include "PokemonNavigationComponent.generated.h"
 
@@ -35,7 +36,10 @@ virtual void BeginPlay() override;
 	const FAgentNavigationRequest& GetCurrentNavigationIntent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
-	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation);
+	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal = true);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|AI|Traversal|Debug",meta = (DevelopmentOnly))
+	bool DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance, bool bDestinationSupportConfirmed);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
 	void SuspendNavigation();
@@ -52,6 +56,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation")
 	bool bHasActiveRequest = false;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|AI|Traversal")
+	bool bPlayerMovePlanningOnly = false;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|AI|Traversal")
+	FPokemonTraversalRequirement LastTraversalRequirement;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|AI|Traversal")
+	FPokemonTraversalCandidate LastTraversalCandidate;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Pokemon|AI|Navigation")
 	float NavigationThinkInterval = 0.2f;
@@ -114,6 +127,14 @@ private:
 
 	bool GetTargetLocation(FVector& OutLocation) const;
 	FVector GetFleeLocationFromTarget(const FVector& ThreatLocation) const;
+
+	void RetainPlayerMoveForTraversal(const FAgentNavigationRequest& Request, FName Trigger);
+
+	bool BuildTraversalRequirement(const FVector& DestinationFeet, FName Trigger, FPokemonTraversalRequirement& OutRequirement) const;
+
+	void EvaluateGroundTraversalFailure(const FVector& DestinationFeet,FName Trigger);
+
+	void EvaluateTraversalRequirement(const FPokemonTraversalRequirement& Requirement);
 
 public:
 	UFUNCTION(BlueprintCallable)

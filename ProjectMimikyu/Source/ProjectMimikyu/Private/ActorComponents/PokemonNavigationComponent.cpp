@@ -9,6 +9,8 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Navigation/PokemonTraversalEvaluator.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
 #include "NavigationPath.h"
@@ -59,22 +61,36 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	CurrentNavigationRequest = NewRequest;
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
 
+	if(bHasActiveRequest&& !CurrentNavigationRequest.RequestId.IsValid())
+	{
+		CurrentNavigationRequest.RequestId = FGuid::NewGuid();
+	}
+
+	bPlayerMovePlanningOnly = false;
+	LastTraversalRequirement = FPokemonTraversalRequirement();
+	LastTraversalCandidate = FPokemonTraversalCandidate();
+
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
 
 	UE_LOG(LogTemp, Warning,
-		TEXT("[PokemonNav] SetNavigationIntent | Owner=%s | Intent=%s | Target=%s | DesiredDistance=%.1f | AcceptableRadius=%.1f"),
+		TEXT("[PokemonNav] SetNavigationIntent | RequestId=%s | ")
+		TEXT("Owner=%s | Intent=%s | Target=%s | ")
+		TEXT("DesiredDistance=%.1f | AcceptableRadius=%.1f"),
+		*CurrentNavigationRequest.RequestId.ToString(),
 		*GetNameSafe(GetOwner()),
 		*CurrentNavigationRequest.IntentTag.ToString(),
 		*GetNameSafe(CurrentNavigationRequest.TargetActor.Get()),
 		CurrentNavigationRequest.DesiredDistance,
-		CurrentNavigationRequest.AcceptableRadius
-	);
+		CurrentNavigationRequest.AcceptableRadius);
 }
 
 void UPokemonNavigationComponent::ClearNavigationIntent()
 {
 	CurrentNavigationRequest = FAgentNavigationRequest();
 	bHasActiveRequest = false;
+	bPlayerMovePlanningOnly = false;
+	LastTraversalRequirement = FPokemonTraversalRequirement();
+	LastTraversalCandidate = FPokemonTraversalCandidate();
 
 	if (CachedAIController)
 	{
@@ -92,7 +108,7 @@ const FAgentNavigationRequest& UPokemonNavigationComponent::GetCurrentNavigation
 	return CurrentNavigationRequest;
 }
 
-bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& RawTargetLocation)
+bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal)
 {
 	if (!OwnerPawn)
 	{
@@ -109,113 +125,69 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 		return false;
 	}
 
-	FNavLocation ProjectedLocation;;
+	FAgentNavigationRequest Request;
+	Request.RequestId = FGuid::NewGuid();
+	Request.IntentTag = PokemonAITags::NavIntent_PlayerCommand_Move;
+	Request.TargetLocation = RawTargetLocation;
+	Request.AcceptableRadius = PlayerCommandAcceptableRadius;
+	Request.Urgency = 0.8f;
+	Request.bAllowSpecialTraversal = bAllowSpecialTraversal;
+	Request.bAllowGASMovementAbilities = true;
 
+	FNavLocation ProjectedLocation;
 	const FNavAgentProperties& AgentProperties = OwnerPawn->GetNavAgentPropertiesRef();
 
-	const bool bProjected = NavSystem->ProjectPointToNavigation(
-		RawTargetLocation,
-		ProjectedLocation,
-		PlayerCommandProjectionExtent,
-		&AgentProperties
-	);
-
-	if (!bProjected)
+	if (!NavSystem->ProjectPointToNavigation(
+		RawTargetLocation, ProjectedLocation,
+		PlayerCommandProjectionExtent, &AgentProperties))
 	{
-		UE_LOG(
-			LogTemp,
-			Warning,
-			TEXT(
-				"[PokemonNav] Player Move failed: "
-				"Could not project target to NavMesh. "
-				"Raw=(%.1f, %.1f, %.1f)"
-			),
-			RawTargetLocation.X,
-			RawTargetLocation.Y,
-			RawTargetLocation.Z
-		);
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] Player Move ground rejected | RequestId=%s | ")
+			TEXT("Reason=ProjectionFailed | Raw=%s"),
+			*Request.RequestId.ToString(),
+			*RawTargetLocation.ToString());
+
+		RetainPlayerMoveForTraversal(Request, FName(TEXT("PlayerProjectionFailed")));
 		return false;
 	}
-
-	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), OwnerPawn->GetActorLocation(), ProjectedLocation.Location, OwnerPawn);
-
-	const bool bHasCompletedGroundPath = GroundPath && GroundPath->IsValid() && !GroundPath->IsPartial();
-
-	if (!bHasCompletedGroundPath)
-	{
-		UE_LOG(
-			LogTemp,
-			Display,
-			TEXT(
-				"[PokemonNav] Player Move projected but is not "
-				"reachable by conventional ground navigation. "
-				"Owner=%s | Projected=(%.1f %.1f %.1f)"
-			),
-			*GetNameSafe(OwnerPawn),
-			ProjectedLocation.Location.X,
-			ProjectedLocation.Location.Y,
-			ProjectedLocation.Location.Z
-		);
-	
-		DrawDebugSphere(
-			GetWorld(),
-			ProjectedLocation.Location,
-			30.f,
-			16,
-			FColor::Yellow,
-			false,
-			3.f,
-			0,
-			3.f
-		);
-
-		return false;
-	}
-
-	FAgentNavigationRequest Request;
-
-	Request.IntentTag = PokemonAITags::NavIntent_PlayerCommand_Move;
 
 	Request.TargetLocation = ProjectedLocation.Location;
 
-	Request.AcceptableRadius = PlayerCommandAcceptableRadius;
+	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), OwnerPawn->GetActorLocation(), ProjectedLocation.Location, OwnerPawn);
 
-	Request.Urgency = 0.8f;
+	const bool bCompleteGroundPath = GroundPath && GroundPath->IsValid() && !GroundPath->IsPartial();
 
-	Request.bAllowSpecialTraversal = true;
-	Request.bAllowGASMovementAbilities = true;
+	if (!bCompleteGroundPath)
+	{
+		const FName GroundFailure(
+			!GroundPath ? TEXT("GroundPathMissing") :
+			!GroundPath->IsValid() ? TEXT("GroundPathInvalid") :
+			TEXT("GroundPathPartial"));
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] Player Move ground rejected | RequestId=%s | ")
+			TEXT("Reason=%s | Projected=%s"),
+			*Request.RequestId.ToString(),
+			*GroundFailure.ToString(),
+			*ProjectedLocation.Location.ToString());
+
+		DrawDebugSphere(GetWorld(), ProjectedLocation.Location, 30.f, 16, FColor::Yellow, false, 3.f, 0, 3.f);
+
+		RetainPlayerMoveForTraversal(Request, GroundFailure);
+		return false;
+	}
 
 	SetNavigationIntent(Request);
 
-	// Projected navigation destination.
-	DrawDebugSphere(
-		GetWorld(),
-		ProjectedLocation.Location,
-		30.f,
-		16,
-		FColor::Green,
-		false,
-		3.f,
-		0,
-		3.f
-	);
+	DrawDebugSphere(GetWorld(), ProjectedLocation.Location, 30.f, 16, FColor::Green, false, 3.f, 0, 3.f);
 
-	UE_LOG(
-		LogTemp,
-		Display,
-		TEXT(
-			"[PokemonNav] Player Move accepted | "
-			"Owner=%s | Raw=(%.1f %.1f %.1f) | "
-			"Projected=(%.1f %.1f %.1f)"
-		),
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] Player Move accepted | RequestId=%s | ")
+		TEXT("Owner=%s | Raw=%s | Projected=%s"),
+		*Request.RequestId.ToString(),
 		*GetNameSafe(OwnerPawn),
-		RawTargetLocation.X,
-		RawTargetLocation.Y,
-		RawTargetLocation.Z,
-		ProjectedLocation.Location.X,
-		ProjectedLocation.Location.Y,
-		ProjectedLocation.Location.Z
-	);
+		*RawTargetLocation.ToString(),
+		*ProjectedLocation.Location.ToString());
 
 	return true;
 }
@@ -235,11 +207,13 @@ void UPokemonNavigationComponent::SuspendNavigation()
 		CachedAIController->StopMovement();
 	}
 
-	UE_LOG(LogTemp, Display, TEXT(
-		"[PokemonNav] Navigation suspended | "	
-		"Owner=%s | Intent=%s"), 
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] Navigation suspended | ")
+		TEXT("Owner=%s | Intent=%s | RequestId=%s | PlanningOnly=%d"),
 		*GetNameSafe(GetOwner()),
-		*CurrentNavigationRequest.IntentTag.ToString());
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		bPlayerMovePlanningOnly);
 }
 
 void UPokemonNavigationComponent::ResumeNavigation()
@@ -254,12 +228,15 @@ void UPokemonNavigationComponent::ResumeNavigation()
 	// Force the retained request to be reconsidered immediately on the next navigation tick.
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
 
-	UE_LOG(LogTemp, Display, TEXT(
-		"[PokemonNav] Navigation resumed | "
-		"Owner=%s | HasRequest=%s | Intent=%s"),
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonNav] Navigation resumed | ")
+		TEXT("Owner=%s | HasRequest=%s | Intent=%s | ")
+		TEXT("RequestId=%s | PlanningOnly=%d"),
 		*GetNameSafe(GetOwner()),
 		bHasActiveRequest ? TEXT("true") : TEXT("false"),
-		*CurrentNavigationRequest.IntentTag.ToString());
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		bPlayerMovePlanningOnly);
 }
 
 void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
@@ -577,6 +554,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
 	{
+		EvaluateGroundTraversalFailure(RequiredFeet,(TEXT("MeleeProjectionFailed")));
+
 		UE_LOG(LogTemp, Display,
 			TEXT("[PokemonNav] GroundCandidateRejected | Stage=Projection | ")
 			TEXT("RequestId=%s | Source=%s | Profile=%s | RequiredRoot=%s"),
@@ -634,6 +613,12 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (NavigationRadius <= 0.f)
 	{
+		EvaluateGroundTraversalFailure(
+			RequiredFeet,
+			FName(ContactError > Candidate.Radius
+				? TEXT("MeleeContactOutsideGroundReach")
+				: TEXT("MeleeNoContactArrivalMargin")));
+
 		CachedAIController->StopMovement();
 
 		UE_LOG(LogTemp, Display,
@@ -781,6 +766,12 @@ bool UPokemonNavigationComponent::ProcessCombatReposition()
 
 bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 {
+	// 0.1 retains the command for planning; no special-traversal executor exists.
+	if (bPlayerMovePlanningOnly)
+	{
+		return false;
+	}
+
 	if (!OwnerPawn)
 	{
 		return false;
@@ -1077,4 +1068,198 @@ FVector UPokemonNavigationComponent::GetFleeLocationFromTarget(const FVector& Th
 	const float Distance = CurrentNavigationRequest.DesiredDistance > 0.f ? CurrentNavigationRequest.DesiredDistance : FleeDistance;
 
 	return OwnerLocation + AwayDirection * Distance;
+}
+
+void UPokemonNavigationComponent::RetainPlayerMoveForTraversal(
+	const FAgentNavigationRequest& Request, FName Trigger)
+{
+	if (!Request.bAllowSpecialTraversal)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[Traversal] EvaluationSkipped | RequestId=%s | ")
+			TEXT("Reason=SpecialTraversalDisabled | Trigger=%s"),
+			*Request.RequestId.ToString(),
+			*Trigger.ToString());
+
+		return; // Preserve the previously retained request.
+	}
+
+	SetNavigationIntent(Request);
+	bPlayerMovePlanningOnly = true;
+
+	// Retire the previous ground path, but do not interrupt a suspended owner.
+	if (!bNavigationSuspended && CachedAIController)
+	{
+		CachedAIController->StopMovement();
+	}
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[Traversal] ParentRetained | RequestId=%s | Intent=%s | ")
+		TEXT("PlanningOnly=true | Trigger=%s"),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*Trigger.ToString());
+
+	EvaluateGroundTraversalFailure(Request.TargetLocation, Trigger);
+}
+
+bool UPokemonNavigationComponent::BuildTraversalRequirement(
+	const FVector& DestinationFeet, FName Trigger,
+	FPokemonTraversalRequirement& OutRequirement) const
+{
+	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	const UCapsuleComponent* Capsule =IsValid(Pokemon) ? Pokemon->GetCapsuleComponent() : nullptr;
+
+	if (!bHasActiveRequest|| !CurrentNavigationRequest.RequestId.IsValid()|| !IsValid(Capsule))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[Traversal] RequirementBuildFailed | RequestId=%s | ")
+			TEXT("Reason=MissingParentOrCharacterCapsule"),
+			*CurrentNavigationRequest.RequestId.ToString());
+
+		return false;
+	}
+
+	OutRequirement = FPokemonTraversalRequirement();
+	OutRequirement.ParentRequestId = CurrentNavigationRequest.RequestId;
+	OutRequirement.Trigger = Trigger;
+
+	OutRequirement.StartFeetLocation = Pokemon->GetActorLocation()- FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight());
+
+	OutRequirement.DestinationFeetLocation = DestinationFeet;
+
+	OutRequirement.bLandingRequired =CurrentNavigationRequest.bTraversalRequiresLanding;
+
+	OutRequirement.bParentMayCompleteWhileAirborne =CurrentNavigationRequest.bParentMayCompleteWhileAirborne;
+
+	const UCharacterMovementComponent* Movement =Pokemon->GetCharacterMovement();
+
+	OutRequirement.bStartSupportKnown = Movement&& Movement->IsMovingOnGround()&& Movement->CurrentFloor.IsWalkableFloor();
+
+	// Projection/path failure alone proves neither a circumstance nor landing support.
+	// Circumstance remains Unclassified; destination support remains unknown.
+	return true;
+}
+
+void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(
+	const FVector& DestinationFeet, FName Trigger)
+{
+	if (!CurrentNavigationRequest.bAllowSpecialTraversal)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[Traversal] EvaluationSkipped | RequestId=%s | ")
+			TEXT("Reason=SpecialTraversalDisabled | Trigger=%s"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*Trigger.ToString());
+
+		return;
+	}
+
+	FPokemonTraversalRequirement Requirement;
+
+	if (BuildTraversalRequirement(DestinationFeet, Trigger, Requirement))
+	{
+		EvaluateTraversalRequirement(Requirement);
+	}
+}
+
+void UPokemonNavigationComponent::EvaluateTraversalRequirement(
+	const FPokemonTraversalRequirement& Requirement)
+{
+	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!IsValid(Pokemon)|| !bHasActiveRequest|| !CurrentNavigationRequest.bAllowSpecialTraversal|| Requirement.ParentRequestId != CurrentNavigationRequest.RequestId)
+	{
+		return;
+	}
+
+	LastTraversalRequirement = Requirement;
+
+	const FPokemonTraversalCapabilities& Capabilities =Pokemon->GetTraversalCapabilities();
+
+	LastTraversalCandidate =FPokemonTraversalEvaluator::Evaluate(Requirement, Capabilities);
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[Traversal] RequirementBuilt | RequestId=%s | Intent=%s | ")
+		TEXT("Circumstance=%s | Evidence=%s | Trigger=%s | ")
+		TEXT("StartFeet=%s | DestinationFeet=%s | Horizontal=%.2f | Vertical=%.2f | ")
+		TEXT("StartSupportKnown=%d | DestinationSupportKnown=%d | ")
+		TEXT("LandingRequired=%d | AirborneParentCompletion=%d"),
+		*Requirement.ParentRequestId.ToString(),
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*UEnum::GetValueAsString(Requirement.Circumstance),
+		*UEnum::GetValueAsString(Requirement.Evidence),
+		*Requirement.Trigger.ToString(),
+		*Requirement.StartFeetLocation.ToString(),
+		*Requirement.DestinationFeetLocation.ToString(),
+		Requirement.HorizontalSeparation(),
+		Requirement.VerticalSeparation(),
+		Requirement.bStartSupportKnown,
+		Requirement.bDestinationSupportKnown,
+		Requirement.bLandingRequired,
+		Requirement.bParentMayCompleteWhileAirborne);
+
+	if (Requirement.Circumstance ==	EPokemonTraversalCircumstance::Unclassified)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[Traversal] RequirementUnclassified | RequestId=%s | Trigger=%s | ")
+			TEXT("Missing=VerifiedCircumstanceAndDestinationSupport"),
+			*Requirement.ParentRequestId.ToString(),
+			*Requirement.Trigger.ToString());
+	}
+
+	const FPokemonTraversalCandidate& Result = LastTraversalCandidate;
+	const FPokemonProvisionalJumpEnvelope& Envelope =	Capabilities.ProvisionalJump;
+
+	const bool bValid = Result.IsValidForPlanning();
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[Traversal] %s | RequestId=%s | Intent=%s | Solution=%s | ")
+		TEXT("Result=%s | Reason=%s | CapabilityProfile=%s | ")
+		TEXT("NaturalJump=%d | ModelEnabled=%d | ")
+		TEXT("MaxHorizontal=%.2f | MaxRise=%.2f | MaxDrop=%.2f | ")
+		TEXT("Validation=%s | Executable=false"),
+		bValid ? TEXT("CandidateEvaluated") : TEXT("NoSolution"),
+		*Result.ParentRequestId.ToString(),
+		*CurrentNavigationRequest.IntentTag.ToString(),
+		*UEnum::GetValueAsString(Result.Solution),
+		bValid ? TEXT("Valid") : TEXT("Invalid"),
+		*Result.FailureReason.ToString(),
+		*Result.CapabilityProfileId.ToString(),
+		Capabilities.bCanNaturallyJump,
+		Envelope.bEnabled,
+		Envelope.MaxHorizontalSpan,
+		Envelope.MaxRise,
+		Envelope.MaxDrop,
+		bValid ? TEXT("ProvisionalEnvelopeOnly") : TEXT("NotValidated"));
+}
+
+bool UPokemonNavigationComponent::DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance,bool bDestinationSupportConfirmed)
+{
+	if (!GetOwner()|| !GetOwner()->HasAuthority()|| !bHasActiveRequest|| !bPlayerMovePlanningOnly|| !CurrentNavigationRequest.bAllowSpecialTraversal|| !CurrentNavigationRequest.IntentTag.MatchesTagExact(PokemonAITags::NavIntent_PlayerCommand_Move))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[Traversal] DebugEvaluationSkipped | ")
+			TEXT("Reason=RequiresAuthorityAndRetainedPlanningOnlyMove"));
+
+		return false;
+	}
+
+	FPokemonTraversalRequirement Requirement;
+
+	if (!BuildTraversalRequirement(CurrentNavigationRequest.TargetLocation,FName(TEXT("DebugMeasuredFixture")),Requirement))
+	{
+		return false;
+	}
+
+	// These assertions come from the test fixture, not an automatic detector.
+	Requirement.Circumstance = ConfirmedCircumstance;
+	Requirement.Evidence = EPokemonTraversalEvidence::SuppliedMeasurement;
+	Requirement.bDestinationSupportKnown = bDestinationSupportConfirmed;
+
+	EvaluateTraversalRequirement(Requirement);
+
+	// A valid candidate does not release the planning-only hold.
+	return LastTraversalCandidate.IsValidForPlanning();
 }
