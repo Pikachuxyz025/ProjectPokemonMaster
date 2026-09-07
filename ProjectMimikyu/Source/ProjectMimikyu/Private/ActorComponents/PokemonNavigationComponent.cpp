@@ -1164,8 +1164,7 @@ void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(
 	}
 }
 
-void UPokemonNavigationComponent::EvaluateTraversalRequirement(
-	const FPokemonTraversalRequirement& Requirement)
+void UPokemonNavigationComponent::EvaluateTraversalRequirement(const FPokemonTraversalRequirement& Requirement)
 {
 	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 

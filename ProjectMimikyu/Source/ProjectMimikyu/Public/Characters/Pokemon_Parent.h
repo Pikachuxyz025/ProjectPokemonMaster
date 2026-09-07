@@ -336,6 +336,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	const FPokemonCommandTarget& GetCommandTarget() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
+	void Debug_EvaluateNavigation();
+
 	FPokemonCommandTarget BuildCommandTargetFromHit(const FHitResult& Hit);
 
 	void SetCommandTargetFromHit(const FHitResult& Hit);
@@ -521,6 +524,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Combat|Hit Stop")
 	UPokemonHitStopComponent* GetHitStopComponent() const	{		return HitStopComponent;	}
 
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Navigation")
 	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
 
 	UMovesetComponent* GetMovesetComponent() const { return MovesetComponent; }
