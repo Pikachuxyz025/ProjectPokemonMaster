@@ -537,4 +537,5 @@ public:
 
 	void SetPokemonTrainer(AActor* NewTrainer);
 	void CallCommand(int32 MoveIndex);
+	// needed for change
 };
