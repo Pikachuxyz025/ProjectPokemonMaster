@@ -13,6 +13,7 @@ class AAIController;
 class APawn;
 class APokemonJumpNavLink;
 class UPokemonJumpExecutionComponent;
+class UNavigationPath;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
@@ -101,6 +102,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Navigation|Approach", meta = (ClampMin = "0.0"))
 	float ApproachArrivalMargin = 5.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pokemon|AI|Traversal|Jump", meta = (ClampMin = "0", ClampMax = "3"))
+	int32 TakeoffAnchorInterpolationCount = 1;
+
 private:
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
@@ -155,6 +159,16 @@ private:
 	void EvaluateGroundTraversalFailure(const FVector& DestinationFeet,FName Trigger);
 
 	void EvaluateTraversalRequirement(const FPokemonTraversalRequirement& Requirement);
+
+	bool BuildExecutableTraversalPlan(const FPokemonTraversalRequirement& Requirement,
+		FPokemonTraversalRequirement& OutResolvedRequirement,
+		FPokemonTraversalCandidate& OutCandidate,
+		FName& OutFailureReason);
+
+	bool SearchTakeoffAnchors(const FVector& DestinationFeet, FName Trigger,
+		const UNavigationPath* GroundPath,
+		FPokemonTraversalRequirement& OutRequirement,
+		FPokemonTraversalCandidate& OutCandidate);
 
 public:
 	UFUNCTION(BlueprintCallable)
