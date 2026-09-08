@@ -8,6 +8,7 @@
 #include "GameFramework/PhysicsVolume.h"
 #include "HAL/IConsoleManager.h"
 #include "Navigation/PokemonTraversalTypes.h"
+#include "Navigation/PokemonCompositeMove.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonJumpValidation, Log, All);
 
@@ -220,6 +221,102 @@ bool FPokemonJumpTrajectoryValidator::ResolveLanding(APokemon_Parent& Pokemon, c
 {
 	PokemonJumpValidation::FBodyQueries Body;
 	return Body.Init(Pokemon, OutFailure) && PokemonJumpValidation::Resolve(Body, ProposedFeet, OutFeet, OutFailure);
+}
+
+bool FPokemonJumpTrajectoryValidator::DiscoverLandingFan(APokemon_Parent& Pokemon,
+	const FVector& SupportedOrigin, const FVector& Heading,
+	const FPokemonJumpCapabilitySnapshot& Capability, const FPokemonTraversalExitSearchSettings& Settings,
+	TArray<FVector>& OutExits, FName& OutFailure)
+{
+	using namespace PokemonJumpValidation;
+	OutExits.Reset();
+	FBodyQueries Body;
+	FVector Origin;
+	if (!Body.Init(Pokemon, OutFailure) || !Resolve(Body, SupportedOrigin, Origin, OutFailure))
+	{
+		return false;
+	}
+	const FVector Direction = Heading.GetSafeNormal2D();
+	const double Gravity = Capability.GravityMagnitude;
+	const double Vertical = Capability.AvailableVerticalSpeed;
+	if (Direction.IsNearlyZero() || Heading.ContainsNaN() || !Capability.bCanNaturallyJump
+		|| !FMath::IsFinite(Gravity) || Gravity <= 0. || !FMath::IsFinite(Vertical) || Vertical <= 0.
+		|| !FMath::IsFinite(Capability.AvailableHorizontalSpeed) || Capability.AvailableHorizontalSpeed <= 0.f)
+	{
+		OutFailure = TEXT("ExitSearchCapabilityUnavailable");
+		return false;
+	}
+	const double Drop = FMath::Clamp(Settings.MaxDrop, 0.f, 500.f);
+	// Upper envelope only; the unchanged solver proves each actual displacement.
+	const double FlightBound = (Vertical + FMath::Sqrt(Vertical * Vertical + 2. * Gravity * Drop)) / Gravity;
+	const double Reach = FMath::Min(static_cast<double>(FMath::Clamp(Settings.MaxDistance, 0.f, 2000.f)),
+		Capability.AvailableHorizontalSpeed * FlightBound);
+	const int32 Count = FMath::Clamp(Settings.MaxSamples, 2, 24);
+	const double Spacing = FMath::Max(25.f, Settings.SampleSpacing);
+	const double Rise = Vertical * Vertical / (2. * Gravity);
+	const double Step = Body.Movement->MaxStepHeight + UCharacterMovementComponent::MAX_FLOOR_DIST;
+	bool bGap = false;
+	bool bFarSupport = false;
+	FVector Previous = Origin;
+	FVector Band;
+	bool bFoundBand = false;
+	for (int32 Index = 1; Index <= Count && Index * Spacing <= Reach; ++Index)
+	{
+		const FVector Point = Origin + Direction * (Index * Spacing);
+		FHitResult Floor;
+		if (!Body.FloorLine(Point + FVector::UpVector * (Rise + Step),
+			Point - FVector::UpVector * (Drop + UCharacterMovementComponent::MAX_FLOOR_DIST), Floor))
+		{
+			bGap = true;
+			bFarSupport = false;
+			continue;
+		}
+		if (Floor.bStartPenetrating || !Body.Movement->IsWalkable(Floor))
+		{
+			OutFailure = TEXT("ExitScanUnwalkableObstruction");
+			return false;
+		}
+		const FVector Support = Floor.ImpactPoint + FVector::UpVector * FloorGap();
+		const bool bHeightBreak = FMath::Abs(Support.Z - Previous.Z) > Step;
+		if (bGap && bFarSupport && !bHeightBreak)
+		{
+			Band = Support;
+			bFoundBand = true;
+			break; // First meaningful band, never skip to arbitrary distant geometry.
+		}
+		bGap |= bHeightBreak;
+		bFarSupport = bGap;
+		Previous = Support;
+	}
+	if (!bFoundBand)
+	{
+		OutFailure = TEXT("NoFarSideSupportBandWithinBudget");
+		return false;
+	}
+	const FVector Side(-Direction.Y, Direction.X, 0.);
+	const float Spread = FMath::Clamp(Settings.FanSpread, 0.f, 150.f);
+	const FVector Offsets[] = { FVector::ZeroVector, Side * Spread, -Side * Spread, Direction * Spread };
+	OutFailure = TEXT("NoValidFarSideLanding");
+	for (int32 Index = 0; Index < FMath::Clamp(Settings.FanCount, 1, 4); ++Index)
+	{
+		FVector Feet;
+		FName Failure;
+		if (FVector::Dist2D(Origin, Band + Offsets[Index]) <= Reach
+			&& Resolve(Body, Band + Offsets[Index], Feet, Failure))
+		{
+			OutExits.AddUnique(Feet);
+		}
+		else if (!Failure.IsNone())
+		{
+			OutFailure = Failure;
+		}
+	}
+	if (!OutExits.IsEmpty())
+	{
+		OutFailure = NAME_None;
+		return true;
+	}
+	return false;
 }
 
 bool FPokemonJumpTrajectoryValidator::Validate(APokemon_Parent& Pokemon, FPokemonTraversalCandidate& Candidate)

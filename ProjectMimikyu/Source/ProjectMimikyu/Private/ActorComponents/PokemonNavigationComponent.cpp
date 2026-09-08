@@ -57,8 +57,20 @@ void UPokemonNavigationComponent::BeginPlay()
 		Executor->OnJumpTakeoff.AddUObject(this, &UPokemonNavigationComponent::HandleJumpTakeoff);
 		Executor->OnJumpFinished.AddUObject(this, &UPokemonNavigationComponent::HandleJumpFinished);
 	}
+	if (UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld()))
+	{
+		Nav->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &ThisClass::HandleNavigationGenerationFinished);
+	}
 }
 
+void UPokemonNavigationComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld()))
+	{
+		Nav->OnNavigationGenerationFinishedDelegate.RemoveDynamic(this, &ThisClass::HandleNavigationGenerationFinished);
+	}
+	Super::EndPlay(EndPlayReason);
+}
 
 void UPokemonNavigationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -69,7 +81,10 @@ void UPokemonNavigationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 
 void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequest& NewRequest)
 {
+	const bool bWasCompositeMove = IsCompositePlayerMove();
 	const bool bSameRequest = NewRequest.RequestId.IsValid() && NewRequest.RequestId == CurrentNavigationRequest.RequestId;
+	// Cancel can synchronously broadcast. Retire ownership before touching the executor.
+	bHasActiveRequest = false;
 	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
 	{
 		Executor->CancelBeforeTakeoff(FName(TEXT("ParentReplaced")));
@@ -77,9 +92,14 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
 	ActiveJumpLink.Reset();
+	ResetLocalTraversal();
+	bCompositeFailureHeld = false;
+	++CompositePlanningGeneration;
 	if (!bSameRequest)
 	{
 		bRequestJumpConsumed = false;
+		TraversalSegmentSerial = 0;
+		CompositeSearchCount = 0;
 	}
 	CurrentNavigationRequest = NewRequest;
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
@@ -94,6 +114,11 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	LastTraversalCandidate = FPokemonTraversalCandidate();
 
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
+	if (CachedAIController && (bWasCompositeMove || IsCompositePlayerMove()))
+	{
+		CachedAIController->StopMovement();
+	}
+	LogCompositeEvent(TEXT("Parent"), TEXT("Installed"));
 
 	UE_LOG(LogTemp, Warning,
 		TEXT("[PokemonNav] SetNavigationIntent | RequestId=%s | ")
@@ -109,6 +134,7 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 
 void UPokemonNavigationComponent::ClearNavigationIntent()
 {
+	bHasActiveRequest = false;
 	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
 	{
 		Executor->CancelBeforeTakeoff(FName(TEXT("ParentCleared")));
@@ -116,6 +142,8 @@ void UPokemonNavigationComponent::ClearNavigationIntent()
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
 	ActiveJumpLink.Reset();
+	ResetLocalTraversal();
+	bCompositeFailureHeld = false;
 	CurrentNavigationRequest = FAgentNavigationRequest();
 	bHasActiveRequest = false;
 	bPlayerMovePlanningOnly = false;
@@ -181,7 +209,7 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 		return false;
 	}
 
-	Request.TargetLocation = ProjectedLocation.Location;
+	// Keep the clicked parent destination. Projection is a ground movement detail.
 
 	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), OwnerPawn->GetActorLocation(), ProjectedLocation.Location, OwnerPawn);
 
@@ -260,7 +288,12 @@ void UPokemonNavigationComponent::ResumeNavigation()
 	}
 
 	bNavigationSuspended = false;
-	if (bPlayerMovePlanningOnly && !IsAttackJumpConsumed()
+	if (IsCompositePlayerMove())
+	{
+		InvalidateCompositePlanning();
+		LogCompositeEvent(TEXT("Continue"), TEXT("NavigationResumed"));
+	}
+	else if (bPlayerMovePlanningOnly && !IsAttackJumpConsumed()
 		&& LastTraversalRequirement.Circumstance != EPokemonTraversalCircumstance::Unclassified)
 	{
 		PendingTraversalRequirement = LastTraversalRequirement;
@@ -314,6 +347,23 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 	if (OwnerPokemon->JumpExecutionComponent && OwnerPokemon->JumpExecutionComponent->IsBusy())
 	{
 		return;
+	}
+	if (IsCompositePlayerMove())
+	{
+		if (TryCompletePlayerMove())
+		{
+			return;
+		}
+		if (!OwnerPokemon->GetCharacterMovement()->IsMovingOnGround())
+		{
+			return;
+		}
+		if (bCompositeFailureHeld && FVector::DistSquared(CompositeFailureFeet,
+			OwnerPokemon->GetCharacterMovement()->GetActorFeetLocation()) > FMath::Square(125.f))
+		{
+			InvalidateCompositePlanning();
+			LogCompositeEvent(TEXT("Continue"), TEXT("LocalRegionChanged"));
+		}
 	}
 	if (bReachingTakeoff)
 	{
@@ -835,6 +885,39 @@ bool UPokemonNavigationComponent::ProcessCombatReposition()
 
 bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 {
+	if (IsCompositePlayerMove())
+	{
+		if (TryCompletePlayerMove())
+		{
+			return true;
+		}
+		if (bPlayerMovePlanningOnly || !OwnerPawn)
+		{
+			return false;
+		}
+		// Zero is a valid stationary destination. Generic actor requests keep their
+		// existing target lookup semantics; player Move uses its authoritative field.
+		const float Radius = CurrentNavigationRequest.AcceptableRadius > 0.f
+			? CurrentNavigationRequest.AcceptableRadius : PlayerCommandAcceptableRadius;
+		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+		FNavLocation GroundGoal;
+		const FNavAgentProperties& Properties = OwnerPawn->GetNavAgentPropertiesRef();
+		if (!NavSystem || !NavSystem->ProjectPointToNavigation(CurrentNavigationRequest.TargetLocation,
+			GroundGoal, PlayerCommandProjectionExtent, &Properties))
+		{
+			EvaluateGroundTraversalFailure(CurrentNavigationRequest.TargetLocation, TEXT("ParentProjectionFailed"));
+			return false;
+		}
+		// A projected goal has a smaller ground acceptance circle so stopping there
+		// also satisfies the original click's tolerance. Projection never moves the parent.
+		const float GroundRadius = Radius - FVector::Dist2D(GroundGoal.Location, CurrentNavigationRequest.TargetLocation) - 2.f;
+		if (GroundRadius <= 0.f)
+		{
+			EvaluateGroundTraversalFailure(CurrentNavigationRequest.TargetLocation, TEXT("GroundGoalOutsideParentAcceptance"));
+			return false;
+		}
+		return RequestMoveToLocation(GroundGoal.Location, GroundRadius, false, false, false);
+	}
 	// A failed route remains retained until a validated executable plan is available.
 	if (bPlayerMovePlanningOnly)
 	{
@@ -948,6 +1031,13 @@ bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocat
 	if (Result.Code == EPathFollowingRequestResult::Failed || (DebugPath.IsValid() && DebugPath->IsPartial()))
 	{
 		EvaluateGroundTraversalFailure(GoalLocation, FName(TEXT("GroundRouteInadequate")));
+	}
+	else if (Result.Code == EPathFollowingRequestResult::AlreadyAtGoal && IsCompositePlayerMove()
+		&& !TryCompletePlayerMove())
+	{
+		// A projection onto another level can satisfy path following while the
+		// original destination remains unreached. Classify/retain instead of looping.
+		EvaluateGroundTraversalFailure(CurrentNavigationRequest.TargetLocation, TEXT("GroundGoalOutsideParentAcceptance"));
 	}
 	return Result.Code != EPathFollowingRequestResult::Failed;
 }
@@ -1237,17 +1327,27 @@ void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(const FVector& 
 	{
 		return;
 	}
+	if (IsCompositePlayerMove() && bCompositeFailureHeld)
+	{
+		return;
+	}
 	FPokemonTraversalRequirement Requirement;
+
 	if (!BuildTraversalRequirement(DestinationFeet, Trigger, Requirement))
 	{
 		return;
 	}
+
 	UNavigationPath* GroundPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 		GetWorld(), Pokemon->GetActorLocation(), DestinationFeet, OwnerPawn);
 
 	FPokemonTraversalRequirement SelectedRequirement;
 	FPokemonTraversalCandidate SelectedCandidate;
-	if (SearchTakeoffAnchors(DestinationFeet, Trigger, GroundPath, SelectedRequirement, SelectedCandidate))
+
+	const bool bFoundPlan = IsCompositePlayerMove()
+		? SearchCompositeTraversal(GroundPath, Trigger, SelectedRequirement, SelectedCandidate)
+		: SearchTakeoffAnchors(DestinationFeet, Trigger, GroundPath, SelectedRequirement, SelectedCandidate);
+	if (bFoundPlan)
 	{
 		bPlayerMovePlanningOnly = true;
 		LastTraversalRequirement = SelectedRequirement;
@@ -1258,8 +1358,10 @@ void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(const FVector& 
 		bReachingTakeoff = !bAtSelectedAnchor;
 		bTraversalPlanReady = bAtSelectedAnchor;
 		TakeoffApproachElapsed = 0.f;
-		if (bAtSelectedAnchor && CachedAIController)
+		if (CachedAIController)
 		{
+			// Retire the old path even when walking to the selected anchor. Otherwise
+			// its Moving status can prevent TickTakeoffApproach from issuing its goal.
 			CachedAIController->StopMovement();
 		}
 	}
@@ -1268,6 +1370,7 @@ void UPokemonNavigationComponent::EvaluateGroundTraversalFailure(const FVector& 
 		bPlayerMovePlanningOnly = true;
 		LastTraversalRequirement = Requirement;
 		LastTraversalCandidate = SelectedCandidate;
+		HoldCompositeFailure(SelectedCandidate.FailureReason);
 		if (CachedAIController)
 		{
 			CachedAIController->StopMovement();
@@ -1350,7 +1453,7 @@ bool UPokemonNavigationComponent::BuildExecutableTraversalPlan(
 	return false;
 }
 
-bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& DestinationFeet, FName Trigger, const UNavigationPath* GroundPath,FPokemonTraversalRequirement& OutRequirement, FPokemonTraversalCandidate& OutCandidate)
+bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& DestinationFeet, FName Trigger, const UNavigationPath* GroundPath,FPokemonTraversalRequirement& OutRequirement, FPokemonTraversalCandidate& OutCandidate, float* OutGroundTime)
 {
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 	UCapsuleComponent* Capsule = IsValid(Pokemon) ? Pokemon->GetCapsuleComponent() : nullptr;
@@ -1444,9 +1547,7 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 		}
 		for (int32 Index = 0; Index < PathFeet.Num(); ++Index)
 		{
-			AddAnchor(
-				PathFeet[Index],
-				PathDistances[Index], FName(TEXT("ReachablePathPoint")));
+			AddAnchor(PathFeet[Index], PathDistances[Index], FName(TEXT("ReachablePathPoint")));
 		}
 	}
 
@@ -1457,6 +1558,7 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 	OutCandidate.DestinationFeetLocation = DestinationFeet;
 	FName BestFailure = FName(TEXT("NoValidTakeoffAnchor"));
 	float BestScore = TNumericLimits<float>::Max();
+	float BestGroundTime = 0.f;
 	int32 BestIndex = INDEX_NONE;
 	FPokemonTraversalRequirement BestRequirement;
 	FPokemonTraversalCandidate BestCandidate;
@@ -1465,11 +1567,29 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 	for (int32 Index = 0; Index < Anchors.Num(); ++Index)
 	{
 		const FAnchor& Anchor = Anchors[Index];
+		float GroundDistance = Anchor.GroundDistance;
 		FPokemonTraversalRequirement Requirement = BaseRequirement;
 		FVector SupportedFeet;
 		FName AnchorFailure;
 		bool bExecutable = FPokemonJumpTrajectoryValidator::ResolveLanding(
 			*Pokemon, Anchor.Feet, SupportedFeet, AnchorFailure);
+		if (bExecutable && IsCompositePlayerMove() && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
+		{
+			// ResolveLanding can adjust height. Prove the actual selected feet are
+			// reachable and cost the real approach, not a chord or the partial endpoint.
+			UNavigationPath* ApproachPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+				GetWorld(), CurrentFeet, SupportedFeet, OwnerPawn,
+				CachedAIController ? CachedAIController->GetDefaultNavigationFilterClass() : nullptr);
+			bExecutable = ApproachPath && ApproachPath->IsValid() && !ApproachPath->IsPartial();
+			if (bExecutable)
+			{
+				GroundDistance = ApproachPath->GetPathLength();
+			}
+			else
+			{
+				AnchorFailure = TEXT("TakeoffAnchorGroundUnreachable");
+			}
+		}
 		float CandidateFlightTime = 0.f;
 		if (bExecutable)
 		{
@@ -1491,12 +1611,13 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 				Requirement, ResolvedRequirement, Candidate, PlanFailure);
 			if (bExecutable)
 			{
-				const float GroundTime = Anchor.GroundDistance / EffectiveSpeed;
+				const float GroundTime = GroundDistance / EffectiveSpeed;
 				const float Score = GroundTime + Candidate.FlightTime;
 				CandidateFlightTime = Candidate.FlightTime;
 				if (Score < BestScore)
 				{
 					BestScore = Score;
+					BestGroundTime = GroundTime;
 					BestIndex = Index;
 					BestRequirement = ResolvedRequirement;
 					BestCandidate = Candidate;
@@ -1508,19 +1629,19 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 			}
 		}
 
-		if (AnchorFailure.IsNone())
+		if (!bExecutable && AnchorFailure.IsNone())
 		{
 			AnchorFailure = FName(TEXT("Rejected"));
 		}
 		if (FPokemonJumpSolver::IsDebugEnabled())
 		{
-			const float GroundTime = Anchor.GroundDistance / EffectiveSpeed;
+			const float GroundTime = GroundDistance / EffectiveSpeed;
 			const float JumpTime = bExecutable ? CandidateFlightTime : 0.f;
 			const float Score = bExecutable ? GroundTime + JumpTime : TNumericLimits<float>::Max();
 			UE_LOG(LogTemp, Display,
 				TEXT("[Jump02] TakeoffSearch | RequestId=%s | Candidate=%d/%d | Source=%s | Takeoff=%s | GroundDistance=%.1f | GroundTime=%.3f | JumpTime=%.3f | Executable=%d | Score=%s | Reason=%s"),
 				*CurrentNavigationRequest.RequestId.ToString(), Index, Anchors.Num(), *Anchor.Source.ToString(),
-				*Anchor.Feet.ToCompactString(), Anchor.GroundDistance, GroundTime, JumpTime, bExecutable,
+				*Anchor.Feet.ToCompactString(), GroundDistance, GroundTime, JumpTime, bExecutable,
 				bExecutable ? *FString::Printf(TEXT("%.3f"), Score) : TEXT("inf"), *AnchorFailure.ToString());
 		}
 		if (!bExecutable && !AnchorFailure.IsNone())
@@ -1533,6 +1654,10 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 	{
 		OutRequirement = BestRequirement;
 		OutCandidate = BestCandidate;
+		if (OutGroundTime)
+		{
+			*OutGroundTime = BestGroundTime;
+		}
 		if (FPokemonJumpSolver::IsDebugEnabled())
 		{
 			UE_LOG(LogTemp, Display,
@@ -1705,6 +1830,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 	{
 		bReachingTakeoff = false;
 		LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachTimeout"));
+		HoldCompositeFailure(LastTraversalCandidate.FailureReason);
 		CachedAIController->StopMovement();
 		if (FPokemonJumpSolver::IsDebugEnabled())
 		{
@@ -1725,6 +1851,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		{
 			bReachingTakeoff = false;
 			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
 		}
 	}
 }
@@ -1738,7 +1865,10 @@ void UPokemonNavigationComponent::StartPreparedTraversal()
 	{
 		return;
 	}
-	Pokemon->JumpExecutionComponent->PrepareJump(LastTraversalCandidate, LastTraversalRequirement, CurrentNavigationRequest);
+	if (!Pokemon->JumpExecutionComponent->PrepareJump(LastTraversalCandidate, LastTraversalRequirement, CurrentNavigationRequest))
+	{
+		HoldCompositeFailure(TEXT("ExecutorPreparationRejected"));
+	}
 }
 
 bool UPokemonNavigationComponent::DebugExecuteRetainedTraversal()
@@ -1771,12 +1901,48 @@ void UPokemonNavigationComponent::HandleJumpLinkReached(APokemonJumpNavLink* Lin
 		return;
 	}
 	Requirement.Evidence = EPokemonTraversalEvidence::AuthoredJumpLink;
+	if (IsCompositePlayerMove() && Link && Link->GetSmartLinkComp())
+	{
+		const FVector Start = Link->GetSmartLinkComp()->GetStartPoint();
+		const FVector End = Link->GetSmartLinkComp()->GetEndPoint();
+		Requirement.StartFeetLocation = FVector::DistSquared(DestinationFeet, End) < FVector::DistSquared(DestinationFeet, Start)
+			? Start : End;
+		FVector SupportedEntry;
+		FName EntryFailure;
+		APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+		Requirement.bStartSupportKnown = FPokemonJumpTrajectoryValidator::ResolveLanding(
+			*Pokemon, Requirement.StartFeetLocation, SupportedEntry, EntryFailure);
+		if (!Requirement.bStartSupportKnown)
+		{
+			HoldCompositeFailure(EntryFailure);
+			return;
+		}
+		Requirement.StartFeetLocation = SupportedEntry;
+	}
 	Requirement.Circumstance = FMath::Abs(Requirement.VerticalSeparation()) > 1.f
 		? EPokemonTraversalCircumstance::VerticalAccess : EPokemonTraversalCircumstance::GapTraversal;
 	ActiveJumpLink = Link;
 	bPlayerMovePlanningOnly = true;
 	EvaluateTraversalRequirement(Requirement);
 	bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+	if (IsCompositePlayerMove())
+	{
+		if (bTraversalPlanReady)
+		{
+			++TraversalSegmentSerial;
+			PendingTraversalRequirement = LastTraversalRequirement;
+			const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+			bReachingTakeoff = FVector::Dist(Pokemon->GetCharacterMovement()->GetActorFeetLocation(),
+				PendingTraversalRequirement.StartFeetLocation) > 6.f;
+			bTraversalPlanReady = !bReachingTakeoff;
+			TakeoffApproachElapsed = 0.f;
+			LogCompositeEvent(TEXT("Segment"), TEXT("AuthoredSmartJumpLink"));
+		}
+		else
+		{
+			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+		}
+	}
 	// Unreal has already reached the Smart Link entry. Retire this path while retaining its parent.
 	CachedAIController->StopMovement();
 }
@@ -1801,6 +1967,22 @@ void UPokemonNavigationComponent::HandleJumpFinished(FGuid RequestId, bool bLand
 {
 	if (!bHasActiveRequest || RequestId != CurrentNavigationRequest.RequestId)
 	{
+		return;
+	}
+	if (IsCompositePlayerMove())
+	{
+		if (bLandedAtDestination)
+		{
+			// Executor broadcasts only after grounded post-landing movement. The
+			// segment is over; the retained request alone supplies the next goal.
+			InvalidateCompositePlanning();
+			LogCompositeEvent(TEXT("Continue"), TEXT("TraversalLanded"));
+			TryCompletePlayerMove();
+		}
+		else
+		{
+			HoldCompositeFailure(Reason);
+		}
 		return;
 	}
 	bTraversalPlanReady = false;

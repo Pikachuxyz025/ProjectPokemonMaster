@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "AIControllers/PokemonAITypes.h"
 #include "Navigation/PokemonTraversalTypes.h"
+#include "Navigation/PokemonCompositeMove.h"
 #include "GameplayTagContainer.h"
 #include "PokemonNavigationComponent.generated.h"
 
@@ -14,6 +15,7 @@ class APawn;
 class APokemonJumpNavLink;
 class UPokemonJumpExecutionComponent;
 class UNavigationPath;
+class ANavigationData;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
@@ -24,6 +26,7 @@ public:
 	UPokemonNavigationComponent();
 
 virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
@@ -106,6 +109,26 @@ protected:
 	int32 TakeoffAnchorInterpolationCount = 1;
 
 private:
+	friend struct FPokemonCompositeMoveTestAccess;
+	bool IsCompositePlayerMove() const;
+	bool TryCompletePlayerMove();
+	void ResetLocalTraversal();
+	void HoldCompositeFailure(FName Reason);
+	void InvalidateCompositePlanning();
+	void LogCompositeEvent(const TCHAR* Event, FName Reason = NAME_None) const;
+	bool SearchCompositeTraversal(const UNavigationPath* GroundPath, FName Trigger,
+		FPokemonTraversalRequirement& OutRequirement, FPokemonTraversalCandidate& OutCandidate);
+	FPokemonCompositeMoveCost EstimateCompositeCost(const FVector& Exit, double GroundCost, double JumpCost) const;
+	UFUNCTION()
+	void HandleNavigationGenerationFinished(ANavigationData* NavData);
+
+	bool bCompositeFailureHeld = false;
+	FVector CompositeFailureFeet = FVector::ZeroVector;
+	uint32 CompositePlanningGeneration = 0;
+	uint32 CompositeSearchCount = 0;
+	uint32 TraversalSegmentSerial = 0;
+	FPokemonCompositeMoveCost SelectedCompositeCost;
+
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
 
@@ -168,7 +191,7 @@ private:
 	bool SearchTakeoffAnchors(const FVector& DestinationFeet, FName Trigger,
 		const UNavigationPath* GroundPath,
 		FPokemonTraversalRequirement& OutRequirement,
-		FPokemonTraversalCandidate& OutCandidate);
+		FPokemonTraversalCandidate& OutCandidate, float* OutGroundTime = nullptr);
 
 public:
 	UFUNCTION(BlueprintCallable)

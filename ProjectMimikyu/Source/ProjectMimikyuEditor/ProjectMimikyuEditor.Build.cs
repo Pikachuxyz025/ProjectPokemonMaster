@@ -23,6 +23,8 @@ public class ProjectMimikyuEditor : ModuleRules
             "UnrealEd",
             // Native jump automation fixtures initialize GAS without content assets.
             "GameplayAbilities",
+            "AIModule",
+            "NavigationSystem",
             "GameplayTags"
         });
     }

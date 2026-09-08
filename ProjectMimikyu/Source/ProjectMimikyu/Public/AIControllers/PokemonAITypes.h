@@ -31,6 +31,8 @@ struct FAgentNavigationRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag PreferredMovementMode;
 
+	// Stationary player Move: authoritative ParentDestination for the whole journey.
+	// Traversal entry/exit/takeoff belong to local requirements, never this field.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector TargetLocation = FVector::ZeroVector;
 
