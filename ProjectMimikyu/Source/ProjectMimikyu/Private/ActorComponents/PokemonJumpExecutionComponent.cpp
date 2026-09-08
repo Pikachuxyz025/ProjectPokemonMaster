@@ -7,6 +7,7 @@
 #include "HAL/IConsoleManager.h"
 #include "Navigation/PokemonJumpSolver.h"
 #include "Navigation/PokemonJumpTrajectoryValidator.h"
+#include "EngineUtils.h"
 #include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonJumpExecution, Log, All);
@@ -17,6 +18,45 @@ namespace
 		TEXT("pokemon.Traversal.JumpExecutionDebug"), 0,
 		TEXT("Log Jump Execution 0.2 preparation/takeoff/landing and interruption events."), ECVF_Default);
 	constexpr float PendingLaunchTimeout = 0.5f;
+
+#if !UE_BUILD_SHIPPING
+	void DebugInterruptJump(const TArray<FString>& Args, UWorld* World)
+	{
+		const FName Reason = Args.Num() > 0 && !Args[0].IsEmpty()
+			? FName(*Args[0])
+			: FName(TEXT("DebugInterrupt"));
+
+		if (!World)
+		{
+			UE_LOG(LogPokemonJumpExecution, Warning,
+				TEXT("[Jump0.2] DebugInterruptJump skipped: no world."));
+			return;
+		}
+
+		for (TActorIterator<APokemon_Parent> It(World); It; ++It)
+		{
+			APokemon_Parent* Pokemon = *It;
+			if (Pokemon && Pokemon->JumpExecutionComponent
+				&& Pokemon->JumpExecutionComponent->IsBusy())
+			{
+				Pokemon->JumpExecutionComponent->InterruptJump(Reason);
+				UE_LOG(LogPokemonJumpExecution, Display,
+					TEXT("[Jump0.2] DebugInterruptJump | Owner=%s | Reason=%s"),
+					*GetNameSafe(Pokemon), *Reason.ToString());
+				return;
+			}
+		}
+
+		UE_LOG(LogPokemonJumpExecution, Warning,
+			TEXT("[Jump0.2] DebugInterruptJump skipped: no busy Pokemon in world."));
+	}
+
+	FAutoConsoleCommandWithWorldAndArgs DebugInterruptJumpCommand(
+		TEXT("pokemon.Traversal.DebugInterruptJump"),
+		TEXT("Development-only: interrupt the first busy Pokemon jump. Optional argument is the interruption reason."),
+		FConsoleCommandWithWorldAndArgsDelegate::CreateStatic(&DebugInterruptJump),
+		ECVF_Cheat);
+#endif
 }
 
 UPokemonJumpExecutionComponent::UPokemonJumpExecutionComponent()
@@ -280,7 +320,11 @@ void UPokemonJumpExecutionComponent::CancelBeforeTakeoff(FName Reason)
 {
 	if (State == EPokemonJumpExecutionState::Preparing || State == EPokemonJumpExecutionState::LaunchPending)
 	{
-		FinishJump(false, Reason.IsNone() ? FName(TEXT("PreparationCancelled")) : Reason);
+		const FName EffectiveReason = Reason.IsNone() ? FName(TEXT("PreparationCancelled")) : Reason;
+		// Keep the interruption visible before FinishJump clears the active request.
+		// The state value in this event proves that no airborne handoff occurred.
+		LogLifecycle(TEXT("Interrupted"), EffectiveReason);
+		FinishJump(false, EffectiveReason);
 	}
 }
 

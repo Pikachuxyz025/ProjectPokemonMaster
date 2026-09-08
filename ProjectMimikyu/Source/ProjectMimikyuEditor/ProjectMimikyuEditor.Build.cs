@@ -20,7 +20,10 @@ public class ProjectMimikyuEditor : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(new string[]
         {
-            "UnrealEd"
+            "UnrealEd",
+            // Native jump automation fixtures initialize GAS without content assets.
+            "GameplayAbilities",
+            "GameplayTags"
         });
     }
 }
