@@ -60,6 +60,11 @@ void UAT_CombatApproach::Activate()
 		return;
 	}
 
+	if (AvatarPokemon->JumpExecutionComponent)
+	{
+		JumpFinishedDelegateHandle = AvatarPokemon->JumpExecutionComponent->OnJumpFinished.AddUObject(this, &UAT_CombatApproach::HandleJumpFinished);
+	}
+
 	AvatarPokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, MoveSpeedMultiplier);
 	
 	if (!SubmitNavigationRequest())
@@ -78,23 +83,61 @@ void UAT_CombatApproach::Activate()
 void UAT_CombatApproach::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
+
 	if (!IsValidSetup())
 	{
 		FinishFailure();
 		return;
 	}
 
-	ElapsedTime += DeltaTime;
-	if (ElapsedTime >= Timeout)
+	const bool bTraversalBusy = IsOwnedTraversalBusy();
+
+	if(bTraversalBusy)
 	{
-		FinishFailure();
-		UE_LOG(LogTemp, Warning, TEXT("Combat Approach Task failed due to timeout."));
-		return;
+		if (!bTimeoutPausedForTraversal)
+		{
+			bTimeoutPausedForTraversal = true;
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[CombatApproach] TimeoutPaused | "
+				"RequestId=%s | "
+				"Elapsed=%.2f | "
+				"Limit=%.2f | "
+				"Reason=TraversalExecuting"
+			),
+				*SubmitNavigationRequestId.ToString(),
+				ElapsedTime,
+				Timeout);
+		}
 	}
+	else
+	{
+		if (bTimeoutPausedForTraversal)
+		{
+			bTimeoutPausedForTraversal = false;
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[CombatApproach] Timeout | "
+				"RequestId=%s | "
+				"Elapsed=%.2f | "
+				"Limit=%.2f"
+			),
+				*SubmitNavigationRequestId.ToString(),
+				ElapsedTime,
+				Timeout);
+
+			FinishFailure();
+
+			return;
+		}
+	}
+
 	if (HasReachedDesiredRange())
 	{
 		FinishSuccess();
+
 		UE_LOG(LogTemp, Log, TEXT("Combat Approach Task succeeded by reaching desired range."));
+
 		return;
 	}
 
@@ -126,10 +169,11 @@ bool UAT_CombatApproach::IsValidSetup() const
 bool UAT_CombatApproach::HasReachedDesiredRange() const
 {
 	// Retain task ownership through preparation/flight; live attack contact is unchanged.
-	if (AvatarPokemon && AvatarPokemon->JumpExecutionComponent && AvatarPokemon->JumpExecutionComponent->IsBusy())
+	if (IsOwnedTraversalBusy())
 	{
 		return false;
 	}
+
 	if (!AvatarPawn)
 	{
 		return false;
@@ -199,6 +243,45 @@ void UAT_CombatApproach::FinishFailure()
 		OnFailed.Broadcast();
 	}
 	EndTask();
+}
+
+bool UAT_CombatApproach::IsOwnedTraversalBusy() const
+{
+	if(!AvatarPokemon||!AvatarPokemon->JumpExecutionComponent||!SubmitNavigationRequestId.IsValid())
+	{
+		return false;
+	}
+
+	const UPokemonJumpExecutionComponent* JumpExecution = AvatarPokemon->JumpExecutionComponent;
+
+	return JumpExecution->IsBusy() && JumpExecution->GetParentRequestId() == SubmitNavigationRequestId;
+}
+
+void UAT_CombatApproach::HandleJumpFinished(FGuid RequestId, bool bReachedDestination, FName Reason)
+{
+	if (!bSubmittedNavigationRequest || RequestId != SubmitNavigationRequestId)
+	{
+		return;
+}
+
+	if (!bReachedDestination)
+	{
+		return;
+	}
+
+	const float PreviousElapsedTime = ElapsedTime;
+
+	ElapsedTime = 0.f;
+
+	UE_LOG(LogTemp,Display,TEXT(
+			"[CombatApproach] ProgressReset | "
+			"RequestId=%s | "
+			"PreviousElapsed=%.2f | "
+			"NewElapsed=0.00 | "
+			"Reason=TraversalCompleted"
+		),
+		*RequestId.ToString(),
+		PreviousElapsedTime);
 }
 
 bool UAT_CombatApproach::ResolveApproachTargetLocation(FVector& OutTargetLocation) const
@@ -422,6 +505,12 @@ void UAT_CombatApproach::FaceTarget(float DeltaTime) const
 
 void UAT_CombatApproach::OnDestroy(bool bInOwnerFinished)
 {
+	if (AvatarPokemon && AvatarPokemon->JumpExecutionComponent && JumpFinishedDelegateHandle.IsValid())
+	{
+		AvatarPokemon->JumpExecutionComponent->OnJumpFinished.Remove(JumpFinishedDelegateHandle);
+		JumpFinishedDelegateHandle.Reset();
+	}
+
 	ClearOwnedNavigationRequest();
 
 	if (AvatarPokemon)

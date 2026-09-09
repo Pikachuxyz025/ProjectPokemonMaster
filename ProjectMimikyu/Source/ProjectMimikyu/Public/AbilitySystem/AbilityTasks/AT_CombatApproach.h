@@ -12,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatApproachSimpleDelegate);
 
 class APokemon_Parent;
 class UPokemonNavigationComponent;
+class UPokemonJumpExecutionComponent;
 
 UCLASS()
 class PROJECTMIMIKYU_API UAT_CombatApproach : public UAbilityTask
@@ -49,12 +50,15 @@ protected:
 	void FinishSuccess();
 	void FinishFailure();
 
+	bool IsOwnedTraversalBusy() const;
+	void HandleJumpFinished(FGuid RequestId, bool bReachedDestination, FName Reason);
+
 	bool ResolveApproachTargetLocation(FVector& OutTargetLocation) const;
 	bool SubmitNavigationRequest();
 	bool IsCurrentNavigationRequestOwnedByTask() const;
 	void ClearOwnedNavigationRequest();
 	void FaceTarget(float DeltaTime) const;
-
+	
 protected:
 	UPROPERTY()
 	TObjectPtr<AActor> TargetActor;
@@ -92,9 +96,13 @@ protected:
 	bool bSubmittedNavigationRequest = false;
 	float DesiredRange = 100.f;
 	float MoveSpeedMultiplier = 1.f;
+
 	float Timeout = 3.f;
 	float ElapsedTime = 0.f;
 	bool bFaceTarget = true;
+
+	bool bTimeoutPausedForTraversal = false;
+	FDelegateHandle JumpFinishedDelegateHandle;
 
 	float CachedOriginalMaxWalkSpeed = 0.f;
 	bool bCachedWalkSpeed = false;
