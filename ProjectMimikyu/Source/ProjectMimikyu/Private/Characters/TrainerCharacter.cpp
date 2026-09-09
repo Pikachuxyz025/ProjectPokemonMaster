@@ -18,6 +18,7 @@
 #include "ActorComponents/TrainerThrowableComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 #include "ActorComponents/CrowdObstacleAgentComponent.h"
 
 #include "Characters/Pokemon_Parent.h"
@@ -1261,23 +1262,23 @@ void ATrainerCharacter::ServerCommandPokemonMove_Implementation(FVector Requeste
 		return;
 	}
 
-	UPokemonNavigationComponent* NavigationComponent = CurrentPokemon->GetNavigationComponent();
+	UPokemonIntentSequenceComponent* IntentSequence = CurrentPokemon->GetIntentSequenceComponent();
 
-	if (!NavigationComponent)
+	if (!IntentSequence)
 	{
 		UE_LOG(
 			LogTemp,
 			Warning,
 			TEXT(
 				"ServerCommandPokemonMove failed: "
-				"Pokemon has no NavigationComponent."
+				"Pokemon has no IntentSequenceComponent."
 			)
 		);
 
 		return;
 	}
 	
-	NavigationComponent->RequestPlayerMoveToLocation(RequestedLocation);
+	IntentSequence->SubmitMoveToIntent(RequestedLocation);
 }
 
 bool ATrainerCharacter::TryBuildPokemonSpawnTransform(const FVector& TraceStart, const FVector& TraceEnd, FTransform& OutSpawnTransform) const

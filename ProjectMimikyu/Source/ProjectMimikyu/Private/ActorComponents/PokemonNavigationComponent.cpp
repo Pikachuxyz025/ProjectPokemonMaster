@@ -65,6 +65,8 @@ void UPokemonNavigationComponent::BeginPlay()
 
 void UPokemonNavigationComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	bNavigationEndingPlay = true;
+	ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Interrupted, TEXT("OwnerEndPlay"));
 	if (UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld()))
 	{
 		Nav->OnNavigationGenerationFinishedDelegate.RemoveDynamic(this, &ThisClass::HandleNavigationGenerationFinished);
@@ -81,13 +83,34 @@ void UPokemonNavigationComponent::TickComponent(float DeltaTime, ELevelTick Tick
 
 void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequest& NewRequest)
 {
+	if (bNavigationEndingPlay)
+	{
+		return;
+	}
+	// Callers may pass a reference to CurrentNavigationRequest. Snapshot before retirement.
+	const FAgentNavigationRequest RequestToInstall = NewRequest;
 	const bool bWasCompositeMove = IsCompositePlayerMove();
-	const bool bSameRequest = NewRequest.RequestId.IsValid() && NewRequest.RequestId == CurrentNavigationRequest.RequestId;
+	const bool bSameRequest = bHasActiveRequest && RequestToInstall.RequestId.IsValid()
+		&& RequestToInstall.RequestId == CurrentNavigationRequest.RequestId;
+	if (bHasActiveRequest && !bSameRequest)
+	{
+		const uint64 ExpectedMutation = NavigationMutationSerial + 1;
+		ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Interrupted, TEXT("ParentReplaced"));
+		if (NavigationMutationSerial != ExpectedMutation || bNavigationEndingPlay)
+		{
+			return; // A terminal listener submitted a newer request. It wins.
+		}
+	}
+	const uint64 ThisMutation = ++NavigationMutationSerial;
 	// Cancel can synchronously broadcast. Retire ownership before touching the executor.
 	bHasActiveRequest = false;
 	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
 	{
 		Executor->CancelBeforeTakeoff(FName(TEXT("ParentReplaced")));
+	}
+	if (NavigationMutationSerial != ThisMutation || bNavigationEndingPlay)
+	{
+		return;
 	}
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
@@ -101,7 +124,7 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 		TraversalSegmentSerial = 0;
 		CompositeSearchCount = 0;
 	}
-	CurrentNavigationRequest = NewRequest;
+	CurrentNavigationRequest = RequestToInstall;
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
 
 	if(bHasActiveRequest&& !CurrentNavigationRequest.RequestId.IsValid())
@@ -134,11 +157,24 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 
 void UPokemonNavigationComponent::ClearNavigationIntent()
 {
-	bHasActiveRequest = false;
-	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Interrupted, TEXT("NavigationCleared"));
+}
+
+bool UPokemonNavigationComponent::CancelNavigationRequest(FGuid OwnedRequestId, FName Reason)
+{
+	return ResolveNavigationRequest(OwnedRequestId, EPokemonNavigationResolution::Interrupted,
+		Reason.IsNone() ? FName(TEXT("NavigationCancelled")) : Reason);
+}
+
+bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId, EPokemonNavigationResolution Result, FName Reason)
+{
+	if (!bHasActiveRequest || !OwnedRequestId.IsValid() || CurrentNavigationRequest.RequestId != OwnedRequestId)
 	{
-		Executor->CancelBeforeTakeoff(FName(TEXT("ParentCleared")));
+		return false;
 	}
+	const uint64 ThisMutation = ++NavigationMutationSerial;
+	// Clear every piece of old ownership before any synchronous executor/listener callback.
+	bHasActiveRequest = false;
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
 	ActiveJumpLink.Reset();
@@ -149,11 +185,18 @@ void UPokemonNavigationComponent::ClearNavigationIntent()
 	bPlayerMovePlanningOnly = false;
 	LastTraversalRequirement = FPokemonTraversalRequirement();
 	LastTraversalCandidate = FPokemonTraversalCandidate();
+	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+	{
+		Executor->CancelBeforeTakeoff(Reason);
+	}
 
-	if (CachedAIController)
+	if (CachedAIController && NavigationMutationSerial == ThisMutation)
 	{
 		CachedAIController->StopMovement();
 	}
+	// No state mutation after broadcasting. A listener may start another action here.
+	OnNavigationResolved.Broadcast(OwnedRequestId, Result, Reason);
+	return true;
 }
 
 bool UPokemonNavigationComponent::HasActiveNavigationRequest() const
@@ -168,9 +211,16 @@ const FAgentNavigationRequest& UPokemonNavigationComponent::GetCurrentNavigation
 
 bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal)
 {
-	if (!OwnerPawn)
+	return SubmitPlayerMoveToLocation(RawTargetLocation, bAllowSpecialTraversal).bGroundPathAccepted;
+}
+
+FPokemonNavigationSubmission UPokemonNavigationComponent::SubmitPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal)
+{
+	FPokemonNavigationSubmission Submission;
+	if (!OwnerPawn || !OwnerPawn->HasAuthority() || bNavigationEndingPlay || RawTargetLocation.ContainsNaN())
 	{
-		return false;
+		Submission.Reason = TEXT("NavigationSubmissionUnavailable");
+		return Submission;
 	}
 
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
@@ -180,7 +230,8 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonNav] RequestPlayerMoveToLocation failed because NavSystem is null. Owner=%s"),
 			*GetNameSafe(GetOwner()));
-		return false;
+		Submission.Reason = TEXT("NavigationSystemUnavailable");
+		return Submission;
 	}
 
 	FAgentNavigationRequest Request;
@@ -191,6 +242,20 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 	Request.Urgency = 0.8f;
 	Request.bAllowSpecialTraversal = bAllowSpecialTraversal;
 	Request.bAllowGASMovementAbilities = true;
+	const auto CaptureOwnership = [this, &Request, &Submission](bool bGroundAccepted)
+	{
+		if (bHasActiveRequest && CurrentNavigationRequest.RequestId == Request.RequestId)
+		{
+			Submission.RequestId = Request.RequestId;
+			Submission.bGroundPathAccepted = bGroundAccepted;
+		}
+		else
+		{
+			Submission.Reason = Request.bAllowSpecialTraversal || bGroundAccepted
+				? FName(TEXT("NavigationSubmissionSuperseded")) : FName(TEXT("SpecialTraversalDisabled"));
+		}
+		return Submission;
+	};
 
 	FNavLocation ProjectedLocation;
 	const FNavAgentProperties& AgentProperties = OwnerPawn->GetNavAgentPropertiesRef();
@@ -206,7 +271,7 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 			*RawTargetLocation.ToString());
 
 		RetainPlayerMoveForTraversal(Request, FName(TEXT("PlayerProjectionFailed")));
-		return false;
+		return CaptureOwnership(false);
 	}
 
 	// Keep the clicked parent destination. Projection is a ground movement detail.
@@ -232,10 +297,14 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 		DrawDebugSphere(GetWorld(), ProjectedLocation.Location, 30.f, 16, FColor::Yellow, false, 3.f, 0, 3.f);
 
 		RetainPlayerMoveForTraversal(Request, GroundFailure);
-		return false;
+		return CaptureOwnership(false);
 	}
 
 	SetNavigationIntent(Request);
+	if (!bHasActiveRequest || CurrentNavigationRequest.RequestId != Request.RequestId)
+	{
+		return CaptureOwnership(true);
+	}
 
 	DrawDebugSphere(GetWorld(), ProjectedLocation.Location, 30.f, 16, FColor::Green, false, 3.f, 0, 3.f);
 
@@ -247,7 +316,7 @@ bool UPokemonNavigationComponent::RequestPlayerMoveToLocation(const FVector& Raw
 		*RawTargetLocation.ToString(),
 		*ProjectedLocation.Location.ToString());
 
-	return true;
+	return CaptureOwnership(true);
 }
 
 void UPokemonNavigationComponent::SuspendNavigation()
@@ -341,7 +410,7 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 
 	if (!OwnerPokemon || !OwnerPokemon->CanAct())
 	{
-		ClearNavigationIntent();
+		ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
 		return;
 	}
 	if (OwnerPokemon->JumpExecutionComponent && OwnerPokemon->JumpExecutionComponent->IsBusy())
@@ -954,7 +1023,7 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 			Distance
 		);
 
-		ClearNavigationIntent();
+		ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Succeeded, NAME_None);
 		return true;
 	}
 
@@ -1261,6 +1330,10 @@ void UPokemonNavigationComponent::RetainPlayerMoveForTraversal(
 	}
 
 	SetNavigationIntent(Request);
+	if (!bHasActiveRequest || CurrentNavigationRequest.RequestId != Request.RequestId)
+	{
+		return; // A reentrant replacement belongs to its newer caller.
+	}
 	bPlayerMovePlanningOnly = true;
 
 	// Retire the previous ground path, but do not interrupt a suspended owner.

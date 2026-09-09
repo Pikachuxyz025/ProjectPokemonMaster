@@ -80,7 +80,7 @@ bool UPokemonNavigationComponent::TryCompletePlayerMove()
 		return false;
 	}
 	LogCompositeEvent(TEXT("Complete"));
-	ClearNavigationIntent();
+	ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Succeeded, NAME_None);
 	return true;
 }
 

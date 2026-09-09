@@ -14,6 +14,7 @@
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/PokemonJumpExecutionComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 #include "ActorComponents/PokemonOwnershipComponent.h"
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
 #include "ActorComponents/PokemonCombatSocketComponent.h"
@@ -51,6 +52,7 @@ APokemon_Parent::APokemon_Parent()
 	NavigationComponent = CreateDefaultSubobject<UPokemonNavigationComponent>(TEXT("Navigation Component"));
 	JumpExecutionComponent = CreateDefaultSubobject<UPokemonJumpExecutionComponent>(TEXT("Jump Execution Component"));
 	CommandComponent = CreateDefaultSubobject<UPokemonCommandComponent>(TEXT("Command Component"));
+	IntentSequenceComponent = CreateDefaultSubobject<UPokemonIntentSequenceComponent>(TEXT("Intent Sequence Component"));
 	OwnershipComponent = CreateDefaultSubobject<UPokemonOwnershipComponent>(TEXT("Ownership Component"));
 	AttributeSet = CreateDefaultSubobject<UPokemonBaseAttributeSet>("Attribute Set");
 	FieldPresenceComponent = CreateDefaultSubobject<UPokemonFieldPresenceComponent>("Field Presence Component");

@@ -7,6 +7,7 @@
 #include "AIControllers/PokemonAITypes.h"
 #include "Navigation/PokemonTraversalTypes.h"
 #include "Navigation/PokemonCompositeMove.h"
+#include "Navigation/PokemonNavigationResult.h"
 #include "GameplayTagContainer.h"
 #include "PokemonNavigationComponent.generated.h"
 
@@ -43,6 +44,11 @@ virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
 	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal = true);
+
+	// Positive executor ownership, independent of initial ground path acceptance.
+	FPokemonNavigationSubmission SubmitPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal = true);
+	bool CancelNavigationRequest(FGuid OwnedRequestId, FName Reason);
+	FPokemonNavigationResolvedSignature OnNavigationResolved;
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|AI|Traversal|Debug",meta = (DevelopmentOnly))
 	bool DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance, bool bDestinationSupportConfirmed);
@@ -110,6 +116,10 @@ protected:
 
 private:
 	friend struct FPokemonCompositeMoveTestAccess;
+	friend struct FPokemonIntentSequenceTestAccess;
+	bool ResolveNavigationRequest(FGuid OwnedRequestId, EPokemonNavigationResolution Result, FName Reason);
+	uint64 NavigationMutationSerial = 0;
+	bool bNavigationEndingPlay = false;
 	bool IsCompositePlayerMove() const;
 	bool TryCompletePlayerMove();
 	void ResetLocalTraversal();

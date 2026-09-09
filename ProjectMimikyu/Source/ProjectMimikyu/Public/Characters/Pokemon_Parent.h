@@ -38,6 +38,7 @@ struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
 class UPokemonJumpExecutionComponent;
 class UPokemonCommandComponent;
+class UPokemonIntentSequenceComponent;
 class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
 class UPokemonCombatSocketComponent;
@@ -442,6 +443,9 @@ protected:
 	TObjectPtr<UPokemonCommandComponent> CommandComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonIntentSequenceComponent> IntentSequenceComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonOwnershipComponent> OwnershipComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -532,6 +536,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Navigation")
 	UPokemonNavigationComponent* GetNavigationComponent() const { return NavigationComponent; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Intent")
+	UPokemonIntentSequenceComponent* GetIntentSequenceComponent() const { return IntentSequenceComponent; }
 
 	UMovesetComponent* GetMovesetComponent() const { return MovesetComponent; }
 
