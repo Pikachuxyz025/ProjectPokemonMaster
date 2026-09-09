@@ -91,20 +91,44 @@ void UAT_CombatApproach::TickTask(float DeltaTime)
 	}
 
 	const bool bTraversalBusy = IsOwnedTraversalBusy();
+	
+	// Execution reach gets first priority.
+	//
+	// While the owned traversal is busy,
+	// HasReachedDesiredRange() deliberately returns false.
+	//
+	// Immediately after traversal completes, however,
+	// we want the new execution position evaluated BEFORE
+	// the watchdog is allowed to fail the approach.
+	if (HasReachedDesiredRange())
+	{
+		UE_LOG(LogTemp,Log,TEXT(
+				"[CombatApproach] ReachedDesiredRange | "
+				"RequestId=%s | "
+				"Elapsed=%.2f | "
+				"Limit=%.2f"
+			),
+			*SubmitNavigationRequestId.ToString(),
+			ElapsedTime,
+			Timeout);
 
-	if(bTraversalBusy)
+		FinishSuccess();
+		return;
+	}
+
+	if (bTraversalBusy)
 	{
 		if (!bTimeoutPausedForTraversal)
 		{
 			bTimeoutPausedForTraversal = true;
 
-			UE_LOG(LogTemp, Display, TEXT(
-				"[CombatApproach] TimeoutPaused | "
-				"RequestId=%s | "
-				"Elapsed=%.2f | "
-				"Limit=%.2f | "
-				"Reason=TraversalExecuting"
-			),
+			UE_LOG(LogTemp,Display,TEXT(
+					"[CombatApproach] TimeoutPaused | "
+					"RequestId=%s | "
+					"Elapsed=%.2f | "
+					"Limit=%.2f | "
+					"Reason=TraversalExecuting"
+				),
 				*SubmitNavigationRequestId.ToString(),
 				ElapsedTime,
 				Timeout);
@@ -116,36 +140,65 @@ void UAT_CombatApproach::TickTask(float DeltaTime)
 		{
 			bTimeoutPausedForTraversal = false;
 
-			UE_LOG(LogTemp, Display, TEXT(
-				"[CombatApproach] Timeout | "
-				"RequestId=%s | "
-				"Elapsed=%.2f | "
-				"Limit=%.2f"
-			),
+			UE_LOG(LogTemp,Display,TEXT(
+					"[CombatApproach] TimeoutResumed | "
+					"RequestId=%s | "
+					"Elapsed=%.2f | "
+					"Limit=%.2f"
+				),
 				*SubmitNavigationRequestId.ToString(),
 				ElapsedTime,
 				Timeout);
-
-			FinishFailure();
-
-			return;
 		}
-	}
 
-	if (HasReachedDesiredRange())
-	{
-		FinishSuccess();
+		if (bTraversalCompletedSinceLastTick)
+		{
+			//
+			// The traversal completion callback has already
+			// reset ElapsedTime.
+			//
+			// Give navigation/approach one full tick to observe
+			// its new world state before consuming the watchdog
+			// budget again.
+			//
+			bTraversalCompletedSinceLastTick = false;
 
-		UE_LOG(LogTemp, Log, TEXT("Combat Approach Task succeeded by reaching desired range."));
+			UE_LOG(LogTemp,Display,TEXT(
+					"[CombatApproach] PostTraversalEvaluation | "
+					"RequestId=%s | "
+					"Elapsed=%.2f | "
+					"Limit=%.2f"
+				),
+				*SubmitNavigationRequestId.ToString(),
+				ElapsedTime,
+				Timeout);
+		}
+		else
+		{
+			ElapsedTime += DeltaTime;
 
-		return;
+			if (ElapsedTime >= Timeout)
+			{
+				UE_LOG(LogTemp,Warning,TEXT(
+						"[CombatApproach] Timeout | "
+						"RequestId=%s | "
+						"Elapsed=%.2f | "
+						"Limit=%.2f"
+					),
+					*SubmitNavigationRequestId.ToString(),
+					ElapsedTime,
+					Timeout);
+
+				FinishFailure();
+				return;
+			}
+		}
 	}
 
 	if (bFaceTarget)
 	{
 		FaceTarget(DeltaTime);
 	}
-
 }
 
 bool UAT_CombatApproach::IsValidSetup() const
@@ -262,7 +315,7 @@ void UAT_CombatApproach::HandleJumpFinished(FGuid RequestId, bool bReachedDestin
 	if (!bSubmittedNavigationRequest || RequestId != SubmitNavigationRequestId)
 	{
 		return;
-}
+	}
 
 	if (!bReachedDestination)
 	{
@@ -272,16 +325,18 @@ void UAT_CombatApproach::HandleJumpFinished(FGuid RequestId, bool bReachedDestin
 	const float PreviousElapsedTime = ElapsedTime;
 
 	ElapsedTime = 0.f;
+	bTraversalCompletedSinceLastTick = true;
 
-	UE_LOG(LogTemp,Display,TEXT(
-			"[CombatApproach] ProgressReset | "
-			"RequestId=%s | "
-			"PreviousElapsed=%.2f | "
-			"NewElapsed=0.00 | "
-			"Reason=TraversalCompleted"
-		),
+	UE_LOG(LogTemp, Display, TEXT(
+		"[CombatApproach] ProgressReset | "
+		"RequestId=%s | "
+		"PreviousElapsed=%.2f | "
+		"NewElapsed=%.2f | "
+		"Reason=TraversalCompleted"
+	),
 		*RequestId.ToString(),
-		PreviousElapsedTime);
+		PreviousElapsedTime,
+		ElapsedTime);
 }
 
 bool UAT_CombatApproach::ResolveApproachTargetLocation(FVector& OutTargetLocation) const

@@ -99,10 +99,13 @@ protected:
 
 	float Timeout = 3.f;
 	float ElapsedTime = 0.f;
-	bool bFaceTarget = true;
 
 	bool bTimeoutPausedForTraversal = false;
+	bool bTraversalCompletedSinceLastTick = false;
+
 	FDelegateHandle JumpFinishedDelegateHandle;
+
+	bool bFaceTarget = true;
 
 	float CachedOriginalMaxWalkSpeed = 0.f;
 	bool bCachedWalkSpeed = false;
