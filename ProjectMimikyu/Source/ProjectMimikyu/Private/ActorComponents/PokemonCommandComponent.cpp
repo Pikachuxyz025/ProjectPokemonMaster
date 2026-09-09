@@ -6,10 +6,19 @@
 #include "AIControllers/PokemonAIController.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Components/CapsuleComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "HAL/IConsoleManager.h"
+#include "TimerManager.h"
+
+namespace
+{
+	TAutoConsoleVariable<int32> CVarPokemonCommandDebug(TEXT("pokemon.Command.Debug"), 0,
+		TEXT("Log sequenced trainer command reservation, execution, contact and resolution."), ECVF_Cheat);
+}
 
 UPokemonCommandComponent::UPokemonCommandComponent()
 {
@@ -192,148 +201,286 @@ void UPokemonCommandComponent::SetCommandTargetFromAimData(const FAimData& AimDa
 	SetCommandTarget(BuildCommandTargetFromAimData(AimData));
 }
 
-bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
+bool UPokemonCommandComponent::IsSupportedSequencedMove(const UPokemonMoveDataAsset* Move)
+{
+	const UPokemonDamageGameplayAbilities* CDO = Move && Move->Ability
+		? Cast<UPokemonDamageGameplayAbilities>(Move->Ability->GetDefaultObject()) : nullptr;
+	return CDO && CDO->MoveActionTag.MatchesTagExact(FPokemonGameplayTags::Get().PokemonMoves_MoveAction_Melee);
+}
+
+void UPokemonCommandComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	bCommandEndingPlay = true;
+	CancelSequencedCommand(ActiveTrainerCommandId, TEXT("OwnerEndPlay"));
+	Super::EndPlay(EndPlayReason);
+}
+
+UPokemonMoveDataAsset* UPokemonCommandComponent::ResolveMoveAtIndex(int32 MoveIndex, FName& OutReason) const
+{
+	const APokemon_Parent* Pokemon = GetOwnerPokemon();
+	const UMovesetComponent* Moveset = Pokemon ? Pokemon->GetMovesetComponent() : nullptr;
+	if (!Moveset || !Moveset->CurrentPokemonMoves.IsValidIndex(MoveIndex))
+	{
+		OutReason = TEXT("InvalidMoveIndex");
+		return nullptr;
+	}
+	UPokemonMoveDataAsset* Move = Moveset->CurrentPokemonMoves[MoveIndex];
+	OutReason = Move ? NAME_None : FName(TEXT("MoveUnavailable"));
+	return Move;
+}
+
+FName UPokemonCommandComponent::ValidateMoveReservation(UPokemonMoveDataAsset* Move, FGuid ReplacedOwnedCommandId) const
 {
 	APokemon_Parent* Pokemon = GetOwnerPokemon();
-	if (!Pokemon)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TryCallCommand failed: OwnerPokemon is null."));
-		return false;
-	}
+	if (!Pokemon || bCommandEndingPlay || IsSequencedExecutionEnding()) return TEXT("CommandUnavailable");
+	if (!Pokemon->CanAct()) return TEXT("OwnerCannotAct");
+	if (IsCommandActive() && !IsSequencedCommand(ReplacedOwnedCommandId)) return TEXT("CommandAlreadyActive");
+	if (!Move) return TEXT("MoveUnavailable");
+	const UMovesetComponent* Moveset = Pokemon->GetMovesetComponent();
+	if (!Moveset || !Moveset->CanUseMove(Move)) return TEXT("MoveResourceUnavailable");
+	UPokemonAbilitySystemComponent* ASC = Pokemon->GetPokemonASC();
+	if (!ASC) return TEXT("AbilitySystemUnavailable");
+	const FGameplayTag* Cooldown = FPokemonGameplayTags::Get().InputsToCooldowns.Find(Move->InputTag);
+	if (Cooldown && ASC->HasMatchingGameplayTag(*Cooldown)) return TEXT("MoveOnCooldown");
+	return NAME_None;
+}
 
-	if (!Pokemon->CanAct())
-	{
-		UE_LOG(LogTemp, Display,
-			TEXT("TryCallCommand rejected: Pokemon cannot act. Pokemon=%s MoveIndex=%d"),
-			*GetNameSafe(Pokemon),
-			MoveIndex);
+FName UPokemonCommandComponent::ValidateSequencedCommand(UPokemonMoveDataAsset* Move,
+	const FPokemonCommandTarget& Target, FGuid ReplacedOwnedCommandId) const
+{
+	const APokemon_Parent* Pokemon = GetOwnerPokemon();
+	if (!Pokemon || !Pokemon->HasAuthority()) return TEXT("AuthorityRequired");
+	if (!IsSupportedSequencedMove(Move)) return TEXT("UnsupportedAttackAction");
+	if (!Target.IsValidTarget() || Target.TargetLocation.ContainsNaN() || Target.ImpactNormal.ContainsNaN()
+		|| (!Target.HasTargetActor() && !Target.HasTargetLocation())) return TEXT("InvalidCommandTarget");
+	if (!Move->InputTag.IsValid()) return TEXT("InvalidMoveInputTag");
+	const auto Policy = Move->Ability->GetDefaultObject<UPokemonGameplayAbilities>()->GetInstancingPolicy();
+	if (Policy != EGameplayAbilityInstancingPolicy::InstancedPerActor
+		&& Policy != EGameplayAbilityInstancingPolicy::InstancedPerExecution) return TEXT("AttackAbilityMustBeInstanced");
+	return ValidateMoveReservation(Move, ReplacedOwnedCommandId);
+}
 
-		return false;
-	}
-
-	if (IsCommandActive())
-	{
-
-		UE_LOG(LogTemp,Display,TEXT(
-				"[PokemonCommand] Command rejected | "
-				"Pokemon=%s | "
-				"RequestedIndex=%d | "
-				"Reason=CommandAlreadyActive | "
-				"ActiveMove=%s"
-			),
-			*GetNameSafe(Pokemon),
-			MoveIndex,
-			*GetNameSafe(ActivePokemonMove)
-		);
-		return false;
-	}
-
-	UMovesetComponent* MovesetComponent = Pokemon->GetMovesetComponent();
-
-	if (!MovesetComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TryCallCommand failed: MovesetComponent is null."));
-		return false;
-	}
-
-	if (!MovesetComponent->CurrentPokemonMoves.IsValidIndex(MoveIndex))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TryCallCommand failed: Invalid move index %d."), MoveIndex);
-		return false;
-	}
-
-	UPokemonMoveDataAsset* SelectedMove = MovesetComponent->CurrentPokemonMoves[MoveIndex];
-	if (!SelectedMove)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("TryCallCommand failed: Move at index %d is null."), MoveIndex);
-		return false;
-	}
-
-	if (!MovesetComponent->CanUseMove(SelectedMove))
-	{
-		UE_LOG(LogTemp, Display, TEXT("TryCallCommand rejected: Move '%s' cannot be used."), *SelectedMove->MoveName.ToString());
-		return false;
-	}
-
-	UPokemonAbilitySystemComponent* PASC = Pokemon->GetPokemonASC();
-	if (!PASC)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TryCallCommand failed: PokemonASC is null."));
-		return false;
-	}
-
-	const FGameplayTag MoveCooldownTag = FPokemonGameplayTags::Get().InputsToCooldowns[SelectedMove->InputTag];
-
-	if (PASC->HasMatchingGameplayTag(MoveCooldownTag))
-	{
-		UE_LOG(LogTemp, Display, TEXT("Move '%s' is in cooldown."), *SelectedMove->MoveName.ToString());
-		return false;
-	}
-
-	ActivePokemonMove = SelectedMove;
+void UPokemonCommandComponent::InstallCommand(UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target, FGuid IntentId)
+{
+	ActivePokemonMove = Move;
+	CurrentCommandTarget = Target;
 	ActiveTrainerCommandId = FGuid::NewGuid();
+	ParentIntentId = IntentId;
+	bSequenceManaged = IntentId.IsValid();
 	bAttackJumpConsumed = false;
 	AuthorizedTraversalMomentum = FVector::ZeroVector;
+	bSequencedAttackConnected = false;
+	bSequencedExecutionRequested = false;
+	bSequencedCancellationRequested = false;
+	SequencedCancellationReason = NAME_None;
+	ReservedInputTag = Move->InputTag;
+	SequencedAbilityHandle = FGameplayAbilitySpecHandle();
+	SequencedAbility.Reset();
+}
 
-	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
+bool UPokemonCommandComponent::TryCallCommand(int32 MoveIndex)
+{
+	FName Reason;
+	UPokemonMoveDataAsset* Move = ResolveMoveAtIndex(MoveIndex, Reason);
+	if (Move) Reason = ValidateMoveReservation(Move);
+	if (!Reason.IsNone())
 	{
-		UE_LOG(LogTemp, Display, TEXT("TryCallCommand: Setting current move in PokemonController's blackboard. Move='%s'"), *SelectedMove->MoveName.ToString());
-		PokemonController->SetBlackboardCurrentMove(ActivePokemonMove);
+		UE_LOG(LogTemp, Display, TEXT("[PokemonCommand] Legacy rejected MoveIndex=%d Reason=%s"), MoveIndex, *Reason.ToString());
+		return false;
+	}
+	InstallCommand(Move, CurrentCommandTarget, FGuid());
+	// Legacy AI/trainer ranged path still publishes to BT, and does not activate GAS here.
+	if (APokemonAIController* Controller = GetOwnerPokemon()->GetPokemonController())
+	{
+		Controller->SetBlackboardCurrentMove(ActivePokemonMove);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TryCallCommand warning: PokemonController is null."));
 	}
-
 	return true;
+}
+
+FPokemonTrainerCommandSubmission UPokemonCommandComponent::ReserveSequencedCommand(
+	UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target, FGuid IntentId)
+{
+	FPokemonTrainerCommandSubmission Submission;
+	Submission.Reason = IntentId.IsValid() ? ValidateSequencedCommand(Move, Target) : FName(TEXT("InvalidParentIntent"));
+	if (!Submission.Reason.IsNone()) return Submission;
+	InstallCommand(Move, Target, IntentId);
+	Submission.CommandId = ActiveTrainerCommandId;
+	LogCommandEvent(TEXT("Reserved"), Submission.CommandId, IntentId);
+	return Submission;
+}
+
+bool UPokemonCommandComponent::IsSequencedCommand(FGuid CommandId) const
+{
+	return bSequenceManaged && IsCommandActive() && CommandId.IsValid() && CommandId == ActiveTrainerCommandId;
+}
+
+bool UPokemonCommandComponent::IsSequencedExecutionEnding() const
+{
+	const UPokemonGameplayAbilities* Ability = SequencedAbility.Get();
+	return bCommandCleanupInProgress || bSequencedCancellationRequested || SequencedAbilityEndDepth > 0
+		|| (Ability && !Ability->CanEndSequencedExecutionImmediately());
+}
+
+bool UPokemonCommandComponent::ExecuteSequencedCommand(FGuid CommandId)
+{
+	APokemon_Parent* Pokemon = GetOwnerPokemon();
+	if (!Pokemon || !Pokemon->HasAuthority() || !IsSequencedCommand(CommandId) || bSequencedExecutionRequested) return false;
+	bSequencedExecutionRequested = true;
+	UPokemonAbilitySystemComponent* ASC = Pokemon->GetPokemonASC();
+	// Match exactly the first tag match used by ActivateAbilityByTag, and verify the
+	// reserved move/class/source before allowing that method to activate anything.
+	if (ASC)
+	{
+		for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+		{
+			if (!Spec.GetDynamicSpecSourceTags().HasTagExact(ReservedInputTag)) continue;
+			if (Spec.Ability && Spec.Ability->GetClass() == ActivePokemonMove->Ability
+				&& Spec.SourceObject.Get() == ActivePokemonMove && !Spec.IsActive())
+			{
+				SequencedAbilityHandle = Spec.Handle;
+			}
+			break;
+		}
+	}
+	if (!SequencedAbilityHandle.IsValid())
+	{
+		FinishCommand(CommandId, EPokemonAttackExecutionOutcome::ActivationFailed, TEXT("ReservedAbilityUnavailable"));
+		return false;
+	}
+	LogCommandEvent(TEXT("Execute"), CommandId, ParentIntentId);
+	const bool bActivated = ASC->ActivateAbilityByTag(ReservedInputTag);
+	// Activation may synchronously end and start a different action/command.
+	if (!bActivated && IsSequencedCommand(CommandId))
+	{
+		FinishCommand(CommandId, EPokemonAttackExecutionOutcome::ActivationFailed, TEXT("AbilityActivationRejected"));
+	}
+	return bActivated;
+}
+
+FGuid UPokemonCommandComponent::BindSequencedAbility(UPokemonGameplayAbilities* Ability, FGameplayAbilitySpecHandle Handle)
+{
+	if (!IsSequencedCommand(ActiveTrainerCommandId) || !bSequencedExecutionRequested
+		|| Handle != SequencedAbilityHandle || !Ability || Ability->GetClass() != ActivePokemonMove->Ability)
+	{
+		return FGuid();
+	}
+	SequencedAbility = Ability;
+	return ActiveTrainerCommandId;
+}
+
+void UPokemonCommandComponent::NotifySequencedContact(UPokemonGameplayAbilities* Ability, FGuid CommandId)
+{
+	if (!GetOwner()->HasAuthority() || !IsSequencedCommand(CommandId) || SequencedAbility.Get() != Ability
+		|| !Ability || !Ability->IsActive() || bSequencedAttackConnected || bSequencedCancellationRequested) return;
+	bSequencedAttackConnected = true;
+	LogCommandEvent(TEXT("Contact"), CommandId, ParentIntentId, EPokemonAttackExecutionOutcome::Connected);
+}
+
+void UPokemonCommandComponent::NotifySequencedAbilityEnded(UPokemonGameplayAbilities* Ability, FGuid CommandId,
+	bool bWasCancelled, FName ActivationFailure)
+{
+	// GAS marks InstancedPerExecution abilities as garbage before EndAbility
+	// returns. Compare identity without dereferencing the retired weak object.
+	if (!IsSequencedCommand(CommandId) || !Ability
+		|| !SequencedAbility.HasSameIndexAndSerialNumber(TWeakObjectPtr<UPokemonGameplayAbilities>(Ability))) return;
+	const EPokemonAttackExecutionOutcome Outcome = (bWasCancelled || bSequencedCancellationRequested) ? EPokemonAttackExecutionOutcome::Interrupted
+		: !ActivationFailure.IsNone() ? EPokemonAttackExecutionOutcome::ActivationFailed
+		: bSequencedAttackConnected ? EPokemonAttackExecutionOutcome::Connected : EPokemonAttackExecutionOutcome::Missed;
+	FinishCommand(CommandId, Outcome, bSequencedCancellationRequested ? SequencedCancellationReason
+		: bWasCancelled ? FName(TEXT("AbilityCancelled")) : ActivationFailure);
+}
+
+bool UPokemonCommandComponent::CancelSequencedCommand(FGuid OwnedCommandId, FName Reason)
+{
+	if (!GetOwner()->HasAuthority() || !IsSequencedCommand(OwnedCommandId) || bSequencedCancellationRequested) return false;
+	bSequencedCancellationRequested = true;
+	SequencedCancellationReason = Reason.IsNone() ? FName(TEXT("IntentCancelled")) : Reason;
+	if (UPokemonGameplayAbilities* Ability = SequencedAbility.Get(); Ability && Ability->IsActive())
+	{
+		Ability->EndSequencedExecution(OwnedCommandId, true);
+		// A scope lock may defer GAS/task cleanup. Keep replacement barred until
+		// the identified native EndAbility callback finalizes this cancellation.
+		if (!IsSequencedCommand(OwnedCommandId) || Ability->IsActive()) return true;
+	}
+	return FinishCommand(OwnedCommandId, EPokemonAttackExecutionOutcome::Interrupted, SequencedCancellationReason);
 }
 
 void UPokemonCommandComponent::AttackEnded()
 {
-	ActiveTrainerCommandId.Invalidate();
-	AuthorizedTraversalMomentum = FVector::ZeroVector;
-	APokemon_Parent* Pokemon = GetOwnerPokemon();
-	if (!Pokemon)
+	// GA_Base calls this without an identity from Blueprint OnEndAbility. The native
+	// identified EndAbility resolves AFTER GAS has destroyed its old tasks.
+	if (bCommandCleanupInProgress || SequencedAbilityEndDepth > 0) return;
+	if (bSequenceManaged)
 	{
+		if (UPokemonGameplayAbilities* Ability = SequencedAbility.Get(); Ability && Ability->IsActive())
+		{
+			Ability->EndSequencedExecution(ActiveTrainerCommandId, false);
+			return;
+		}
+		FinishCommand(ActiveTrainerCommandId, bSequencedAttackConnected
+			? EPokemonAttackExecutionOutcome::Connected : EPokemonAttackExecutionOutcome::Missed, NAME_None);
 		return;
 	}
+	FinishCommand(ActiveTrainerCommandId, EPokemonAttackExecutionOutcome::None, NAME_None);
+}
 
-	if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
-	{
-		if (Capsule->OnComponentHit.IsBound())
-		{
-			Capsule->OnComponentHit.Clear();
-		}
-	}
+bool UPokemonCommandComponent::FinishCommand(FGuid CommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason)
+{
+	if (bCommandCleanupInProgress || !CommandId.IsValid() || CommandId != ActiveTrainerCommandId) return false;
+	const bool bReportSequence = bSequenceManaged;
+	const FGuid IntentId = ParentIntentId;
+	APokemon_Parent* Pokemon = GetOwnerPokemon();
+	// No new reservation may enter while old GAS/BT cleanup can still call back.
+	bCommandCleanupInProgress = true;
+	ActiveTrainerCommandId.Invalidate();
+	ParentIntentId.Invalidate();
+	ActivePokemonMove = nullptr;
+	bSequenceManaged = false;
+	bSequencedExecutionRequested = false;
+	bSequencedCancellationRequested = false;
+	SequencedCancellationReason = NAME_None;
+	bSequencedAttackConnected = false;
+	bAttackJumpConsumed = false;
+	AuthorizedTraversalMomentum = FVector::ZeroVector;
+	ReservedInputTag = FGameplayTag();
+	SequencedAbilityHandle = FGameplayAbilitySpecHandle();
+	SequencedAbility.Reset();
+	ClearCommandTarget();
+	CleanupCommand(Pokemon);
+	bCommandCleanupInProgress = false;
+	if (bReportSequence) LogCommandEvent(TEXT("Resolved"), CommandId, IntentId, Outcome, Reason);
+	if (Pokemon) Pokemon->OnAttackEnd.Broadcast();
+	// Nothing mutates command ownership after either result bus; listeners may submit.
+	if (bReportSequence) OnTrainerCommandResolved.Broadcast(CommandId, Outcome, Reason);
+	return true;
+}
 
+void UPokemonCommandComponent::CleanupCommand(APokemon_Parent* Pokemon)
+{
+	if (!Pokemon) return;
+	if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent()) Capsule->OnComponentHit.Clear();
 	if (bIsCharging)
 	{
 		bIsCharging = false;
-
-		if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
-		{
-			Movement->StopMovementImmediately();
-		}
-
-		if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
-		{
-			Capsule->SetSimulatePhysics(false);
-		}
+		GetWorld()->GetTimerManager().ClearTimer(ChargeTimer);
+		if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement()) Movement->StopMovementImmediately();
+		if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent()) Capsule->SetSimulatePhysics(false);
 	}
-
-	ActivePokemonMove = nullptr;
-
-	ClearCommandTarget();
-
-	UE_LOG(LogTemp, Display, TEXT("[PokemonCommand] Attack ended | Pokemon=%s | Command target cleared"), *GetNameSafe(Pokemon));
-
-	if (APokemonAIController* PokemonController = Pokemon->GetPokemonController())
-	{
-		PokemonController->SetBlackboardCurrentMove(nullptr);
-	}
-
+	if (APokemonAIController* Controller = Pokemon->GetPokemonController()) Controller->SetBlackboardCurrentMove(nullptr);
 	Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Running);
-	Pokemon->OnAttackEnd.Broadcast();
+	UE_LOG(LogTemp, Display, TEXT("[PokemonCommand] Attack ended | Pokemon=%s | Command target cleared"), *GetNameSafe(Pokemon));
+}
+
+void UPokemonCommandComponent::LogCommandEvent(const TCHAR* Event, FGuid CommandId, FGuid IntentId,
+	EPokemonAttackExecutionOutcome Outcome, FName Reason) const
+{
+	if (CVarPokemonCommandDebug.GetValueOnGameThread() == 0) return;
+	UE_LOG(LogTemp, Log, TEXT("[PokemonCommand] %s CommandId=%s ParentIntentId=%s Outcome=%s Reason=%s"),
+		Event, *CommandId.ToString(), *IntentId.ToString(), *PokemonAttackOutcomeName(Outcome).ToString(), *Reason.ToString());
 }
 
 bool UPokemonCommandComponent::ResolveDodgeDirection(FGameplayTag DirectionTag, const FVector& ReferenceForward, FVector& OutWorldDirection) const
@@ -544,6 +691,11 @@ void UPokemonCommandComponent::SelectRandomMove()
 
 void UPokemonCommandComponent::ClearActiveMove()
 {
+	if (bSequenceManaged)
+	{
+		CancelSequencedCommand(ActiveTrainerCommandId, TEXT("CommandCleared"));
+		return;
+	}
 	ActivePokemonMove = nullptr;
 	ActiveTrainerCommandId.Invalidate();
 	AuthorizedTraversalMomentum = FVector::ZeroVector;

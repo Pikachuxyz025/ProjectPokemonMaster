@@ -767,7 +767,14 @@ void APokemon_Parent::Fainted(const FVector& DeathImpulse)
 	}
 
 	bIsDead = true;
-	AttackEnded();
+	if (CommandComponent && CommandComponent->IsSequencedCommand(CommandComponent->GetActiveTrainerCommandId()))
+	{
+		CommandComponent->CancelSequencedCommand(CommandComponent->GetActiveTrainerCommandId(), TEXT("OwnerFainted"));
+	}
+	else
+	{
+		AttackEnded();
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("%s has fainted."), *GetNameSafe(this));
 

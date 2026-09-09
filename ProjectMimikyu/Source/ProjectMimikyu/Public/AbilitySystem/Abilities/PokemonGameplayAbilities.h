@@ -54,6 +54,10 @@ class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
+	// The command component binds this before Blueprint ActivateAbility can run/end.
+	FGuid GetSequencedCommandId() const { return SequencedCommandId; }
+	void EndSequencedExecution(FGuid OwnedCommandId, bool bWasCancelled);
+	bool CanEndSequencedExecutionImmediately() const { return ScopeLockCount == 0 && !bSequencedEndInProgress; }
 
 	virtual bool CanActivateAbility(
 		const FGameplayAbilitySpecHandle Handle,
@@ -145,6 +149,7 @@ public:
 	FMoveTiming MoveTimingSequence;
 
 protected:
+	void RecordSequencedActivationFailure(FName Reason);
 	virtual void EndAbility(
 		const FGameplayAbilitySpecHandle Handle,
 		const FGameplayAbilityActorInfo* ActorInfo,
@@ -195,4 +200,9 @@ protected:
 
 	UPROPERTY(Transient)
 	bool bSawRecoveryWindowThisActivation = false;
+
+private:
+	FGuid SequencedCommandId;
+	FName SequencedActivationFailure = NAME_None;
+	bool bSequencedEndInProgress = false;
 };

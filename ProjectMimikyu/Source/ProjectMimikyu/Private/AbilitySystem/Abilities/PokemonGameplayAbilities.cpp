@@ -5,6 +5,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "ActorComponents/PokemonCombatStateComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
 #include "Animation/AnimMontage.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "Characters/Pokemon_Parent.h"
@@ -42,13 +43,23 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	SequencedCommandId.Invalidate();
+	SequencedActivationFailure = NAME_None;
+	if (APokemon_Parent* Pokemon = ActorInfo ? Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get()) : nullptr)
+	{
+		if (UPokemonCommandComponent* Command = Pokemon->FindComponentByClass<UPokemonCommandComponent>())
+		{
+			SequencedCommandId = Command->BindSequencedAbility(this, Handle);
+		}
+	}
+	const FGuid ActivatingCommandId = SequencedCommandId;
 	// Run the Blueprint Event ActivateAbility first.
 	// This gives the Blueprint a chance to CommitPokemonMove().
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	// CommitPokemonMove may have failed and the Blueprint may
 	// have called EndAbility().
-	if (!IsActive())
+	if (!IsActive() || (ActivatingCommandId.IsValid() && SequencedCommandId != ActivatingCommandId))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[PokemonGameplayAbilities] Activation ended during Blueprint activation. Ability=%s"), *GetNameSafe(this));
 
@@ -237,11 +248,56 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 
 void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	const FGuid EndingCommandId = SequencedCommandId;
+	TWeakObjectPtr<UPokemonCommandComponent> Command;
+	if (EndingCommandId.IsValid())
+	{
+		if (bSequencedEndInProgress || !IsEndAbilityValid(Handle, ActorInfo)) return;
+		if (ScopeLockCount > 0)
+		{
+			// Preserve the identified override when GAS defers an end until a scope unlocks.
+			WaitingToExecute.Add(FPostLockDelegate::CreateUObject(this, &ThisClass::EndAbility,
+				Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled));
+			return;
+		}
+		if (APokemon_Parent* Pokemon = GetAvatarPokemon()) Command = Pokemon->FindComponentByClass<UPokemonCommandComponent>();
+		bSequencedEndInProgress = true;
+		if (Command.IsValid()) ++Command->SequencedAbilityEndDepth;
+	}
 	ClearAbilityCombatStateLock(bWasCancelled);
 
 	ResetAbilityWindowRuntimeState();
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	if (EndingCommandId.IsValid())
+	{
+		bSequencedEndInProgress = false;
+		const FName Failure = SequencedActivationFailure;
+		if (Command.IsValid())
+		{
+			--Command->SequencedAbilityEndDepth;
+			// GAS has now retired the ability and destroyed AT_CombatApproach. No
+			// old ability/task state is mutated after the command's terminal callback.
+			Command->NotifySequencedAbilityEnded(this, EndingCommandId, bWasCancelled, Failure);
+		}
+	}
+}
+
+void UPokemonGameplayAbilities::EndSequencedExecution(FGuid OwnedCommandId, bool bWasCancelled)
+{
+	if (!OwnedCommandId.IsValid() || OwnedCommandId != SequencedCommandId || !IsActive()) return;
+	if (bWasCancelled)
+	{
+		CancelAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true);
+		// Explicit owner retirement also ends an ability that opted out of GAS cancellation.
+		if (!IsActive()) return;
+	}
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, bWasCancelled);
+}
+
+void UPokemonGameplayAbilities::RecordSequencedActivationFailure(FName Reason)
+{
+	if (SequencedCommandId.IsValid()) SequencedActivationFailure = Reason;
 }
 
 void UPokemonGameplayAbilities::ApplyAbilityCombatStateLock()

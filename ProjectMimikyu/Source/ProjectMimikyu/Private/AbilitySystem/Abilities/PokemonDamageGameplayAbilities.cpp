@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "ActorComponents/PokemonImpactResolverComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
@@ -200,6 +201,16 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.bAttackerAirborne = false;
 
 	OutImpactResolution = DefenderResolver->ResolveImpact(ContactContext);
+	// Real direct contact has been resolved. Latch before ApplyImpactResolution's
+	// public callbacks can synchronously end the ability; damage/recovery still proceed normally.
+	if (MoveActionTag.MatchesTagExact(GameplayTags.PokemonMoves_MoveAction_Melee)
+		&& OutImpactResolution.ImpactResult != EPokemonImpactResult::None)
+	{
+		if (UPokemonCommandComponent* Command = Attacker->FindComponentByClass<UPokemonCommandComponent>())
+		{
+			Command->NotifySequencedContact(this, GetSequencedCommandId());
+		}
+	}
 
 	OutImpactResolution.AttackerImpulse *= AppliedImpulseScale;
 	OutImpactResolution.DefenderImpulse *= AppliedImpulseScale;
@@ -432,6 +443,7 @@ bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 	if (!ASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: ASC is null on [%s]."), *GetNameSafe(this));
+		RecordSequencedActivationFailure(TEXT("CommitAbilitySystemUnavailable"));
 		return false;
 	}
 
@@ -439,6 +451,7 @@ bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 	if (!ActorInfo)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CommitPokemonMove failed: ActorInfo is null on [%s]."), *GetNameSafe(this));
+		RecordSequencedActivationFailure(TEXT("CommitActorInfoUnavailable"));
 		return false;
 	}
 
@@ -447,6 +460,7 @@ bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 	if (CurrentCooldownTag.IsValid() && ASC->HasMatchingGameplayTag(CurrentCooldownTag))
 	{
 		UE_LOG(LogTemp, Display, TEXT("CommitPokemonMove blocked: [%s] is on cooldown with tag [%s]."), *CurrentCooldownTag.ToString(), *GetNameSafe(this));
+		RecordSequencedActivationFailure(TEXT("CommitMoveOnCooldown"));
 		return false;
 	}
 
@@ -457,6 +471,7 @@ bool UPokemonDamageGameplayAbilities::CommitPokemonMove()
 			TEXT("CommitPokemonMove blocked: CheckCost failed for [%s]."),
 			*GetNameSafe(this));
 
+		RecordSequencedActivationFailure(TEXT("CommitCostRejected"));
 		return false;
 	}
 

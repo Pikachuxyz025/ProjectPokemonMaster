@@ -25,7 +25,9 @@ public class ProjectMimikyuEditor : ModuleRules
             "GameplayAbilities",
             "AIModule",
             "NavigationSystem",
-            "GameplayTags"
+            "GameplayTags",
+            "GameplayTasks",
+            "GameplayBehaviorsModule"
         });
     }
 }

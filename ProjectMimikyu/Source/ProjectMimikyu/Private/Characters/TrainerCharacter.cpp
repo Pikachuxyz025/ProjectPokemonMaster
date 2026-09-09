@@ -792,9 +792,7 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		return;
 	}
 
-	CurrentPokemon->SetCommandTargetFromAimData(AimData);
-
-	const FPokemonCommandTarget& CommandTarget = CurrentPokemon->GetCommandTarget();
+	const FPokemonCommandTarget CommandTarget = CurrentPokemon->BuildCommandTargetFromAimData(AimData);
 
 	UE_LOG(LogTemp, Display, TEXT(
 		"[PokemonAimCommand] Accepted | "
@@ -815,6 +813,18 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		*CommandTarget.TargetLocation.ToString()
 	);
 
+	UPokemonCommandComponent* Command = CurrentPokemon->FindComponentByClass<UPokemonCommandComponent>();
+	FName Rejection;
+	UPokemonMoveDataAsset* Move = Command ? Command->ResolveMoveAtIndex(MoveIndex, Rejection) : nullptr;
+	if (UPokemonCommandComponent::IsSupportedSequencedMove(Move))
+	{
+		if (UPokemonIntentSequenceComponent* Intent = CurrentPokemon->GetIntentSequenceComponent())
+		{
+			Intent->SubmitAttackIntent(MoveIndex, CommandTarget);
+		}
+		return; // Supported melee rejection must never fall through to legacy execution.
+	}
+	CurrentPokemon->SetCommandTarget(CommandTarget);
 	CurrentPokemon->CallCommand(MoveIndex);
 }
 

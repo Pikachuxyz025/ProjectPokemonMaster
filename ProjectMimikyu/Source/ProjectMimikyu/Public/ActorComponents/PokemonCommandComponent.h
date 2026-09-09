@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Command/PokemonCommandTypes.h"
+#include "Command/PokemonAttackExecution.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "ActorComponents/TargetingType.h"
 #include "PokemonCommandComponent.generated.h"
 
 class APokemon_Parent;
 class UPokemonMoveDataAsset;
+class UPokemonGameplayAbilities;
 
 UCLASS(ClassGroup = (Pokemon), meta = (BlueprintSpawnableComponent))
 class PROJECTMIMIKYU_API UPokemonCommandComponent : public UActorComponent
@@ -21,10 +24,31 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	bool TryCallCommand(int32 MoveIndex);
+
+	// Classification is independent of validation. Rejected melee never falls back to BT.
+	static bool IsSupportedSequencedMove(const UPokemonMoveDataAsset* Move);
+	UPokemonMoveDataAsset* ResolveMoveAtIndex(int32 MoveIndex, FName& OutReason) const;
+	FName ValidateSequencedCommand(UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target,
+		FGuid ReplacedOwnedCommandId = FGuid()) const;
+	FPokemonTrainerCommandSubmission ReserveSequencedCommand(UPokemonMoveDataAsset* Move,
+		const FPokemonCommandTarget& Target, FGuid ParentIntentId);
+	bool ExecuteSequencedCommand(FGuid CommandId);
+	bool CancelSequencedCommand(FGuid OwnedCommandId, FName Reason);
+	bool IsSequencedCommand(FGuid CommandId) const;
+	bool IsSequencedExecutionEnding() const;
+	FGuid GetParentIntentId() const { return ParentIntentId; }
+	FPokemonTrainerCommandResolvedSignature OnTrainerCommandResolved;
+
+	// Native ability bridge: source instance and command identity must both match.
+	FGuid BindSequencedAbility(UPokemonGameplayAbilities* Ability, FGameplayAbilitySpecHandle Handle);
+	void NotifySequencedAbilityEnded(UPokemonGameplayAbilities* Ability, FGuid CommandId,
+		bool bWasCancelled, FName ActivationFailure);
+	void NotifySequencedContact(UPokemonGameplayAbilities* Ability, FGuid CommandId);
 
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	void AttackEnded();
@@ -94,7 +118,14 @@ public:
 	FGameplayTag GetDodgeDirectionTag() const { return DodgeDirectionTag; }
 
 private:
+	friend class UPokemonGameplayAbilities;
 	APokemon_Parent* GetOwnerPokemon() const;
+	FName ValidateMoveReservation(UPokemonMoveDataAsset* Move, FGuid ReplacedOwnedCommandId = FGuid()) const;
+	void InstallCommand(UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target, FGuid IntentId);
+	bool FinishCommand(FGuid CommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason);
+	void CleanupCommand(APokemon_Parent* Pokemon);
+	void LogCommandEvent(const TCHAR* Event, FGuid CommandId, FGuid IntentId,
+		EPokemonAttackExecutionOutcome Outcome = EPokemonAttackExecutionOutcome::None, FName Reason = NAME_None) const;
 
 private:
 	UPROPERTY()
@@ -126,4 +157,17 @@ private:
 	FGuid ActiveTrainerCommandId;
 	bool bAttackJumpConsumed = false;
 	FVector AuthorizedTraversalMomentum = FVector::ZeroVector;
+	FGuid ParentIntentId;
+	FGameplayTag ReservedInputTag;
+	FGameplayAbilitySpecHandle SequencedAbilityHandle;
+	TWeakObjectPtr<UPokemonGameplayAbilities> SequencedAbility;
+	bool bSequenceManaged = false;
+	bool bSequencedAttackConnected = false;
+	bool bSequencedExecutionRequested = false;
+	bool bSequencedCancellationRequested = false;
+	FName SequencedCancellationReason = NAME_None;
+	bool bCommandCleanupInProgress = false;
+	bool bCommandEndingPlay = false;
+	// Suppresses identity-free Blueprint AttackEnded during an identified native EndAbility.
+	int32 SequencedAbilityEndDepth = 0;
 };
