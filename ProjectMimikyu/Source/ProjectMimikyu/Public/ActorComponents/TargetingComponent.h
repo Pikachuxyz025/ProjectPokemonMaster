@@ -221,6 +221,7 @@ protected:
 	void GatherTargetCandidates(TArray<AActor*>& OutCandidates,EPokemonAimMode QueryAimMode) const;
 	AActor* FindBestLockOnTarget() const;
 	AActor* FindSwitchTarget(bool bSwitchRight) const;
+	bool ResolveDirectCrosshairTargetFromHit(const FHitResult& Hit, AActor*& OutTarget, FVector& OutAimLocation) const;
 #pragma endregion
 
 #pragma region Helpers

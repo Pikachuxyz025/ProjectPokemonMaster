@@ -167,8 +167,13 @@ FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromAimData(co
 
 	Result.TargetActor = AimData.TargetActor.Get();
 	Result.TargetLocation = AimData.AimWorldLocation;
-	Result.ImpactNormal = FVector::UpVector;
 	Result.TargetPointTag = AimData.TargetPointTag;
+
+	Result.bHasHitResult = AimData.bHasAimHitResult;
+
+	Result.HitResult = AimData.AimHitResult;
+
+	Result.ImpactNormal = AimData.bHasAimHitResult ? AimData.AimHitResult.ImpactNormal.GetSafeNormal() : FVector::UpVector;
 
 	AActor* TargetActor = Result.TargetActor.Get();
 

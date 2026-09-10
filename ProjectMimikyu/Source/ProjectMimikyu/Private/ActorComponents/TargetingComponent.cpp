@@ -177,10 +177,21 @@ FAimData UTargetingComponent::BuildAimData() const
 
 	case EPokemonAimMode::FreeAim:
 	{
-		AActor* CrosshairTarget = nullptr;
-		FVector CrosshairAimLocation = CachedAimLocation;
+		FHitResult RawAimHit;
 
-		if (TryGetDirectCrosshairTarget(CrosshairTarget, CrosshairAimLocation))
+		const bool bTraceAvailable = PerformAimTrace(RawAimHit);
+
+		if (bTraceAvailable)
+		{
+			AimData.AimHitResult = RawAimHit;
+			AimData.bHasAimHitResult = RawAimHit.bBlockingHit;
+		}
+
+		AActor* CrosshairTarget = nullptr;
+
+		FVector CrosshairAimLocation = bTraceAvailable ? RawAimHit.ImpactPoint : CachedAimLocation;
+
+		if (bTraceAvailable && ResolveDirectCrosshairTargetFromHit(RawAimHit, CrosshairTarget, CrosshairAimLocation))
 		{
 			const FVector RawAimLocation = CrosshairAimLocation;
 
@@ -191,26 +202,33 @@ FAimData UTargetingComponent::BuildAimData() const
 			// Semantic actor target:
 			// attempt to snap the player's raw mesh hit
 			// to an authored target point.
-			if (UTargetableComponent* Targetable = CrosshairTarget->FindComponentByClass<UTargetableComponent>())
+			//
+			if (UTargetableComponent* Targetable =
+				CrosshairTarget->FindComponentByClass<UTargetableComponent>())
 			{
 				FResolvedPokemonTargetPoint ResolvedPoint;
 
-				if (Targetable->ResolveNearestTargetPoint(RawAimLocation, ResolvedPoint))
+				if (Targetable->ResolveNearestTargetPoint(
+					RawAimLocation,
+					ResolvedPoint))
 				{
 					AimData.TargetPointTag = ResolvedPoint.PointTag;
-
 					AimData.AimWorldLocation = ResolvedPoint.WorldLocation;
 
-					UE_LOG(LogTemp, Display, TEXT("[TargetPoint] Resolved | Actor=%s | Raw=(%.1f %.1f %.1f) | Point=%s | Resolved=(%.1f %.1f %.1f)"),
+					UE_LOG(LogTemp, Display, TEXT(
+						"[TargetPoint] Resolved | "
+						"Actor=%s | "
+						"Raw=(%.1f %.1f %.1f) | "
+						"Point=%s | "
+						"Resolved=(%.1f %.1f %.1f)"
+					),
 						*GetNameSafe(CrosshairTarget),
 
 						RawAimLocation.X,
 						RawAimLocation.Y,
 						RawAimLocation.Z,
 
-						*ResolvedPoint
-						.PointTag
-						.ToString(),
+						*ResolvedPoint.PointTag.ToString(),
 
 						ResolvedPoint.WorldLocation.X,
 						ResolvedPoint.WorldLocation.Y,
@@ -220,13 +238,21 @@ FAimData UTargetingComponent::BuildAimData() const
 			}
 
 			AimData.AimDirection = (AimData.AimWorldLocation - GetOwner()->GetActorLocation()).GetSafeNormal();
+
 			AimData.bHasValidTarget = true;
 			AimData.bUsingAimAssist = false;
 
 			return AimData;
 		}
+
+		//
+		// The trace may still have hit floor/wall/world geometry.
+		// We deliberately preserve AimHitResult above even though
+		// there is no semantic target.
+		//
 		AimData.bHasValidTarget = false;
 		AimData.bUsingAimAssist = false;
+
 		return AimData;
 	}
 	default:
@@ -404,31 +430,16 @@ bool UTargetingComponent::TryGetAimAssistTarget(AActor*& OutTarget, FVector& Out
 
 bool UTargetingComponent::TryGetDirectCrosshairTarget(AActor*& OutTarget, FVector& OutAimLocation) const
 {
-	OutTarget = nullptr;
-	OutAimLocation = CachedAimLocation;
 
 	FHitResult Hit;
 	if (!PerformAimTrace(Hit))
 	{
+		OutTarget = nullptr;
+		OutAimLocation = CachedAimLocation;
 		return false;
 	}
 
-	AActor* HitActor = Hit.GetActor();
-
-	if (!IsValid(HitActor))
-	{
-		return false;
-	}
-
-	if (!IsActorTargetable(HitActor, EPokemonAimMode::FreeAim))
-	{
-		return false;
-	}
-
-	OutTarget = HitActor;
-	OutAimLocation = Hit.ImpactPoint;
-
-	return true;
+	return ResolveDirectCrosshairTargetFromHit(Hit, OutTarget, OutAimLocation);
 }
 
 bool UTargetingComponent::TryGetCommandMoveLocation(FVector& OutLocation) const
@@ -813,6 +824,34 @@ AActor* UTargetingComponent::FindSwitchTarget(bool bSwitchRight) const
 		}
 	}
 	return BestTarget;
+}
+
+bool UTargetingComponent::ResolveDirectCrosshairTargetFromHit(const FHitResult& Hit, AActor*& OutTarget, FVector& OutAimLocation) const
+{
+	OutTarget = nullptr;
+	OutAimLocation = Hit.ImpactPoint;
+
+	if (!Hit.bBlockingHit)
+	{
+		return false;
+	}
+
+	AActor* HitActor = Hit.GetActor();
+
+	if (!IsValid(HitActor))
+	{
+		return false;
+	}
+
+	if (!IsActorTargetable(HitActor, EPokemonAimMode::FreeAim))
+	{
+		return false;
+	}
+
+	OutTarget = HitActor;
+	OutAimLocation = Hit.ImpactPoint;
+
+	return true;
 }
 
 float UTargetingComponent::ScoreTargetForLockOn(AActor* Candidate) const

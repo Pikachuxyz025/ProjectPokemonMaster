@@ -41,6 +41,12 @@ struct FAimData
 	FVector AimWorldLocation = FVector::ZeroVector;
 
 	UPROPERTY(BlueprintReadOnly)
+	bool bHasAimHitResult = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	FHitResult AimHitResult;
+
+	UPROPERTY(BlueprintReadOnly)
 	FVector AimDirection = FVector::ForwardVector;
 
 	UPROPERTY(BlueprintReadOnly)

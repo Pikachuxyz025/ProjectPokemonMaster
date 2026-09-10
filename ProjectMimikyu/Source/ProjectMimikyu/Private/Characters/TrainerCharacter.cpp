@@ -43,6 +43,40 @@
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
+namespace PokemonAimDiagnostics
+{
+	const TCHAR* ClassifySurface(const FPokemonCommandTarget& Target)
+	{
+		if (!Target.bHasHitResult || !Target.HitResult.bBlockingHit)
+		{
+			return Target.HasTargetActor() ? TEXT("NoRawHit") : TEXT("OpenSpace");
+		}
+
+		AActor* RawHitActor = Target.HitResult.GetActor();
+
+		if (Cast<APokemon_Parent>(RawHitActor))
+		{
+			return TEXT("Pokemon");
+		}
+
+		const FVector Normal = Target.HitResult.ImpactNormal.GetSafeNormal();
+
+		const float UpDot = FVector::DotProduct(Normal, FVector::UpVector);
+
+		if (UpDot >= 0.7f)
+		{
+			return TEXT("GroundLike");
+		}
+
+		if (UpDot <= -0.7f)
+		{
+			return TEXT("CeilingLike");
+		}
+
+		return TEXT("WallLike");
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // ATrainerCharacter
 
@@ -794,6 +828,20 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 
 	const FPokemonCommandTarget CommandTarget = CurrentPokemon->BuildCommandTargetFromAimData(AimData);
 
+	const bool bRawHit =
+		CommandTarget.bHasHitResult &&
+		CommandTarget.HitResult.bBlockingHit;
+
+	const FHitResult& RawHit =
+		CommandTarget.HitResult;
+
+	const float SemanticShift =
+		bRawHit
+		? FVector::Dist(
+			RawHit.ImpactPoint,
+			CommandTarget.TargetLocation)
+		: 0.f;
+
 	UE_LOG(LogTemp, Display, TEXT(
 		"[PokemonAimCommand] Accepted | "
 		"Pokemon=%s | "
@@ -802,15 +850,45 @@ void ATrainerCharacter::ServerCallCommand_Implementation(int32 MoveIndex, const 
 		"TargetType=%d | "
 		"TargetActor=%s | "
 		"TargetPoint=%s | "
-		"TargetLocation=%s"
+		"TargetLocation=%s | "
+		"RawHit=%d | "
+		"RawActor=%s | "
+		"RawComponent=%s | "
+		"RawImpact=%s | "
+		"RawNormal=%s | "
+		"Surface=%s | "
+		"SemanticShift=%.2f | "
+		"TraceStart=%s | "
+		"TraceEnd=%s"
 	),
 		*GetNameSafe(CurrentPokemon),
 		MoveIndex,
 		static_cast<int32>(AimData.AimMode),
-		static_cast<int32>(CommandTarget.TargetType),
-		*GetNameSafe(CommandTarget.TargetActor),
+		static_cast<int32>(
+			CommandTarget.TargetType),
+		*GetNameSafe(
+			CommandTarget.TargetActor),
 		*CommandTarget.TargetPointTag.ToString(),
-		*CommandTarget.TargetLocation.ToString()
+		*CommandTarget.TargetLocation.ToString(),
+
+		bRawHit,
+
+		*GetNameSafe(
+			RawHit.GetActor()),
+
+		*GetNameSafe(
+			RawHit.GetComponent()),
+
+		*RawHit.ImpactPoint.ToString(),
+		*RawHit.ImpactNormal.ToString(),
+
+		PokemonAimDiagnostics::ClassifySurface(
+			CommandTarget),
+
+		SemanticShift,
+
+		*RawHit.TraceStart.ToString(),
+		*RawHit.TraceEnd.ToString()
 	);
 
 	UPokemonCommandComponent* Command = CurrentPokemon->FindComponentByClass<UPokemonCommandComponent>();

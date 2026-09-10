@@ -462,13 +462,47 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 
 	bSubmittedNavigationRequest = true;
 
-	UE_LOG(LogTemp,Display,TEXT("[CombatApproach] Submitted | Pokemon=%s | RequestId=%s | Target=%s | Point=%s | Location=%s | Range=%.1f"),
+	const bool bRawHit = CommandTarget.bHasHitResult && CommandTarget.HitResult.bBlockingHit;
+
+	UE_LOG(
+		LogTemp,
+		Display,
+		TEXT(
+			"[CombatApproach] Submitted | "
+			"Pokemon=%s | "
+			"RequestId=%s | "
+			"CommandId=%s | "
+			"Target=%s | "
+			"Point=%s | "
+			"Location=%s | "
+			"Range=%.1f | "
+			"RawHit=%d | "
+			"RawActor=%s | "
+			"RawComponent=%s | "
+			"RawImpact=%s | "
+			"RawNormal=%s"
+		),
 		*GetNameSafe(AvatarPokemon),
 		*SubmitNavigationRequestId.ToString(),
+		*Request.ParentAttackCommandId.ToString(),
 		*GetNameSafe(Request.TargetActor.Get()),
 		*Request.TargetPointTag.ToString(),
 		*Request.TargetLocation.ToString(),
-		DesiredRange
+		DesiredRange,
+
+		bRawHit,
+
+		*GetNameSafe(
+			CommandTarget.HitResult.GetActor()),
+
+		*GetNameSafe(
+			CommandTarget.HitResult.GetComponent()),
+
+		*CommandTarget.HitResult
+		.ImpactPoint.ToString(),
+
+		*CommandTarget.HitResult
+		.ImpactNormal.ToString()
 	);
 
 
