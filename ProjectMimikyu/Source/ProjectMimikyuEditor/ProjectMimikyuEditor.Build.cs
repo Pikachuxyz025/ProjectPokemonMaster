@@ -21,6 +21,11 @@ public class ProjectMimikyuEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(new string[]
         {
             "UnrealEd",
+
+            // PokePal native editor UI
+            "Slate",
+            "SlateCore",
+
             // Native jump automation fixtures initialize GAS without content assets.
             "GameplayAbilities",
             "AIModule",
