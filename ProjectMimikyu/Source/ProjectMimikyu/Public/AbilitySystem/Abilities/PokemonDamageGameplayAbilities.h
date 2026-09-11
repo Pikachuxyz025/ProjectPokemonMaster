@@ -98,6 +98,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach")
 	FPokemonMeleeApproachProfile MeleeApproachProfile;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach", meta = (ClampMin = "0.0"))
+	float ApproachTimeout = 3.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach")
+	bool bFaceTargetDuringApproach = true;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

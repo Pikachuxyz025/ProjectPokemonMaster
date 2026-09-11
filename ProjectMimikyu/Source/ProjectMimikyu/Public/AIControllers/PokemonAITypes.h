@@ -63,6 +63,20 @@ struct FAgentNavigationRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAllowGASMovementAbilities = true;
 
+	// When true, this Approach request is a first-class coordinator action.
+	// Navigation is responsible for producing a terminal Success/Failure result.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Approach")
+	bool bResolveApproachAsAction = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Approach")
+	float ApproachTimeout = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Approach")
+	float ApproachMoveSpeedMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Approach")
+	bool bFaceTargetDuringApproach = true;
+
 	// Execution modality is independent of Physical/Special damage category.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traversal")
 	EPokemonJumpTrajectoryPreference JumpTrajectoryPreference = EPokemonJumpTrajectoryPreference::Direct;

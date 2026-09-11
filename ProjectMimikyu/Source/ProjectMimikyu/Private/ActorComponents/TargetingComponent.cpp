@@ -185,6 +185,11 @@ FAimData UTargetingComponent::BuildAimData() const
 		{
 			AimData.AimHitResult = RawAimHit;
 			AimData.bHasAimHitResult = RawAimHit.bBlockingHit;
+
+			if (RawAimHit.bBlockingHit)
+			{
+				AimData.AimWorldLocation = RawAimHit.ImpactPoint;
+			}
 		}
 
 		AActor* CrosshairTarget = nullptr;
