@@ -31,7 +31,7 @@ bool UPokemonIntentSequenceComponent::IsRunningAttackExecutionForCommand(FGuid C
 	
 	return Action.Spec.Type == EPokemonIntentActionType::AttackExecution
 		&& Action.State == EPokemonIntentActionState::Running
-		&& Action.ExecutorRequestId == CommandId;;
+		&& Action.ExecutorRequestId == CommandId;
 }
 
 void UPokemonIntentSequenceComponent::BeginPlay()

@@ -142,23 +142,21 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	{
 		if (APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner()))
 		{
-			Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging,CurrentNavigationRequest.ApproachMoveSpeedMultiplier);
+			Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging, CurrentNavigationRequest.ApproachMoveSpeedMultiplier);
 		}
-	}
 
-	UE_LOG(LogTemp,Display,TEXT(
+		UE_LOG(LogTemp, Display, TEXT(
 			"[CombatApproachAction] Started | "
 			"RequestId=%s | "
 			"CommandId=%s | "
 			"Timeout=%.2f | "
 			"SpeedMultiplier=%.2f"
 		),
-		*CurrentNavigationRequest.RequestId.ToString(),
-		*CurrentNavigationRequest
-		.ParentAttackCommandId.ToString(),
-		CurrentNavigationRequest.ApproachTimeout,
-		CurrentNavigationRequest
-		.ApproachMoveSpeedMultiplier);
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*CurrentNavigationRequest.ParentAttackCommandId.ToString(),
+			CurrentNavigationRequest.ApproachTimeout,
+			CurrentNavigationRequest.ApproachMoveSpeedMultiplier);
+	}
 
 	bPlayerMovePlanningOnly = false;
 	LastTraversalRequirement = FPokemonTraversalRequirement();
@@ -1143,6 +1141,19 @@ void UPokemonNavigationComponent::TickCoordinatorApproachAction(float DeltaTime)
 		return;
 	}
 
+	FVector TargetLocation;
+
+	if (!GetTargetLocation(TargetLocation) || TargetLocation.ContainsNaN())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Clearing CoordinatorApproach request because target location is invalid. Owner=%s Target=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(TargetActor));
+
+		ResolveNavigationRequest(RequestId, EPokemonNavigationResolution::Failed, TEXT("ApproachTargetLocationInvalid"));
+		return;
+	}
+
 	// Reach always wins before timeout
 	if (HasReachedCoordinatorApproachExecutionPosition())
 	{
@@ -1340,6 +1351,8 @@ void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime)
 		{
 			return;
 		}
+
+		TargetRotation = Candidate.Facing;
 	}
 	
 	const FRotator NewRotation = FMath::RInterpTo(OwnerPawn->GetActorRotation(), TargetRotation, DeltaTime, 10.f);
@@ -2348,7 +2361,7 @@ void UPokemonNavigationComponent::HandleJumpFinished(FGuid RequestId, bool bLand
 		return;
 	}
 
-	if (!IsCoordinatorApproachRequest() && bLandedAtDestination)
+	if (IsCoordinatorApproachRequest() && bLandedAtDestination)
 	{
 		const float PreviousElapsed = CoordinatorApproachElapsedTime;
 
@@ -2356,14 +2369,14 @@ void UPokemonNavigationComponent::HandleJumpFinished(FGuid RequestId, bool bLand
 
 		bCoordinatorApproachTraversalCompletedSinceLastTick = true;
 
-		UE_LOG(LogTemp,Display,TEXT(
-				"[CombatApproachAction] "
-				"ProgressReset | "
-				"RequestId=%s | "
-				"PreviousElapsed=%.2f | "
-				"NewElapsed=0.00 | "
-				"Reason=TraversalCompleted"
-			),
+		UE_LOG(LogTemp, Display, TEXT(
+			"[CombatApproachAction] "
+			"ProgressReset | "
+			"RequestId=%s | "
+			"PreviousElapsed=%.2f | "
+			"NewElapsed=0.00 | "
+			"Reason=TraversalCompleted"
+		),
 			*RequestId.ToString(),
 			PreviousElapsed);
 	}
