@@ -103,7 +103,7 @@ FGuid UPokemonIntentSequenceComponent::SubmitSequence(const TArray<FPokemonInten
 			ReplaceableCommandId = CurrentSequence.AttackCommandId;
 		}
 
-		else if (Spec.Type == EPokemonIntentActionType::AttackExecution || Spec.Type == EPokemonIntentActionType::CombatApproach)
+		if (Spec.Type == EPokemonIntentActionType::AttackExecution || Spec.Type == EPokemonIntentActionType::CombatApproach)
 		{
 			const FName Rejection = Command.IsValid() ? Command->ValidateSequencedCommand(Spec.AttackMove, Spec.CommandTarget, ReplaceableCommandId) : FName(TEXT("CommandComponentUnavailable"));
 			
@@ -321,14 +321,6 @@ void UPokemonIntentSequenceComponent::StartAttackAction()
 		return;
 	}
 
-	const FPokemonTrainerCommandSubmission Submission = FPokemonAttackExecutionAction::Reserve(Command.Get(), Action.Spec, IntentId);
-
-	if (!Submission.IsAccepted())
-	{
-		ApplyActionResult(EPokemonIntentActionState::Failed, Submission.Reason, TEXT("ActivationFailed"));
-		return;
-	}
-
 	CommandResultHandle = Command->OnTrainerCommandResolved.AddWeakLambda(this,
 		[this, IntentId, ActionId](FGuid ResolvedCommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason)
 		{
@@ -342,17 +334,20 @@ void UPokemonIntentSequenceComponent::StartAttackAction()
 	LogEvent(TEXT("ActionStart"));
 
 	// Adopt BEFORE activation: native/Blueprint GAS can synchronously finish here.
-	FPokemonAttackExecutionAction::Execute(Command.Get(), Submission.CommandId);
+	FPokemonAttackExecutionAction::Execute(Command.Get(), CommandId);
 }
 
 void UPokemonIntentSequenceComponent::StartNavigateAction()
 {
 	check(CurrentSequence.State == EPokemonIntentSequenceState::Running);
 	check(CurrentSequence.Actions.IsValidIndex(CurrentSequence.ActiveActionIndex));
+
 	const FGuid IntentId = CurrentSequence.IntentId;
 	const FGuid ActionId = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex].ActionId;
 	const FPokemonIntentActionSpec Spec = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex].Spec;
+
 	UnbindExecutor();
+
 	if (UPokemonNavigationComponent* Nav = Navigation.Get())
 	{
 		NavigationResultHandle = Nav->OnNavigationResolved.AddWeakLambda(this,
@@ -361,7 +356,9 @@ void UPokemonIntentSequenceComponent::StartNavigateAction()
 				HandleNavigationResolved(IntentId, ActionId, EPokemonIntentActionType::NavigateToLocation, RequestId, Result, Reason);
 			});
 	}
+
 	const FPokemonNavigationSubmission Submission = FPokemonNavigateToLocationAction::Start(Navigation.Get(), Spec);
+
 	if (CurrentSequence.IntentId != IntentId || CurrentSequence.State != EPokemonIntentSequenceState::Running
 		|| !CurrentSequence.Actions.IsValidIndex(CurrentSequence.ActiveActionIndex)
 		|| CurrentSequence.Actions[CurrentSequence.ActiveActionIndex].ActionId != ActionId)
@@ -370,13 +367,16 @@ void UPokemonIntentSequenceComponent::StartNavigateAction()
 		FPokemonNavigateToLocationAction::Cancel(Navigation.Get(), Submission.RequestId, TEXT("ParentReplaced"));
 		return;
 	}
+
 	FPokemonIntentActionRecord& Action = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex];
+
 	if (!Submission.IsAccepted())
 	{
 		// A rejected submission is terminal without an executor; a retained partial path is accepted.
 		ApplyActionResult(EPokemonIntentActionState::Failed, Submission.Reason);
 		return;
 	}
+
 	Action.ExecutorRequestId = Submission.RequestId;
 	Action.State = EPokemonIntentActionState::Running;
 	LogEvent(TEXT("ActionStart"));
@@ -385,7 +385,7 @@ void UPokemonIntentSequenceComponent::StartNavigateAction()
 void UPokemonIntentSequenceComponent::HandleNavigationResolved(FGuid ExpectedIntentId, FGuid ExpectedActionId, EPokemonIntentActionType ExpectedType,
 	FGuid RequestId, EPokemonNavigationResolution Result, FName Reason)
 {
-	if (!OwnsRunningAction(ExpectedIntentId, ExpectedActionId, RequestId, EPokemonIntentActionType::NavigateToLocation))
+	if (!OwnsRunningAction(ExpectedIntentId, ExpectedActionId, RequestId, ExpectedType))
 	{
 		return;
 	}
@@ -429,16 +429,21 @@ void UPokemonIntentSequenceComponent::HandleCommandResolved(FGuid ExpectedIntent
 	FGuid CommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason)
 {
 	if (!OwnsRunningAction(ExpectedIntentId, ExpectedActionId, CommandId, EPokemonIntentActionType::AttackExecution)) return;
+
 	switch (Outcome)
 	{
 	case EPokemonAttackExecutionOutcome::Connected:
 	case EPokemonAttackExecutionOutcome::Missed:
-		ApplyActionResult(EPokemonIntentActionState::Succeeded, Reason, PokemonAttackOutcomeName(Outcome)); break;
+		ApplyActionResult(EPokemonIntentActionState::Succeeded, Reason, PokemonAttackOutcomeName(Outcome));
+		break;
 	case EPokemonAttackExecutionOutcome::Interrupted:
-		ApplyActionResult(EPokemonIntentActionState::Interrupted, Reason, PokemonAttackOutcomeName(Outcome)); break;
+		ApplyActionResult(EPokemonIntentActionState::Interrupted, Reason, PokemonAttackOutcomeName(Outcome));
+		break;
 	case EPokemonAttackExecutionOutcome::ActivationFailed:
-		ApplyActionResult(EPokemonIntentActionState::Failed, Reason, PokemonAttackOutcomeName(Outcome)); break;
-	case EPokemonAttackExecutionOutcome::None: break;
+		ApplyActionResult(EPokemonIntentActionState::Failed, Reason, PokemonAttackOutcomeName(Outcome));
+		break;
+	case EPokemonAttackExecutionOutcome::None:
+		break;
 	}
 }
 
@@ -498,11 +503,12 @@ void UPokemonIntentSequenceComponent::LogEvent(const TCHAR* Event) const
 	if (CVarPokemonIntentDebug.GetValueOnGameThread() == 0 || CurrentSequence.Actions.IsEmpty()) return;
 	const int32 Index = FMath::Min(CurrentSequence.ActiveActionIndex, CurrentSequence.Actions.Num() - 1);
 	const FPokemonIntentActionRecord& Action = CurrentSequence.Actions[Index];
-	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s ActionId=%s ActionIndex=%d ActionType=%s ActionState=%s ExecutorRequestId=%s SequenceState=%s Reason=%s Type=%s Outcome=%s"),
+	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s ActionId=%s ActionIndex=%d ActionType=%s ActionState=%s ExecutorRequestId=%s AttackCommandId=%s SequenceState=%s Reason=%s Type=%s Outcome=%s"),
 		Event, *CurrentSequence.IntentId.ToString(), *Action.ActionId.ToString(), Index,
 		*StaticEnum<EPokemonIntentActionType>()->GetNameStringByValue(static_cast<int64>(Action.Spec.Type)),
 		*StaticEnum<EPokemonIntentActionState>()->GetNameStringByValue(static_cast<int64>(Action.State)),
 		*Action.ExecutorRequestId.ToString(),
+		*CurrentSequence.AttackCommandId.ToString(),
 		*StaticEnum<EPokemonIntentSequenceState>()->GetNameStringByValue(static_cast<int64>(CurrentSequence.State)),
 		*Action.Reason.ToString(), *StaticEnum<EPokemonIntentType>()->GetNameStringByValue(static_cast<int64>(CurrentSequence.Type)),
 		*Action.Outcome.ToString());

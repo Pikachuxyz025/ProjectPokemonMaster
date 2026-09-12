@@ -52,14 +52,14 @@ void SPokePalMainPanel::Construct(const FArguments& InArgs)
 	{
 		if (UPokePalEditorSubsystem* PokePalSubsystem =	GEditor->GetEditorSubsystem<UPokePalEditorSubsystem>())
 		{
-			PokePalSubsystem->OnSelectedActorsChanged().AddSP(this, &SPokePalMainPanel::HandleSelectedActorsChanged);
+			PokePalSubsystem->OnEditorContextChanged().AddSP(this, &SPokePalMainPanel::HandleEditorContextChanged);
 		}
 	}
 
 	RefreshEditorContextText();
 }
 
-void SPokePalMainPanel::HandleSelectedActorsChanged()
+void SPokePalMainPanel::HandleEditorContextChanged()
 {
 	RefreshEditorContextText();
 }
@@ -93,10 +93,12 @@ void SPokePalMainPanel::RefreshEditorContextText()
 			"Editor Context"
 			"\nWorld: %s"
 			"\nCurrent Level: %s"
+			"\nLevel Path: %s"
 			"\nSelected Actors: %d"
 		),
 		*Context.WorldName,
 		*Context.CurrentLevelName,
+		*Context.CurrentLevelPath,
 		Context.SelectedActors.Num()
 	);
 

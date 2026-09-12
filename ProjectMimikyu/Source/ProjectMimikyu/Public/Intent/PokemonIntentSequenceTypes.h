@@ -46,13 +46,17 @@ struct PROJECTMIMIKYU_API FPokemonIntentActionSpec
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPokemonIntentActionType Type = EPokemonIntentActionType::NavigateToLocation;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FVector Destination = FVector::ZeroVector;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bAllowSpecialTraversal = true;
+
 	// Resolved at intent acceptance; changing moveset slots cannot change this action.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UPokemonMoveDataAsset> AttackMove = nullptr;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FPokemonCommandTarget CommandTarget;
 };
@@ -64,16 +68,44 @@ struct PROJECTMIMIKYU_API FPokemonIntentActionRecord
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGuid ActionId;
-	// The subsystem's request ID, not an IntentId or an ActionId.
+
+	/*
+     * Identity shorthand used by coordinator docs/debugging:
+     *
+     * I = IntentId
+     * A = ActionId
+     * C = AttackCommandId / trainer-command reservation
+     * N = FAgentNavigationRequest::RequestId
+     *
+     * A1 / A2 mean Action 1 / Action 2 for that particular sequence.
+     * They are ordinals, NOT permanent action-type aliases.
+     *
+     * Attack 0.3:
+     *
+     *   Intent I
+     *   ├── A1 CombatApproach
+     *   │      ExecutorRequestId = N
+     *   └── A2 AttackExecution
+     *          ExecutorRequestId = C
+     */
+
+	 // ID owned by the subsystem executing THIS action.
+     // NavigateToLocation / CombatApproach -> Navigation RequestId (N).
+     // AttackExecution                    -> AttackCommandId (C).
+     // Never an IntentId (I) or ActionId (A).
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGuid ExecutorRequestId;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FPokemonIntentActionSpec Spec;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPokemonIntentActionState State = EPokemonIntentActionState::Pending;
+
 	// Optional executor-specific outcome (Connected/Missed/etc.), independent of State.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FName Outcome = NAME_None;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FName Reason = NAME_None;
 };
@@ -96,6 +128,9 @@ struct PROJECTMIMIKYU_API FPokemonIntentSequence
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 ActiveActionIndex = INDEX_NONE;
 
+	// Parent-scoped trainer-command reservation (C).
+    // Reserved once for an Attack intent before CombatApproach begins.
+    // A1 traversal and A2 GAS execution refer to this same command identity.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGuid AttackCommandId = FGuid();
 

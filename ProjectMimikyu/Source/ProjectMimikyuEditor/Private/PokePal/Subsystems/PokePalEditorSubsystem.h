@@ -5,7 +5,7 @@
 #include "PokePal/Context/PokePalEditorContext.h"
 #include "PokePalEditorSubsystem.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnPokePalSelectedActorsChanged);
+DECLARE_MULTICAST_DELEGATE(FOnPokePalEditorContextChanged);
 
 UCLASS()
 class UPokePalEditorSubsystem : public UEditorSubsystem
@@ -18,14 +18,17 @@ public:
 
 	FPokePalEditorContext BuildEditorContext() const;
 
-	FOnPokePalSelectedActorsChanged& OnSelectedActorsChanged()
+	FOnPokePalEditorContextChanged& OnEditorContextChanged()
 	{
-		return SelectedActorsChangedEvent;
+		return EditorContextChangedEvent;
 	}
 
 private:
 	void HandleEditorSelectionChanged(UObject* NewSelection);
+	void HandleMapOpened(const FString& Filename, bool bAsTemplate);
 
 	FDelegateHandle EditorSelectionChangedHandle;
-	FOnPokePalSelectedActorsChanged SelectedActorsChangedEvent;
+	FDelegateHandle MapOpenedHandle;
+
+	FOnPokePalEditorContextChanged EditorContextChangedEvent;
 };

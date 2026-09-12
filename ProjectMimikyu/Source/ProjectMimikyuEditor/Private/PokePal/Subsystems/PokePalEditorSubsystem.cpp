@@ -15,6 +15,8 @@ void UPokePalEditorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	EditorSelectionChangedHandle = USelection::SelectionChangedEvent.AddUObject(this, &UPokePalEditorSubsystem::HandleEditorSelectionChanged);
 
+	MapOpenedHandle = FEditorDelegates::OnMapOpened.AddUObject(this, &UPokePalEditorSubsystem::HandleMapOpened);
+
 	UE_LOG(LogPokePal,Log,TEXT("PokéPal Editor Subsystem initialized."));
 }
 
@@ -24,6 +26,13 @@ void UPokePalEditorSubsystem::Deinitialize()
 	{
 		USelection::SelectionChangedEvent.Remove(EditorSelectionChangedHandle);
 		EditorSelectionChangedHandle.Reset();
+	}
+
+
+	if (MapOpenedHandle.IsValid())
+	{
+		FEditorDelegates::OnMapOpened.Remove(MapOpenedHandle);
+		MapOpenedHandle.Reset();
 	}
 
 	UE_LOG(LogPokePal,Log,TEXT("PokéPal Editor Subsystem deinitialized."));
@@ -84,15 +93,25 @@ FPokePalEditorContext UPokePalEditorSubsystem::BuildEditorContext() const
 		ActorContext.Rotation = AActor->GetActorRotation();
 		ActorContext.Scale = AActor->GetActorScale3D();
 
-		if (ULevel* ActorLevel = AActor->GetLevel())
+		if (ULevel* CurrentLevel = AActor->GetLevel())
 		{
-			ActorContext.LevelName =FPackageName::GetShortName(ActorLevel->GetOutermost()->GetName());
+			const FString CurrentLevelPackageName = CurrentLevel->GetOutermost()->GetName();
+
+			Context.CurrentLevelName =FPackageName::GetShortName(CurrentLevelPackageName);
+
+			Context.CurrentLevelPath = CurrentLevelPackageName;
 		}
 	}
 
 	return Context;
 }
+
 void UPokePalEditorSubsystem::HandleEditorSelectionChanged(UObject* NewSelection)
 {
-	SelectedActorsChangedEvent.Broadcast();
+	EditorContextChangedEvent.Broadcast();
+}
+
+void UPokePalEditorSubsystem::HandleMapOpened(const FString& Filename, bool bAsTemplate)
+{
+	EditorContextChangedEvent.Broadcast();
 }

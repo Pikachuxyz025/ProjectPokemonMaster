@@ -15,7 +15,7 @@ public:
 		void Construct(const FArguments& InArgs);
 
 private:
-	void HandleSelectedActorsChanged();
+	void HandleEditorContextChanged();
 	void RefreshEditorContextText();
 
 	TSharedPtr<STextBlock> EditorContextTextBlock;

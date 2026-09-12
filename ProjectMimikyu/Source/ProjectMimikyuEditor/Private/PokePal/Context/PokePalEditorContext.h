@@ -19,6 +19,7 @@ struct FPokePalEditorContext
 {
 	FString WorldName;
 	FString CurrentLevelName;
+	FString CurrentLevelPath;
 
 	TArray<FPokePalActorContext> SelectedActors;
 };
