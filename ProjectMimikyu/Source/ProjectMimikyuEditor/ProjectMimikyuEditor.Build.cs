@@ -13,7 +13,7 @@ public class ProjectMimikyuEditor : ModuleRules
             "Engine",
             "ProjectMimikyu",
 
-			// Needed because PMMakeAnimationInPlaceModifier.h includes AnimationModifier.h
+			// Needed because PMMakeAnimationInPlaceModifier.h includes AnimationModifier.h 
 			"AnimationModifiers",
             "AnimationBlueprintLibrary"
         });
@@ -21,6 +21,7 @@ public class ProjectMimikyuEditor : ModuleRules
         PrivateDependencyModuleNames.AddRange(new string[]
         {
             "UnrealEd",
+            "EditorSubsystem",
 
             // PokePal native editor UI
             "Slate",

@@ -1,7 +1,7 @@
 #include "PokePal/UI/SPokePalMainPanel.h"
 
 #include "Widgets/Layout/SBorder.h"
-#include "Widgets/Layout/SVerticalBox.h"
+#include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
 
 void SPokePalMainPanel::Construct(const FArguments& InArgs)
