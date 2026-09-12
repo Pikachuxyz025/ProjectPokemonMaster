@@ -8,7 +8,8 @@ UENUM(BlueprintType)
 enum class EPokemonIntentActionType : uint8
 {
 	NavigateToLocation,
-	AttackExecution
+	AttackExecution,
+	CombatApproach
 };
 
 UENUM(BlueprintType)
@@ -85,16 +86,25 @@ struct PROJECTMIMIKYU_API FPokemonIntentSequence
 	// Whole intent. An attack's command ID remains a distinct executor-owned GUID.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FGuid IntentId;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPokemonIntentType Type = EPokemonIntentType::MoveTo;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<FPokemonIntentActionRecord> Actions;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 ActiveActionIndex = INDEX_NONE;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid AttackCommandId = FGuid();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPokemonIntentSequenceState State = EPokemonIntentSequenceState::Idle;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FName Outcome = NAME_None;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FName Reason = NAME_None;
 };

@@ -21,7 +21,7 @@ struct FPokemonIntentSequenceTestAccess
 	static void Deliver(UPokemonIntentSequenceComponent& Intent, FGuid IntentId, FGuid ActionId,
 		FGuid RequestId, EPokemonNavigationResolution Result)
 	{
-		Intent.HandleNavigationResolved(IntentId, ActionId, RequestId, Result, NAME_None);
+		Intent.HandleNavigationResolved(IntentId, ActionId, EPokemonIntentActionType::NavigateToLocation, RequestId, Result, NAME_None);
 	}
 };
 

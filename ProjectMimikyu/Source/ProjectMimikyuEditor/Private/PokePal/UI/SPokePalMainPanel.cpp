@@ -42,8 +42,8 @@ void SPokePalMainPanel::Construct(const FArguments& InArgs)
 						.AutoHeight()
 						.Padding(0.0f, 16.0f, 0.0f, 0.0f)
 						[
-							SAssignNew(SelectedActorsTextBlock, STextBlock)
-								.Text(FText::FromString(TEXT("Selected Actors: None")))
+							SAssignNew(EditorContextTextBlock, STextBlock)
+								.Text(FText::FromString(TEXT("Editor Context: Unavailable")))
 						]	
 				]
 		];
@@ -56,40 +56,71 @@ void SPokePalMainPanel::Construct(const FArguments& InArgs)
 		}
 	}
 
-	RefreshSelectedActorsText();
+	RefreshEditorContextText();
 }
 
 void SPokePalMainPanel::HandleSelectedActorsChanged()
 {
-	RefreshSelectedActorsText();
+	RefreshEditorContextText();
 }
 
-void SPokePalMainPanel::RefreshSelectedActorsText()
+void SPokePalMainPanel::RefreshEditorContextText()
 {
-	if (!SelectedActorsTextBlock.IsValid())
+	if (!EditorContextTextBlock.IsValid())
 	{
 		return;
 	}
 
-	FString SelectedActorsText = TEXT("Selected Actors: None");
-
-	if (GEditor)
+	if (!GEditor)
 	{
-		if (UPokePalEditorSubsystem* PokePalSubsystem = GEditor->GetEditorSubsystem<UPokePalEditorSubsystem>())
-		{
-			const TArray<FPokePalSelectedActorInfo> SelectedActors = PokePalSubsystem->GetSelectedActorInfo();
+		EditorContextTextBlock->SetText(FText::FromString(TEXT("Editor Context: Unavailable")));
 
-			if (!SelectedActors.IsEmpty())
-			{
-				SelectedActorsText = FString::Printf(TEXT("Selected Actors: %d"), SelectedActors.Num());
-
-				for (const FPokePalSelectedActorInfo& ActorInfo : SelectedActors)
-				{
-					SelectedActorsText += FString::Printf(TEXT("\n\n%s\n  Object: %s\n  Class: %s"), *ActorInfo.ActorLabel, *ActorInfo.ObjectName, *ActorInfo.ClassName);
-				}
-			}
-		}
+		return;
 	}
 
-	SelectedActorsTextBlock->SetText(FText::FromString(SelectedActorsText));
+	UPokePalEditorSubsystem* PokePalSubsystem = GEditor->GetEditorSubsystem<UPokePalEditorSubsystem>();
+
+	if (!PokePalSubsystem)
+	{
+		EditorContextTextBlock->SetText(FText::FromString(TEXT("Editor Context: Unavailable")));
+		return;
+	}
+		
+	const FPokePalEditorContext Context = PokePalSubsystem->BuildEditorContext();
+
+	FString ContextText = FString::Printf(
+		TEXT(
+			"Editor Context"
+			"\nWorld: %s"
+			"\nCurrent Level: %s"
+			"\nSelected Actors: %d"
+		),
+		*Context.WorldName,
+		*Context.CurrentLevelName,
+		Context.SelectedActors.Num()
+	);
+
+	for (const FPokePalActorContext& ActorContext : Context.SelectedActors)
+	{
+		ContextText += FString::Printf(
+			TEXT(
+				"\n\n%s"
+				"\n  Object: %s"
+				"\n  Class: %s"
+				"\n  Level: %s"
+				"\n  Location: %s"
+				"\n  Rotation: %s"
+				"\n  Scale: %s"
+			),
+			*ActorContext.ActorLabel,
+			*ActorContext.ObjectName,
+			*ActorContext.ClassName,
+			*ActorContext.LevelName,
+			*ActorContext.Location.ToString(),
+			*ActorContext.Rotation.ToString(),
+			*ActorContext.Scale.ToString()
+		);
+	}
+
+	EditorContextTextBlock->SetText(FText::FromString(ContextText));
 }

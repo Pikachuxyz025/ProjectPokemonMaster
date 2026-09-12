@@ -1,6 +1,10 @@
 #include "PokePal/Subsystems/PokePalEditorSubsystem.h"
 #include "Selection.h"
 #include "Editor.h"
+#include "Engine/Level.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
+#include "Misc/PackageName.h"
 #include "Subsystems/EditorActorSubsystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogPokePal, Log, All);
@@ -27,41 +31,67 @@ void UPokePalEditorSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-TArray<FPokePalSelectedActorInfo>UPokePalEditorSubsystem::GetSelectedActorInfo() const
+FPokePalEditorContext UPokePalEditorSubsystem::BuildEditorContext() const
 {
-	TArray<FPokePalSelectedActorInfo> Result;
+	FPokePalEditorContext Context;
 
 	if (!GEditor)
 	{
-		return Result;
+		return Context;
 	}
 
-	UEditorActorSubsystem* EditorActorSubsystem =GEditor->GetEditorSubsystem<UEditorActorSubsystem>();
+	// ---------------------------------------------------------
+	// Editor world / level context
+	// ---------------------------------------------------------
 
-	if (!EditorActorSubsystem)
+	if (UWorld* EditorWorld = GEditor->GetEditorWorldContext().World())
 	{
-		return Result;
+		Context.WorldName = EditorWorld->GetName();
+
+		if (ULevel* CurrentLevel = EditorWorld->GetCurrentLevel())
+		{
+			Context.CurrentLevelName = CurrentLevel->GetOutermost()->GetName();
+		}
 	}
 
-	const TArray<AActor*> SelectedActors =EditorActorSubsystem->GetSelectedLevelActors();
+	// ---------------------------------------------------------
+	// Selected actor context
+	// ---------------------------------------------------------
 
-	for (AActor* Actor : SelectedActors)
+	UEditorActorSubsystem* EditorActorSubsystem = GEditor->GetEditorSubsystem<UEditorActorSubsystem>();
+
+	if(!EditorActorSubsystem)
 	{
-		if (!IsValid(Actor))
+		return Context;
+	}
+
+	const TArray<AActor*> SelectedActors = EditorActorSubsystem->GetSelectedLevelActors();
+
+	for (AActor* AActor : SelectedActors)
+	{
+		if (!IsValid(AActor))
 		{
 			continue;
 		}
 
-		FPokePalSelectedActorInfo& ActorInfo = Result.AddDefaulted_GetRef();
+		FPokePalActorContext& ActorContext = Context.SelectedActors.AddDefaulted_GetRef();
 
-		ActorInfo.ActorLabel = Actor->GetActorLabel();
-		ActorInfo.ObjectName = Actor->GetName();
-		ActorInfo.ClassName = Actor->GetClass()->GetName();
+		ActorContext.ActorLabel = AActor->GetActorLabel();
+		ActorContext.ObjectName = AActor->GetName();
+		ActorContext.ClassName = AActor->GetClass()->GetName();
+
+		ActorContext.Location = AActor->GetActorLocation();
+		ActorContext.Rotation = AActor->GetActorRotation();
+		ActorContext.Scale = AActor->GetActorScale3D();
+
+		if (ULevel* ActorLevel = AActor->GetLevel())
+		{
+			ActorContext.LevelName =FPackageName::GetShortName(ActorLevel->GetOutermost()->GetName());
+		}
 	}
 
-	return Result;
+	return Context;
 }
-
 void UPokePalEditorSubsystem::HandleEditorSelectionChanged(UObject* NewSelection)
 {
 	SelectedActorsChangedEvent.Broadcast();

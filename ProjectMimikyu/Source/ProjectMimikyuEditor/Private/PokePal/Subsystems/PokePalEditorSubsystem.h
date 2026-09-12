@@ -2,14 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "EditorSubsystem.h"
+#include "PokePal/Context/PokePalEditorContext.h"
 #include "PokePalEditorSubsystem.generated.h"
-
-struct FPokePalSelectedActorInfo
-{
-	FString ActorLabel;
-	FString ObjectName;
-	FString ClassName;
-};
 
 DECLARE_MULTICAST_DELEGATE(FOnPokePalSelectedActorsChanged);
 
@@ -22,9 +16,9 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
-	TArray<FPokePalSelectedActorInfo> GetSelectedActorInfo() const;
+	FPokePalEditorContext BuildEditorContext() const;
 
-	FOnPokePalSelectedActorsChanged OnSelectedActorsChanged()
+	FOnPokePalSelectedActorsChanged& OnSelectedActorsChanged()
 	{
 		return SelectedActorsChangedEvent;
 	}

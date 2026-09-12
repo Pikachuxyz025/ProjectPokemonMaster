@@ -51,13 +51,12 @@ private:
 
 	FGuid SubmitSequence(const TArray<FPokemonIntentActionSpec>& Specs, EPokemonIntentType Type = EPokemonIntentType::MoveTo);
 	void StartActiveAction();
+	void StartCombatApproachAction();
 	void StartNavigateAction();
 	void StartAttackAction();
 	void CancelExecutor(EPokemonIntentActionType Type, FGuid RequestId, FName Reason);
-	void HandleNavigationResolved(FGuid ExpectedIntentId, FGuid ExpectedActionId,
-		FGuid RequestId, EPokemonNavigationResolution Result, FName Reason);
-	void HandleCommandResolved(FGuid ExpectedIntentId, FGuid ExpectedActionId,
-		FGuid CommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason);
+	void HandleNavigationResolved(FGuid ExpectedIntentId, FGuid ExpectedActionId, EPokemonIntentActionType ExpectedType, FGuid RequestId, EPokemonNavigationResolution Result, FName Reason);
+	void HandleCommandResolved(FGuid ExpectedIntentId, FGuid ExpectedActionId, FGuid CommandId, EPokemonAttackExecutionOutcome Outcome, FName Reason);
 	bool OwnsRunningAction(FGuid IntentId, FGuid ActionId, FGuid ExecutorId, EPokemonIntentActionType Type) const;
 	void ApplyActionResult(EPokemonIntentActionState Result, FName Reason, FName Outcome = NAME_None);
 	void FinishSequence(EPokemonIntentSequenceState Result, FName Reason);

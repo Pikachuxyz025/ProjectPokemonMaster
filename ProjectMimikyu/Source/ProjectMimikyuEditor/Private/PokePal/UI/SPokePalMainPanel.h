@@ -16,7 +16,7 @@ public:
 
 private:
 	void HandleSelectedActorsChanged();
-	void RefreshSelectedActorsText();
+	void RefreshEditorContextText();
 
-	TSharedPtr<STextBlock> SelectedActorsTextBlock;
+	TSharedPtr<STextBlock> EditorContextTextBlock;
 };
