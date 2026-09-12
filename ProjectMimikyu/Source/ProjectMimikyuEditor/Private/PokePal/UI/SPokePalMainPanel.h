@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Widgets/SCompoundWidget.h"
 
+class STextBlock;
+
 class SPokePalMainPanel : public SCompoundWidget
 {
 public:
@@ -11,4 +13,10 @@ public:
 		SLATE_END_ARGS()
 
 		void Construct(const FArguments& InArgs);
+
+private:
+	void HandleSelectedActorsChanged();
+	void RefreshSelectedActorsText();
+
+	TSharedPtr<STextBlock> SelectedActorsTextBlock;
 };
