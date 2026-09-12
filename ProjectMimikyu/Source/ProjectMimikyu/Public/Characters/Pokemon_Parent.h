@@ -496,6 +496,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|CombatSocket")
 	UPokemonCombatSocketComponent* GetCombatSocketComponent() const { return CombatSocketComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	UPokemonCommandComponent* GetCommandComponent() const { return CommandComponent; }
+
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Navigation")
 	bool UsesGroundCrowdNavigation() const;
 

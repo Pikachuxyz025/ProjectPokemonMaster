@@ -92,6 +92,7 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	const bool bWasCompositeMove = IsCompositePlayerMove();
 	const bool bSameRequest = bHasActiveRequest && RequestToInstall.RequestId.IsValid()
 		&& RequestToInstall.RequestId == CurrentNavigationRequest.RequestId;
+
 	if (bHasActiveRequest && !bSameRequest)
 	{
 		const uint64 ExpectedMutation = NavigationMutationSerial + 1;
@@ -112,18 +113,21 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 	{
 		return;
 	}
+
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
 	ActiveJumpLink.Reset();
 	ResetLocalTraversal();
 	bCompositeFailureHeld = false;
 	++CompositePlanningGeneration;
+
 	if (!bSameRequest)
 	{
 		bRequestJumpConsumed = false;
 		TraversalSegmentSerial = 0;
 		CompositeSearchCount = 0;
 	}
+
 	CurrentNavigationRequest = RequestToInstall;
 	bHasActiveRequest = CurrentNavigationRequest.IntentTag.IsValid();
 
@@ -132,15 +136,41 @@ void UPokemonNavigationComponent::SetNavigationIntent(const FAgentNavigationRequ
 		CurrentNavigationRequest.RequestId = FGuid::NewGuid();
 	}
 
+	ResetCoordinatorApproachRuntime();
+
+	if (IsCoordinatorApproachRequest())
+	{
+		if (APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner()))
+		{
+			Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Engaging,CurrentNavigationRequest.ApproachMoveSpeedMultiplier);
+		}
+	}
+
+	UE_LOG(LogTemp,Display,TEXT(
+			"[CombatApproachAction] Started | "
+			"RequestId=%s | "
+			"CommandId=%s | "
+			"Timeout=%.2f | "
+			"SpeedMultiplier=%.2f"
+		),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*CurrentNavigationRequest
+		.ParentAttackCommandId.ToString(),
+		CurrentNavigationRequest.ApproachTimeout,
+		CurrentNavigationRequest
+		.ApproachMoveSpeedMultiplier);
+
 	bPlayerMovePlanningOnly = false;
 	LastTraversalRequirement = FPokemonTraversalRequirement();
 	LastTraversalCandidate = FPokemonTraversalCandidate();
 
 	TimeSinceLastNavigationThink = NavigationThinkInterval;
+
 	if (CachedAIController && (bWasCompositeMove || IsCompositePlayerMove()))
 	{
 		CachedAIController->StopMovement();
 	}
+
 	LogCompositeEvent(TEXT("Parent"), TEXT("Installed"));
 
 	UE_LOG(LogTemp, Warning,
@@ -172,6 +202,11 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 	{
 		return false;
 	}
+
+	const bool bWasCoordinatorApproach = IsCoordinatorApproachRequest();
+
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
 	const uint64 ThisMutation = ++NavigationMutationSerial;
 	// Clear every piece of old ownership before any synchronous executor/listener callback.
 	bHasActiveRequest = false;
@@ -194,6 +229,13 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 	{
 		CachedAIController->StopMovement();
 	}
+
+	if (bWasCoordinatorApproach && Pokemon)
+	{
+		Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Running);
+	}
+	ResetCoordinatorApproachRuntime();
+
 	// No state mutation after broadcasting. A listener may start another action here.
 	OnNavigationResolved.Broadcast(OwnedRequestId, Result, Reason);
 	return true;
@@ -397,6 +439,28 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 	if (!bHasActiveRequest || !CachedAIController)
 	{
 		return;
+	}
+
+	if (IsCoordinatorApproachRequest())
+	{
+		APokemon_Parent* ApproachPokemon = Cast<APokemon_Parent>(GetOwner());
+
+		if (!ApproachPokemon || !ApproachPokemon->CanAct())
+		{
+			ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
+			return;
+		}
+
+		const FGuid ApproachRequestId = CurrentNavigationRequest.RequestId;
+
+		TickCoordinatorApproachAction(DeltaTime);
+
+		// A terminal broadcast may synchronously advance
+		// A1 -> A2 or install a completely new request.
+		if (!bHasActiveRequest || CurrentNavigationRequest.RequestId != ApproachRequestId)
+		{
+			return;
+		}
 	}
 
 	// A transient action such as Dodge owns locomotion right now.
@@ -1040,6 +1104,247 @@ bool UPokemonNavigationComponent::ProcessPlayerCommandMove()
 	);
 
 	return RequestMoveToLocation(TargetLocation, Radius, false, false);
+}
+
+bool UPokemonNavigationComponent::IsCoordinatorApproachRequest() const
+{
+	return bHasActiveRequest
+		&& CurrentNavigationRequest.bResolveApproachAsAction
+		&& CurrentNavigationRequest.IntentTag.MatchesTagExact(
+			PokemonAITags::NavIntent_Approach);
+}
+
+void UPokemonNavigationComponent::ResetCoordinatorApproachRuntime()
+{
+	CoordinatorApproachElapsedTime = 0.f;
+	bCoordinatorApproachTimeoutPausedForTraversal = false;
+	bCoordinatorApproachTraversalCompletedSinceLastTick = false;
+}
+
+void UPokemonNavigationComponent::TickCoordinatorApproachAction(float DeltaTime)
+{
+	if (!IsCoordinatorApproachRequest())
+	{
+		return;
+}
+
+	const FGuid RequestId = CurrentNavigationRequest.RequestId;
+
+	AActor* TargetActor = CurrentNavigationRequest.TargetActor.Get();
+
+	if (IsValid(TargetActor) && PokemonNavigationUtils::IsInvalidPokemonNavigationTarget(TargetActor))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonNav] Clearing CoordinatorApproach request because target cannot be combat targeted. Owner=%s Target=%s"),
+			*GetNameSafe(GetOwner()),
+			*GetNameSafe(TargetActor));
+
+		ResolveNavigationRequest(RequestId, EPokemonNavigationResolution::Failed, TEXT("ApproachTargetInvalid"));
+		return;
+	}
+
+	// Reach always wins before timeout
+	if (HasReachedCoordinatorApproachExecutionPosition())
+	{
+		if (CurrentNavigationRequest.bFaceTargetDuringApproach)
+		{
+			FaceCoordinatorApproachTarget(DeltaTime);
+		}
+
+		ResolveNavigationRequest(RequestId, EPokemonNavigationResolution::Succeeded, TEXT("ApproachTargetReached"));
+		return;
+	}
+
+	const bool bTraversalBusy = IsOwnedCoordinatorApproachTraversalBusy();
+
+	if(bTraversalBusy)
+	{
+		if(!bCoordinatorApproachTimeoutPausedForTraversal)
+		{
+			bCoordinatorApproachTimeoutPausedForTraversal = true;
+
+			UE_LOG(LogTemp,Display,TEXT(
+					"[CombatApproachAction] "
+					"TimeoutPaused | "
+					"RequestId=%s | "
+					"Elapsed=%.2f | "
+					"Limit=%.2f"
+				),
+				*RequestId.ToString(),
+				CoordinatorApproachElapsedTime,
+				CurrentNavigationRequest
+				.ApproachTimeout);
+		}
+	}
+	else
+	{
+		if (bCoordinatorApproachTimeoutPausedForTraversal)
+		{
+			bCoordinatorApproachTimeoutPausedForTraversal = false;
+			UE_LOG(LogTemp, Display, TEXT(
+				"[CombatApproachAction] "
+				"TimeoutResumed | "
+				"RequestId=%s"
+			),
+				*RequestId.ToString());
+		}
+
+		if (bCoordinatorApproachTraversalCompletedSinceLastTick)
+		{
+			bCoordinatorApproachTraversalCompletedSinceLastTick = false;
+			UE_LOG(LogTemp, Display, TEXT(
+				"[CombatApproachAction] "
+				"PostTraversalEvaluation | "
+				"RequestId=%s"
+			),
+				*RequestId.ToString());
+		}
+		else
+		{
+			CoordinatorApproachElapsedTime += DeltaTime;
+
+			if (CoordinatorApproachElapsedTime >= CurrentNavigationRequest.ApproachTimeout)
+			{
+				UE_LOG(LogTemp,Warning,TEXT(
+						"[CombatApproachAction] "
+						"Timeout | "
+						"RequestId=%s | "
+						"Elapsed=%.2f | "
+						"Limit=%.2f"
+					),
+					*RequestId.ToString(),
+					CoordinatorApproachElapsedTime,
+					CurrentNavigationRequest
+					.ApproachTimeout);
+
+				ResolveNavigationRequest(RequestId, EPokemonNavigationResolution::Failed, TEXT("CombatApproachTimeout"));
+				return;
+			}
+		}
+	}
+	
+	if (bHasActiveRequest && CurrentNavigationRequest.RequestId == RequestId && CurrentNavigationRequest.bFaceTargetDuringApproach)
+	{
+		FaceCoordinatorApproachTarget(DeltaTime);
+	}
+}
+
+bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition() const
+{
+	if (!IsCoordinatorApproachRequest() || IsOwnedCoordinatorApproachTraversalBusy())
+	{
+		return false;
+	}
+
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon)
+	{
+		return false;
+	}
+
+	FVector TargetLocation;
+
+	if (!GetTargetLocation(TargetLocation)||TargetLocation.ContainsNaN())
+	{
+		return false;
+	}
+
+	if (CurrentNavigationRequest.MeleeContact.SocketTag.IsValid())
+	{
+		FPokemonMeleeExecutionCandidate Candidate;
+
+		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(
+			Pokemon,
+			CurrentNavigationRequest.MeleeApproach,
+			TargetLocation,
+			Candidate))
+		{
+			return false;
+		}
+
+		const double Distance = FVector::Dist(Candidate.PlannedContactCenter, TargetLocation);
+
+		if (Distance > Candidate.Radius)
+		{
+			return false;
+		}
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[CombatApproachAction] "
+			"MeleeExecutionReached | "
+			"RequestId=%s | "
+			"CommandId=%s | "
+			"Target=%s | "
+			"PlannedCenter=%s | "
+			"Distance3D=%.2f | "
+			"Radius=%.2f | "
+			"Profile=%s"
+		),
+			*CurrentNavigationRequest
+			.RequestId.ToString(),
+			*CurrentNavigationRequest
+			.ParentAttackCommandId.ToString(),
+			*TargetLocation.ToString(),
+			*Candidate.PlannedContactCenter.ToString(),
+			Distance,
+			Candidate.Radius,
+			*CurrentNavigationRequest
+			.MeleeApproach.ProfileId.ToString());
+
+		return true;
+	}
+
+	const float Range = CurrentNavigationRequest.DesiredDistance > 0.f
+		? CurrentNavigationRequest.DesiredDistance
+		: CurrentNavigationRequest.AcceptableRadius;
+
+	return FVector::Dist2D(GetOwner()->GetActorLocation(), TargetLocation) <= Range;
+}
+
+bool UPokemonNavigationComponent::IsOwnedCoordinatorApproachTraversalBusy() const
+{
+	if (!IsCoordinatorApproachRequest())
+	{
+		return false;
+	}
+
+	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	const UPokemonJumpExecutionComponent* Jump = Pokemon ? Pokemon->JumpExecutionComponent : nullptr;
+
+	return Jump && Jump->IsBusy() && Jump->GetParentRequestId() == CurrentNavigationRequest.RequestId;
+}
+
+void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime) const
+{
+	if(!OwnerPawn)
+	{
+		return;
+	}
+
+	FVector TargetLocation;
+
+	if(!GetTargetLocation(TargetLocation))
+	{
+		return;
+	}
+
+	FRotator TargetRotation = (TargetLocation - OwnerPawn->GetActorLocation()).Rotation();
+
+	if (CurrentNavigationRequest.MeleeContact.SocketTag.IsValid())
+	{
+		FPokemonMeleeExecutionCandidate Candidate;
+
+		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(OwnerPawn, CurrentNavigationRequest.MeleeApproach, TargetLocation, Candidate))
+		{
+			return;
+		}
+	}
+	
+	const FRotator NewRotation = FMath::RInterpTo(OwnerPawn->GetActorRotation(), TargetRotation, DeltaTime, 10.f);
+		
+	OwnerPawn->SetActorRotation(FRotator(0.f, NewRotation.Yaw, 0.f));
 }
 
 bool UPokemonNavigationComponent::RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath, bool bIncludeAgentRadius, bool bProjectGoalLocation)
@@ -2042,6 +2347,27 @@ void UPokemonNavigationComponent::HandleJumpFinished(FGuid RequestId, bool bLand
 	{
 		return;
 	}
+
+	if (!IsCoordinatorApproachRequest() && bLandedAtDestination)
+	{
+		const float PreviousElapsed = CoordinatorApproachElapsedTime;
+
+		CoordinatorApproachElapsedTime = 0.f;
+
+		bCoordinatorApproachTraversalCompletedSinceLastTick = true;
+
+		UE_LOG(LogTemp,Display,TEXT(
+				"[CombatApproachAction] "
+				"ProgressReset | "
+				"RequestId=%s | "
+				"PreviousElapsed=%.2f | "
+				"NewElapsed=0.00 | "
+				"Reason=TraversalCompleted"
+			),
+			*RequestId.ToString(),
+			PreviousElapsed);
+	}
+
 	if (IsCompositePlayerMove())
 	{
 		if (bLandedAtDestination)

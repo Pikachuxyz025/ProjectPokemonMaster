@@ -27,6 +27,11 @@ public class ProjectMimikyuEditor : ModuleRules
             "Slate",
             "SlateCore",
 
+            // PokéPal external request / serialization layer.
+            "HTTP",
+            "Json",
+"JsonUtilities",
+
             // Native jump automation fixtures initialize GAS without content assets.
             "GameplayAbilities",
             "AIModule",

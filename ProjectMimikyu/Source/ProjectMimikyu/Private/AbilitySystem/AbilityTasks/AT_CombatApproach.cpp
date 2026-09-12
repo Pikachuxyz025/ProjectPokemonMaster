@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AbilityTasks/AT_CombatApproach.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 #include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
 #include "GameplayTags/PokemonAITags.h"
 #include "GameFramework/Character.h"
@@ -53,6 +54,31 @@ void UAT_CombatApproach::Activate()
 	AvatarPokemon = Cast<APokemon_Parent>(AvatarPawn.Get());
 
 	NavigationComponent = AvatarPokemon ? AvatarPokemon->GetNavigationComponent() : nullptr;
+
+	if (AvatarPokemon)
+	{
+		const UPokemonCommandComponent* Command = AvatarPokemon->GetCommandComponent();
+
+		const UPokemonIntentSequenceComponent* Intent = AvatarPokemon->GetIntentSequenceComponent();
+
+		const FGuid CommandId = Command ? Command->GetActiveTrainerCommandId() : FGuid();
+
+		if (Command && Intent
+			&& Command->IsSequencedCommand(CommandId)
+			&& Intent->IsRunningAttackExecutionForCommand(CommandId))
+		{
+			UE_LOG(LogTemp, Display, TEXT(
+				"[CombatApproach] "
+				"CoordinatorBypass | "
+				"CommandId=%s | "
+				"Reason=CombatApproachAlreadySatisfied"
+			),
+				*CommandId.ToString());
+
+			FinishSuccess();
+			return;
+		}
+	}
 
 	if (!IsValidSetup())
 	{

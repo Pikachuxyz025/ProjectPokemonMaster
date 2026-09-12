@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "EditorSubsystem.h"
 #include "PokePal/Context/PokePalEditorContext.h"
+#include "PokePal/Services/PokePalRequestService.h"
 #include "PokePalEditorSubsystem.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPokePalEditorContextChanged);
@@ -31,4 +32,6 @@ private:
 	FDelegateHandle MapOpenedHandle;
 
 	FOnPokePalEditorContextChanged EditorContextChangedEvent;
+
+	TUniquePtr<FPokePalRequestService> RequestService;
 };

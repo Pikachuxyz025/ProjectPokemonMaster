@@ -18,6 +18,22 @@ UPokemonIntentSequenceComponent::UPokemonIntentSequenceComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
+bool UPokemonIntentSequenceComponent::IsRunningAttackExecutionForCommand(FGuid CommandId) const
+{
+	if (!CommandId.IsValid() || CurrentSequence.State != EPokemonIntentSequenceState::Running 
+		|| CurrentSequence.Type != EPokemonIntentType::Attack || CurrentSequence.AttackCommandId != CommandId
+		|| !CurrentSequence.Actions.IsValidIndex(CurrentSequence.ActiveActionIndex))
+	{
+		return false;
+	}
+
+	const FPokemonIntentActionRecord& Action = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex];
+	
+	return Action.Spec.Type == EPokemonIntentActionType::AttackExecution
+		&& Action.State == EPokemonIntentActionState::Running
+		&& Action.ExecutorRequestId == CommandId;;
+}
+
 void UPokemonIntentSequenceComponent::BeginPlay()
 {
 	Super::BeginPlay();

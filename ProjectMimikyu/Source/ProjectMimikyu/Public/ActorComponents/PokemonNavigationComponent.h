@@ -115,8 +115,10 @@ protected:
 	int32 TakeoffAnchorInterpolationCount = 1;
 
 private:
+
 	friend struct FPokemonCompositeMoveTestAccess;
 	friend struct FPokemonIntentSequenceTestAccess;
+
 	bool ResolveNavigationRequest(FGuid OwnedRequestId, EPokemonNavigationResolution Result, FName Reason);
 	uint64 NavigationMutationSerial = 0;
 	bool bNavigationEndingPlay = false;
@@ -177,6 +179,33 @@ private:
 	bool ProcessCombatReposition();
 	bool ProcessPlayerCommandMove();
 
+	// Runtime state used only when the retained Approach request is
+    // a first-class coordinator action:
+    //
+    //   I = Intent
+    //   A1 = CombatApproach
+    //   N = this navigation RequestId
+    //   C = parent AttackCommandId
+    //
+    // Legacy AbilityTask-owned Approach requests do not use this state.
+
+	float CoordinatorApproachElapsedTime = 0.f;
+
+	bool bCoordinatorApproachTimeoutPausedForTraversal = false;
+
+	bool bCoordinatorApproachTraversalCompletedSinceLastTick = false;
+
+	bool IsCoordinatorApproachRequest() const;
+
+	void ResetCoordinatorApproachRuntime();
+
+	void TickCoordinatorApproachAction(float DeltaTime);
+
+	bool HasReachedCoordinatorApproachExecutionPosition() const;
+
+	bool IsOwnedCoordinatorApproachTraversalBusy() const;
+
+	void FaceCoordinatorApproachTarget(float DeltaTime) const;
 	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath = true, bool bIncludeAgentRadius = true, bool bProjectGoalLocation = true);
 	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius, bool bCanStrafe = false);
 

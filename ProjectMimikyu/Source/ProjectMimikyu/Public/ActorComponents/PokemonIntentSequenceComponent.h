@@ -34,6 +34,8 @@ public:
 
 	FPokemonIntentResolvedSignature OnIntentResolved;
 
+	bool IsRunningAttackExecutionForCommand(FGuid CommandId) const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

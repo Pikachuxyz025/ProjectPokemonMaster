@@ -13,6 +13,8 @@ void UPokePalEditorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
+	RequestService = MakeUnique<FPokePalRequestService>();
+
 	EditorSelectionChangedHandle = USelection::SelectionChangedEvent.AddUObject(this, &UPokePalEditorSubsystem::HandleEditorSelectionChanged);
 
 	MapOpenedHandle = FEditorDelegates::OnMapOpened.AddUObject(this, &UPokePalEditorSubsystem::HandleMapOpened);
@@ -34,6 +36,8 @@ void UPokePalEditorSubsystem::Deinitialize()
 		FEditorDelegates::OnMapOpened.Remove(MapOpenedHandle);
 		MapOpenedHandle.Reset();
 	}
+
+	RequestService.Reset();
 
 	UE_LOG(LogPokePal,Log,TEXT("PokéPal Editor Subsystem deinitialized."));
 
