@@ -15,6 +15,13 @@ FPokePalRequestService::FPokePalRequestService()
 		Log,
 		TEXT("PokéPal Request Service created.")
 	);
+
+	UE_LOG(
+		LogPokePalRequestService,
+		Log,
+		TEXT("OpenAI API creditial available: %s"),
+		HasOpenAIApiKey() ? TEXT("Yes") : TEXT("No")
+	);
 }
 
 FPokePalRequestService::~FPokePalRequestService()
