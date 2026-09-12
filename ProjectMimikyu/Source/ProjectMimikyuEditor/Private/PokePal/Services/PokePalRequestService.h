@@ -12,4 +12,8 @@ public:
 
 private:
 	FString GetOpenAIApiKey() const;
+
+	void BuildRequestPreview() const;
+
+	FString BuildRequestBodyPreview() const;
 };
