@@ -45,6 +45,8 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 
 	Request.IntentTag = PokemonAITags::NavIntent_Approach;
 
+	Request.TargetPointTag = Spec.CommandTarget.TargetPointTag;
+
 	Request.TargetActor = Spec.CommandTarget.TargetActor.Get();
 
 	Request.TargetLocation = Spec.CommandTarget.TargetLocation;
@@ -65,6 +67,12 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 	Request.ApproachTimeout = MoveCDO->ApproachTimeout;
 
 	Request.ApproachMoveSpeedMultiplier = MoveCDO->SpeedMultiplier;
+
+	Request.AcceptableRadius = MoveCDO->IdealRange;
+
+	Request.ParentAttackCommandId = ParentAttackCommandId;
+
+	Request.bResolveApproachAsAction = true;
 
 	Request.bFaceTargetDuringApproach = MoveCDO->bFaceTargetDuringApproach;
 
