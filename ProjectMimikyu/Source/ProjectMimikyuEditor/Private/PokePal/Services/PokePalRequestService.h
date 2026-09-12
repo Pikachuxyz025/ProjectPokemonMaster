@@ -7,4 +7,9 @@ class FPokePalRequestService
 public:
 	FPokePalRequestService();
 	~FPokePalRequestService();
+
+	bool HasOpenAIApiKey() const;
+
+private:
+	FString GetOpenAIApiKey() const;
 };
