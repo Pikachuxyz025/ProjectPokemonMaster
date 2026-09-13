@@ -18,5 +18,7 @@ private:
 	void HandleEditorContextChanged();
 	void RefreshEditorContextText();
 
+	FReply HandleSendHelloRequestClicked();
+
 	TSharedPtr<STextBlock> EditorContextTextBlock;
 };

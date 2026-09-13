@@ -16,6 +16,15 @@ namespace PokemonDebugTags
 	UE_DEFINE_GAMEPLAY_TAG(Combat_Knockback, "Debug.Combat.Knockback");
 	UE_DEFINE_GAMEPLAY_TAG(Combat_Faint, "Debug.Combat.Faint");
 
+	UE_DEFINE_GAMEPLAY_TAG(Navigation, "Debug.Navigation");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Request, "Debug.Navigation.Request");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Projection, "Debug.Navigation.Projection");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Path, "Debug.Navigation.Path");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Stance, "Debug.Navigation.Stance");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Stance_Contact, "Debug.Navigation.Stance.Contact");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Stance_Surface, "Debug.Navigation.Stance.Surface");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Traversal, "Debug.Navigation.Traversal");
+
 	UE_DEFINE_GAMEPLAY_TAG(Ability, "Debug.Ability");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Addition, "Debug.Ability.Addition");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Activation, "Debug.Ability.Activation");

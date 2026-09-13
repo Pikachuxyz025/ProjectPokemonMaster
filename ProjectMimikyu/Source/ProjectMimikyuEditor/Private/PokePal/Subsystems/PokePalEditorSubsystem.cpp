@@ -110,6 +110,18 @@ FPokePalEditorContext UPokePalEditorSubsystem::BuildEditorContext() const
 	return Context;
 }
 
+void UPokePalEditorSubsystem::SendHelloRequest()
+{
+	if (!RequestService)
+	{
+		UE_LOG(LogPokePal,Error,TEXT("Cannot send Hello AI request: request service is unavailable."));
+
+		return;
+	}
+
+	RequestService->SendHelloRequest();
+}
+
 void UPokePalEditorSubsystem::HandleEditorSelectionChanged(UObject* NewSelection)
 {
 	EditorContextChangedEvent.Broadcast();

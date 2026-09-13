@@ -19,6 +19,8 @@ public:
 
 	FPokePalEditorContext BuildEditorContext() const;
 
+	void SendHelloRequest();
+
 	FOnPokePalEditorContextChanged& OnEditorContextChanged()
 	{
 		return EditorContextChangedEvent;

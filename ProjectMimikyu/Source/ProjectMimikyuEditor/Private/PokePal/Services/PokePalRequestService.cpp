@@ -1,5 +1,6 @@
 #include "PokePal/Services/PokePalRequestService.h"
 #include "HAL/PlatformMisc.h"
+#include "Interfaces/IHttpResponse.h"
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 #include "HttpModule.h"
@@ -10,6 +11,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogPokePalRequestService, Log, All);
 namespace PokePalRequest
 {
 	static const TCHAR* OpenAIApiKeyEnvironmentVariable = TEXT("OPENAI_API_KEY");
+	static const TCHAR* OpenAIResponsesURL = TEXT("https://api.openai.com/v1/responses");
 }
 
 FPokePalRequestService::FPokePalRequestService()
@@ -26,17 +28,18 @@ FPokePalRequestService::FPokePalRequestService()
 		TEXT("OpenAI API credential available: %s"),
 		HasOpenAIApiKey() ? TEXT("Yes") : TEXT("No")
 	);
-
-	BuildRequestPreview();
 }
 
 FPokePalRequestService::~FPokePalRequestService()
 {
-	UE_LOG(
-		LogPokePalRequestService,
-		Log,
-		TEXT("PokéPal Request Service destroyed.")
-	);
+	if (ActiveRequest.IsValid())
+	{
+		ActiveRequest->OnProcessRequestComplete().Unbind();
+		ActiveRequest->CancelRequest();
+		ActiveRequest.Reset();
+	}
+
+	UE_LOG(LogPokePalRequestService,Log,TEXT("PokéPal Request Service destroyed."));
 }
 
 bool FPokePalRequestService::HasOpenAIApiKey() const
@@ -49,20 +52,31 @@ FString FPokePalRequestService::GetOpenAIApiKey() const
 	return FPlatformMisc::GetEnvironmentVariable(PokePalRequest::OpenAIApiKeyEnvironmentVariable);
 }
 
-void FPokePalRequestService::BuildRequestPreview() const
+void FPokePalRequestService::SendHelloRequest()
 {
 	if (!HasOpenAIApiKey())
 	{
 		UE_LOG(
 			LogPokePalRequestService,
 			Warning,
-			TEXT("Cannot build request preview: API credential is unavailable.")
+			TEXT("Cannot send request: OpenAI API credential is unavailable.")
 		);
-
 		return;
 	}
 
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
+	if (ActiveRequest.IsValid())
+	{
+		UE_LOG(
+			LogPokePalRequestService,
+			Warning,
+			TEXT("Cannot send request: Another request is already in progress.")
+		);
+		return;
+	}
+
+	FHttpRequestPtr Request = FHttpModule::Get().CreateRequest();
+
+	Request->SetURL(PokePalRequest::OpenAIResponsesURL);
 
 	Request->SetVerb(TEXT("POST"));
 
@@ -74,28 +88,33 @@ void FPokePalRequestService::BuildRequestPreview() const
 
 	Request->SetContentAsString(RequestBody);
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("HTTP request preview built."));
+	Request->OnProcessRequestComplete().BindRaw(this, &FPokePalRequestService::HandleRequestComplete);
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("Verb: %s"), *Request->GetVerb());
+	ActiveRequest = Request;
+	const bool bStarted = Request->ProcessRequest();
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("Content-Type: %s"), *Request->GetHeader(TEXT("Content-Type")));
+	if (!bStarted)
+	{
+		Request->OnProcessRequestComplete().Unbind();
+		ActiveRequest.Reset();
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("Authorization header configured: %s"), Request->GetHeader(TEXT("Authorization")).IsEmpty() ? TEXT("No") : TEXT("Yes"));
+		UE_LOG(LogPokePalRequestService, Error, TEXT("PokéPal HTTP request failed to start."));
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("Body size: %d characters"), Request->GetContentLength());
+		return;
+	}
 
-	UE_LOG(LogPokePalRequestService, Log, TEXT("Request body preview: %s"), *RequestBody);
+	UE_LOG(LogPokePalRequestService, Log, TEXT("PokéPal HTTP request started."));
 }
 
 FString FPokePalRequestService::BuildRequestBodyPreview() const
 {
 	TSharedRef<FJsonObject> RootObject = MakeShared<FJsonObject>();
 
-	RootObject->SetStringField(TEXT("message"), TEXT("Hello from PokéPal!"));
+	RootObject->SetStringField(TEXT("model"), TEXT("gpt-5.6-luna"));
 
-	RootObject->SetStringField(TEXT("phase"), TEXT("Hello AI!"));
+	RootObject->SetStringField(TEXT("input"), TEXT("Reply with exactly: Hello from OpenAI to PokePal."));
 
-	RootObject->SetBoolField(TEXT("read_only"), true);
+	RootObject->SetBoolField(TEXT("store"), false);
 
 	FString JsonString;
 
@@ -104,4 +123,38 @@ FString FPokePalRequestService::BuildRequestBodyPreview() const
 	FJsonSerializer::Serialize(RootObject, Writer);
 
 	return JsonString;
+}
+
+void FPokePalRequestService::HandleRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+{
+	ActiveRequest.Reset();
+
+	if (!bConnectedSuccessfully)
+	{
+		UE_LOG(LogPokePalRequestService, Error, TEXT("PokéPal HTTP transport failed."));
+		return;
+	}
+
+	if (!Response.IsValid())
+	{
+		UE_LOG(LogPokePalRequestService, Error, TEXT("PokéPal request completed without a valid HTTP response."));
+		return;
+	}
+
+	const int32 StatusCode = Response->GetResponseCode();
+
+	const FString ResponseBody = Response->GetContentAsString();
+
+	UE_LOG(LogPokePalRequestService, Log, TEXT("PokéPal request completed with status code %d. Response: %s"), StatusCode, *ResponseBody);
+
+	if (StatusCode < 200 || StatusCode >= 300)
+	{
+		UE_LOG(LogPokePalRequestService, Error, TEXT("OpenAI returned an HTTP error."));
+
+		UE_LOG(LogPokePalRequestService, Error, TEXT("Response body: %s"), *ResponseBody);
+	}
+
+	UE_LOG(LogPokePalRequestService, Log, TEXT("OpenAI response received successfully."));
+
+	UE_LOG(LogPokePalRequestService, Log, TEXT("Response body: %s"), *ResponseBody);
 }

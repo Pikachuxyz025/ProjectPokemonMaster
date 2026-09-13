@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HttpFwd.h"
 
 class FPokePalRequestService
 {
@@ -10,10 +11,13 @@ public:
 
 	bool HasOpenAIApiKey() const;
 
+	void SendHelloRequest();
+
 private:
 	FString GetOpenAIApiKey() const;
-
-	void BuildRequestPreview() const;
-
 	FString BuildRequestBodyPreview() const;
+
+	void HandleRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	FHttpRequestPtr ActiveRequest;
 };

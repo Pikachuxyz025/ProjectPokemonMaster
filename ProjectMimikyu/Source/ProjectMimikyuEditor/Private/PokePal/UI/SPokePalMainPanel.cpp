@@ -2,6 +2,7 @@
 #include "PokePal/Subsystems/PokePalEditorSubsystem.h"
 #include "Editor.h"
 #include "Widgets/Layout/SBorder.h"
+#include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Text/STextBlock.h"
 
@@ -45,6 +46,18 @@ void SPokePalMainPanel::Construct(const FArguments& InArgs)
 							SAssignNew(EditorContextTextBlock, STextBlock)
 								.Text(FText::FromString(TEXT("Editor Context: Unavailable")))
 						]	
+
+						+ SVerticalBox::Slot()
+						.AutoHeight()
+						.Padding(0.0f, 16.0f, 0.0f, 0.0f)
+						[
+							SNew(SButton)
+								.Text(FText::FromString(TEXT("Send Hello AI")))
+								.OnClicked(
+									this,
+									&SPokePalMainPanel::HandleSendHelloRequestClicked
+								)
+						]
 				]
 		];
 
@@ -125,4 +138,19 @@ void SPokePalMainPanel::RefreshEditorContextText()
 	}
 
 	EditorContextTextBlock->SetText(FText::FromString(ContextText));
+}
+
+FReply SPokePalMainPanel::HandleSendHelloRequestClicked()
+{
+	if (!GEditor)
+	{
+		return FReply::Handled();
+	}
+
+	if (UPokePalEditorSubsystem* PokePalSubsystem = GEditor->GetEditorSubsystem<UPokePalEditorSubsystem>())
+	{
+		PokePalSubsystem->SendHelloRequest();
+	}
+
+	return FReply::Handled();
 }

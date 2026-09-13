@@ -22,6 +22,34 @@
 #include "NavigationPath.h"
 #include "NavigationData.h"
 
+namespace
+{
+	enum class EMeleeGroundedReachClassification :uint8
+	{
+		WithinGroundedReach,
+		AboveGroundedReach,
+		BelowGroundedReach
+	};
+
+	const TCHAR* ToString(EMeleeGroundedReachClassification Classification)
+	{
+		switch (Classification)
+		{
+		case EMeleeGroundedReachClassification::WithinGroundedReach:
+			return TEXT("WithinGroundedReach");
+
+		case EMeleeGroundedReachClassification::AboveGroundedReach:
+			return TEXT("AboveGroundedReach");
+
+		case EMeleeGroundedReachClassification::BelowGroundedReach:
+			return TEXT("BelowGroundedReach");
+
+		default:
+			return TEXT("Unknown");
+		}
+	}
+}
+
 namespace PokemonNavigationUtils
 {
 	bool IsInvalidPokemonNavigationTarget(AActor* TargetActor)
@@ -795,6 +823,45 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return true;
 	}
 
+	const float GroundedContactCenterZ = Candidate.PlannedContactCenter.Z;
+
+	const float GroundedReachMinZ = GroundedContactCenterZ - Candidate.Radius;
+
+	const float GroundedReachMaxZ = GroundedContactCenterZ + Candidate.Radius;
+
+	EMeleeGroundedReachClassification GroundedReachClassification = EMeleeGroundedReachClassification::WithinGroundedReach;
+
+	if (TargetLocation.Z > GroundedReachMaxZ)
+	{
+		GroundedReachClassification = EMeleeGroundedReachClassification::AboveGroundedReach;
+	}
+	else if (TargetLocation.Z < GroundedReachMinZ)
+	{
+		GroundedReachClassification = EMeleeGroundedReachClassification::BelowGroundedReach;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[MeleeReach] "
+		"RequestId=%s | "
+		"TargetZ=%.2f | "
+		"GroundedCenterZ=%.2f | "
+		"GroundedMinZ=%.2f | "
+		"GroundedMaxZ=%.2f | "
+		"VerticalDelta=%.2f | "
+		"Radius=%.2f | "
+		"Classification=%s | "
+		"Profile=%s"
+	),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		TargetLocation.Z,
+		GroundedContactCenterZ,
+		GroundedReachMinZ,
+		GroundedReachMaxZ,
+		TargetLocation.Z - GroundedContactCenterZ,
+		Candidate.Radius,
+		ToString(GroundedReachClassification),
+		*Plan.ProfileId.ToString());
+
 	// Navigation location describes feet; execution location describes root
 	const FVector RootAboveFeet(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight());
 
@@ -804,7 +871,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
 	{
-		EvaluateGroundTraversalFailure(RequiredFeet,(TEXT("MeleeProjectionFailed")));
+		EvaluateGroundTraversalFailure(RequiredFeet, (TEXT("MeleeProjectionFailed")));
 
 		UE_LOG(LogTemp, Display,
 			TEXT("[PokemonNav] GroundCandidateRejected | Stage=Projection | ")
@@ -863,21 +930,45 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (NavigationRadius <= 0.f)
 	{
+		FName TraversalTrigger;
+
+		switch (GroundedReachClassification)
+		{
+		case EMeleeGroundedReachClassification::AboveGroundedReach:
+			TraversalTrigger =
+				TEXT("MeleeTargetAboveGroundedReach");
+			break;
+
+		case EMeleeGroundedReachClassification::BelowGroundedReach:
+			TraversalTrigger =
+				TEXT("MeleeTargetBelowGroundedReach");
+			break;
+
+		default:
+			TraversalTrigger =
+				ContactError > Candidate.Radius
+				? FName(TEXT("MeleeContactOutsideGroundReach"))
+				: FName(TEXT("MeleeNoContactArrivalMargin"));
+			break;
+		}
+
 		EvaluateGroundTraversalFailure(
 			RequiredFeet,
-			FName(ContactError > Candidate.Radius
-				? TEXT("MeleeContactOutsideGroundReach")
-				: TEXT("MeleeNoContactArrivalMargin")));
+			TraversalTrigger);
 
 		CachedAIController->StopMovement();
 
-		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonNav] GroundCandidateRejected | ")
-			TEXT("RequestId=%s | Reason=%s | Source=%s | Profile=%s"),
+		UE_LOG(LogTemp, Display, TEXT(
+			"[PokemonNav] GroundCandidateRejected | "
+			"RequestId=%s | "
+			"Reason=%s | "
+			"GroundedReach=%s | "
+			"Source=%s | "
+			"Profile=%s"
+		),
 			*CurrentNavigationRequest.RequestId.ToString(),
-			ContactError > Candidate.Radius
-			? TEXT("ContactOutsideGroundReach")
-			: TEXT("NoContactArrivalMargin"),
+			*TraversalTrigger.ToString(),
+			ToString(GroundedReachClassification),
 			*UEnum::GetValueAsString(Plan.Source),
 			*Plan.ProfileId.ToString());
 
