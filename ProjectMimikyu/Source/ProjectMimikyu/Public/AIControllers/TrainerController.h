@@ -34,27 +34,6 @@ UFUNCTION(BlueprintCallable)
 
 	UFUNCTION(BlueprintCallable)
 	void FocusNewWidget(UUserWidget* NewWidget);
-
-	UFUNCTION(Exec)
-	void DebugToggleAI();
-
-	UFUNCTION(Exec)
-	void DebugToggleCombat();
-
-	UFUNCTION(Exec)
-	void DebugToggleProjectile();
-
-	UFUNCTION(Exec)
-	void DebugToggleNetwork();
-
-	UFUNCTION(Exec)
-	void DebugVerboseBasic();
-
-	UFUNCTION(Exec)
-	void DebugVerboseDetailed();
-
-	UFUNCTION(Exec)
-	void DebugVerboseFull();
 private:
 
 	UPROPERTY()
