@@ -4,6 +4,25 @@
 #include "Debugging/PokemonDebugLibrary.h"
 #include "Debugging/PokemonDebugWorldSubsystem.h"
 
+void UPokemonDebugLibrary::DrawCapsule(const UObject* WorldContextObject, FGameplayTag CategoryTag, FVector Center, float HalfHeight, float Radius, FRotator Rotation, float Duration, FLinearColor Color, float Thickness, EPokemonDebugVerbosity Verbosity)
+{
+	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
+	{
+		DebugSubsystem->DrawDebugCapsuleForCategory(
+			WorldContextObject,
+			CategoryTag,
+			Center,
+			HalfHeight,
+			Radius,
+			Rotation,
+			Duration,
+			Color.ToFColor(true),
+			Thickness,
+			Verbosity
+		);
+	}
+}
+
 UPokemonDebugWorldSubsystem* UPokemonDebugLibrary::GetDebugSubsystem(const UObject* WorldContextObject)
 {
 	if(!IsValid(WorldContextObject))
@@ -120,5 +139,23 @@ void UPokemonDebugLibrary::SetMaxVerbosity(const UObject* WorldContextObject, EP
 	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
 	{
 		DebugSubsystem->SetMaxVerbosity(Verbosity);
+	}
+}
+
+void UPokemonDebugLibrary::DrawDirectionalArrow(const UObject* WorldContextObject, FGameplayTag CategoryTag, FVector Start, FVector End, float ArrowSize, float Duration, FLinearColor Color, float Thickness, EPokemonDebugVerbosity Verbosity)
+{
+	if (UPokemonDebugWorldSubsystem* DebugSubsystem = GetDebugSubsystem(WorldContextObject))
+	{
+		DebugSubsystem->DrawDebugDirectionalArrowForCategory(
+			WorldContextObject,
+			CategoryTag,
+			Start,
+			End,
+			ArrowSize,
+			Duration,
+			Color.ToFColor(true),
+			Thickness,
+			Verbosity
+		);
 	}
 }

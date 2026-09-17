@@ -19,6 +19,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
+#include "Debugging/PokemonDebugLibrary.h"
+#include "GameplayTags/PokemonDebugTags.h"
 #include "NavigationPath.h"
 #include "NavigationData.h"
 
@@ -987,6 +989,24 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			*Plan.ProfileId.ToString());
 
 		return false;
+	}
+
+	if(CurrentNavigationRequest.bHasTargetImpactNormal)
+	{
+		const FVector NormalStart = CurrentNavigationRequest.TargetLocation;
+		const FVector NormalEnd = NormalStart + CurrentNavigationRequest.TargetImpactNormal * 100.f;
+
+		UPokemonDebugLibrary::DrawDirectionalArrow(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			NormalEnd,
+			20.f,
+			5.f,
+			FLinearColor::Blue,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
 	}
 
 	return true;

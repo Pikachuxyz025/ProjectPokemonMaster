@@ -68,6 +68,31 @@ public:
 		EPokemonDebugVerbosity Verbosity = EPokemonDebugVerbosity::Basic
 	);
 
+	void DrawDebugDirectionalArrowForCategory(
+		const UObject* SourceObject,
+		const FGameplayTag& CategoryTag,
+		const FVector& Start,
+		const FVector& End,
+		float ArrowSize = 20.f,
+		float Duration = 3.f,
+		FColor Color = FColor::Cyan,
+		float Thickness = 1.f,
+		EPokemonDebugVerbosity Verbosity = EPokemonDebugVerbosity::Basic
+	);
+
+	void DrawDebugCapsuleForCategory(
+		const UObject* SourceObject,
+		const FGameplayTag& CategoryTag,
+		const FVector& Center,
+		float HalfHeight,
+		float Radius,
+		const FRotator& Rotation = FRotator::ZeroRotator,
+		float Duration = 3.f,
+		FColor Color = FColor::Yellow,
+		float Thickness = 1.f,
+		EPokemonDebugVerbosity Verbosity = EPokemonDebugVerbosity::Basic
+	);
+
 	const TArray<FPokemonDebugMessage>& GetDebugMessages() const { return RecentMessages; }
 
 protected:

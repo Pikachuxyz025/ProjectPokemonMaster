@@ -90,6 +90,35 @@ public:
 		EPokemonDebugVerbosity Verbosity
 	);
 
+	UFUNCTION(BlueprintCallable,Category = "Pokemon|Debug",meta = (WorldContext = "WorldContextObject"))
+	static void DrawDirectionalArrow(
+		const UObject* WorldContextObject,
+		FGameplayTag CategoryTag,
+		FVector Start,
+		FVector End,
+		float ArrowSize = 20.f,
+		float Duration = 3.f,
+		FLinearColor Color = FLinearColor::Blue,
+		float Thickness = 1.f,
+		EPokemonDebugVerbosity Verbosity =
+		EPokemonDebugVerbosity::Basic
+	);
+
+	UFUNCTION(BlueprintCallable,Category = "Pokemon|Debug",meta = (WorldContext = "WorldContextObject"))
+	static void DrawCapsule(
+		const UObject* WorldContextObject,
+		FGameplayTag CategoryTag,
+		FVector Center,
+		float HalfHeight,
+		float Radius,
+		FRotator Rotation = FRotator::ZeroRotator,
+		float Duration = 3.f,
+		FLinearColor Color = FLinearColor::Yellow,
+		float Thickness = 1.f,
+		EPokemonDebugVerbosity Verbosity =
+		EPokemonDebugVerbosity::Basic
+	);
+
 private:
 	static UPokemonDebugWorldSubsystem* GetDebugSubsystem(const UObject* WorldContextObject);
 };

@@ -431,6 +431,13 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 		Request.TargetActor = CommandTarget.TargetActor;
 		Request.TargetPointTag = CommandTarget.TargetPointTag;
 		Request.TargetLocation = CommandTarget.TargetLocation;
+
+		Request.bHasTargetImpactNormal = CommandTarget.bHasHitResult && CommandTarget.HitResult.bBlockingHit;
+
+		if (Request.bHasTargetImpactNormal)
+		{
+			Request.TargetImpactNormal = CommandTarget.ImpactNormal.GetSafeNormal();
+		}
 	}
 	else if (IsValid(TargetActor))
 	{
@@ -462,6 +469,8 @@ bool UAT_CombatApproach::SubmitNavigationRequest()
 		}
 
 		Request.MeleeApproach = MeleeApproach;
+
+		
 
 		UE_LOG(LogTemp, Display,
 			TEXT("[CombatApproach] MeleePlanCaptured | RequestId=%s | ")

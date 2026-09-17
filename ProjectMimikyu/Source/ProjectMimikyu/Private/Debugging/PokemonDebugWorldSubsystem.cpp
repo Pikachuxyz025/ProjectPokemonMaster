@@ -3,6 +3,7 @@
 
 #include "Debugging/PokemonDebugWorldSubsystem.h"
 #include "Debugging/PokemonDebugLog.h"
+#include "DrawDebugHelpers.h"
 
 bool UPokemonDebugWorldSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -190,6 +191,32 @@ void UPokemonDebugWorldSubsystem::DrawDebugLineForCategory(const UObject* Source
 	if (UWorld* World = GetWorld())
 	{
 		DrawDebugLine(World, Start, End, Color, false, Duration, 0, Thickness);
+	}
+}
+
+void UPokemonDebugWorldSubsystem::DrawDebugDirectionalArrowForCategory(const UObject* SourceObject, const FGameplayTag& CategoryTag, const FVector& Start, const FVector& End, float ArrowSize, float Duration, FColor Color, float Thickness, EPokemonDebugVerbosity Verbosity)
+{
+	if (!ShouldEmitMessage(SourceObject, CategoryTag, Verbosity))
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		DrawDebugDirectionalArrow(World, Start, End, ArrowSize, Color, false, Duration, 0, Thickness);
+	}
+}
+
+void UPokemonDebugWorldSubsystem::DrawDebugCapsuleForCategory(const UObject* SourceObject, const FGameplayTag& CategoryTag, const FVector& Center, float HalfHeight, float Radius, const FRotator& Rotation, float Duration, FColor Color, float Thickness, EPokemonDebugVerbosity Verbosity)
+{
+	if (!ShouldEmitMessage(SourceObject, CategoryTag, Verbosity))
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		DrawDebugCapsule(World, Center, HalfHeight, Radius, Rotation.Quaternion(), Color, false, Duration, 0, Thickness);
 	}
 }
 

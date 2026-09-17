@@ -42,6 +42,12 @@ struct FAgentNavigationRequest
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag TargetPointTag;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Target")
+	bool bHasTargetImpactNormal = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Target")
+	FVector TargetImpactNormal = FVector::ZeroVector;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FPokemonMeleeContactSettings MeleeContact;
 
