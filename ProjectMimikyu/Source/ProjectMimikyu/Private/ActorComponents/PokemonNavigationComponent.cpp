@@ -819,6 +819,54 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
+	if (CurrentNavigationRequest.bHasTargetImpactNormal)
+	{
+		const FVector Normal =
+			CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
+
+		const FVector NormalStart =
+			CurrentNavigationRequest.TargetLocation + Normal * 2.f;
+
+		const FVector NormalEnd =
+			NormalStart + Normal * 200.f;
+
+		UPokemonDebugLibrary::DrawDirectionalArrow(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			NormalEnd,
+			40.f,
+			10.f,
+			FLinearColor::Red,
+			5.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			10.f,
+			10.f,
+			FLinearColor::Yellow,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalEnd,
+			12.f,
+			10.f,
+			FLinearColor::Green,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+	}
+
 	if (FVector::DistSquared(Candidate.PlannedContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
 	{
 		CachedAIController->StopMovement();
@@ -991,23 +1039,66 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
-	if(CurrentNavigationRequest.bHasTargetImpactNormal)
+	/*if(CurrentNavigationRequest.bHasTargetImpactNormal)
 	{
 		const FVector NormalStart = CurrentNavigationRequest.TargetLocation;
-		const FVector NormalEnd = NormalStart + CurrentNavigationRequest.TargetImpactNormal * 100.f;
+
+		const FVector NormalEnd = NormalStart + CurrentNavigationRequest.TargetImpactNormal * 300.f;
+
+		const bool bSurfaceDebugEnabled = UPokemonDebugLibrary::IsCategoryEnabled(this, PokemonDebugTags::Navigation_Stance_Surface);
+		UE_LOG(LogTemp,Warning,TEXT(
+				"[SurfaceDebug] "
+				"World=%s | "
+				"Enabled=%d | "
+				"Target=%s | "
+				"Normal=%s | "
+				"NormalEnd=%s"
+			),
+			*GetNameSafe(GetWorld()),
+			bSurfaceDebugEnabled,
+			*NormalStart.ToString(),
+			*CurrentNavigationRequest.TargetImpactNormal.ToString(),
+			*NormalEnd.ToString()
+		);
 
 		UPokemonDebugLibrary::DrawDirectionalArrow(
 			this,
 			PokemonDebugTags::Navigation_Stance_Surface,
 			NormalStart,
 			NormalEnd,
-			20.f,
-			5.f,
-			FLinearColor::Blue,
-			3.f,
-			EPokemonDebugVerbosity::Detailed
+			60.f,
+			10.f,
+			FLinearColor::Red,
+			8.f,
+			EPokemonDebugVerbosity::Basic
 		);
-	}
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			20.f,
+			10.f,
+			FLinearColor::Yellow,
+			16,
+			5.f,
+			EPokemonDebugVerbosity::Basic
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalEnd,
+			20.f,
+			10.f,
+			FLinearColor::Green,
+			16,
+			5.f,
+			EPokemonDebugVerbosity::Basic
+		);
+	}*/
+
+	
 
 	return true;
 }
