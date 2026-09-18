@@ -20,6 +20,7 @@
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Debugging/PokemonDebugLibrary.h"
+#include "Debugging/PokemonDebugWorldSubsystem.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "NavigationPath.h"
 #include "NavigationData.h"
@@ -821,14 +822,53 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	if (CurrentNavigationRequest.bHasTargetImpactNormal)
 	{
-		const FVector Normal =
-			CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
+		const FVector Normal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
 
-		const FVector NormalStart =
-			CurrentNavigationRequest.TargetLocation + Normal * 2.f;
+		const FVector NormalStart = CurrentNavigationRequest.TargetLocation + Normal * 2.f;
 
-		const FVector NormalEnd =
-			NormalStart + Normal * 200.f;
+		const FVector NormalEnd = NormalStart + Normal * 200.f;
+
+		UPokemonDebugWorldSubsystem* DebugSubsystem =
+			GetWorld()
+			? GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>()
+			: nullptr;
+
+		if (DebugSubsystem)
+		{
+			const bool bCategoryEnabled = DebugSubsystem->IsCategoryEnabled(PokemonDebugTags::Navigation_Stance_Surface);
+
+			const bool bShouldEmit = DebugSubsystem->ShouldEmitMessage(this, PokemonDebugTags::Navigation_Stance_Surface, EPokemonDebugVerbosity::Detailed);
+
+			UE_LOG(LogTemp, Warning, TEXT(
+				"[SurfaceDebugGate] "
+				"World=%s | "
+				"Subsystem=%p | "
+				"Global=%d | "
+				"CategoryEnabled=%d | "
+				"ShouldEmit=%d | "
+				"MaxVerbosity=%d | "
+				"ObservedActor=%s"
+			),
+				*GetNameSafe(GetWorld()),
+				DebugSubsystem,
+				DebugSubsystem->IsGlobalDebugEnabled(),
+				bCategoryEnabled,
+				bShouldEmit,
+				static_cast<int32>(
+					DebugSubsystem->GetMaxVerbosity()),
+				*GetNameSafe(
+					DebugSubsystem->GetObservedActor())
+			);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT(
+				"[SurfaceDebugGate] "
+				"No DebugSubsystem | World=%s"
+			),
+				*GetNameSafe(GetWorld())
+			);
+		}
 
 		UPokemonDebugLibrary::DrawDirectionalArrow(
 			this,
