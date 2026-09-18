@@ -71,15 +71,18 @@ namespace PokemonDebugConsole
 
 		DebugSubsystem->SetCategoryEnabled(CategoryTag, bEnabled);
 
-		UE_LOG(LogPokemonDebug, Display, TEXT(
-			"Debug category %s is now %s | "
-			"World=%s | Subsystem=%p"
-		),
+		UE_LOG(LogPokemonDebug,Display,TEXT(
+				"Debug category %s is now %s | "
+				"World=%s | "
+				"WorldPath=%s | "
+				"Subsystem=%p"
+			),
 			*CategoryTag.ToString(),
 			bEnabled
 			? TEXT("Enabled")
 			: TEXT("Disabled"),
 			*GetNameSafe(World),
+			*GetPathNameSafe(World),
 			DebugSubsystem
 		);
 	}
