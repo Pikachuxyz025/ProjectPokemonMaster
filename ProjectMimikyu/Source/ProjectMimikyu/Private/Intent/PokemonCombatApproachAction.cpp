@@ -51,6 +51,16 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 
 	Request.TargetLocation = Spec.CommandTarget.TargetLocation;
 
+	Request.bHasTargetImpactNormal =
+		Spec.CommandTarget.bHasHitResult
+		&& Spec.CommandTarget.HitResult.bBlockingHit
+		&& !Spec.CommandTarget.ImpactNormal.IsNearlyZero();
+
+	if (Request.bHasTargetImpactNormal)
+	{
+		Request.TargetImpactNormal =Spec.CommandTarget.ImpactNormal.GetSafeNormal();
+	}
+
 	Request.DesiredDistance = MoveCDO->IdealRange;
 
 	Request.MeleeContact = MoveCDO->MeleeContact;
