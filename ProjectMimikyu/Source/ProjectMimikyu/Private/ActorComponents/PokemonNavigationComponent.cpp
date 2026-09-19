@@ -820,94 +820,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
-	if (CurrentNavigationRequest.bHasTargetImpactNormal)
-	{
-		const FVector Normal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
-
-		const FVector NormalStart = CurrentNavigationRequest.TargetLocation + Normal * 2.f;
-
-		const FVector NormalEnd = NormalStart + Normal * 200.f;
-
-		UPokemonDebugWorldSubsystem* DebugSubsystem =
-			GetWorld()
-			? GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>()
-			: nullptr;
-
-		if (DebugSubsystem)
-		{
-			const bool bCategoryEnabled = DebugSubsystem->IsCategoryEnabled(PokemonDebugTags::Navigation_Stance_Surface);
-
-			const bool bShouldEmit = DebugSubsystem->ShouldEmitMessage(this, PokemonDebugTags::Navigation_Stance_Surface, EPokemonDebugVerbosity::Detailed);
-
-			UE_LOG(LogTemp, Warning, TEXT(
-				"[SurfaceDebugGate] "
-				"World=%s | "
-				"Subsystem=%p | "
-				"Global=%d | "
-				"CategoryEnabled=%d | "
-				"ShouldEmit=%d | "
-				"MaxVerbosity=%d | "
-				"ObservedActor=%s"
-			),
-				*GetNameSafe(GetWorld()),
-				DebugSubsystem,
-				DebugSubsystem->IsGlobalDebugEnabled(),
-				bCategoryEnabled,
-				bShouldEmit,
-				static_cast<int32>(
-					DebugSubsystem->GetMaxVerbosity()),
-				*GetNameSafe(
-					DebugSubsystem->GetObservedActor())
-			);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT(
-				"[SurfaceDebugGate] "
-				"No DebugSubsystem | World=%s"
-			),
-				*GetNameSafe(GetWorld())
-			);
-		}
-
-		UPokemonDebugLibrary::DrawDirectionalArrow(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			NormalEnd,
-			40.f,
-			10.f,
-			FLinearColor::Red,
-			5.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			10.f,
-			10.f,
-			FLinearColor::Yellow,
-			16,
-			3.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalEnd,
-			12.f,
-			10.f,
-			FLinearColor::Green,
-			16,
-			3.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-	}
-
-	constexpr float StanceDebugDuration = 8.f;
+	constexpr float StanceDebugDuration = .35f;
 
 	// 
 	// Target point.
@@ -1078,6 +991,133 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const FLinearColor ContactColor = bContactValid ? FLinearColor::Green : FLinearColor::Red;
 
+	if (CurrentNavigationRequest.bHasTargetImpactNormal)
+	{
+		const FVector Normal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
+
+		const FVector NormalStart = CurrentNavigationRequest.TargetLocation + Normal * 2.f;
+
+		const FVector NormalEnd = NormalStart + Normal * 200.f;
+
+		const FVector ContactToRoot = GroundRoot - TargetLocation;
+
+		const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, CurrentNavigationRequest.TargetImpactNormal);
+
+		const bool bRootOnExposedSide = SurfaceSideDot > 0.f;
+
+		const FLinearColor SurfaceSideColor = bRootOnExposedSide ? FLinearColor::Green : FLinearColor::Red;
+
+		UPokemonDebugWorldSubsystem* DebugSubsystem =
+			GetWorld()
+			? GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>()
+			: nullptr;
+
+		if (DebugSubsystem)
+		{
+			const bool bCategoryEnabled = DebugSubsystem->IsCategoryEnabled(PokemonDebugTags::Navigation_Stance_Surface);
+
+			const bool bShouldEmit = DebugSubsystem->ShouldEmitMessage(this, PokemonDebugTags::Navigation_Stance_Surface, EPokemonDebugVerbosity::Detailed);
+
+			UE_LOG(LogTemp, Warning, TEXT(
+				"[SurfaceDebugGate] "
+				"World=%s | "
+				"Subsystem=%p | "
+				"Global=%d | "
+				"CategoryEnabled=%d | "
+				"ShouldEmit=%d | "
+				"MaxVerbosity=%d | "
+				"ObservedActor=%s"
+			),
+				*GetNameSafe(GetWorld()),
+				DebugSubsystem,
+				DebugSubsystem->IsGlobalDebugEnabled(),
+				bCategoryEnabled,
+				bShouldEmit,
+				static_cast<int32>(
+					DebugSubsystem->GetMaxVerbosity()),
+				*GetNameSafe(
+					DebugSubsystem->GetObservedActor())
+			);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT(
+				"[SurfaceDebugGate] "
+				"No DebugSubsystem | World=%s"
+			),
+				*GetNameSafe(GetWorld())
+			);
+		}
+
+		UPokemonDebugLibrary::DrawDirectionalArrow(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			NormalEnd,
+			40.f,
+			10.f,
+			FLinearColor::Red,
+			5.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			10.f,
+			10.f,
+			FLinearColor::Yellow,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalEnd,
+			12.f,
+			10.f,
+			FLinearColor::Green,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceDotDebug] "
+			"RequestId=%s | "
+			"RootOnExposedSide=%s | "
+			"SurfaceSideDot=%.2f | "
+			"ContactToRoot=%s | "
+			"TargetImpactNormal=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			bRootOnExposedSide
+			? TEXT("TRUE")
+			: TEXT("FALSE"),
+			SurfaceSideDot,
+			*ContactToRoot.ToString(),
+			*CurrentNavigationRequest.TargetImpactNormal.ToString()
+		);
+
+		//
+		// Show which side of the surface plane
+		// the proposed root actually occupies.
+		//
+		UPokemonDebugLibrary::DrawLine(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			TargetLocation,
+			GroundRoot,
+			StanceDebugDuration,
+			SurfaceSideColor,
+			4.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+	}
+
 	// 
 	// GroundRoot.
 	// 
@@ -1162,6 +1202,76 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		EPokemonDebugVerbosity::Detailed
 	);
 
+
+	float CapsuleRadius = 0.f;
+	float CapsuleHalfHeight = 0.f;
+
+	Capsule->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+
+	const FCollisionShape OccupancyShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
+
+	FCollisionQueryParams OccupancyQuery(SCENE_QUERY_STAT(PokemonMeleeStanceOccupancy), false, GetOwner());
+
+	FCollisionResponseParams OccupancyResponse;
+
+	//
+	// Important:
+	//
+	// Reuse the capsule's CURRENT response container
+	// and movement-ignore configuration.
+	//
+	// This makes the diagnostic answer the same colliion
+	// question the character's movement system would ask.
+	//
+	Capsule->InitSweepCollisionParams(OccupancyQuery, OccupancyResponse);
+
+	TArray<FOverlapResult> OccupancyOverlaps;
+
+	bool bCapsuleBlocked = false;
+	bool bOccupancyTestAvailable = false;
+
+	FString BlockingActorName = TEXT("None"); 
+	FString BlockingComponentName = TEXT("None");
+
+	if (UWorld* World = GetWorld();World&&Capsule->IsQueryCollisionEnabled())
+	{
+		bOccupancyTestAvailable = true;
+		bCapsuleBlocked = World->OverlapMultiByChannel(
+			OccupancyOverlaps,
+			GroundRoot,
+			GroundFacing.Quaternion(),
+			Capsule->GetCollisionObjectType(),
+			OccupancyShape,
+			OccupancyQuery,
+			OccupancyResponse
+		);
+
+		if (bCapsuleBlocked)
+		{
+			for (const FOverlapResult& Overlap : OccupancyOverlaps)
+			{
+				if (!Overlap.bBlockingHit)
+				{
+					continue;
+				}
+
+				BlockingActorName = GetNameSafe(Overlap.GetActor());
+
+				BlockingComponentName = GetNameSafe(Overlap.GetComponent());
+
+				break;
+			}
+		}
+	}
+
+	const bool bCapsulePlacementValid = bOccupancyTestAvailable && !bCapsuleBlocked;
+
+	const FLinearColor OccupancyColor = !bOccupancyTestAvailable 
+		? FLinearColor(.5f, .5f, .5f, 1.f) 
+		: bCapsulePlacementValid 
+		? FLinearColor::Green 
+		: FLinearColor::Red;
+
 	//
 	// Lucario's capsule if standing at GroundRoot.
 	// 
@@ -1170,78 +1280,41 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	//
 	UPokemonDebugLibrary::DrawCapsule(
 		this,
-		PokemonDebugTags::Navigation_Stance,
+		PokemonDebugTags::Navigation_Stance_Occupancy,
 		GroundRoot,
-		Capsule->GetScaledCapsuleHalfHeight(),
-		Capsule->GetScaledCapsuleRadius(),
+		CapsuleHalfHeight,
+		CapsuleRadius,
 		GroundFacing,
 		StanceDebugDuration,
-		FLinearColor::Blue,
-		2.f,
+		OccupancyColor,
+		3.f,
 		EPokemonDebugVerbosity::Detailed
 	);
 
 	UE_LOG(LogTemp, Display, TEXT(
-		"[MeleeStanceDebug] "
+		"[MeleeStanceOccupancyDebug] "
 		"RequestId=%s | "
-		"RequiredRoot=%s | "
+		"TestAvailable=%d | "
+		"CapsuleBlocked=%d | "
+		"PlacementValid=%d | "
 		"GroundRoot=%s | "
-		"ProjectionDelta=%.2f | "
-		"GroundContact=%s | "
-		"Target=%s | "
-		"ContactError=%.2f | "
-		"ContactRadius=%.2f | "
-		"ContactSlack=%.2f | "
-		"ContactValid=%d | "
-		"NavigationRadius=%.2f"
+		"Radius=%.2f | "
+		"HalfHeight=%.2f | "
+		"OverlapCount=%d | "
+		"BlockingActor=%s | "
+		"BlockingComponent=%s"
 	),
 		*CurrentNavigationRequest.RequestId.ToString(),
-		*Candidate.RootLocation.ToString(),
+		bOccupancyTestAvailable,
+		bCapsuleBlocked,
+		bCapsulePlacementValid,
 		*GroundRoot.ToString(),
-		ProjectionDelta,
-		*GroundContact.ToString(),
-		*TargetLocation.ToString(),
-		ContactError,
-		Candidate.Radius,
-		ContactSlack,
-		bContactValid,
-		NavigationRadius
+		CapsuleRadius,
+		CapsuleHalfHeight,
+		OccupancyOverlaps.Num(),
+		*BlockingActorName,
+		*BlockingComponentName
 	);
-
-	const FVector ContactToRoot = GroundRoot - TargetLocation;
-	const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, CurrentNavigationRequest.TargetImpactNormal);
-
-	// Is the proposed execution root on the exposed side of the surface?
-	const bool bRootOnExposedSide = SurfaceSideDot > 0.f;
-	if (bRootOnExposedSide)
-	{
-		UE_LOG(LogTemp, Display, TEXT(
-			"[MeleeStanceDotDebug] "
-			"RequestId=%s | "
-			"RootOnExposedSide=TRUE | "
-			"SurfaceSideDot=%.2f | "
-			"ContactToRoot=%s | "
-			"TargetImpactNormal=%s"
-		),
-			*CurrentNavigationRequest.RequestId.ToString(),
-			SurfaceSideDot,
-			*ContactToRoot.ToString(),
-			*CurrentNavigationRequest.TargetImpactNormal.ToString()
-		);
-
-		// Visualize the surface normal at the target location.
-		UPokemonDebugLibrary::DrawDirectionalArrow(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			TargetLocation,
-			TargetLocation + CurrentNavigationRequest.TargetImpactNormal * 200.f,
-			40.f,
-			10.f,
-			FLinearColor::White,
-			StanceDebugDuration,
-			EPokemonDebugVerbosity::Detailed
-		);
-	}
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
