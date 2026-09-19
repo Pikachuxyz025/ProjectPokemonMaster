@@ -1070,7 +1070,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
 
-	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot);
+	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot); // why not static_cast<float>(FVector::Dist(Candidate.RootLocation, GroundRoot));
 
 	const float ContactSlack = Candidate.Radius - ContactError;
 
@@ -1207,6 +1207,41 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		bContactValid,
 		NavigationRadius
 	);
+
+	const FVector ContactToRoot = GroundRoot - TargetLocation;
+	const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, CurrentNavigationRequest.TargetImpactNormal);
+
+	// Is the proposed execution root on the exposed side of the surface?
+	const bool bRootOnExposedSide = SurfaceSideDot > 0.f;
+	if (bRootOnExposedSide)
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceDotDebug] "
+			"RequestId=%s | "
+			"RootOnExposedSide=TRUE | "
+			"SurfaceSideDot=%.2f | "
+			"ContactToRoot=%s | "
+			"TargetImpactNormal=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			SurfaceSideDot,
+			*ContactToRoot.ToString(),
+			*CurrentNavigationRequest.TargetImpactNormal.ToString()
+		);
+
+		// Visualize the surface normal at the target location.
+		UPokemonDebugLibrary::DrawDirectionalArrow(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			TargetLocation,
+			TargetLocation + CurrentNavigationRequest.TargetImpactNormal * 200.f,
+			40.f,
+			10.f,
+			FLinearColor::White,
+			StanceDebugDuration,
+			EPokemonDebugVerbosity::Detailed
+		);
+	}
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
