@@ -907,6 +907,77 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		);
 	}
 
+	constexpr float StanceDebugDuration = 8.f;
+
+	// 
+	// Target point.
+	// This is the position the attack is trying to contact.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Surface,
+		TargetLocation,
+		8.f,
+		StanceDebugDuration,
+		FLinearColor::White,
+		12,
+		2.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// RequiredRoot
+	//
+	// This is the root position produced by the authored
+	// melee approach geometry BEFORE NaviMesh projection.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Surface,
+		Candidate.RootLocation,
+		12.f,
+		StanceDebugDuration,
+		FLinearColor::Yellow,
+		12,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// Planned contact volume before grounding.
+    // 
+	// Candidate.PlannedContactCenter is where the authored
+	// attack contact center would land if Lucario could use
+	// Candidate.RootLocation exactly.
+	// 
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Surface,
+		Candidate.PlannedContactCenter,
+		Candidate.Radius,
+		StanceDebugDuration,
+		FLinearColor::Yellow,
+		20,
+		2.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+    // Show the authored relationship:
+    //
+    // RequiredRoot -> PlannedContactCenter
+    //
+	UPokemonDebugLibrary::DrawLine(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		Candidate.RootLocation,
+		Candidate.PlannedContactCenter,
+		StanceDebugDuration,
+		FLinearColor::Yellow,
+		2.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
 	if (FVector::DistSquared(Candidate.PlannedContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
 	{
 		CachedAIController->StopMovement();
@@ -999,6 +1070,144 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
 
+	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot);
+
+	const float ContactSlack = Candidate.Radius - ContactError;
+
+	const bool bContactValid = ContactError <= Candidate.Radius;
+
+	const FLinearColor ContactColor = bContactValid ? FLinearColor::Green : FLinearColor::Red;
+
+	// 
+	// GroundRoot.
+	// 
+	// This is where the required root ended up
+	// AFTER the NavMesh projection.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance,
+		GroundRoot,
+		12.f,
+		StanceDebugDuration,
+		FLinearColor(0.f, 1.f, 1.f, 1.f),
+		12,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// RequiredRoot -> GroundRoot.
+	// 
+	// This directly visualizes how much NavMesh projection
+	// altered the stance
+	//
+	UPokemonDebugLibrary::DrawLine(
+		this,
+		PokemonDebugTags::Navigation_Projection,
+		Candidate.RootLocation,
+		GroundRoot,
+		StanceDebugDuration,
+		FLinearColor(1.f, 0.f, 1.f, 1.f),
+		4.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// GroundContact center marker.
+	// 
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		6.f,
+		StanceDebugDuration,
+		ContactColor,
+		12,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// Actual contact volume AFTER grounding.
+	// 
+	// Green = Target is inside the attack contact volume.
+	// Red = Target is outside it.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		Candidate.Radius,
+		StanceDebugDuration,
+		ContactColor,
+		24,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// GroundContact -> TargetLocation.
+	// 
+	// Its length is literally ContactError.
+	//
+	UPokemonDebugLibrary::DrawLine(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		TargetLocation,
+		StanceDebugDuration,
+		FLinearColor(1.f, 0.5f, 0.f, 1.f),
+		4.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// Lucario's capsule if standing at GroundRoot.
+	// 
+	// This lets us see the physical occupancy associated
+	// with the projected execution stance.
+	//
+	UPokemonDebugLibrary::DrawCapsule(
+		this,
+		PokemonDebugTags::Navigation_Stance,
+		GroundRoot,
+		Capsule->GetScaledCapsuleHalfHeight(),
+		Capsule->GetScaledCapsuleRadius(),
+		GroundFacing,
+		StanceDebugDuration,
+		FLinearColor::Blue,
+		2.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[MeleeStanceDebug] "
+		"RequestId=%s | "
+		"RequiredRoot=%s | "
+		"GroundRoot=%s | "
+		"ProjectionDelta=%.2f | "
+		"GroundContact=%s | "
+		"Target=%s | "
+		"ContactError=%.2f | "
+		"ContactRadius=%.2f | "
+		"ContactSlack=%.2f | "
+		"ContactValid=%d | "
+		"NavigationRadius=%.2f"
+	),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*Candidate.RootLocation.ToString(),
+		*GroundRoot.ToString(),
+		ProjectionDelta,
+		*GroundContact.ToString(),
+		*TargetLocation.ToString(),
+		ContactError,
+		Candidate.Radius,
+		ContactSlack,
+		bContactValid,
+		NavigationRadius
+	);
+
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonNav] MeleeExecutionCandidate | RequestId=%s | ")
 		TEXT("Target=%s | RequiredRoot=%s | GroundRoot=%s | ")
@@ -1078,67 +1287,6 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 		return false;
 	}
-
-	/*if(CurrentNavigationRequest.bHasTargetImpactNormal)
-	{
-		const FVector NormalStart = CurrentNavigationRequest.TargetLocation;
-
-		const FVector NormalEnd = NormalStart + CurrentNavigationRequest.TargetImpactNormal * 300.f;
-
-		const bool bSurfaceDebugEnabled = UPokemonDebugLibrary::IsCategoryEnabled(this, PokemonDebugTags::Navigation_Stance_Surface);
-		UE_LOG(LogTemp,Warning,TEXT(
-				"[SurfaceDebug] "
-				"World=%s | "
-				"Enabled=%d | "
-				"Target=%s | "
-				"Normal=%s | "
-				"NormalEnd=%s"
-			),
-			*GetNameSafe(GetWorld()),
-			bSurfaceDebugEnabled,
-			*NormalStart.ToString(),
-			*CurrentNavigationRequest.TargetImpactNormal.ToString(),
-			*NormalEnd.ToString()
-		);
-
-		UPokemonDebugLibrary::DrawDirectionalArrow(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			NormalEnd,
-			60.f,
-			10.f,
-			FLinearColor::Red,
-			8.f,
-			EPokemonDebugVerbosity::Basic
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			20.f,
-			10.f,
-			FLinearColor::Yellow,
-			16,
-			5.f,
-			EPokemonDebugVerbosity::Basic
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalEnd,
-			20.f,
-			10.f,
-			FLinearColor::Green,
-			16,
-			5.f,
-			EPokemonDebugVerbosity::Basic
-		);
-	}*/
-
-	
 
 	return true;
 }
