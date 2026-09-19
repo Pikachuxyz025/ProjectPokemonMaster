@@ -1002,7 +1002,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 		const FVector ContactToRoot = GroundRoot - TargetLocation;
 
-		const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, CurrentNavigationRequest.TargetImpactNormal);
+		const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, Normal);
 
 		const bool bRootOnExposedSide = SurfaceSideDot > 0.f;
 
@@ -1013,50 +1013,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			? GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>()
 			: nullptr;
 
-		if (DebugSubsystem)
-		{
-			const bool bCategoryEnabled = DebugSubsystem->IsCategoryEnabled(PokemonDebugTags::Navigation_Stance_Surface);
-
-			const bool bShouldEmit = DebugSubsystem->ShouldEmitMessage(this, PokemonDebugTags::Navigation_Stance_Surface, EPokemonDebugVerbosity::Detailed);
-
-			UE_LOG(LogTemp, Warning, TEXT(
-				"[SurfaceDebugGate] "
-				"World=%s | "
-				"Subsystem=%p | "
-				"Global=%d | "
-				"CategoryEnabled=%d | "
-				"ShouldEmit=%d | "
-				"MaxVerbosity=%d | "
-				"ObservedActor=%s"
-			),
-				*GetNameSafe(GetWorld()),
-				DebugSubsystem,
-				DebugSubsystem->IsGlobalDebugEnabled(),
-				bCategoryEnabled,
-				bShouldEmit,
-				static_cast<int32>(
-					DebugSubsystem->GetMaxVerbosity()),
-				*GetNameSafe(
-					DebugSubsystem->GetObservedActor())
-			);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT(
-				"[SurfaceDebugGate] "
-				"No DebugSubsystem | World=%s"
-			),
-				*GetNameSafe(GetWorld())
-			);
-		}
-
 		UPokemonDebugLibrary::DrawDirectionalArrow(
 			this,
 			PokemonDebugTags::Navigation_Stance_Surface,
 			NormalStart,
 			NormalEnd,
 			40.f,
-			10.f,
+			StanceDebugDuration,
 			FLinearColor::Red,
 			5.f,
 			EPokemonDebugVerbosity::Detailed
@@ -1067,7 +1030,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			PokemonDebugTags::Navigation_Stance_Surface,
 			NormalStart,
 			10.f,
-			10.f,
+			StanceDebugDuration,
 			FLinearColor::Yellow,
 			16,
 			3.f,
@@ -1079,7 +1042,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			PokemonDebugTags::Navigation_Stance_Surface,
 			NormalEnd,
 			12.f,
-			10.f,
+			StanceDebugDuration,
 			FLinearColor::Green,
 			16,
 			3.f,
