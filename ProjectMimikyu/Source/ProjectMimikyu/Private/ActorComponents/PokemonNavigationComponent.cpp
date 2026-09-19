@@ -24,6 +24,7 @@
 #include "GameplayTags/PokemonDebugTags.h"
 #include "NavigationPath.h"
 #include "NavigationData.h"
+#include "Engine/OverlapResult.h"
 
 namespace
 {
