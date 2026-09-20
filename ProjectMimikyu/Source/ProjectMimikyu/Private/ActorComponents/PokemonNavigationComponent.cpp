@@ -1002,16 +1002,11 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 		const FVector ContactToRoot = GroundRoot - TargetLocation;
 
-		const float SurfaceSideDot = FVector::DotProduct(ContactToRoot, Normal);
+		const float RootSideDot = FVector::DotProduct(ContactToRoot, Normal);
 
-		const bool bRootOnExposedSide = SurfaceSideDot > 0.f;
+		const bool bRootOnExposedSide = RootSideDot > 0.f;
 
-		const FLinearColor SurfaceSideColor = bRootOnExposedSide ? FLinearColor::Green : FLinearColor::Red;
-
-		UPokemonDebugWorldSubsystem* DebugSubsystem =
-			GetWorld()
-			? GetWorld()->GetSubsystem<UPokemonDebugWorldSubsystem>()
-			: nullptr;
+		const FLinearColor RootSideColor = bRootOnExposedSide ? FLinearColor::Green : FLinearColor::Red;
 
 		UPokemonDebugLibrary::DrawDirectionalArrow(
 			this,
@@ -1061,7 +1056,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			bRootOnExposedSide
 			? TEXT("TRUE")
 			: TEXT("FALSE"),
-			SurfaceSideDot,
+			RootSideDot,
 			*ContactToRoot.ToString(),
 			*CurrentNavigationRequest.TargetImpactNormal.ToString()
 		);
@@ -1076,7 +1071,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			TargetLocation,
 			GroundRoot,
 			StanceDebugDuration,
-			SurfaceSideColor,
+			RootSideColor,
 			4.f,
 			EPokemonDebugVerbosity::Detailed
 		);
@@ -1166,15 +1161,25 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		EPokemonDebugVerbosity::Detailed
 	);
 
-
 	float CapsuleRadius = 0.f;
 	float CapsuleHalfHeight = 0.f;
 
-	Capsule->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+	Capsule->GetScaledCapsuleSize(
+		CapsuleRadius,
+		CapsuleHalfHeight
+	);
 
-	const FCollisionShape OccupancyShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
+	const FCollisionShape OccupancyShape =
+		FCollisionShape::MakeCapsule(
+			CapsuleRadius,
+			CapsuleHalfHeight
+		);
 
-	FCollisionQueryParams OccupancyQuery(SCENE_QUERY_STAT(PokemonMeleeStanceOccupancy), false, GetOwner());
+	FCollisionQueryParams OccupancyQuery(
+		SCENE_QUERY_STAT(PokemonMeleeStanceOccupancy),
+		false,
+		GetOwner()
+	);
 
 	FCollisionResponseParams OccupancyResponse;
 
@@ -1184,56 +1189,207 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	// Reuse the capsule's CURRENT response container
 	// and movement-ignore configuration.
 	//
-	// This makes the diagnostic answer the same colliion
+	// This makes the diagnostic answer the same collision
 	// question the character's movement system would ask.
 	//
-	Capsule->InitSweepCollisionParams(OccupancyQuery, OccupancyResponse);
+	Capsule->InitSweepCollisionParams(
+		OccupancyQuery,
+		OccupancyResponse
+	);
 
 	TArray<FOverlapResult> OccupancyOverlaps;
 
 	bool bCapsuleBlocked = false;
 	bool bOccupancyTestAvailable = false;
 
-	FString BlockingActorName = TEXT("None"); 
+	FString BlockingActorName = TEXT("None");
 	FString BlockingComponentName = TEXT("None");
 
-	if (UWorld* World = GetWorld();World&&Capsule->IsQueryCollisionEnabled())
+	if (UWorld* World = GetWorld();
+		World && Capsule->IsQueryCollisionEnabled())
 	{
 		bOccupancyTestAvailable = true;
-		bCapsuleBlocked = World->OverlapMultiByChannel(
-			OccupancyOverlaps,
-			GroundRoot,
-			GroundFacing.Quaternion(),
-			Capsule->GetCollisionObjectType(),
-			OccupancyShape,
-			OccupancyQuery,
-			OccupancyResponse
-		);
+
+		bCapsuleBlocked =
+			World->OverlapMultiByChannel(
+				OccupancyOverlaps,
+				GroundRoot,
+				GroundFacing.Quaternion(),
+				Capsule->GetCollisionObjectType(),
+				OccupancyShape,
+				OccupancyQuery,
+				OccupancyResponse
+			);
 
 		if (bCapsuleBlocked)
 		{
-			for (const FOverlapResult& Overlap : OccupancyOverlaps)
+			for (const FOverlapResult& Overlap :
+				OccupancyOverlaps)
 			{
 				if (!Overlap.bBlockingHit)
 				{
 					continue;
 				}
 
-				BlockingActorName = GetNameSafe(Overlap.GetActor());
+				BlockingActorName =
+					GetNameSafe(Overlap.GetActor());
 
-				BlockingComponentName = GetNameSafe(Overlap.GetComponent());
+				BlockingComponentName =
+					GetNameSafe(Overlap.GetComponent());
 
 				break;
 			}
 		}
 	}
 
-	const bool bCapsulePlacementValid = bOccupancyTestAvailable && !bCapsuleBlocked;
+	const FVector SurfaceNormal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
 
-	const FLinearColor OccupancyColor = !bOccupancyTestAvailable 
-		? FLinearColor(.5f, .5f, .5f, 1.f) 
-		: bCapsulePlacementValid 
-		? FLinearColor::Green 
+	FVector SurfaceFacingDirection = -SurfaceNormal;
+	SurfaceFacingDirection.Z = 0.f;
+
+	if (SurfaceFacingDirection.Normalize())
+	{
+		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
+			? RootSpaceContactOffset.Rotation().Yaw
+			: 0.f;
+
+		const FRotator SurfaceSeedFacing(0.f, FRotator::NormalizeAxis(SurfaceFacingDirection.Rotation().Yaw - ContactYaw), 0.f);
+
+		const FVector SurfaceSeedRequiredRoot = TargetLocation - SurfaceSeedFacing.RotateVector(RootSpaceContactOffset);
+
+		const FVector SurfaceSeedRequiredFeet = SurfaceSeedRequiredRoot - RootAboveFeet;
+
+		FVector SurfaceSeedNavGoal;
+
+		const bool bSurfaceSeedProjectedValid = TryProjectNavigationGoal(SurfaceSeedRequiredFeet, ApproachProjectionExtent, SurfaceSeedNavGoal);
+
+		if (bSurfaceSeedProjectedValid)
+		{
+			const FVector SurfaceSeedGroundRoot = SurfaceSeedNavGoal + RootAboveFeet;
+
+			const FVector SurfaceSeedGroundContact = SurfaceSeedGroundRoot + SurfaceSeedFacing.RotateVector(RootSpaceContactOffset);
+
+			const float SurfaceSeedContactError = FVector::Dist(SurfaceSeedGroundContact, TargetLocation);
+
+			const float SurfaceSeedContactSlack = Candidate.Radius - SurfaceSeedContactError;
+
+			const bool bSurfaceSeedContactValid = SurfaceSeedContactError <= Candidate.Radius;
+
+			const float SurfaceSeedProjectionDelta = FVector::Dist(SurfaceSeedRequiredRoot, SurfaceSeedGroundRoot);
+
+			const FVector SurfaceSeedContactToRoot = SurfaceSeedGroundRoot - TargetLocation;
+
+			const float SurfaceSeedSideDot = FVector::DotProduct(SurfaceSeedContactToRoot, SurfaceNormal);
+
+			const bool bSurfaceSeedExposed = SurfaceSeedSideDot > 0.f;
+
+			TArray<FOverlapResult> SurfaceSeedOverlaps;
+
+			bool bSurfaceSeedBlocked = false;
+
+			if (UWorld* World = GetWorld();
+				World && Capsule->IsQueryCollisionEnabled())
+			{
+				bSurfaceSeedBlocked = World->OverlapMultiByChannel(
+					SurfaceSeedOverlaps,
+					SurfaceSeedGroundRoot,
+					SurfaceSeedFacing.Quaternion(),
+					Capsule->GetCollisionObjectType(),
+					OccupancyShape,
+					OccupancyQuery,
+					OccupancyResponse);
+			}
+
+			const bool bSurfaceSeedPlacementValid = !bSurfaceSeedBlocked;
+
+			const FLinearColor SurfaceSeedColor(
+				0.65f,
+				0.20f,
+				1.0f,
+				1.0f
+			);
+
+			UPokemonDebugLibrary::DrawSphere(
+				this,
+				PokemonDebugTags::Navigation_Stance_Surface,
+				SurfaceSeedGroundRoot,
+				14.f,
+				StanceDebugDuration,
+				SurfaceSeedColor,
+				16,
+				4.f,
+				EPokemonDebugVerbosity::Detailed
+			);
+
+			UPokemonDebugLibrary::DrawLine(
+				this,
+				PokemonDebugTags::Navigation_Stance_Surface,
+				SurfaceSeedGroundRoot,
+				SurfaceSeedGroundContact,
+				StanceDebugDuration,
+				SurfaceSeedColor,
+				4.f,
+				EPokemonDebugVerbosity::Detailed
+			);
+
+			UE_LOG(LogTemp,Display,TEXT(
+					"[MeleeSurfaceSeedDebug] "
+					"RequestId=%s | "
+					"ProjectionValid=1 | "
+					"RequiredRoot=%s | "
+					"GroundRoot=%s | "
+					"GroundContact=%s | "
+					"ProjectionDelta=%.2f | "
+					"ContactError=%.2f | "
+					"ContactSlack=%.2f | "
+					"ContactValid=%d | "
+					"SurfaceSideDot=%.2f | "
+					"ExposedSide=%d | "
+					"CapsuleBlocked=%d | "
+					"PlacementValid=%d"
+				),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				*SurfaceSeedRequiredRoot.ToString(),
+				*SurfaceSeedGroundRoot.ToString(),
+				*SurfaceSeedGroundContact.ToString(),
+				SurfaceSeedProjectionDelta,
+				SurfaceSeedContactError,
+				SurfaceSeedContactSlack,
+				bSurfaceSeedContactValid,
+				SurfaceSeedSideDot,
+				bSurfaceSeedExposed,
+				bSurfaceSeedBlocked,
+				bSurfaceSeedPlacementValid
+			);
+
+		}
+		else
+		{
+			UE_LOG(LogTemp,Display,TEXT(
+					"[MeleeSurfaceSeedDebug] "
+					"RequestId=%s | "
+					"ProjectionValid=0 | "
+					"RequiredRoot=%s"
+				),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				*SurfaceSeedRequiredRoot.ToString()
+			);
+		}
+	}
+
+	const bool bCapsulePlacementValid =
+		bOccupancyTestAvailable
+		&& !bCapsuleBlocked;
+
+	const FLinearColor OccupancyColor =
+		!bOccupancyTestAvailable
+		? FLinearColor(
+			0.5f,
+			0.5f,
+			0.5f,
+			1.f)
+		: bCapsulePlacementValid
+		? FLinearColor::Green
 		: FLinearColor::Red;
 
 	//
