@@ -141,6 +141,12 @@ private:
 	uint32 TraversalSegmentSerial = 0;
 	FPokemonCompositeMoveCost SelectedCompositeCost;
 
+	FGuid DiagnosticMeleeStanceRequestId;
+
+	bool bHasDiagnosticMeleeStance = false;
+
+	float DiagnosticMeleeStanceAngle = 0.f;
+
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
 

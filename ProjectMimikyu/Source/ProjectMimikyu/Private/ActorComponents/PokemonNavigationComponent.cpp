@@ -20,7 +20,6 @@
 #include "GameFramework/Pawn.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Debugging/PokemonDebugLibrary.h"
-#include "Debugging/PokemonDebugWorldSubsystem.h"
 #include "GameplayTags/PokemonDebugTags.h"
 #include "NavigationPath.h"
 #include "NavigationData.h"
@@ -52,6 +51,64 @@ namespace
 			return TEXT("Unknown");
 		}
 	}
+
+	struct FMeleeStanceSearchCandidate
+	{
+		float AngleOffsetDegrees = 0.f;
+
+		FRotator Facing = FRotator::ZeroRotator;
+
+		FVector RequiredRoot = FVector::ZeroVector;
+		FVector RequiredFeet = FVector::ZeroVector;
+		FVector NavGoal = FVector::ZeroVector;
+		FVector GroundRoot = FVector::ZeroVector;
+		FVector GroundContact = FVector::ZeroVector;
+
+		float ProjectionDelta = 0.f;
+		float ContactError = 0.f;
+		float ContactSlack = 0.f;
+		float SurfaceSideDot = 0.f;
+		float PathLength = -1.f;
+		float ForwardAlignment = -1.f;
+
+		bool bProjectionValid = false;
+		bool bContactValid = false;
+		bool bExposedSide = false;
+
+		bool bOccupancyTestAvailable = false;
+		bool bCapsuleBlocked = false;
+		bool bPlacementValid = false;
+
+		bool bPathChecked = false;
+		bool bCompletePath = false;
+
+		bool bPreferredMarginSatisfied = false;
+
+		bool IsViable() const
+		{
+			return bProjectionValid
+				&& bContactValid
+				&& bExposedSide
+				&& bPlacementValid
+				&& bCompletePath;
+		}
+
+		bool MatchesAngle(float OtherAngle) const
+		{
+			return FMath::IsNearlyEqual(AngleOffsetDegrees, OtherAngle, 0.1f);
+		}
+	};
+
+	static constexpr float MeleeStanceSearchAngles[] =
+	{
+		0.f,
+		15.f,
+		-15.f,
+		30.f,
+		-30.f,
+		45.f,
+		-45.f
+	};
 }
 
 namespace PokemonNavigationUtils
@@ -821,6 +878,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
+	
 	constexpr float StanceDebugDuration = .35f;
 
 	// 
@@ -940,6 +998,23 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	// Navigation location describes feet; execution location describes root
 	const FVector RootAboveFeet(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight());
 
+	const FVector& RootSpaceContactOffset = Plan.RootSpaceContactOffset;
+
+	float CapsuleRadius = 0.f;
+	float CapsuleHalfHeight = 0.f;
+
+	Capsule->GetScaledCapsuleSize(CapsuleRadius, CapsuleHalfHeight);
+
+	const FCollisionShape OccupancyShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
+
+	FCollisionQueryParams OccupancyQuery(SCENE_QUERY_STAT(PokemonMeleeStanceOccupancy), false, GetOwner());
+
+	FCollisionResponseParams OccupancyResponse;
+
+	Capsule->InitSweepCollisionParams(OccupancyQuery, OccupancyResponse);
+
+	bool bOccupancyTestAvailable = GetWorld() && Capsule->IsQueryCollisionEnabled();
+
 	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
 
 	FVector NavGoal;
@@ -961,9 +1036,6 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const FVector GroundRoot = NavGoal + RootAboveFeet;
 
-	// Recover the sampled contact offset in the actor's rotation frame.
-	const FVector& RootSpaceContactOffset = Plan.RootSpaceContactOffset;
-
 	// Predict how the task would face that target from the projected root.
 	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
 
@@ -984,7 +1056,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
 
-	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot); // why not static_cast<float>(FVector::Dist(Candidate.RootLocation, GroundRoot));
+	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot); 
 
 	const float ContactSlack = Candidate.Radius - ContactError;
 
@@ -1161,46 +1233,10 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		EPokemonDebugVerbosity::Detailed
 	);
 
-	float CapsuleRadius = 0.f;
-	float CapsuleHalfHeight = 0.f;
-
-	Capsule->GetScaledCapsuleSize(
-		CapsuleRadius,
-		CapsuleHalfHeight
-	);
-
-	const FCollisionShape OccupancyShape =
-		FCollisionShape::MakeCapsule(
-			CapsuleRadius,
-			CapsuleHalfHeight
-		);
-
-	FCollisionQueryParams OccupancyQuery(
-		SCENE_QUERY_STAT(PokemonMeleeStanceOccupancy),
-		false,
-		GetOwner()
-	);
-
-	FCollisionResponseParams OccupancyResponse;
-
-	//
-	// Important:
-	//
-	// Reuse the capsule's CURRENT response container
-	// and movement-ignore configuration.
-	//
-	// This makes the diagnostic answer the same collision
-	// question the character's movement system would ask.
-	//
-	Capsule->InitSweepCollisionParams(
-		OccupancyQuery,
-		OccupancyResponse
-	);
-
 	TArray<FOverlapResult> OccupancyOverlaps;
 
 	bool bCapsuleBlocked = false;
-	bool bOccupancyTestAvailable = false;
+	
 
 	FString BlockingActorName = TEXT("None");
 	FString BlockingComponentName = TEXT("None");
@@ -1244,137 +1280,311 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const FVector SurfaceNormal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
 
-	FVector SurfaceFacingDirection = -SurfaceNormal;
-	SurfaceFacingDirection.Z = 0.f;
+	FVector BaseSurfaceFacing = -SurfaceNormal;
+	BaseSurfaceFacing.Z = 0.f;
 
-	if (SurfaceFacingDirection.Normalize())
+	FVector TravelDirection = OwnerPawn->GetVelocity().GetSafeNormal2D();
+
+	const bool bHasTravelDirection = OwnerPawn->GetVelocity().SizeSquared2D() > FMath::Square(25.f);
+
+	if (!bHasTravelDirection)
 	{
+		TravelDirection = OwnerPawn->GetActorForwardVector().GetSafeNormal2D();
+	}
+
+	if(BaseSurfaceFacing.Normalize())
+	{ 
 		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
 			? RootSpaceContactOffset.Rotation().Yaw
 			: 0.f;
 
-		const FRotator SurfaceSeedFacing(0.f, FRotator::NormalizeAxis(SurfaceFacingDirection.Rotation().Yaw - ContactYaw), 0.f);
+		TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
-		const FVector SurfaceSeedRequiredRoot = TargetLocation - SurfaceSeedFacing.RotateVector(RootSpaceContactOffset);
+		SearchCandidates.Reserve(UE_ARRAY_COUNT(MeleeStanceSearchAngles));
 
-		const FVector SurfaceSeedRequiredFeet = SurfaceSeedRequiredRoot - RootAboveFeet;
-
-		FVector SurfaceSeedNavGoal;
-
-		const bool bSurfaceSeedProjectedValid = TryProjectNavigationGoal(SurfaceSeedRequiredFeet, ApproachProjectionExtent, SurfaceSeedNavGoal);
-
-		if (bSurfaceSeedProjectedValid)
+		for (const float AngleOffset : MeleeStanceSearchAngles)
 		{
-			const FVector SurfaceSeedGroundRoot = SurfaceSeedNavGoal + RootAboveFeet;
+			FMeleeStanceSearchCandidate& Search = SearchCandidates.AddDefaulted_GetRef();
 
-			const FVector SurfaceSeedGroundContact = SurfaceSeedGroundRoot + SurfaceSeedFacing.RotateVector(RootSpaceContactOffset);
+			Search.AngleOffsetDegrees = AngleOffset;
 
-			const float SurfaceSeedContactError = FVector::Dist(SurfaceSeedGroundContact, TargetLocation);
+			const FVector FacingDirection = BaseSurfaceFacing.RotateAngleAxis(AngleOffset, FVector::UpVector);
 
-			const float SurfaceSeedContactSlack = Candidate.Radius - SurfaceSeedContactError;
+			Search.Facing = FRotator(0.f, FRotator::NormalizeAxis(FacingDirection.Rotation().Yaw - ContactYaw), 0.f);
 
-			const bool bSurfaceSeedContactValid = SurfaceSeedContactError <= Candidate.Radius;
+			Search.RequiredRoot = TargetLocation - Search.Facing.RotateVector(RootSpaceContactOffset);
 
-			const float SurfaceSeedProjectionDelta = FVector::Dist(SurfaceSeedRequiredRoot, SurfaceSeedGroundRoot);
+			Search.RequiredFeet = Search.RequiredRoot - RootAboveFeet;
 
-			const FVector SurfaceSeedContactToRoot = SurfaceSeedGroundRoot - TargetLocation;
+			Search.bProjectionValid = TryProjectNavigationGoal(Search.RequiredFeet, ApproachProjectionExtent, Search.NavGoal);
 
-			const float SurfaceSeedSideDot = FVector::DotProduct(SurfaceSeedContactToRoot, SurfaceNormal);
-
-			const bool bSurfaceSeedExposed = SurfaceSeedSideDot > 0.f;
-
-			TArray<FOverlapResult> SurfaceSeedOverlaps;
-
-			bool bSurfaceSeedBlocked = false;
-
-			if (UWorld* World = GetWorld();
-				World && Capsule->IsQueryCollisionEnabled())
+			if (!Search.bProjectionValid)
 			{
-				bSurfaceSeedBlocked = World->OverlapMultiByChannel(
-					SurfaceSeedOverlaps,
-					SurfaceSeedGroundRoot,
-					SurfaceSeedFacing.Quaternion(),
+				// Log and continue
+				continue;
+			}
+
+			Search.GroundRoot = Search.NavGoal + RootAboveFeet;
+
+			Search.ProjectionDelta = static_cast<float>(FVector::Dist(Search.RequiredRoot, Search.GroundRoot));
+
+			Search.GroundContact = Search.GroundRoot + Search.Facing.RotateVector(RootSpaceContactOffset);
+
+			Search.ContactError = static_cast<float>(FVector::Dist(Search.GroundContact, TargetLocation));
+
+			Search.ContactSlack = Candidate.Radius - Search.ContactError;
+
+			Search.bContactValid = Search.ContactError <= Candidate.Radius;
+
+			Search.bPreferredMarginSatisfied = Search.ContactSlack >= FMath::Max(0.f,ApproachArrivalMargin);
+
+			const FVector ContactToRoot = Search.GroundRoot - TargetLocation;
+
+			Search.SurfaceSideDot = FVector::DotProduct(ContactToRoot, SurfaceNormal);
+
+			Search.bExposedSide = Search.SurfaceSideDot > 0.f;
+
+			Search.bOccupancyTestAvailable = bOccupancyTestAvailable;
+
+			if (Search.bOccupancyTestAvailable)
+			{
+				TArray<FOverlapResult> SearchOverlaps;
+
+				Search.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
+					SearchOverlaps,
+					Search.GroundRoot,
+					Search.Facing.Quaternion(),
 					Capsule->GetCollisionObjectType(),
 					OccupancyShape,
 					OccupancyQuery,
-					OccupancyResponse);
+					OccupancyResponse
+				);
+
+				Search.bPlacementValid = !Search.bCapsuleBlocked;
 			}
 
-			const bool bSurfaceSeedPlacementValid = !bSurfaceSeedBlocked;
+			const FVector PathStart = Pokemon->GetCharacterMovement()
+				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
+				: OwnerPawn->GetActorLocation();
 
-			const FLinearColor SurfaceSeedColor(
-				0.65f,
-				0.20f,
-				1.0f,
-				1.0f
-			);
+			if (Search.bContactValid && Search.bPlacementValid && Search.bExposedSide)
+			{
+				Search.bPathChecked = true;
+
+				UNavigationPath* SearchPath = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), PathStart, Search.NavGoal, OwnerPawn);
+
+				Search.bCompletePath = SearchPath && SearchPath->IsValid() && !SearchPath->IsPartial();
+
+				if (SearchPath && SearchPath->IsValid())
+				{
+					Search.PathLength = static_cast<float>(SearchPath->GetPathLength());
+				}		
+			}
+
+			const FLinearColor SearchColor = Search.IsViable()
+				? FLinearColor::Green
+				: Search.bProjectionValid
+				? FLinearColor::Red
+				: FLinearColor(.5f, .5f, .5f, 1.f);
+
+			if (Search.IsViable())
+			{
+				const FVector ToCandidate = (Search.GroundRoot - OwnerPawn->GetActorLocation()).GetSafeNormal2D();
+
+				Search.ForwardAlignment = FVector::DotProduct(TravelDirection, ToCandidate);
+			}
 
 			UPokemonDebugLibrary::DrawSphere(
 				this,
-				PokemonDebugTags::Navigation_Stance_Surface,
-				SurfaceSeedGroundRoot,
-				14.f,
+				PokemonDebugTags::Navigation_Stance_Search,
+				Search.bProjectionValid
+				? Search.GroundRoot
+				: Search.RequiredRoot,
+				10.f,
 				StanceDebugDuration,
-				SurfaceSeedColor,
-				16,
-				4.f,
+				SearchColor,
+				12,
+				2.f,
 				EPokemonDebugVerbosity::Detailed
 			);
 
-			UPokemonDebugLibrary::DrawLine(
-				this,
-				PokemonDebugTags::Navigation_Stance_Surface,
-				SurfaceSeedGroundRoot,
-				SurfaceSeedGroundContact,
-				StanceDebugDuration,
-				SurfaceSeedColor,
-				4.f,
-				EPokemonDebugVerbosity::Detailed
-			);
-
-			UE_LOG(LogTemp,Display,TEXT(
-					"[MeleeSurfaceSeedDebug] "
-					"RequestId=%s | "
-					"ProjectionValid=1 | "
-					"RequiredRoot=%s | "
-					"GroundRoot=%s | "
-					"GroundContact=%s | "
-					"ProjectionDelta=%.2f | "
-					"ContactError=%.2f | "
-					"ContactSlack=%.2f | "
-					"ContactValid=%d | "
-					"SurfaceSideDot=%.2f | "
-					"ExposedSide=%d | "
-					"CapsuleBlocked=%d | "
-					"PlacementValid=%d"
-				),
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeStanceSearchCandidate] "
+				"RequestId=%s | "
+				"Angle=%+.0f | "
+				"Projection=%d | "
+				"Contact=%d | "
+				"ContactError=%.2f | "
+				"Slack=%.2f | "
+				"MarginSatisfied=%d | "
+				"SideDot=%.2f | "
+				"Exposed=%d | "
+				"Occupancy=%d | "
+				"PathChecked=%d | "
+				"CompletePath=%d | "
+				"PathLength=%.2f | "
+				"Viable=%d"
+			),
 				*CurrentNavigationRequest.RequestId.ToString(),
-				*SurfaceSeedRequiredRoot.ToString(),
-				*SurfaceSeedGroundRoot.ToString(),
-				*SurfaceSeedGroundContact.ToString(),
-				SurfaceSeedProjectionDelta,
-				SurfaceSeedContactError,
-				SurfaceSeedContactSlack,
-				bSurfaceSeedContactValid,
-				SurfaceSeedSideDot,
-				bSurfaceSeedExposed,
-				bSurfaceSeedBlocked,
-				bSurfaceSeedPlacementValid
+				Search.AngleOffsetDegrees,
+				Search.bProjectionValid,
+				Search.bContactValid,
+				Search.ContactError,
+				Search.ContactSlack,
+				Search.bPreferredMarginSatisfied,
+				Search.SurfaceSideDot,
+				Search.bExposedSide,
+				Search.bPlacementValid,
+				Search.bPathChecked,
+				Search.bCompletePath,
+				Search.PathLength,
+				Search.IsViable()
 			);
-
 		}
-		else
+
+		int32 ViableCount = 0;
+		const FMeleeStanceSearchCandidate* InitialCandidate = nullptr;
+
+		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
 		{
-			UE_LOG(LogTemp,Display,TEXT(
-					"[MeleeSurfaceSeedDebug] "
-					"RequestId=%s | "
-					"ProjectionValid=0 | "
-					"RequiredRoot=%s"
-				),
-				*CurrentNavigationRequest.RequestId.ToString(),
-				*SurfaceSeedRequiredRoot.ToString()
-			);
+			if (!Search.IsViable())
+			{
+				continue;
+			}
+
+			ViableCount++;
+
+			if (!InitialCandidate || Search.PathLength < InitialCandidate->PathLength)
+			{
+				InitialCandidate = &Search;
+			}
+
+			if (InitialCandidate)
+			{
+				bHasDiagnosticMeleeStance = true;
+
+				DiagnosticMeleeStanceAngle = InitialCandidate->AngleOffsetDegrees;
+
+				UE_LOG(LogTemp,Display,TEXT(
+						"[MeleeStanceSelection] "
+						"RequestId=%s | "
+						"Event=InitialAcquire | "
+						"Angle=%+.0f | "
+						"PathLength=%.2f | "
+						"Alignment=%.3f"
+					),
+					*CurrentNavigationRequest
+					.RequestId.ToString(),
+					InitialCandidate
+					->AngleOffsetDegrees,
+					InitialCandidate->PathLength,
+					InitialCandidate
+					->ForwardAlignment
+				);
+
+			}
 		}
+
+		UE_LOG(LogTemp,Display,TEXT(
+				"[MeleeStanceSearchSummary] "
+				"RequestId=%s | "
+				"CandidateCount=%d | "
+				"ViableCount=%d"
+			),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			SearchCandidates.Num(),
+			ViableCount
+		);
+
+		const bool bNewSelectionRequest = DiagnosticMeleeStanceRequestId != CurrentNavigationRequest.RequestId;
+		bHasDiagnosticMeleeStance = false;
+
+		if (bNewSelectionRequest)
+		{
+			DiagnosticMeleeStanceRequestId = CurrentNavigationRequest.RequestId;
+			bHasDiagnosticMeleeStance = false;
+
+			const FMeleeStanceSearchCandidate* CurrentSelection = nullptr;
+
+			for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
+			{
+				if (Search.MatchesAngle(DiagnosticMeleeStanceAngle))
+				{
+					CurrentSelection = &Search;
+					break;
+				}
+			}
+
+			const FMeleeStanceSearchCandidate* BestForwardCandidate = nullptr;
+
+			for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
+			{
+				if (!Search.IsViable())
+				{
+					continue;
+				}
+				if (!BestForwardCandidate || Search.ForwardAlignment > BestForwardCandidate->ForwardAlignment)
+				{
+					BestForwardCandidate = &Search;
+				}
+
+				const bool bSelected = bHasDiagnosticMeleeStance && Search.MatchesAngle(DiagnosticMeleeStanceAngle);
+
+				const float MarkerRadius = bSelected ? 18.f : 8.f;
+				const float MarkerThickness = bSelected ? 5.f : 2.f;
+			}
+
+			constexpr float AlignmentSwitchThreshold = 0.15f;
+
+			bool bWouldSwitch = false;
+
+			if (CurrentSelection 
+				&& CurrentSelection->IsViable() 
+				&& BestForwardCandidate 
+				&& BestForwardCandidate != CurrentSelection)
+			{
+				const float AlignmentImprovement = BestForwardCandidate->ForwardAlignment - CurrentSelection->ForwardAlignment;
+
+				bWouldSwitch = AlignmentImprovement >= AlignmentSwitchThreshold;
+			}
+
+			if (bWouldSwitch)
+			{
+				const float PreviousAngle = DiagnosticMeleeStanceAngle;
+
+				DiagnosticMeleeStanceAngle = BestForwardCandidate->AngleOffsetDegrees;
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeStanceSelection] "
+					"RequestId=%s | "
+					"Event=ForwardSwitch | "
+					"From=%+.0f | "
+					"To=%+.0f | "
+					"OldAlignment=%.3f | "
+					"NewAlignment=%.3f"
+				),
+					*CurrentNavigationRequest
+					.RequestId.ToString(),
+					PreviousAngle,
+					DiagnosticMeleeStanceAngle,
+					CurrentSelection
+					->ForwardAlignment,
+					BestForwardCandidate
+					->ForwardAlignment
+				);
+			}
+		}
+}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceSearch] "
+			"RequestId=%s | "
+			"Skipped=NoHorizontalSurfaceDirection"
+		),
+			*CurrentNavigationRequest
+			.RequestId.ToString()
+		);
 	}
 
 	const bool bCapsulePlacementValid =

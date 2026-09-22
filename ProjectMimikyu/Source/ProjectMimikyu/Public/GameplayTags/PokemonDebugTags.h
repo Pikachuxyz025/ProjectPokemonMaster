@@ -24,6 +24,7 @@ namespace PokemonDebugTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Contact);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Surface);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Search);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Occupancy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal);
 	
