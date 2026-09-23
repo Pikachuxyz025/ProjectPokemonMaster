@@ -1524,7 +1524,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 				DiagnosticMeleeStanceAngle = ShortestPathCandidate->AngleOffsetDegrees;
 
-				bAcquiredThisEvaluation = true;
+				bHasDiagnosticMeleeStance = true;
 
 				CurrentSelection = ShortestPathCandidate;
 
