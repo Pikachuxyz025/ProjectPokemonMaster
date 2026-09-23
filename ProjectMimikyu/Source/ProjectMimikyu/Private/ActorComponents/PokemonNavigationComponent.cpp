@@ -878,7 +878,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		return false;
 	}
 
-	
+
 	constexpr float StanceDebugDuration = .35f;
 
 	// 
@@ -917,7 +917,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	//
 	// Planned contact volume before grounding.
-    // 
+	// 
 	// Candidate.PlannedContactCenter is where the authored
 	// attack contact center would land if Lucario could use
 	// Candidate.RootLocation exactly.
@@ -935,10 +935,10 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	);
 
 	//
-    // Show the authored relationship:
-    //
-    // RequiredRoot -> PlannedContactCenter
-    //
+	// Show the authored relationship:
+	//
+	// RequiredRoot -> PlannedContactCenter
+	//
 	UPokemonDebugLibrary::DrawLine(
 		this,
 		PokemonDebugTags::Navigation_Stance_Contact,
@@ -1056,7 +1056,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
 
-	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot); 
+	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot);
 
 	const float ContactSlack = Candidate.Radius - ContactError;
 
@@ -1236,7 +1236,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	TArray<FOverlapResult> OccupancyOverlaps;
 
 	bool bCapsuleBlocked = false;
-	
+
 
 	FString BlockingActorName = TEXT("None");
 	FString BlockingComponentName = TEXT("None");
@@ -1292,8 +1292,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		TravelDirection = OwnerPawn->GetActorForwardVector().GetSafeNormal2D();
 	}
 
-	if(BaseSurfaceFacing.Normalize())
-	{ 
+	if (BaseSurfaceFacing.Normalize())
+	{
 		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
 			? RootSpaceContactOffset.Rotation().Yaw
 			: 0.f;
@@ -1336,7 +1336,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 			Search.bContactValid = Search.ContactError <= Candidate.Radius;
 
-			Search.bPreferredMarginSatisfied = Search.ContactSlack >= FMath::Max(0.f,ApproachArrivalMargin);
+			Search.bPreferredMarginSatisfied = Search.ContactSlack >= FMath::Max(0.f, ApproachArrivalMargin);
 
 			const FVector ContactToRoot = Search.GroundRoot - TargetLocation;
 
@@ -1378,7 +1378,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				if (SearchPath && SearchPath->IsValid())
 				{
 					Search.PathLength = static_cast<float>(SearchPath->GetPathLength());
-				}		
+				}
 			}
 
 			const FLinearColor SearchColor = Search.IsViable()
@@ -1443,116 +1443,156 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		}
 
 		int32 ViableCount = 0;
-		const FMeleeStanceSearchCandidate* InitialCandidate = nullptr;
 
+		const FMeleeStanceSearchCandidate* ShortestPathCandidate = nullptr;
+		const FMeleeStanceSearchCandidate* BestForwardCandidate = nullptr;
+		const FMeleeStanceSearchCandidate* CurrentSelection = nullptr;
+
+		const bool bNewSelectionRequest = DiagnosticMeleeStanceRequestId != CurrentNavigationRequest.RequestId;
+
+		if (bNewSelectionRequest)
+		{
+			DiagnosticMeleeStanceRequestId = CurrentNavigationRequest.RequestId;
+
+			bHasDiagnosticMeleeStance = false;
+		}
+
+		//
+		// First pass:
+		// understand the freshly-generated candidate set.
+		//
 		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
 		{
-			if (!Search.IsViable())
+			if (Search.IsViable())
 			{
-				continue;
+				ViableCount++;
+
+				//
+				// Best acquision candidate:
+				// shortest actual navigation path
+				//
+				if (!ShortestPathCandidate || Search.PathLength < ShortestPathCandidate->PathLength)
+				{
+					ShortestPathCandidate = &Search;
+				}
+
+				//
+				// Best continuation candidate:
+				// most aligned with the current travel direction.
+				//
+				if (!BestForwardCandidate || Search.ForwardAlignment > BestForwardCandidate->ForwardAlignment)
+				{
+					BestForwardCandidate = &Search;
+				}
 			}
-
-			ViableCount++;
-
-			if (!InitialCandidate || Search.PathLength < InitialCandidate->PathLength)
+			//
+			// Recover our persistant selection
+			// from the newly-caluclated candidate set.
+			//
+			if (bHasDiagnosticMeleeStance && Search.MatchesAngle(DiagnosticMeleeStanceAngle))
 			{
-				InitialCandidate = &Search;
-			}
-
-			if (InitialCandidate)
-			{
-				bHasDiagnosticMeleeStance = true;
-
-				DiagnosticMeleeStanceAngle = InitialCandidate->AngleOffsetDegrees;
-
-				UE_LOG(LogTemp,Display,TEXT(
-						"[MeleeStanceSelection] "
-						"RequestId=%s | "
-						"Event=InitialAcquire | "
-						"Angle=%+.0f | "
-						"PathLength=%.2f | "
-						"Alignment=%.3f"
-					),
-					*CurrentNavigationRequest
-					.RequestId.ToString(),
-					InitialCandidate
-					->AngleOffsetDegrees,
-					InitialCandidate->PathLength,
-					InitialCandidate
-					->ForwardAlignment
-				);
-
+				CurrentSelection = &Search;
 			}
 		}
 
-		UE_LOG(LogTemp,Display,TEXT(
-				"[MeleeStanceSearchSummary] "
-				"RequestId=%s | "
-				"CandidateCount=%d | "
-				"ViableCount=%d"
-			),
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceSearchSummary] "
+			"RequestId=%s | "
+			"CandidateCount=%d | "
+			"ViableCount=%d"
+		),
 			*CurrentNavigationRequest.RequestId.ToString(),
 			SearchCandidates.Num(),
 			ViableCount
 		);
 
-		const bool bNewSelectionRequest = DiagnosticMeleeStanceRequestId != CurrentNavigationRequest.RequestId;
-		bHasDiagnosticMeleeStance = false;
+		bool bAcquiredThisEvaluation = false;
 
-		if (bNewSelectionRequest)
+		//
+		// Acquire when:
+		//  1. this is a new request,
+		//  2. we have no current selection,
+		//  3. the old selection is no longer viable.
+		//
+		if (!CurrentSelection || !CurrentSelection->IsViable())
 		{
-			DiagnosticMeleeStanceRequestId = CurrentNavigationRequest.RequestId;
-			bHasDiagnosticMeleeStance = false;
-
-			const FMeleeStanceSearchCandidate* CurrentSelection = nullptr;
-
-			for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
+			if (ShortestPathCandidate)
 			{
-				if (Search.MatchesAngle(DiagnosticMeleeStanceAngle))
-				{
-					CurrentSelection = &Search;
-					break;
-				}
+				const TCHAR* AcquireReason = bNewSelectionRequest
+					? TEXT("InitialAcquire")
+					: TEXT("ReacquireInvalidated");
+
+				DiagnosticMeleeStanceAngle = ShortestPathCandidate->AngleOffsetDegrees;
+
+				bAcquiredThisEvaluation = true;
+
+				CurrentSelection = ShortestPathCandidate;
+
+				bAcquiredThisEvaluation = true;
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeStanceSelection] "
+					"RequestId=%s | "
+					"Event=%s | "
+					"Angle=%+.0f | "
+					"PathLength=%.2f | "
+					"Alignment=%.3f"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					AcquireReason,
+					CurrentSelection->AngleOffsetDegrees,
+					CurrentSelection->PathLength,
+					CurrentSelection->ForwardAlignment
+				);
 			}
-
-			const FMeleeStanceSearchCandidate* BestForwardCandidate = nullptr;
-
-			for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
+			else
 			{
-				if (!Search.IsViable())
-				{
-					continue;
-				}
-				if (!BestForwardCandidate || Search.ForwardAlignment > BestForwardCandidate->ForwardAlignment)
-				{
-					BestForwardCandidate = &Search;
-				}
-
-				const bool bSelected = bHasDiagnosticMeleeStance && Search.MatchesAngle(DiagnosticMeleeStanceAngle);
-
-				const float MarkerRadius = bSelected ? 18.f : 8.f;
-				const float MarkerThickness = bSelected ? 5.f : 2.f;
+				bHasDiagnosticMeleeStance = false;
 			}
+		}
 
-			constexpr float AlignmentSwitchThreshold = 0.15f;
 
-			bool bWouldSwitch = false;
 
-			if (CurrentSelection 
-				&& CurrentSelection->IsViable() 
-				&& BestForwardCandidate 
-				&& BestForwardCandidate != CurrentSelection)
-			{
-				const float AlignmentImprovement = BestForwardCandidate->ForwardAlignment - CurrentSelection->ForwardAlignment;
+		constexpr float AlignmentSwitchThreshold = 0.15f;
 
-				bWouldSwitch = AlignmentImprovement >= AlignmentSwitchThreshold;
-			}
+		//
+		// Don't immediately override the shortest-path acquisition
+		// on the same evaluation in which we acquired it.
+		//
+		if (!bAcquiredThisEvaluation
+			&& CurrentSelection
+			&& CurrentSelection->IsViable()
+			&& BestForwardCandidate
+			&& BestForwardCandidate != CurrentSelection)
+		{
+			const float AlignmentImprovement = BestForwardCandidate->ForwardAlignment - CurrentSelection->ForwardAlignment;
 
-			if (bWouldSwitch)
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeStanceSelectionTrack] "
+				"RequestId=%s | "
+				"Current=%+.0f | "
+				"CurrentAlignment=%.3f | "
+				"BestForward=%+.0f | "
+				"BestAlignment=%.3f | "
+				"Improvement=%.3f | "
+				"Threshold=%.3f"
+			),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				CurrentSelection->AngleOffsetDegrees,
+				CurrentSelection->ForwardAlignment,
+				BestForwardCandidate->AngleOffsetDegrees,
+				BestForwardCandidate->ForwardAlignment,
+				AlignmentImprovement,
+				AlignmentSwitchThreshold
+			);
+
+			if (AlignmentImprovement >= AlignmentSwitchThreshold)
 			{
 				const float PreviousAngle = DiagnosticMeleeStanceAngle;
 
 				DiagnosticMeleeStanceAngle = BestForwardCandidate->AngleOffsetDegrees;
+
+				CurrentSelection = BestForwardCandidate;
 
 				UE_LOG(LogTemp, Display, TEXT(
 					"[MeleeStanceSelection] "
@@ -1560,33 +1600,32 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 					"Event=ForwardSwitch | "
 					"From=%+.0f | "
 					"To=%+.0f | "
-					"OldAlignment=%.3f | "
 					"NewAlignment=%.3f"
 				),
-					*CurrentNavigationRequest
-					.RequestId.ToString(),
+					*CurrentNavigationRequest.RequestId.ToString(),
 					PreviousAngle,
 					DiagnosticMeleeStanceAngle,
-					CurrentSelection
-					->ForwardAlignment,
-					BestForwardCandidate
-					->ForwardAlignment
+					CurrentSelection->ForwardAlignment
 				);
 			}
 		}
-}
-	else
-	{
-		UE_LOG(LogTemp, Display, TEXT(
-			"[MeleeStanceSearch] "
-			"RequestId=%s | "
-			"Skipped=NoHorizontalSurfaceDirection"
-		),
-			*CurrentNavigationRequest
-			.RequestId.ToString()
-		);
-	}
 
+		if (bHasDiagnosticMeleeStance && CurrentSelection)
+		{
+			UPokemonDebugLibrary::DrawSphere(
+				this,
+				PokemonDebugTags::Navigation_Stance_Search,
+				CurrentSelection->GroundRoot,
+				18.f,
+				StanceDebugDuration,
+				FLinearColor::Blue,
+				16,
+				5.f,
+				EPokemonDebugVerbosity::Detailed
+
+			);
+		}
+	}
 	const bool bCapsulePlacementValid =
 		bOccupancyTestAvailable
 		&& !bCapsuleBlocked;
