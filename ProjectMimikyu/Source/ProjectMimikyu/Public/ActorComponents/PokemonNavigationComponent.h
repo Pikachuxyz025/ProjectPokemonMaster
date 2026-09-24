@@ -18,6 +18,36 @@ class UPokemonJumpExecutionComponent;
 class UNavigationPath;
 class ANavigationData;
 
+struct FMeleeStanceRuntimeSelection
+{
+	FGuid RequestId;
+
+	bool bValid = false;
+
+	float AngleOffsetDegrees = 0.f;
+
+	FVector NavGoal = FVector::ZeroVector;
+	FVector GroundRoot = FVector::ZeroVector;
+	FVector GroundContact = FVector::ZeroVector;
+
+	FRotator Facing = FRotator::ZeroRotator;
+
+	float ContactError = 0.f;
+	float ContactSlack = 0.f;
+
+	void Reset()
+	{
+		*this = FMeleeStanceRuntimeSelection();
+	}
+
+	bool MatchesRequest(const FGuid& OtherRequestId) const
+	{
+		return bValid
+			&& RequestId.IsValid()
+			&& RequestId == OtherRequestId;
+	}
+};
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
 {
@@ -141,11 +171,11 @@ private:
 	uint32 TraversalSegmentSerial = 0;
 	FPokemonCompositeMoveCost SelectedCompositeCost;
 
-	FGuid DiagnosticMeleeStanceRequestId;
 
-	bool bHasDiagnosticMeleeStance = false;
-
-	float DiagnosticMeleeStanceAngle = 0.f;
+	FGuid MeleeStanceSelectionRequestId;
+	bool bHasMeleeStanceSelection = false;
+	float MeleeStanceSelectionAngle = 0.f;
+	FMeleeStanceRuntimeSelection SelectedMeleeStance;
 
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;

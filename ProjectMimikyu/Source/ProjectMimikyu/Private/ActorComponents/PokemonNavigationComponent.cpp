@@ -918,9 +918,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	//
 	// Planned contact volume before grounding.
 	// 
-	// Candidate.PlannedContactCenter is where the authored
-	// attack contact center would land if Lucario could use
-	// Candidate.RootLocation exactly.
+	// Candidate.PlannedContactCenter is the attack contact center 
+	// produced by Lucario's current root 
+	// and current rotation.
 	// 
 	UPokemonDebugLibrary::DrawSphere(
 		this,
@@ -1190,13 +1190,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		const FMeleeStanceSearchCandidate* BestForwardCandidate = nullptr;
 		const FMeleeStanceSearchCandidate* CurrentSelection = nullptr;
 
-		const bool bNewSelectionRequest = DiagnosticMeleeStanceRequestId != CurrentNavigationRequest.RequestId;
+		const bool bNewSelectionRequest = MeleeStanceSelectionRequestId != CurrentNavigationRequest.RequestId;
 
 		if (bNewSelectionRequest)
 		{
-			DiagnosticMeleeStanceRequestId = CurrentNavigationRequest.RequestId;
+			MeleeStanceSelectionRequestId = CurrentNavigationRequest.RequestId;
 
-			bHasDiagnosticMeleeStance = false;
+			bHasMeleeStanceSelection = false;
 		}
 
 		//
@@ -1231,7 +1231,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			// Recover our persistant selection
 			// from the newly-caluclated candidate set.
 			//
-			if (bHasDiagnosticMeleeStance && Search.MatchesAngle(DiagnosticMeleeStanceAngle))
+			if (bHasMeleeStanceSelection && Search.MatchesAngle(MeleeStanceSelectionAngle))
 			{
 				CurrentSelection = &Search;
 			}
@@ -1264,9 +1264,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 					? TEXT("InitialAcquire")
 					: TEXT("ReacquireInvalidated");
 
-				DiagnosticMeleeStanceAngle = ShortestPathCandidate->AngleOffsetDegrees;
+				MeleeStanceSelectionAngle = ShortestPathCandidate->AngleOffsetDegrees;
 
-				bHasDiagnosticMeleeStance = true;
+				bHasMeleeStanceSelection = true;
 
 				CurrentSelection = ShortestPathCandidate;
 
@@ -1289,7 +1289,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			}
 			else
 			{
-				bHasDiagnosticMeleeStance = false;
+				bHasMeleeStanceSelection = false;
 			}
 		}
 
@@ -1330,9 +1330,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 			if (AlignmentImprovement >= AlignmentSwitchThreshold)
 			{
-				const float PreviousAngle = DiagnosticMeleeStanceAngle;
+				const float PreviousAngle = MeleeStanceSelectionAngle;
 
-				DiagnosticMeleeStanceAngle = BestForwardCandidate->AngleOffsetDegrees;
+				MeleeStanceSelectionAngle = BestForwardCandidate->AngleOffsetDegrees;
 
 				CurrentSelection = BestForwardCandidate;
 
@@ -1346,13 +1346,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				),
 					*CurrentNavigationRequest.RequestId.ToString(),
 					PreviousAngle,
-					DiagnosticMeleeStanceAngle,
+					MeleeStanceSelectionAngle,
 					CurrentSelection->ForwardAlignment
 				);
 			}
 		}
 
-		if (bHasDiagnosticMeleeStance && CurrentSelection)
+		if (bHasMeleeStanceSelection && CurrentSelection)
 		{
 			UPokemonDebugLibrary::DrawSphere(
 				this,
@@ -1371,7 +1371,75 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			{
 				SelectedSearchCandidate = *CurrentSelection;
 				bHasSelectedSearchCandidate = true;
+
+				SelectedMeleeStance.RequestId = CurrentNavigationRequest.RequestId;
+
+				SelectedMeleeStance.bValid = true;
+
+				SelectedMeleeStance.AngleOffsetDegrees = CurrentSelection->AngleOffsetDegrees;
+
+				SelectedMeleeStance.NavGoal = CurrentSelection->NavGoal;
+
+				SelectedMeleeStance.GroundRoot = CurrentSelection->GroundRoot;
+
+				SelectedMeleeStance.GroundContact = CurrentSelection->GroundContact;
+
+				SelectedMeleeStance.Facing = CurrentSelection->Facing;
+
+				SelectedMeleeStance.ContactError = CurrentSelection->ContactError;
+
+				SelectedMeleeStance.ContactSlack = CurrentSelection->ContactSlack;
 			}
+		}
+	}
+
+	if (!bHasSelectedSearchCandidate)
+	{
+		// Search.ContactSlack tells us how far the actor can
+	    // deviate from the exact stance while still guaranteeing
+	    // geometric contact.
+		const float PreferredNavigationRadius = SelectedSearchCandidate.ContactSlack - FMath::Max(0.f, ApproachArrivalMargin);
+
+		// Preferred margin is quality, not existence.
+	    // If there is insufficient slack for the preferred margin,
+	    // use a tighter acceptance circle instead of rejecting an
+	    // otherwise valid contact stance.
+		const float NavigationRadius = PreferredNavigationRadius > KINDA_SMALL_NUMBER
+			? PreferredNavigationRadius
+			: FMath::Max(KINDA_SMALL_NUMBER, SelectedSearchCandidate.ContactSlack * 0.5f);
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceAuthority] "
+			"RequestId=%s | "
+			"Angle=%+.0f | "
+			"NavGoal=%s | "
+			"GroundRoot=%s | "
+			"FacingYaw=%.2f | "
+			"ContactError=%.2f | "
+			"ContactSlack=%.2f | "
+			"NavigationRadius=%.2f"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			SelectedSearchCandidate.AngleOffsetDegrees,
+			*SelectedSearchCandidate.NavGoal.ToString(),
+			*SelectedSearchCandidate.GroundRoot.ToString(),
+			SelectedSearchCandidate.Facing.Yaw,
+			SelectedSearchCandidate.ContactError,
+			SelectedSearchCandidate.ContactSlack,
+			NavigationRadius);
+
+		if (!RequestMoveToLocation(SelectedSearchCandidate.NavGoal, NavigationRadius, false, false, false))
+		{
+			CachedAIController->StopMovement();
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeStanceAuthority] "
+				"RequestId=%s | "
+				"Event=MoveRejected | "
+				"Angle=%+.0f"),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				SelectedSearchCandidate.AngleOffsetDegrees);
+
+			return false;
 		}
 	}
 	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
@@ -1656,9 +1724,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		}
 	}
 
-	const bool bCapsulePlacementValid =
-		bOccupancyTestAvailable
-		&& !bCapsuleBlocked;
+	const bool bCapsulePlacementValid =bOccupancyTestAvailable&& !bCapsuleBlocked;
 
 	const FLinearColor OccupancyColor =
 		!bOccupancyTestAvailable
@@ -1758,9 +1824,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			break;
 		}
 
-		EvaluateGroundTraversalFailure(
-			RequiredFeet,
-			TraversalTrigger);
+		EvaluateGroundTraversalFailure(RequiredFeet,TraversalTrigger);
 
 		CachedAIController->StopMovement();
 
@@ -2242,14 +2306,21 @@ void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime)
 
 	if (CurrentNavigationRequest.MeleeContact.SocketTag.IsValid())
 	{
-		FPokemonMeleeExecutionCandidate Candidate;
-
-		if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(OwnerPawn, CurrentNavigationRequest.MeleeApproach, TargetLocation, Candidate))
+		if (SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId))
 		{
-			return;
+			TargetRotation = SelectedMeleeStance.Facing;
 		}
+		else
+		{
+			FPokemonMeleeExecutionCandidate Candidate;
 
-		TargetRotation = Candidate.Facing;
+			if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(OwnerPawn, CurrentNavigationRequest.MeleeApproach, TargetLocation, Candidate))
+			{
+				return;
+			}
+
+			TargetRotation = Candidate.Facing;
+		}
 	}
 	
 	const FRotator NewRotation = FMath::RInterpTo(OwnerPawn->GetActorRotation(), TargetRotation, DeltaTime, 10.f);
