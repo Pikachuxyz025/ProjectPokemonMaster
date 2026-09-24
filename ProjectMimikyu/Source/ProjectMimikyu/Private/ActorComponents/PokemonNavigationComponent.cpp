@@ -1197,6 +1197,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			MeleeStanceSelectionRequestId = CurrentNavigationRequest.RequestId;
 
 			bHasMeleeStanceSelection = false;
+			SelectedMeleeStance.Reset();
 		}
 
 		//
@@ -1290,6 +1291,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			else
 			{
 				bHasMeleeStanceSelection = false;
+				SelectedMeleeStance.Reset();
 			}
 		}
 
@@ -2243,6 +2245,37 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			return false;
 		}
 
+		float FacingErrorDegrees = 0.f;
+
+		if (SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId))
+		{
+			FacingErrorDegrees = FMath::Abs(FMath::FindDeltaAngleDegrees(Pokemon->GetActorRotation().Yaw, SelectedMeleeStance.Facing.Yaw));
+
+			constexpr float ExecutionFacingTolerance = 5.f;
+
+			if (FacingErrorDegrees > ExecutionFacingTolerance)
+			{
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeExecutionGate] "
+					"RequestId=%s | "
+					"Contact=1 | "
+					"FacingReady=0 | "
+					"ActorYaw=%.2f | "
+					"SelectedYaw=%.2f | "
+					"FacingError=%.2f | "
+					"Tolerance=%.2f"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					Pokemon->GetActorRotation().Yaw,
+					SelectedMeleeStance.Facing.Yaw,
+					FacingErrorDegrees,
+					ExecutionFacingTolerance
+				);
+
+				return false;
+			}
+		}
+
 		UE_LOG(LogTemp, Display, TEXT(
 			"[CombatApproachAction] "
 			"MeleeExecutionReached | "
@@ -2251,6 +2284,10 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			"Target=%s | "
 			"PlannedCenter=%s | "
 			"Distance3D=%.2f | "
+			"SelectedAngle=%+.0f | "
+			"SelectedYaw=%.2f | "
+			"ActorYaw=%.2f | "
+			"FacingError=%.2f | "
 			"Radius=%.2f | "
 			"Profile=%s"
 		),
@@ -2261,6 +2298,10 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			*TargetLocation.ToString(),
 			*Candidate.PlannedContactCenter.ToString(),
 			Distance,
+			SelectedMeleeStance.AngleOffsetDegrees,
+			SelectedMeleeStance.Facing.Yaw,
+			Pokemon->GetActorRotation().Yaw,
+			FacingErrorDegrees,
 			Candidate.Radius,
 			*CurrentNavigationRequest
 			.MeleeApproach.ProfileId.ToString());
