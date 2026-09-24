@@ -1015,268 +1015,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 	bool bOccupancyTestAvailable = GetWorld() && Capsule->IsQueryCollisionEnabled();
 
-	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
-
-	FVector NavGoal;
-
-	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
-	{
-		EvaluateGroundTraversalFailure(RequiredFeet, (TEXT("MeleeProjectionFailed")));
-
-		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonNav] GroundCandidateRejected | Stage=Projection | ")
-			TEXT("RequestId=%s | Source=%s | Profile=%s | RequiredRoot=%s"),
-			*CurrentNavigationRequest.RequestId.ToString(),
-			*UEnum::GetValueAsString(Plan.Source),
-			*Plan.ProfileId.ToString(),
-			*Candidate.RootLocation.ToString());
-		CachedAIController->StopMovement();
-		return false;
-	}
-
-	const FVector GroundRoot = NavGoal + RootAboveFeet;
-
-	// Predict how the task would face that target from the projected root.
-	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
-
-	FRotator GroundFacing = Candidate.Facing;
-
-	if (!GroundDirection.IsNearlyZero())
-	{
-		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
-			? RootSpaceContactOffset.Rotation().Yaw
-			: 0.f;
-
-		GroundFacing = FRotator(0.f, FRotator::NormalizeAxis(GroundDirection.Rotation().Yaw - ContactYaw), 0.f);
-	}
-
-	const FVector GroundContact = GroundRoot + GroundFacing.RotateVector(RootSpaceContactOffset);
-
-	const float ContactError = static_cast<float>(FVector::Dist(GroundContact, TargetLocation));
-
-	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
-
-	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot);
-
-	const float ContactSlack = Candidate.Radius - ContactError;
-
-	const bool bContactValid = ContactError <= Candidate.Radius;
-
-	const FLinearColor ContactColor = bContactValid ? FLinearColor::Green : FLinearColor::Red;
-
-	if (CurrentNavigationRequest.bHasTargetImpactNormal)
-	{
-		const FVector Normal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
-
-		const FVector NormalStart = CurrentNavigationRequest.TargetLocation + Normal * 2.f;
-
-		const FVector NormalEnd = NormalStart + Normal * 200.f;
-
-		const FVector ContactToRoot = GroundRoot - TargetLocation;
-
-		const float RootSideDot = FVector::DotProduct(ContactToRoot, Normal);
-
-		const bool bRootOnExposedSide = RootSideDot > 0.f;
-
-		const FLinearColor RootSideColor = bRootOnExposedSide ? FLinearColor::Green : FLinearColor::Red;
-
-		UPokemonDebugLibrary::DrawDirectionalArrow(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			NormalEnd,
-			40.f,
-			StanceDebugDuration,
-			FLinearColor::Red,
-			5.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalStart,
-			10.f,
-			StanceDebugDuration,
-			FLinearColor::Yellow,
-			16,
-			3.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-
-		UPokemonDebugLibrary::DrawSphere(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			NormalEnd,
-			12.f,
-			StanceDebugDuration,
-			FLinearColor::Green,
-			16,
-			3.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-
-		UE_LOG(LogTemp, Display, TEXT(
-			"[MeleeStanceDotDebug] "
-			"RequestId=%s | "
-			"RootOnExposedSide=%s | "
-			"SurfaceSideDot=%.2f | "
-			"ContactToRoot=%s | "
-			"TargetImpactNormal=%s"
-		),
-			*CurrentNavigationRequest.RequestId.ToString(),
-			bRootOnExposedSide
-			? TEXT("TRUE")
-			: TEXT("FALSE"),
-			RootSideDot,
-			*ContactToRoot.ToString(),
-			*CurrentNavigationRequest.TargetImpactNormal.ToString()
-		);
-
-		//
-		// Show which side of the surface plane
-		// the proposed root actually occupies.
-		//
-		UPokemonDebugLibrary::DrawLine(
-			this,
-			PokemonDebugTags::Navigation_Stance_Surface,
-			TargetLocation,
-			GroundRoot,
-			StanceDebugDuration,
-			RootSideColor,
-			4.f,
-			EPokemonDebugVerbosity::Detailed
-		);
-	}
-
-	// 
-	// GroundRoot.
-	// 
-	// This is where the required root ended up
-	// AFTER the NavMesh projection.
-	//
-	UPokemonDebugLibrary::DrawSphere(
-		this,
-		PokemonDebugTags::Navigation_Stance,
-		GroundRoot,
-		12.f,
-		StanceDebugDuration,
-		FLinearColor(0.f, 1.f, 1.f, 1.f),
-		12,
-		3.f,
-		EPokemonDebugVerbosity::Detailed
-	);
-
-	//
-	// RequiredRoot -> GroundRoot.
-	// 
-	// This directly visualizes how much NavMesh projection
-	// altered the stance
-	//
-	UPokemonDebugLibrary::DrawLine(
-		this,
-		PokemonDebugTags::Navigation_Projection,
-		Candidate.RootLocation,
-		GroundRoot,
-		StanceDebugDuration,
-		FLinearColor(1.f, 0.f, 1.f, 1.f),
-		4.f,
-		EPokemonDebugVerbosity::Detailed
-	);
-
-	//
-	// GroundContact center marker.
-	// 
-	UPokemonDebugLibrary::DrawSphere(
-		this,
-		PokemonDebugTags::Navigation_Stance_Contact,
-		GroundContact,
-		6.f,
-		StanceDebugDuration,
-		ContactColor,
-		12,
-		3.f,
-		EPokemonDebugVerbosity::Detailed
-	);
-
-	//
-	// Actual contact volume AFTER grounding.
-	// 
-	// Green = Target is inside the attack contact volume.
-	// Red = Target is outside it.
-	//
-	UPokemonDebugLibrary::DrawSphere(
-		this,
-		PokemonDebugTags::Navigation_Stance_Contact,
-		GroundContact,
-		Candidate.Radius,
-		StanceDebugDuration,
-		ContactColor,
-		24,
-		3.f,
-		EPokemonDebugVerbosity::Detailed
-	);
-
-	//
-	// GroundContact -> TargetLocation.
-	// 
-	// Its length is literally ContactError.
-	//
-	UPokemonDebugLibrary::DrawLine(
-		this,
-		PokemonDebugTags::Navigation_Stance_Contact,
-		GroundContact,
-		TargetLocation,
-		StanceDebugDuration,
-		FLinearColor(1.f, 0.5f, 0.f, 1.f),
-		4.f,
-		EPokemonDebugVerbosity::Detailed
-	);
-
-	TArray<FOverlapResult> OccupancyOverlaps;
-
-	bool bCapsuleBlocked = false;
-
-
-	FString BlockingActorName = TEXT("None");
-	FString BlockingComponentName = TEXT("None");
-
-	if (UWorld* World = GetWorld();
-		World && Capsule->IsQueryCollisionEnabled())
-	{
-		bOccupancyTestAvailable = true;
-
-		bCapsuleBlocked =
-			World->OverlapMultiByChannel(
-				OccupancyOverlaps,
-				GroundRoot,
-				GroundFacing.Quaternion(),
-				Capsule->GetCollisionObjectType(),
-				OccupancyShape,
-				OccupancyQuery,
-				OccupancyResponse
-			);
-
-		if (bCapsuleBlocked)
-		{
-			for (const FOverlapResult& Overlap :
-				OccupancyOverlaps)
-			{
-				if (!Overlap.bBlockingHit)
-				{
-					continue;
-				}
-
-				BlockingActorName =
-					GetNameSafe(Overlap.GetActor());
-
-				BlockingComponentName =
-					GetNameSafe(Overlap.GetComponent());
-
-				break;
-			}
-		}
-	}
+	/*----------------------------Search / Selection Phase----------------------------*/ 
 
 	const FVector SurfaceNormal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
 
@@ -1286,6 +1025,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 	FVector TravelDirection = OwnerPawn->GetVelocity().GetSafeNormal2D();
 
 	const bool bHasTravelDirection = OwnerPawn->GetVelocity().SizeSquared2D() > FMath::Square(25.f);
+
+	FMeleeStanceSearchCandidate SelectedSearchCandidate;
+	bool bHasSelectedSearchCandidate = false;
 
 	if (!bHasTravelDirection)
 	{
@@ -1624,8 +1366,296 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				EPokemonDebugVerbosity::Detailed
 
 			);
+
+			if (CurrentSelection->IsViable())
+			{
+				SelectedSearchCandidate = *CurrentSelection;
+				bHasSelectedSearchCandidate = true;
+			}
 		}
 	}
+	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
+
+	FVector NavGoal;
+
+	if (!TryProjectNavigationGoal(RequiredFeet, ApproachProjectionExtent, NavGoal))
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceAuthorityBridge] "
+			"RequestId=%s | "
+			"LegacyProjectionValid=0 | "
+			"SearchSelectionAvailable=%d | "
+			"SelectedAngle=%+.0f | "
+			"SelectedGroundRoot=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			bHasSelectedSearchCandidate,
+			bHasSelectedSearchCandidate
+			? SelectedSearchCandidate.AngleOffsetDegrees
+			: 0.f,
+			bHasSelectedSearchCandidate
+			? *SelectedSearchCandidate.GroundRoot.ToString()
+			: TEXT("None")
+		);
+
+		// Existing legacy handling remains for this experiment.
+		EvaluateGroundTraversalFailure(RequiredFeet, (TEXT("MeleeProjectionFailed")));
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonNav] GroundCandidateRejected | Stage=Projection | ")
+			TEXT("RequestId=%s | Source=%s | Profile=%s | RequiredRoot=%s"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*UEnum::GetValueAsString(Plan.Source),
+			*Plan.ProfileId.ToString(),
+			*Candidate.RootLocation.ToString());
+		CachedAIController->StopMovement();
+		return false;
+	}
+
+	const FVector GroundRoot = NavGoal + RootAboveFeet;
+
+	// Predict how the task would face that target from the projected root.
+	const FVector GroundDirection = (TargetLocation - GroundRoot).GetSafeNormal2D();
+
+	FRotator GroundFacing = Candidate.Facing;
+
+	if (!GroundDirection.IsNearlyZero())
+	{
+		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
+			? RootSpaceContactOffset.Rotation().Yaw
+			: 0.f;
+
+		GroundFacing = FRotator(0.f, FRotator::NormalizeAxis(GroundDirection.Rotation().Yaw - ContactYaw), 0.f);
+	}
+
+	const FVector GroundContact = GroundRoot + GroundFacing.RotateVector(RootSpaceContactOffset);
+
+	const float ContactError = static_cast<float>(FVector::Dist(GroundContact, TargetLocation));
+
+	const float NavigationRadius = Candidate.Radius - ContactError - FMath::Max(0.f, ApproachArrivalMargin);
+
+	const float ProjectionDelta = FVector::Dist(Candidate.RootLocation, GroundRoot);
+
+	const float ContactSlack = Candidate.Radius - ContactError;
+
+	const bool bContactValid = ContactError <= Candidate.Radius;
+
+	const FLinearColor ContactColor = bContactValid ? FLinearColor::Green : FLinearColor::Red;
+
+	if (CurrentNavigationRequest.bHasTargetImpactNormal)
+	{
+		const FVector Normal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
+
+		const FVector NormalStart = CurrentNavigationRequest.TargetLocation + Normal * 2.f;
+
+		const FVector NormalEnd = NormalStart + Normal * 200.f;
+
+		const FVector ContactToRoot = GroundRoot - TargetLocation;
+
+		const float RootSideDot = FVector::DotProduct(ContactToRoot, Normal);
+
+		const bool bRootOnExposedSide = RootSideDot > 0.f;
+
+		const FLinearColor RootSideColor = bRootOnExposedSide ? FLinearColor::Green : FLinearColor::Red;
+
+		UPokemonDebugLibrary::DrawDirectionalArrow(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			NormalEnd,
+			40.f,
+			StanceDebugDuration,
+			FLinearColor::Red,
+			5.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalStart,
+			10.f,
+			StanceDebugDuration,
+			FLinearColor::Yellow,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UPokemonDebugLibrary::DrawSphere(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			NormalEnd,
+			12.f,
+			StanceDebugDuration,
+			FLinearColor::Green,
+			16,
+			3.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeStanceDotDebug] "
+			"RequestId=%s | "
+			"RootOnExposedSide=%s | "
+			"SurfaceSideDot=%.2f | "
+			"ContactToRoot=%s | "
+			"TargetImpactNormal=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			bRootOnExposedSide
+			? TEXT("TRUE")
+			: TEXT("FALSE"),
+			RootSideDot,
+			*ContactToRoot.ToString(),
+			*CurrentNavigationRequest.TargetImpactNormal.ToString()
+		);
+
+		//
+		// Show which side of the surface plane
+		// the proposed root actually occupies.
+		//
+		UPokemonDebugLibrary::DrawLine(
+			this,
+			PokemonDebugTags::Navigation_Stance_Surface,
+			TargetLocation,
+			GroundRoot,
+			StanceDebugDuration,
+			RootSideColor,
+			4.f,
+			EPokemonDebugVerbosity::Detailed
+		);
+	}
+
+	// 
+	// GroundRoot.
+	// 
+	// This is where the required root ended up
+	// AFTER the NavMesh projection.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance,
+		GroundRoot,
+		12.f,
+		StanceDebugDuration,
+		FLinearColor(0.f, 1.f, 1.f, 1.f),
+		12,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// RequiredRoot -> GroundRoot.
+	// 
+	// This directly visualizes how much NavMesh projection
+	// altered the stance
+	//
+	UPokemonDebugLibrary::DrawLine(
+		this,
+		PokemonDebugTags::Navigation_Projection,
+		Candidate.RootLocation,
+		GroundRoot,
+		StanceDebugDuration,
+		FLinearColor(1.f, 0.f, 1.f, 1.f),
+		4.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// GroundContact center marker.
+	// 
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		6.f,
+		StanceDebugDuration,
+		ContactColor,
+		12,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// Actual contact volume AFTER grounding.
+	// 
+	// Green = Target is inside the attack contact volume.
+	// Red = Target is outside it.
+	//
+	UPokemonDebugLibrary::DrawSphere(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		Candidate.Radius,
+		StanceDebugDuration,
+		ContactColor,
+		24,
+		3.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	//
+	// GroundContact -> TargetLocation.
+	// 
+	// Its length is literally ContactError.
+	//
+	UPokemonDebugLibrary::DrawLine(
+		this,
+		PokemonDebugTags::Navigation_Stance_Contact,
+		GroundContact,
+		TargetLocation,
+		StanceDebugDuration,
+		FLinearColor(1.f, 0.5f, 0.f, 1.f),
+		4.f,
+		EPokemonDebugVerbosity::Detailed
+	);
+
+	TArray<FOverlapResult> OccupancyOverlaps;
+
+	bool bCapsuleBlocked = false;
+
+
+	FString BlockingActorName = TEXT("None");
+	FString BlockingComponentName = TEXT("None");
+
+	if (UWorld* World = GetWorld();
+		World && Capsule->IsQueryCollisionEnabled())
+	{
+		bOccupancyTestAvailable = true;
+
+		bCapsuleBlocked =
+			World->OverlapMultiByChannel(
+				OccupancyOverlaps,
+				GroundRoot,
+				GroundFacing.Quaternion(),
+				Capsule->GetCollisionObjectType(),
+				OccupancyShape,
+				OccupancyQuery,
+				OccupancyResponse
+			);
+
+		if (bCapsuleBlocked)
+		{
+			for (const FOverlapResult& Overlap :
+				OccupancyOverlaps)
+			{
+				if (!Overlap.bBlockingHit)
+				{
+					continue;
+				}
+
+				BlockingActorName =
+					GetNameSafe(Overlap.GetActor());
+
+				BlockingComponentName =
+					GetNameSafe(Overlap.GetComponent());
+
+				break;
+			}
+		}
+	}
+
 	const bool bCapsulePlacementValid =
 		bOccupancyTestAvailable
 		&& !bCapsuleBlocked;
