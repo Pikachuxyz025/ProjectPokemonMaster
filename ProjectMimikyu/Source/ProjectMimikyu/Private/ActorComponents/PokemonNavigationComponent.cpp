@@ -1393,7 +1393,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		}
 	}
 
-	if (!bHasSelectedSearchCandidate)
+	if (bHasSelectedSearchCandidate)
 	{
 		// Search.ContactSlack tells us how far the actor can
 	    // deviate from the exact stance while still guaranteeing
@@ -1441,6 +1441,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 			return false;
 		}
+		return true;
 	}
 	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
 
