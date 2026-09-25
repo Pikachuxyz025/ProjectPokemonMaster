@@ -1658,7 +1658,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			"BestTotalTime=%.3f"),
 			*CurrentNavigationRequest.RequestId.ToString(),
 			TraversalStances.Num(),
-			TraversalViableCount
+			TraversalViableCount,
 			BestTraversalStance ? BestTraversalStance->AngleOffsetDegrees : 0.f,
 			BestTraversalStance ? BestTraversalStance->TotalTime : 0.f
 		);
