@@ -1514,112 +1514,138 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 		TArray<FMeleeTraversalStanceCandidate> TraversalStances;
 
 		TraversalStances.Reserve(SearchCandidates.Num());
+
 		const FMeleeTraversalStanceCandidate* BestTraversalStance = nullptr;
+		int32 TraversalViableCount = 0;
 
 		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
 		{
-			if (Search.HasGroundedExecutionPlacement())
-			{
-				FMeleeTraversalStanceCandidate& TraversalStance = TraversalStances.AddDefaulted_GetRef();
 
-				TraversalStance.AngleOffsetDegrees = Search.AngleOffsetDegrees;
+			FMeleeTraversalStanceCandidate& TraversalStance = TraversalStances.AddDefaulted_GetRef();
 
-				TraversalStance.Facing = Search.Facing;
+			TraversalStance.AngleOffsetDegrees = Search.AngleOffsetDegrees;
 
-				TraversalStance.RequestedFeet = Search.RequiredFeet;
+			TraversalStance.Facing = Search.Facing;
 
-				float GroundTime = 0.f;
+			TraversalStance.RequestedFeet = Search.RequiredFeet;
 
-				TraversalStance.bTraversalPlanFound = SearchTakeoffAnchors(
+			float GroundTime = 0.f;
+
+			const FVector TraversalPathStart =
+				Pokemon->GetCharacterMovement()
+				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
+				: OwnerPawn->GetActorLocation();
+
+			UNavigationPath* TraversalGroundPath =
+				UNavigationSystemV1::FindPathToLocationSynchronously(
+					GetWorld(),
+					TraversalPathStart,
+					Search.RequiredFeet,
+					OwnerPawn);
+
+			TraversalStance.bTraversalPlanFound =
+				SearchTakeoffAnchors(
 					Search.RequiredFeet,
 					FName(TEXT("MeleeStanceTraversal")),
-					nullptr,
+					TraversalGroundPath,
 					TraversalStance.Requirement,
 					TraversalStance.Traversal,
-					&GroundTime
-				);
+					&GroundTime);
 
-				if (!TraversalStance.bTraversalPlanFound)
-				{
-					continue;
-				}
-
-				TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
-
-				TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
-
-				TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot + TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
-
-				TraversalStance.ContactError = static_cast<float>(FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
-
-				TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
-
-				const FVector ContactToResolvedRoot = TraversalStance.ResolvedRoot - TargetLocation;
-
-				TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToResolvedRoot, SurfaceNormal);
-
-				TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
-
-				TraversalStance.bOccupancyTestAvailable = bOccupancyTestAvailable;
-
-				if (TraversalStance.bOccupancyTestAvailable)
-				{
-					TArray<FOverlapResult> TraversalOverlaps;
-
-					TraversalStance.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
-						TraversalOverlaps,
-						TraversalStance.ResolvedRoot,
-						TraversalStance.Facing.Quaternion(),
-						Capsule->GetCollisionObjectType(),
-						OccupancyShape,
-						OccupancyQuery,
-						OccupancyResponse
-					);
-					TraversalStance.bPlacementValid = !TraversalStance.bCapsuleBlocked;
-				}
-
-				TraversalStance.GroundTime = GroundTime;
-
-				TraversalStance.FlightTime = TraversalStance.Traversal.FlightTime;
-
-				TraversalStance.TotalTime = TraversalStance.GroundTime + TraversalStance.FlightTime;
-
+			if (!TraversalStance.bTraversalPlanFound)
+			{
+				TraversalStance.Traversal.FailureReason = TEXT("NoTraversalPlanFound");
 				UE_LOG(LogTemp, Display, TEXT(
-					"[MeleeTraversalStanceCandidate] "
+					"[MeleeTraversalStanceCandidate]"
 					"RequestId=%s | "
 					"Angle=%+.0f | "
-					"RequestedFeet=%s | "
-					"PlanFound=%d | "
-					"ResolvedFeet=%s | "
-					"ContactError=%.2f | "
-					"Contact=%d | "
-					"SideDot=%.2f | "
-					"Exposed=%d | "
-					"Placement=%d | "
-					"GroundTime=%.3f | "
-					"FlightTime=%.3f | "
-					"TotalTime=%.3f | "
-					"Viable=%d"),
+					"PlanFound=0 | "
+					"FailureReason=%s"),
 					*CurrentNavigationRequest.RequestId.ToString(),
 					TraversalStance.AngleOffsetDegrees,
-					*TraversalStance.RequestedFeet.ToString(),
-					TraversalStance.bTraversalPlanFound,
-					*TraversalStance.ResolvedLandingFeet.ToString(),
-					TraversalStance.ContactError,
-					TraversalStance.bContactValid,
-					TraversalStance.SurfaceSideDot,
-					TraversalStance.bExposedSide,
-					TraversalStance.bPlacementValid,
-					TraversalStance.GroundTime,
-					TraversalStance.FlightTime,
-					TraversalStance.TotalTime,
-					TraversalStance.IsViable()
-				);
+					*TraversalStance.Traversal.FailureReason.ToString());
+				continue;
+			}
 
-				if (TraversalStance.IsViable() && (!BestTraversalStance || TraversalStance.TotalTime < BestTraversalStance->TotalTime))
+			TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
+
+			TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
+
+			TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot + TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
+
+			TraversalStance.ContactError = static_cast<float>(FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
+
+			TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
+
+			const FVector ContactToResolvedRoot = TraversalStance.ResolvedRoot - TargetLocation;
+
+			TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToResolvedRoot, SurfaceNormal);
+
+			TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
+
+			TraversalStance.bOccupancyTestAvailable = bOccupancyTestAvailable;
+
+			if (TraversalStance.bOccupancyTestAvailable)
+			{
+				TArray<FOverlapResult> TraversalOverlaps;
+
+				TraversalStance.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
+					TraversalOverlaps,
+					TraversalStance.ResolvedRoot,
+					TraversalStance.Facing.Quaternion(),
+					Capsule->GetCollisionObjectType(),
+					OccupancyShape,
+					OccupancyQuery,
+					OccupancyResponse
+				);
+				TraversalStance.bPlacementValid = !TraversalStance.bCapsuleBlocked;
+			}
+
+			TraversalStance.GroundTime = GroundTime;
+
+			TraversalStance.FlightTime = TraversalStance.Traversal.FlightTime;
+
+			TraversalStance.TotalTime = TraversalStance.GroundTime + TraversalStance.FlightTime;
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeTraversalStanceCandidate] "
+				"RequestId=%s | "
+				"Angle=%+.0f | "
+				"RequestedFeet=%s | "
+				"PlanFound=%d | "
+				"ResolvedFeet=%s | "
+				"ContactError=%.2f | "
+				"Contact=%d | "
+				"SideDot=%.2f | "
+				"Exposed=%d | "
+				"Placement=%d | "
+				"GroundTime=%.3f | "
+				"FlightTime=%.3f | "
+				"TotalTime=%.3f | "
+				"Viable=%d"),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				TraversalStance.AngleOffsetDegrees,
+				*TraversalStance.RequestedFeet.ToString(),
+				TraversalStance.bTraversalPlanFound,
+				*TraversalStance.ResolvedLandingFeet.ToString(),
+				TraversalStance.ContactError,
+				TraversalStance.bContactValid,
+				TraversalStance.SurfaceSideDot,
+				TraversalStance.bExposedSide,
+				TraversalStance.bPlacementValid,
+				TraversalStance.GroundTime,
+				TraversalStance.FlightTime,
+				TraversalStance.TotalTime,
+				TraversalStance.IsViable()
+			);
+
+			if (TraversalStance.IsViable())
+			{
+				TraversalViableCount++;
+				if (!BestTraversalStance || TraversalStance.TotalTime < BestTraversalStance->TotalTime)
 				{
 					BestTraversalStance = &TraversalStance;
-				}
+				}	
 			}
 		}
 
@@ -1632,7 +1658,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			"BestTotalTime=%.3f"),
 			*CurrentNavigationRequest.RequestId.ToString(),
 			TraversalStances.Num(),
-			BestTraversalStance ? 1 : 0,
+			TraversalViableCount
 			BestTraversalStance ? BestTraversalStance->AngleOffsetDegrees : 0.f,
 			BestTraversalStance ? BestTraversalStance->TotalTime : 0.f
 		);
