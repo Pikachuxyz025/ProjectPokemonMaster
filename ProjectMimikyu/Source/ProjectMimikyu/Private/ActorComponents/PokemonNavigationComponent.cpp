@@ -84,18 +84,68 @@ namespace
 
 		bool bPreferredMarginSatisfied = false;
 
-		bool IsViable() const
+		bool HasGroundedExecutionPlacement() const
 		{
 			return bProjectionValid
 				&& bContactValid
 				&& bExposedSide
-				&& bPlacementValid
-				&& bCompletePath;
+				&& bPlacementValid;
+		}
+
+		bool IsGroundReachable() const
+		{
+			return HasGroundedExecutionPlacement() && bCompletePath;
+		}
+
+		// Temporary compatibility alias.
+		// Remove once all callers use more precise name
+		bool IsViable() const
+		{
+			return IsGroundReachable();
 		}
 
 		bool MatchesAngle(float OtherAngle) const
 		{
 			return FMath::IsNearlyEqual(AngleOffsetDegrees, OtherAngle, 0.1f);
+		}
+	};
+
+	struct FMeleeTraversalStanceCandidate
+	{
+		float  AngleOffsetDegrees = 0.f;
+
+		FRotator Facing = FRotator::ZeroRotator;
+
+		FVector RequestedFeet = FVector::ZeroVector;
+		FVector ResolvedLandingFeet = FVector::ZeroVector;
+
+		FVector ResolvedRoot = FVector::ZeroVector;
+		FVector ResolvedContact = FVector::ZeroVector; 
+
+		float ContactError = 0.f;
+		float SurfaceSideDot = 0.f;
+
+		float GroundTime = 0.f;
+		float FlightTime = 0.f;
+		float TotalTime = TNumericLimits<float>::Max();
+
+		bool bTraversalPlanFound = false;
+		bool bContactValid = false;
+		bool bExposedSide = false;
+
+		bool bOccupancyTestAvailable = false;
+		bool bCapsuleBlocked = false;
+		bool bPlacementValid = false;
+
+		FPokemonTraversalRequirement Requirement;
+		FPokemonTraversalCandidate Traversal;
+
+		bool IsViable() const
+		{
+			return bTraversalPlanFound
+				&& bContactValid
+				&& bExposedSide
+				&& bPlacementValid;
 		}
 	};
 
@@ -1034,15 +1084,17 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		TravelDirection = OwnerPawn->GetActorForwardVector().GetSafeNormal2D();
 	}
 
+TArray<FMeleeStanceSearchCandidate> SearchCandidates;
+
+		SearchCandidates.Reserve(UE_ARRAY_COUNT(MeleeStanceSearchAngles));
+
 	if (BaseSurfaceFacing.Normalize())
 	{
 		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
 			? RootSpaceContactOffset.Rotation().Yaw
 			: 0.f;
 
-		TArray<FMeleeStanceSearchCandidate> SearchCandidates;
-
-		SearchCandidates.Reserve(UE_ARRAY_COUNT(MeleeStanceSearchAngles));
+		
 
 		for (const float AngleOffset : MeleeStanceSearchAngles)
 		{
@@ -1109,7 +1161,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
 				: OwnerPawn->GetActorLocation();
 
-			if (Search.bContactValid && Search.bPlacementValid && Search.bExposedSide)
+			if (Search.HasGroundedExecutionPlacement())
 			{
 				Search.bPathChecked = true;
 
@@ -1165,7 +1217,8 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				"PathChecked=%d | "
 				"CompletePath=%d | "
 				"PathLength=%.2f | "
-				"Viable=%d"
+				"GroundPlacement=%d |"
+				"GroundReachable=%d"
 			),
 				*CurrentNavigationRequest.RequestId.ToString(),
 				Search.AngleOffsetDegrees,
@@ -1180,11 +1233,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 				Search.bPathChecked,
 				Search.bCompletePath,
 				Search.PathLength,
-				Search.IsViable()
+				Search.HasGroundedExecutionPlacement(),
+				Search.IsGroundReachable()
 			);
 		}
 
-		int32 ViableCount = 0;
+		int32 GroundPlacementCount = 0;
+		int32 GroundReachableCount = 0;
 
 		const FMeleeStanceSearchCandidate* ShortestPathCandidate = nullptr;
 		const FMeleeStanceSearchCandidate* BestForwardCandidate = nullptr;
@@ -1206,28 +1261,35 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		//
 		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
 		{
-			if (Search.IsViable())
-			{
-				ViableCount++;
 
-				//
-				// Best acquision candidate:
-				// shortest actual navigation path
-				//
-				if (!ShortestPathCandidate || Search.PathLength < ShortestPathCandidate->PathLength)
+				if (Search.HasGroundedExecutionPlacement())
 				{
-					ShortestPathCandidate = &Search;
+					GroundPlacementCount++;
 				}
 
-				//
-				// Best continuation candidate:
-				// most aligned with the current travel direction.
-				//
-				if (!BestForwardCandidate || Search.ForwardAlignment > BestForwardCandidate->ForwardAlignment)
+				if (Search.IsGroundReachable())
 				{
-					BestForwardCandidate = &Search;
+					GroundReachableCount++;
+
+					//
+					// Best acquision candidate:
+					// shortest actual navigation path
+					//
+					if (!ShortestPathCandidate || Search.PathLength < ShortestPathCandidate->PathLength)
+					{
+						ShortestPathCandidate = &Search;
+					}
+
+					//
+					// Best continuation candidate:
+					// most aligned with the current travel direction.
+					//
+					if (!BestForwardCandidate || Search.ForwardAlignment > BestForwardCandidate->ForwardAlignment)
+					{
+						BestForwardCandidate = &Search;
+					}
 				}
-			}
+			
 			//
 			// Recover our persistant selection
 			// from the newly-caluclated candidate set.
@@ -1242,11 +1304,13 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 			"[MeleeStanceSearchSummary] "
 			"RequestId=%s | "
 			"CandidateCount=%d | "
-			"ViableCount=%d"
+			"GroundPlacementCount=%d | "
+			"GroundReachableCount=%d"
 		),
 			*CurrentNavigationRequest.RequestId.ToString(),
 			SearchCandidates.Num(),
-			ViableCount
+			GroundPlacementCount,
+			GroundReachableCount
 		);
 
 		bool bAcquiredThisEvaluation = false;
@@ -1445,6 +1509,135 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		}
 		return true;
 	}
+	else if (!bHasSelectedSearchCandidate && CurrentNavigationRequest.bAllowSpecialTraversal && SearchCandidates.Num() > 0)
+	{
+		TArray<FMeleeTraversalStanceCandidate> TraversalStances;
+
+		TraversalStances.Reserve(SearchCandidates.Num());
+		const FMeleeTraversalStanceCandidate* BestTraversalStance = nullptr;
+
+		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
+		{
+			if (Search.HasGroundedExecutionPlacement())
+			{
+				FMeleeTraversalStanceCandidate& TraversalStance = TraversalStances.AddDefaulted_GetRef();
+
+				TraversalStance.AngleOffsetDegrees = Search.AngleOffsetDegrees;
+
+				TraversalStance.Facing = Search.Facing;
+
+				TraversalStance.RequestedFeet = Search.RequiredFeet;
+
+				float GroundTime = 0.f;
+
+				TraversalStance.bTraversalPlanFound = SearchTakeoffAnchors(
+					Search.RequiredFeet,
+					FName(TEXT("MeleeStanceTraversal")),
+					nullptr,
+					TraversalStance.Requirement,
+					TraversalStance.Traversal,
+					&GroundTime
+				);
+
+				if (!TraversalStance.bTraversalPlanFound)
+				{
+					continue;
+				}
+
+				TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
+
+				TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
+
+				TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot + TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
+
+				TraversalStance.ContactError = static_cast<float>(FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
+
+				TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
+
+				const FVector ContactToResolvedRoot = TraversalStance.ResolvedRoot - TargetLocation;
+
+				TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToResolvedRoot, SurfaceNormal);
+
+				TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
+
+				TraversalStance.bOccupancyTestAvailable = bOccupancyTestAvailable;
+
+				if (TraversalStance.bOccupancyTestAvailable)
+				{
+					TArray<FOverlapResult> TraversalOverlaps;
+
+					TraversalStance.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
+						TraversalOverlaps,
+						TraversalStance.ResolvedRoot,
+						TraversalStance.Facing.Quaternion(),
+						Capsule->GetCollisionObjectType(),
+						OccupancyShape,
+						OccupancyQuery,
+						OccupancyResponse
+					);
+					TraversalStance.bPlacementValid = !TraversalStance.bCapsuleBlocked;
+				}
+
+				TraversalStance.GroundTime = GroundTime;
+
+				TraversalStance.FlightTime = TraversalStance.Traversal.FlightTime;
+
+				TraversalStance.TotalTime = TraversalStance.GroundTime + TraversalStance.FlightTime;
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeTraversalStanceCandidate] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"RequestedFeet=%s | "
+					"PlanFound=%d | "
+					"ResolvedFeet=%s | "
+					"ContactError=%.2f | "
+					"Contact=%d | "
+					"SideDot=%.2f | "
+					"Exposed=%d | "
+					"Placement=%d | "
+					"GroundTime=%.3f | "
+					"FlightTime=%.3f | "
+					"TotalTime=%.3f | "
+					"Viable=%d"),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					TraversalStance.AngleOffsetDegrees,
+					*TraversalStance.RequestedFeet.ToString(),
+					TraversalStance.bTraversalPlanFound,
+					*TraversalStance.ResolvedLandingFeet.ToString(),
+					TraversalStance.ContactError,
+					TraversalStance.bContactValid,
+					TraversalStance.SurfaceSideDot,
+					TraversalStance.bExposedSide,
+					TraversalStance.bPlacementValid,
+					TraversalStance.GroundTime,
+					TraversalStance.FlightTime,
+					TraversalStance.TotalTime,
+					TraversalStance.IsViable()
+				);
+
+				if (TraversalStance.IsViable() && (!BestTraversalStance || TraversalStance.TotalTime < BestTraversalStance->TotalTime))
+				{
+					BestTraversalStance = &TraversalStance;
+				}
+			}
+		}
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[MeleeTraversalStanceSummary] "
+			"RequestId=%s | "
+			"CandidateCount=%d | "
+			"ViableCount=%d | "
+			"BestAngle=%+.0f | "
+			"BestTotalTime=%.3f"),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			TraversalStances.Num(),
+			BestTraversalStance ? 1 : 0,
+			BestTraversalStance ? BestTraversalStance->AngleOffsetDegrees : 0.f,
+			BestTraversalStance ? BestTraversalStance->TotalTime : 0.f
+		);
+	}
+
 	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
 
 	FVector NavGoal;
