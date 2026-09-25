@@ -2245,9 +2245,11 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			return false;
 		}
 
+		const bool bHasAuthoritativeStance =SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId);
+
 		float FacingErrorDegrees = 0.f;
 
-		if (SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId))
+		if (bHasAuthoritativeStance)
 		{
 			FacingErrorDegrees = FMath::Abs(FMath::FindDeltaAngleDegrees(Pokemon->GetActorRotation().Yaw, SelectedMeleeStance.Facing.Yaw));
 
@@ -2276,6 +2278,27 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			}
 		}
 
+		const FString SelectedAngleText =
+			bHasAuthoritativeStance
+			? FString::Printf(
+				TEXT("%+.0f"),
+				SelectedMeleeStance.AngleOffsetDegrees)
+			: TEXT("None");
+
+		const FString SelectedYawText =
+			bHasAuthoritativeStance
+			? FString::Printf(
+				TEXT("%.2f"),
+				SelectedMeleeStance.Facing.Yaw)
+			: TEXT("None");
+
+		const FString FacingErrorText =
+			bHasAuthoritativeStance
+			? FString::Printf(
+				TEXT("%.2f"),
+				FacingErrorDegrees)
+			: TEXT("N/A");
+
 		UE_LOG(LogTemp, Display, TEXT(
 			"[CombatApproachAction] "
 			"MeleeExecutionReached | "
@@ -2284,27 +2307,27 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 			"Target=%s | "
 			"PlannedCenter=%s | "
 			"Distance3D=%.2f | "
-			"SelectedAngle=%+.0f | "
-			"SelectedYaw=%.2f | "
+			"HasSelectedStance=%d | "
+			"SelectedAngle=%s | "
+			"SelectedYaw=%s | "
 			"ActorYaw=%.2f | "
-			"FacingError=%.2f | "
+			"FacingError=%s | "
 			"Radius=%.2f | "
 			"Profile=%s"
 		),
-			*CurrentNavigationRequest
-			.RequestId.ToString(),
-			*CurrentNavigationRequest
-			.ParentAttackCommandId.ToString(),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*CurrentNavigationRequest.ParentAttackCommandId.ToString(),
 			*TargetLocation.ToString(),
 			*Candidate.PlannedContactCenter.ToString(),
 			Distance,
-			SelectedMeleeStance.AngleOffsetDegrees,
-			SelectedMeleeStance.Facing.Yaw,
+			bHasAuthoritativeStance,
+			*SelectedAngleText,
+			*SelectedYawText,
 			Pokemon->GetActorRotation().Yaw,
-			FacingErrorDegrees,
+			*FacingErrorText,
 			Candidate.Radius,
-			*CurrentNavigationRequest
-			.MeleeApproach.ProfileId.ToString());
+			*CurrentNavigationRequest.MeleeApproach.ProfileId.ToString()
+		);
 
 		return true;
 	}
