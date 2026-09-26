@@ -1554,15 +1554,16 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			if (!TraversalStance.bTraversalPlanFound)
 			{
-				TraversalStance.Traversal.FailureReason = TEXT("NoTraversalPlanFound");
 				UE_LOG(LogTemp, Display, TEXT(
-					"[MeleeTraversalStanceCandidate]"
+					"[MeleeTraversalStanceCandidate] "
 					"RequestId=%s | "
 					"Angle=%+.0f | "
+					"RequestedFeet=%s | "
 					"PlanFound=0 | "
 					"FailureReason=%s"),
 					*CurrentNavigationRequest.RequestId.ToString(),
 					TraversalStance.AngleOffsetDegrees,
+					*TraversalStance.RequestedFeet.ToString(),
 					*TraversalStance.Traversal.FailureReason.ToString());
 				continue;
 			}
@@ -3111,6 +3112,11 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 	FPokemonTraversalRequirement BaseRequirement;
 	if (!BuildTraversalRequirement(DestinationFeet, Trigger, BaseRequirement))
 	{
+		OutCandidate = FPokemonTraversalCandidate();
+		OutCandidate.ParentRequestId = CurrentNavigationRequest.RequestId;
+		OutCandidate.DestinationFeetLocation = DestinationFeet;
+
+		OutCandidate.FailureReason = FName(TEXT("TakeoffSearchRequirementBuildFailed"));
 		return false;
 	}
 
