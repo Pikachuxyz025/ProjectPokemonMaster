@@ -3599,8 +3599,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
 
-	if (FPokemonJumpSolver::IsDebugEnabled()
-		&& FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
+	if (FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
 	{
 		UE_LOG(LogTemp, Display,
 			TEXT("[Jump02] TakeoffApproach | RequestId=%s | CurrentFeet=%s | Takeoff=%s | Distance3D=%.2f | Distance2D=%.2f | VerticalDelta=%.2f | Speed2D=%.2f | MoveStatus=%d"),
@@ -3620,6 +3619,23 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	if (TakeoffApproachElapsed > 8.f)
 	{
+		UE_LOG(LogTemp, Warning, TEXT(
+			"[TakeoffApproach] STALLED/TIMEOUT | "
+			"RequestId=%s | "
+			"Distance3D=%.2f | "
+			"Distance2D=%.2f | "
+			"DeltaZ=%.2f | "
+			"Speed2D=%.2f | "
+			"MoveStatus=%d"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			Distance3D,
+			Distance2D,
+			VerticalDelta,
+			Speed2D,
+			static_cast<int32>(MoveStatus)
+		);
+
 		bReachingTakeoff = false;
 		LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachTimeout"));
 		HoldCompositeFailure(LastTraversalCandidate.FailureReason);
