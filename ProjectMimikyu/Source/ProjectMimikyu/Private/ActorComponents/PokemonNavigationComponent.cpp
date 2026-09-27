@@ -2505,7 +2505,12 @@ void UPokemonNavigationComponent::TickCoordinatorApproachAction(float DeltaTime)
 		}
 	}
 	
-	if (bHasActiveRequest && CurrentNavigationRequest.RequestId == RequestId && CurrentNavigationRequest.bFaceTargetDuringApproach)
+	if (bHasActiveRequest 
+		&& CurrentNavigationRequest.RequestId == RequestId 
+		&& CurrentNavigationRequest.bFaceTargetDuringApproach
+		&& !bReachingTakeoff
+		&& !bTraversalPlanReady
+		&& !bTraversalBusy)
 	{
 		FaceCoordinatorApproachTarget(DeltaTime);
 	}
@@ -2657,7 +2662,11 @@ bool UPokemonNavigationComponent::IsOwnedCoordinatorApproachTraversalBusy() cons
 
 	const UPokemonJumpExecutionComponent* Jump = Pokemon ? Pokemon->JumpExecutionComponent : nullptr;
 
-	return Jump && Jump->IsBusy() && Jump->GetParentRequestId() == CurrentNavigationRequest.RequestId;
+	const bool bOwnedTakeoffPhase = (bReachingTakeoff || bTraversalPlanReady) && LastTraversalCandidate.ParentRequestId == CurrentNavigationRequest.RequestId;
+
+	const bool bOwnedJump=Jump && Jump->IsBusy() && Jump->GetParentRequestId() == CurrentNavigationRequest.RequestId;
+	
+	return bOwnedTakeoffPhase || bOwnedJump;
 }
 
 void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime) const
@@ -3567,13 +3576,38 @@ void UPokemonNavigationComponent::RefreshTraversalAuthorization()
 void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 {
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
 	if (!Pokemon || PendingTraversalRequirement.ParentRequestId != CurrentNavigationRequest.RequestId || IsAttackJumpConsumed())
 	{
 		bReachingTakeoff = false;
 		return;
 	}
+
 	TakeoffApproachElapsed += DeltaTime;
+
 	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+	
+	const FVector Takeoff = PendingTraversalRequirement.StartFeetLocation;
+
+	const float Distance3D = FVector::Dist(CurrentFeet, Takeoff);
+
+	const float Distance2D = FVector::Dist2D(CurrentFeet, Takeoff);
+
+	const float VerticalDelta = CurrentFeet.Z - Takeoff.Z;
+
+	const float Speed2D = Pokemon->GetVelocity().Size2D();
+
+	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
+
+	if (FPokemonJumpSolver::IsDebugEnabled()
+		&& FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[Jump02] TakeoffApproach | RequestId=%s | CurrentFeet=%s | Takeoff=%s | Distance3D=%.2f | Distance2D=%.2f | VerticalDelta=%.2f | Speed2D=%.2f | MoveStatus=%d"),
+			*CurrentNavigationRequest.RequestId.ToString(), *CurrentFeet.ToCompactString(), *Takeoff.ToCompactString(), Distance3D, Distance2D, VerticalDelta, Speed2D,
+			static_cast<int32>(MoveStatus));
+	}
+
 	if (FVector::Dist(CurrentFeet, PendingTraversalRequirement.StartFeetLocation) <= 6.f)
 	{
 		bReachingTakeoff = false;
@@ -3583,6 +3617,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		CachedAIController->StopMovement();
 		return;
 	}
+
 	if (TakeoffApproachElapsed > 8.f)
 	{
 		bReachingTakeoff = false;
@@ -3595,6 +3630,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		}
 		return;
 	}
+
 	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
 	{
 		FAIMoveRequest Approach;
