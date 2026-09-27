@@ -1675,7 +1675,78 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			const bool bAtSelectedTakeoff = FVector::Dist(CurrentFeet, SelectedTraversal.Requirement.StartFeetLocation) <= 6.f;
 
+			// --------------------------------------------------------
+            // Traversal authority
+            // --------------------------------------------------------
+
 			bPlayerMovePlanningOnly = true;
+
+			LastTraversalRequirement = SelectedTraversal.Requirement;
+
+			LastTraversalCandidate = SelectedTraversal.Traversal;
+
+			PendingTraversalRequirement = SelectedTraversal.Requirement;
+
+			bReachingTakeoff = !bAtSelectedTakeoff;
+
+			bTraversalPlanReady = bAtSelectedTakeoff;
+
+			TakeoffApproachElapsed = 0.f;	
+
+			// --------------------------------------------------------
+            // Execution-stance authority
+            // --------------------------------------------------------
+
+			bHasMeleeStanceSelection = true;
+
+			MeleeStanceSelectionAngle = SelectedTraversal.AngleOffsetDegrees;
+
+			SelectedMeleeStance.RequestId = CurrentNavigationRequest.RequestId;
+
+			SelectedMeleeStance.bValid = true;
+
+			SelectedMeleeStance.AngleOffsetDegrees = SelectedTraversal.AngleOffsetDegrees;
+
+			SelectedMeleeStance.NavGoal = SelectedTraversal.ResolvedLandingFeet;
+
+			SelectedMeleeStance.GroundRoot = SelectedTraversal.ResolvedRoot;
+
+			SelectedMeleeStance.GroundContact = SelectedTraversal.ResolvedContact;
+
+			SelectedMeleeStance.Facing = SelectedTraversal.Facing;
+
+			SelectedMeleeStance.ContactError = SelectedTraversal.ContactError;
+
+			SelectedMeleeStance.ContactSlack = FMath::Max(0.0f, Candidate.Radius - SelectedTraversal.ContactError);
+
+			if (CachedAIController)
+			{
+				CachedAIController->StopMovement();
+			}
+
+			UE_LOG(LogTemp,Display,TEXT(
+					"[MeleeTraversalAuthority] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"Takeoff=%s | "
+					"LandingFeet=%s | "
+					"FacingYaw=%.2f | "
+					"GroundTime=%.3f | "
+					"FlightTime=%.3f | "
+					"TotalTime=%.3f | "
+					"AtTakeoff=%d"
+				),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				SelectedTraversal.AngleOffsetDegrees,
+				*SelectedTraversal.Requirement
+				.StartFeetLocation.ToString(),
+				*SelectedTraversal.ResolvedLandingFeet.ToString(),
+				SelectedTraversal.Facing.Yaw,
+				SelectedTraversal.GroundTime,
+				SelectedTraversal.FlightTime,
+				SelectedTraversal.TotalTime,
+				bAtSelectedTakeoff
+			);
 
 			return false;
 		}
