@@ -3,6 +3,7 @@
 
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/TargetableComponent.h"
+#include "Characters/Pokemon_Parent.h"
 #include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameplayTags/PokemonAITags.h"
@@ -2886,6 +2887,25 @@ FVector UPokemonNavigationComponent::GetFleeLocationFromTarget(const FVector& Th
 	return OwnerLocation + AwayDirection * Distance;
 }
 
+float UPokemonNavigationComponent::GetTraversalGroundDecisionSpeed() const
+{
+	 APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon)
+	{
+		return 1.f;
+	}
+
+	const UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	if(Movement&&Movement->MaxWalkSpeed>KINDA_SMALL_NUMBER)
+	{
+		return Movement->MaxWalkSpeed;
+	}
+
+	return FMath::Max(1.f, Pokemon->GetNaturalTraversalMovementSpeed());
+}
+
 void UPokemonNavigationComponent::RetainPlayerMoveForTraversal(
 	const FAgentNavigationRequest& Request, FName Trigger)
 {
@@ -3212,7 +3232,9 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 	FPokemonTraversalRequirement BestRequirement;
 	FPokemonTraversalCandidate BestCandidate;
 
-	const float EffectiveSpeed = FMath::Max(1.f, Pokemon->GetNaturalTraversalMovementSpeed());
+	const float DecisionGroundSpeed = GetTraversalGroundDecisionSpeed();
+	const float PhysicalTraversalSpeed = FMath::Max(1.f, Pokemon->GetNaturalTraversalMovementSpeed());
+
 	for (int32 Index = 0; Index < Anchors.Num(); ++Index)
 	{
 		const FAnchor& Anchor = Anchors[Index];
@@ -3260,7 +3282,7 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 				Requirement, ResolvedRequirement, Candidate, PlanFailure);
 			if (bExecutable)
 			{
-				const float GroundTime = GroundDistance / EffectiveSpeed;
+				const float GroundTime = GroundDistance / DecisionGroundSpeed;
 				const float Score = GroundTime + Candidate.FlightTime;
 				CandidateFlightTime = Candidate.FlightTime;
 				if (Score < BestScore)
@@ -3284,7 +3306,7 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 		}
 		if (FPokemonJumpSolver::IsDebugEnabled())
 		{
-			const float GroundTime = GroundDistance / EffectiveSpeed;
+			const float GroundTime = GroundDistance / DecisionGroundSpeed;
 			const float JumpTime = bExecutable ? CandidateFlightTime : 0.f;
 			const float Score = bExecutable ? GroundTime + JumpTime : TNumericLimits<float>::Max();
 			UE_LOG(LogTemp, Display,
@@ -3310,9 +3332,9 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 		if (FPokemonJumpSolver::IsDebugEnabled())
 		{
 			UE_LOG(LogTemp, Display,
-				TEXT("[Jump02] TakeoffSearch | RequestId=%s | CandidateCount=%d | SelectedCandidate=%d | SelectedTakeoff=%s | TotalTime=%.3f"),
+				TEXT("[Jump02] TakeoffSearch | RequestId=%s | CandidateCount=%d | SelectedCandidate=%d | SelectedTakeoff=%s | TotalTime=%.3f | DecisionGroundSpeed=%.1f | PhysicalTraversalSpeed=%.1f"),
 				*CurrentNavigationRequest.RequestId.ToString(), Anchors.Num(), BestIndex,
-				*BestRequirement.StartFeetLocation.ToCompactString(), BestScore);
+				*BestRequirement.StartFeetLocation.ToCompactString(), BestScore, DecisionGroundSpeed, PhysicalTraversalSpeed);
 			const FPokemonJumpCapabilitySnapshot& Capability = BestCandidate.CapabilitySnapshot;
 			UE_LOG(LogTemp, Display,
 				TEXT("[Jump02] TakeoffPlan | RequestId=%s | StartFeet=%s | DestinationFeet=%s | Speed=%.2f | MovementSpeed=%.2f | BaseV=%.2f | Attack=%.2f | Gravity=%.2f | FlightTime=%.3f | Launch=%s | Preference=%s | Executable=%d"),

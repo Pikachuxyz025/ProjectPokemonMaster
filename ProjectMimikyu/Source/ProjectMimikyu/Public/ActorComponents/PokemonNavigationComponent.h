@@ -249,6 +249,7 @@ private:
 
 	bool GetTargetLocation(FVector& OutLocation) const;
 	FVector GetFleeLocationFromTarget(const FVector& ThreatLocation) const;
+	float GetTraversalGroundDecisionSpeed() const;
 
 	void RetainPlayerMoveForTraversal(const FAgentNavigationRequest& Request, FName Trigger);
 
