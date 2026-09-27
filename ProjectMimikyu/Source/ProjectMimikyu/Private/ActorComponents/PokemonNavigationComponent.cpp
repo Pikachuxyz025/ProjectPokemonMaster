@@ -1664,6 +1664,21 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			BestTraversalStance ? BestTraversalStance->AngleOffsetDegrees : 0.f,
 			BestTraversalStance ? BestTraversalStance->TotalTime : 0.f
 		);
+
+		if (BestTraversalStance)
+		{
+			const FMeleeTraversalStanceCandidate SelectedTraversal = *BestTraversalStance;
+
+			const FVector CurrentFeet = Pokemon->GetCharacterMovement()
+				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
+				: OwnerPawn->GetActorLocation();
+
+			const bool bAtSelectedTakeoff = FVector::Dist(CurrentFeet, SelectedTraversal.Requirement.StartFeetLocation) <= 6.f;
+
+			bPlayerMovePlanningOnly = true;
+
+			return false;
+		}
 	}
 
 	const FVector RequiredFeet = Candidate.RootLocation - RootAboveFeet;
