@@ -3676,17 +3676,31 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
 
+	 FAIMoveRequest Approach;
+	 FAIRequestID RequestId;
+
 	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
 	{
-		FAIMoveRequest Approach;
+		
 		// AI MoveTo goals use the nav-agent feet location in this project.
 		Approach.SetGoalLocation(PendingTraversalRequirement.StartFeetLocation);
 		Approach.SetAcceptanceRadius(5.f);
 		Approach.SetReachTestIncludesAgentRadius(false);
 		Approach.SetProjectGoalLocation(false);
 		Approach.SetAllowPartialPath(false);
-		if (CachedAIController->MoveTo(Approach).Code == EPathFollowingRequestResult::Failed)
+		
+		const FPathFollowingRequestResult MoveResult = CachedAIController->MoveTo(Approach);
+		
+		RequestId = MoveResult.MoveId;
+
+
+		// Is the currently owned movement request the takeoff movement I submitted for this traversal request?
+
+		if (MoveResult.Code == EPathFollowingRequestResult::Failed)
 		{
+			// if owned request disappears while we're faraway from the takeoff, 
+			// retry or fail deliberately. 
+			// Once we're in the ~20 cm range, we utilize the revalidation system	
 			bReachingTakeoff = false;
 			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
 			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
