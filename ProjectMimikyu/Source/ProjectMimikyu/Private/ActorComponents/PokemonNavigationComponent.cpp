@@ -3659,6 +3659,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		return;
 	}
 
+
 	TakeoffApproachElapsed += DeltaTime;
 
 	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
@@ -3674,6 +3675,23 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 	const float Speed2D = Pokemon->GetVelocity().Size2D();
 
 	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
+
+	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
+	{
+		FAIMoveRequest Approach;
+		// AI MoveTo goals use the nav-agent feet location in this project.
+		Approach.SetGoalLocation(PendingTraversalRequirement.StartFeetLocation);
+		Approach.SetAcceptanceRadius(5.f);
+		Approach.SetReachTestIncludesAgentRadius(false);
+		Approach.SetProjectGoalLocation(false);
+		Approach.SetAllowPartialPath(false);
+		if (CachedAIController->MoveTo(Approach).Code == EPathFollowingRequestResult::Failed)
+		{
+			bReachingTakeoff = false;
+			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+		}
+	}
 
 	if (FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
 	{
@@ -3735,23 +3753,6 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 			UE_LOG(LogTemp, Display, TEXT("[Jump02] Rejected | RequestId=%s | Reason=TakeoffApproachTimeout"), *CurrentNavigationRequest.RequestId.ToString());
 		}
 		return;
-	}
-
-	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
-	{
-		FAIMoveRequest Approach;
-		// AI MoveTo goals use the nav-agent feet location in this project.
-		Approach.SetGoalLocation(PendingTraversalRequirement.StartFeetLocation);
-		Approach.SetAcceptanceRadius(5.f);
-		Approach.SetReachTestIncludesAgentRadius(false);
-		Approach.SetProjectGoalLocation(false);
-		Approach.SetAllowPartialPath(false);
-		if (CachedAIController->MoveTo(Approach).Code == EPathFollowingRequestResult::Failed)
-		{
-			bReachingTakeoff = false;
-			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
-			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
-		}
 	}
 }
 
