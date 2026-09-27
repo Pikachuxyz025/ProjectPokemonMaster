@@ -2669,6 +2669,82 @@ bool UPokemonNavigationComponent::IsOwnedCoordinatorApproachTraversalBusy() cons
 	return bOwnedTakeoffPhase || bOwnedJump;
 }
 
+bool UPokemonNavigationComponent::TryRevalidateTraversalFromCurrentTakeoff(const FVector& CurrentFeet)
+{
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon
+		|| !bHasActiveRequest
+		|| IsAttackJumpConsumed())
+	{
+		return false;
+	}
+
+	FVector SupportedTakeoff;
+	FName SupportFailure;
+
+	if (!FPokemonJumpTrajectoryValidator::ResolveLanding(*Pokemon, CurrentFeet, SupportedTakeoff, SupportFailure))
+	{
+		return false;
+	}
+
+	FPokemonTraversalRequirement RevalidatedRequirement = PendingTraversalRequirement;
+
+	RevalidatedRequirement.StartFeetLocation = SupportedTakeoff;
+
+	RevalidatedRequirement.bStartSupportKnown = true;
+
+	FPokemonTraversalRequirement ResolvedRequirement;
+	FPokemonTraversalCandidate RevalidatedCandidate;
+	FName FailureReason;
+
+	if (!BuildExecutableTraversalPlan(RevalidatedRequirement, ResolvedRequirement, RevalidatedCandidate, FailureReason))
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[Jump02] TakeoffRevalidationRejected | "
+			"RequestId=%s | "
+			"CurrentFeet=%s | "
+			"OriginalTakeoff=%s | "
+			"Reason=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*CurrentFeet.ToCompactString(),
+			*PendingTraversalRequirement
+			.StartFeetLocation.ToCompactString(),
+			*FailureReason.ToString());
+
+		return false;
+	}
+
+	const FVector PreviousTakeoff = PendingTraversalRequirement.StartFeetLocation;
+
+	LastTraversalRequirement = ResolvedRequirement;
+	PendingTraversalRequirement = RevalidatedRequirement;
+	LastTraversalCandidate = RevalidatedCandidate;
+
+	bReachingTakeoff = false;
+	bTraversalPlanReady = RevalidatedCandidate.IsExecutable();
+
+	CachedAIController->StopMovement();
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[Jump02] TakeoffRevalidated | "
+		"RequestId=%s | "
+		"PreviousTakeoff=%s | "
+		"ActualTakeoff=%s | "
+		"Shift=%.2f"
+	),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*PreviousTakeoff.ToCompactString(),
+		*ResolvedRequirement
+		.StartFeetLocation.ToCompactString(),
+		FVector::Dist(
+			PreviousTakeoff,
+			ResolvedRequirement.StartFeetLocation));
+
+	return bTraversalPlanReady;
+}
+
 void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime) const
 {
 	if(!OwnerPawn)
@@ -3614,6 +3690,20 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		// replace them with a new solve merely because the approach ended within tolerance.
 		bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
 		CachedAIController->StopMovement();
+		return;
+	}
+
+	constexpr float TakeoffRevalidationRadius = 20.f;
+	constexpr float TakeoffRevalidationSpeed = 100.f;
+
+	const bool bNearTakeoff = Distance2D <= TakeoffRevalidationRadius && FMath::Abs(VerticalDelta) <= 5.f;
+
+	const bool bApproachHasSlowed = Speed2D <= TakeoffRevalidationSpeed
+		|| MoveStatus!=EPathFollowingStatus::Moving;
+
+
+	if (bNearTakeoff && bApproachHasSlowed && TryRevalidateTraversalFromCurrentTakeoff(CurrentFeet))
+	{
 		return;
 	}
 

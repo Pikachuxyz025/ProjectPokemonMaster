@@ -241,6 +241,8 @@ private:
 
 	bool IsOwnedCoordinatorApproachTraversalBusy() const;
 
+	bool TryRevalidateTraversalFromCurrentTakeoff(const FVector& CurrentFeet);
+
 	void FaceCoordinatorApproachTarget(float DeltaTime) const;
 	bool RequestMoveToLocation(const FVector& GoalLocation, float AcceptableRadius, bool bAllowPartialPath = true, bool bIncludeAgentRadius = true, bool bProjectGoalLocation = true);
 	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius, bool bCanStrafe = false);
