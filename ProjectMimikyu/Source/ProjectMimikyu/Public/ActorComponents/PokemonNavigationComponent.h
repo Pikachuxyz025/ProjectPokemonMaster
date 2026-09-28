@@ -7,6 +7,7 @@
 #include "AIControllers/PokemonAITypes.h"
 #include "Navigation/PokemonTraversalTypes.h"
 #include "Navigation/PokemonCompositeMove.h"
+#include "AITypes.h"
 #include "Navigation/PokemonNavigationResult.h"
 #include "GameplayTagContainer.h"
 #include "PokemonNavigationComponent.generated.h"
@@ -186,10 +187,18 @@ private:
 	float TimeSinceLastNavigationThink = 0.f;
 
 	bool bNavigationSuspended = false;
+
 	bool bTraversalPlanReady = false;
 	bool bReachingTakeoff = false;
 	bool bRequestJumpConsumed = false;
+
 	float TakeoffApproachElapsed = 0.f;
+
+	FAIRequestID TakeoffApproachMoveId = FAIRequestID::InvalidRequest;
+
+	FGuid TakeoffApproachMoveOwnerRequestId;
+
+	
 	FPokemonTraversalRequirement PendingTraversalRequirement;
 	TWeakObjectPtr<APokemonJumpNavLink> ActiveJumpLink;
 
@@ -248,6 +257,12 @@ private:
 	bool RequestMoveToActor(AActor* TargetActor, float AcceptableRadius, bool bCanStrafe = false);
 
 	bool TryProjectNavigationGoal(const FVector& RawGoal, const FVector& ProjectionExtent, FVector& OutProjectedGoal) const;
+
+	bool IssueTakeoffApproachMove();
+
+	bool IsTakeoffApproachMoveActive() const;
+
+	void ClearTakeoffApproachMoveOwnership();
 
 	bool GetTargetLocation(FVector& OutLocation) const;
 	FVector GetFleeLocationFromTarget(const FVector& ThreatLocation) const;

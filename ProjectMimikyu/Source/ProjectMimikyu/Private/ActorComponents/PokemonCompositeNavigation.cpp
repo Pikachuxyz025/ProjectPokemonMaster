@@ -90,10 +90,14 @@ void UPokemonNavigationComponent::HoldCompositeFailure(FName Reason)
 	{
 		return;
 	}
+
 	bCompositeFailureHeld = true;
 	bPlayerMovePlanningOnly = true;
+
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
+
+	ClearTakeoffApproachMoveOwnership();
 	LastTraversalCandidate.FailureReason = Reason;
 	const APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 	CompositeFailureFeet = Pokemon->GetCharacterMovement()->GetActorFeetLocation();

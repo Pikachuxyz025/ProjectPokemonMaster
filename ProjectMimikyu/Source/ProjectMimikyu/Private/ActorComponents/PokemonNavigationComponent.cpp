@@ -339,7 +339,7 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 	if (!bHasActiveRequest || !OwnedRequestId.IsValid() || CurrentNavigationRequest.RequestId != OwnedRequestId)
 	{
 		return false;
-	}
+	}	
 
 	const bool bWasCoordinatorApproach = IsCoordinatorApproachRequest();
 
@@ -350,12 +350,18 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 	bHasActiveRequest = false;
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
+
+	ClearTakeoffApproachMoveOwnership();
+
 	ActiveJumpLink.Reset();
 	ResetLocalTraversal();
+
 	bCompositeFailureHeld = false;
 	CurrentNavigationRequest = FAgentNavigationRequest();
+
 	bHasActiveRequest = false;
 	bPlayerMovePlanningOnly = false;
+
 	LastTraversalRequirement = FPokemonTraversalRequirement();
 	LastTraversalCandidate = FPokemonTraversalCandidate();
 	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
@@ -1724,6 +1730,22 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				CachedAIController->StopMovement();
 			}
 
+			ClearTakeoffApproachMoveOwnership();
+
+			if (bReachingTakeoff)
+			{
+				if(!IssueTakeoffApproachMove())
+				{
+					bReachingTakeoff = false;
+
+					LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+
+					HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+
+
+				}
+			}
+
 			UE_LOG(LogTemp,Display,TEXT(
 					"[MeleeTraversalAuthority] "
 					"RequestId=%s | "
@@ -2727,6 +2749,8 @@ bool UPokemonNavigationComponent::TryRevalidateTraversalFromCurrentTakeoff(const
 
 	CachedAIController->StopMovement();
 
+	ClearTakeoffApproachMoveOwnership();
+
 	UE_LOG(LogTemp, Display, TEXT(
 		"[Jump02] TakeoffRevalidated | "
 		"RequestId=%s | "
@@ -2951,6 +2975,95 @@ bool UPokemonNavigationComponent::TryProjectNavigationGoal(const FVector& RawGoa
 		*ProjectionExtent.ToString());
 
 	return bProjected;
+}
+
+bool UPokemonNavigationComponent::IssueTakeoffApproachMove()
+{
+	if (!CachedAIController
+		|| !bHasActiveRequest
+		|| !bReachingTakeoff
+		|| PendingTraversalRequirement.ParentRequestId != CurrentNavigationRequest.RequestId)
+	{
+		return false;
+	}
+
+	FAIMoveRequest Approach;
+
+	Approach.SetGoalLocation(PendingTraversalRequirement.StartFeetLocation);
+
+	Approach.SetAcceptanceRadius(5.f);
+
+	Approach.SetReachTestIncludesAgentRadius(false);
+
+	Approach.SetProjectGoalLocation(false);
+
+	Approach.SetAllowPartialPath(false);
+
+	const FPathFollowingRequestResult MoveResult = CachedAIController->MoveTo(Approach);
+
+	if (MoveResult.Code == EPathFollowingRequestResult::Failed)
+	{
+		ClearTakeoffApproachMoveOwnership();
+
+		UE_LOG(LogTemp, Warning, TEXT(
+			"[Jump02] TakeoffMoveRejected | "
+			"RequestId=%s | "
+			"Goal=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*PendingTraversalRequirement
+			.StartFeetLocation.ToCompactString());
+
+		return false;
+	}
+
+	TakeoffApproachMoveId = MoveResult.MoveId;
+
+	TakeoffApproachMoveOwnerRequestId = CurrentNavigationRequest.RequestId;
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[Jump02] TakeoffMoveIssued | "
+		"RequestId=%s | "
+		"MoveId=%s | "
+		"Goal=%s | "
+		"Result=%d"
+	),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*TakeoffApproachMoveId.ToString(),
+		*PendingTraversalRequirement
+		.StartFeetLocation.ToCompactString(),
+		static_cast<int32>(MoveResult.Code));
+
+	return true;
+}
+
+bool UPokemonNavigationComponent::IsTakeoffApproachMoveActive() const
+{
+	if(!CachedAIController
+		||!bHasActiveRequest
+		||!TakeoffApproachMoveId.IsValid()
+		|| TakeoffApproachMoveOwnerRequestId != CurrentNavigationRequest.RequestId)
+	{
+		return false;
+	}
+
+	const UPathFollowingComponent* PathFollowing = CachedAIController->GetPathFollowingComponent();
+
+	if (!PathFollowing)
+	{
+		return false;
+	}
+
+	const FAIRequestID CurrentMoveId = PathFollowing->GetCurrentRequestId();
+
+	return CurrentMoveId.IsEquivalent(TakeoffApproachMoveId) && CachedAIController->GetMoveStatus() == EPathFollowingStatus::Moving;
+}
+
+void UPokemonNavigationComponent::ClearTakeoffApproachMoveOwnership()
+{
+	TakeoffApproachMoveId = FAIRequestID::InvalidRequest;
+
+	TakeoffApproachMoveOwnerRequestId = FGuid();
 }
 
 bool UPokemonNavigationComponent::GetTargetLocation(FVector& OutLocation) const
@@ -3676,36 +3789,18 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
 
-	 FAIMoveRequest Approach;
-	 FAIRequestID RequestId;
+	 if(Distance3D<=6.f)
+	 {
+		 ClearTakeoffApproachMoveOwnership();
+	 
+		 bReachingTakeoff = false;
+	 
+		 bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+	 
+		 CachedAIController->StopMovement();
 
-	if (CachedAIController->GetMoveStatus() != EPathFollowingStatus::Moving)
-	{
-		
-		// AI MoveTo goals use the nav-agent feet location in this project.
-		Approach.SetGoalLocation(PendingTraversalRequirement.StartFeetLocation);
-		Approach.SetAcceptanceRadius(5.f);
-		Approach.SetReachTestIncludesAgentRadius(false);
-		Approach.SetProjectGoalLocation(false);
-		Approach.SetAllowPartialPath(false);
-		
-		const FPathFollowingRequestResult MoveResult = CachedAIController->MoveTo(Approach);
-		
-		RequestId = MoveResult.MoveId;
-
-
-		// Is the currently owned movement request the takeoff movement I submitted for this traversal request?
-
-		if (MoveResult.Code == EPathFollowingRequestResult::Failed)
-		{
-			// if owned request disappears while we're faraway from the takeoff, 
-			// retry or fail deliberately. 
-			// Once we're in the ~20 cm range, we utilize the revalidation system	
-			bReachingTakeoff = false;
-			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
-			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
-		}
-	}
+		 return;
+	 }
 
 	if (FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
 	{
@@ -3736,6 +3831,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	if (bNearTakeoff && bApproachHasSlowed && TryRevalidateTraversalFromCurrentTakeoff(CurrentFeet))
 	{
+		ClearTakeoffApproachMoveOwnership();
 		return;
 	}
 
@@ -3758,20 +3854,36 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 			static_cast<int32>(MoveStatus)
 		);
 
-		bReachingTakeoff = false;
-		LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachTimeout"));
-		HoldCompositeFailure(LastTraversalCandidate.FailureReason);
-		CachedAIController->StopMovement();
-		if (FPokemonJumpSolver::IsDebugEnabled())
+		if (!IsTakeoffApproachMoveActive())
 		{
-			UE_LOG(LogTemp, Display, TEXT("[Jump02] Rejected | RequestId=%s | Reason=TakeoffApproachTimeout"), *CurrentNavigationRequest.RequestId.ToString());
+			UE_LOG(LogTemp, Display, TEXT(
+				"[Jump02] TakeoffMoveLost | "
+				"RequestId=%s | "
+				"OwnedMoveId=%s | "
+				"Distance=%.2f"
+			),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				*TakeoffApproachMoveId.ToString(),
+				Distance2D);
+
+			if (!IssueTakeoffApproachMove())
+			{
+				bReachingTakeoff = false;
+
+				LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+
+				HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+
+				return;
+			}
 		}
-		return;
 	}
 }
 
 void UPokemonNavigationComponent::StartPreparedTraversal()
 {
+	ClearTakeoffApproachMoveOwnership();
+
 	bTraversalPlanReady = false;
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 	if (!Pokemon || bNavigationSuspended || IsAttackJumpConsumed() || !LastTraversalCandidate.IsExecutable()
