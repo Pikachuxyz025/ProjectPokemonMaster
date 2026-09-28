@@ -286,6 +286,10 @@ private:
 		FPokemonTraversalRequirement& OutRequirement,
 		FPokemonTraversalCandidate& OutCandidate, float* OutGroundTime = nullptr);
 
+	bool EvaluateGroundMobilityOption(const FMeleeStanceSearchCandidate& Stance, FPokemonMobilityOption& OutOption);
+
+	bool EvaluateRunJumpMobilityOption(const FMeleeStanceSearchCandidate& Stance, FPokemonMobilityOption& OutOption);
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void DebugFollowTarget(AActor* TargetActor);

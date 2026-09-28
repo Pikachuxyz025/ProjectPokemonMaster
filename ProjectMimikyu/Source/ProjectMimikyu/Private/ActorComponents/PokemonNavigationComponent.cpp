@@ -35,6 +35,12 @@ namespace
 		BelowGroundedReach
 	};
 
+	enum class EPokemonMobilityOptionType :uint8
+	{
+		GroundPath,
+		RunAndJump
+	};
+
 	const TCHAR* ToString(EMeleeGroundedReachClassification Classification)
 	{
 		switch (Classification)
@@ -109,6 +115,21 @@ namespace
 		{
 			return FMath::IsNearlyEqual(AngleOffsetDegrees, OtherAngle, 0.1f);
 		}
+	};
+
+	struct FPokemonMobilityOption
+	{
+		EPokemonMobilityOptionType Type = EPokemonMobilityOptionType::GroundPath;
+
+		bool bValid = false;
+
+		float EstimatedTime = 0.f;
+
+		float GroundDistance = 0.f;
+
+		FPokemonTraversalRequirement TraversalRequirement;
+
+		FPokemonTraversalCandidate TraversalCandidate;
 	};
 
 	struct FMeleeTraversalStanceCandidate
