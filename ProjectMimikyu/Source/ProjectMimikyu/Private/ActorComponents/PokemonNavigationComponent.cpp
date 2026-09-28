@@ -121,9 +121,11 @@ namespace
 	{
 		EPokemonMobilityOptionType Type = EPokemonMobilityOptionType::GroundPath;
 
+		float StanceAngleOffsetDegrees = 0.f;
+
 		bool bValid = false;
 
-		float EstimatedTime = 0.f;
+		float EstimatedTime = TNumericLimits<float>::Max();
 
 		float GroundDistance = 0.f;
 
@@ -1116,6 +1118,32 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 		SearchCandidates.Reserve(UE_ARRAY_COUNT(MeleeStanceSearchAngles));
 
+		TArray<FPokemonMobilityOption> MobilityOptions;
+
+		MobilityOptions.Reserve(UE_ARRAY_COUNT(MeleeStanceSearchAngles));
+
+		const float GroundDecisionSpeed = FMath::Max(1.f, GetTraversalGroundDecisionSpeed());
+
+		const auto EvaluateGroundMobilityOption = [GroundDecisionSpeed](
+			const FMeleeStanceSearchCandidate& Stance)
+			{
+				FPokemonMobilityOption Option;
+
+				Option.Type = EPokemonMobilityOptionType::GroundPath;
+
+				Option.StanceAngleOffsetDegrees = Stance.AngleOffsetDegrees;
+				Option.bValid = Stance.IsGroundReachable();
+
+				if (Option.bValid)
+				{
+					Option.GroundDistance = FMath::Max(0.f, Stance.PathLength);
+
+					Option.EstimatedTime = Option.GroundDistance / GroundDecisionSpeed;
+				}
+				return Option;
+			};
+			
+
 	if (BaseSurfaceFacing.Normalize())
 	{
 		const float ContactYaw = RootSpaceContactOffset.SizeSquared2D() > KINDA_SMALL_NUMBER
@@ -1203,6 +1231,9 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				}
 			}
 
+
+
+
 			const FLinearColor SearchColor = Search.IsViable()
 				? FLinearColor::Green
 				: Search.bProjectionValid
@@ -1229,6 +1260,29 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				2.f,
 				EPokemonDebugVerbosity::Detailed
 			);
+
+			FPokemonMobilityOption GroundOption = EvaluateGroundMobilityOption(Search);
+
+			MobilityOptions.Add(GroundOption);
+
+			UE_LOG(LogTemp,Display,TEXT(
+					"[MobilityOption] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"Type=GroundPath | "
+					"Valid=%d | "
+					"GroundDistance=%.2f | "
+					"EstimatedTime=%.3f"
+				),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				GroundOption.StanceAngleOffsetDegrees,
+				GroundOption.bValid,
+				GroundOption.GroundDistance,
+				GroundOption.bValid
+				? GroundOption.EstimatedTime
+				: -1.f
+			);
+
 
 			UE_LOG(LogTemp, Display, TEXT(
 				"[MeleeStanceSearchCandidate] "
@@ -1339,6 +1393,32 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			SearchCandidates.Num(),
 			GroundPlacementCount,
 			GroundReachableCount
+		);
+
+		int32 ValidGroundMobilityCount = 0;
+
+		for (const FPokemonMobilityOption& Option : MobilityOptions)
+		{
+			if (Option.Type == EPokemonMobilityOptionType::GroundPath && Option.bValid)
+			{
+				++ValidGroundMobilityCount;
+			}
+		}
+
+		UE_LOG(LogTemp,Display,TEXT(
+				"[MobilitySummary] "
+				"RequestId=%s | "
+				"GroundPathOptions=%d | "
+				"ValidGroundPathOptions=%d | "
+				"GroundReachableCount=%d | "
+				"Match=%d"
+			),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			MobilityOptions.Num(),
+			ValidGroundMobilityCount,
+			GroundReachableCount,
+			ValidGroundMobilityCount
+			== GroundReachableCount
 		);
 
 		bool bAcquiredThisEvaluation = false;
