@@ -2741,7 +2741,7 @@ bool UPokemonNavigationComponent::TryRevalidateTraversalFromCurrentTakeoff(const
 	const FVector PreviousTakeoff = PendingTraversalRequirement.StartFeetLocation;
 
 	LastTraversalRequirement = ResolvedRequirement;
-	PendingTraversalRequirement = RevalidatedRequirement;
+	PendingTraversalRequirement = ResolvedRequirement;
 	LastTraversalCandidate = RevalidatedCandidate;
 
 	bReachingTakeoff = false;
@@ -3776,7 +3776,7 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 	TakeoffApproachElapsed += DeltaTime;
 
 	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
-	
+
 	const FVector Takeoff = PendingTraversalRequirement.StartFeetLocation;
 
 	const float Distance3D = FVector::Dist(CurrentFeet, Takeoff);
@@ -3789,18 +3789,18 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	const EPathFollowingStatus::Type MoveStatus = CachedAIController->GetMoveStatus();
 
-	 if(Distance3D<=6.f)
-	 {
-		 ClearTakeoffApproachMoveOwnership();
-	 
-		 bReachingTakeoff = false;
-	 
-		 bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
-	 
-		 CachedAIController->StopMovement();
+	if (Distance3D <= 6.f)
+	{
+		ClearTakeoffApproachMoveOwnership();
 
-		 return;
-	 }
+		bReachingTakeoff = false;
+
+		bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+
+		CachedAIController->StopMovement();
+
+		return;
+	}
 
 	if (FMath::Fmod(TakeoffApproachElapsed, 0.25f) < DeltaTime)
 	{
@@ -3810,29 +3810,45 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 			static_cast<int32>(MoveStatus));
 	}
 
-	if (FVector::Dist(CurrentFeet, PendingTraversalRequirement.StartFeetLocation) <= 6.f)
-	{
-		bReachingTakeoff = false;
-		// The selected requirement/candidate are a stable request snapshot. Do not
-		// replace them with a new solve merely because the approach ended within tolerance.
-		bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
-		CachedAIController->StopMovement();
-		return;
-	}
 
-	constexpr float TakeoffRevalidationRadius = 20.f;
+	constexpr float TakeoffRevalidationRadius = 30.f;
 	constexpr float TakeoffRevalidationSpeed = 100.f;
 
 	const bool bNearTakeoff = Distance2D <= TakeoffRevalidationRadius && FMath::Abs(VerticalDelta) <= 5.f;
 
 	const bool bApproachHasSlowed = Speed2D <= TakeoffRevalidationSpeed
-		|| MoveStatus!=EPathFollowingStatus::Moving;
+		|| MoveStatus != EPathFollowingStatus::Moving;
 
 
 	if (bNearTakeoff && bApproachHasSlowed && TryRevalidateTraversalFromCurrentTakeoff(CurrentFeet))
 	{
 		ClearTakeoffApproachMoveOwnership();
 		return;
+	}
+
+
+	if (!IsTakeoffApproachMoveActive())
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[Jump02] TakeoffMoveLost | "
+			"RequestId=%s | "
+			"OwnedMoveId=%s | "
+			"Distance=%.2f"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			*TakeoffApproachMoveId.ToString(),
+			Distance2D);
+
+		if (!IssueTakeoffApproachMove())
+		{
+			bReachingTakeoff = false;
+
+			LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+
+			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+
+			return;
+		}
 	}
 
 	if (TakeoffApproachElapsed > 8.f)
@@ -3851,32 +3867,19 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 			Distance2D,
 			VerticalDelta,
 			Speed2D,
-			static_cast<int32>(MoveStatus)
-		);
+			static_cast<int32>(MoveStatus));
 
-		if (!IsTakeoffApproachMoveActive())
-		{
-			UE_LOG(LogTemp, Display, TEXT(
-				"[Jump02] TakeoffMoveLost | "
-				"RequestId=%s | "
-				"OwnedMoveId=%s | "
-				"Distance=%.2f"
-			),
-				*CurrentNavigationRequest.RequestId.ToString(),
-				*TakeoffApproachMoveId.ToString(),
-				Distance2D);
+		bReachingTakeoff = false;
 
-			if (!IssueTakeoffApproachMove())
-			{
-				bReachingTakeoff = false;
+		LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachTimeout"));
 
-				LastTraversalCandidate.FailureReason = FName(TEXT("TakeoffApproachUnreachable"));
+		ClearTakeoffApproachMoveOwnership();
 
-				HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+		CachedAIController->StopMovement();
 
-				return;
-			}
-		}
+		HoldCompositeFailure(LastTraversalCandidate.FailureReason);
+
+		return;
 	}
 }
 
