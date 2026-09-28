@@ -123,14 +123,16 @@ namespace
 
 		float StanceAngleOffsetDegrees = 0.f;
 
-		bool bValid = false;
+		bool bTransportEvaluated = false;
+		bool bTransportValid = false;
 
 		float EstimatedTime = TNumericLimits<float>::Max();
 
 		float GroundDistance = 0.f;
+		float GroundTime = 0.f;
+		float FlightTime = 0.f;
 
 		FPokemonTraversalRequirement TraversalRequirement;
-
 		FPokemonTraversalCandidate TraversalCandidate;
 	};
 
@@ -1132,14 +1134,20 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				Option.Type = EPokemonMobilityOptionType::GroundPath;
 
 				Option.StanceAngleOffsetDegrees = Stance.AngleOffsetDegrees;
-				Option.bValid = Stance.IsGroundReachable();
 
-				if (Option.bValid)
+				Option.bTransportEvaluated = Stance.bPathChecked;
+
+				Option.bTransportValid = Stance.bPathChecked && Stance.bCompletePath;
+
+				if (Option.bTransportValid)
 				{
 					Option.GroundDistance = FMath::Max(0.f, Stance.PathLength);
 
-					Option.EstimatedTime = Option.GroundDistance / GroundDecisionSpeed;
+					Option.GroundTime = Option.GroundDistance / GroundDecisionSpeed;
+
+					Option.EstimatedTime = Option.GroundTime;
 				}
+				
 				return Option;
 			};
 			
@@ -1270,17 +1278,17 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 					"RequestId=%s | "
 					"Angle=%+.0f | "
 					"Type=GroundPath | "
-					"Valid=%d | "
+					"TransportEvaluated=%d | "
+					"TransportValid=%d | "
 					"GroundDistance=%.2f | "
 					"EstimatedTime=%.3f"
 				),
 				*CurrentNavigationRequest.RequestId.ToString(),
 				GroundOption.StanceAngleOffsetDegrees,
-				GroundOption.bValid,
+				GroundOption.bTransportEvaluated,
+				GroundOption.bTransportValid,
 				GroundOption.GroundDistance,
-				GroundOption.bValid
-				? GroundOption.EstimatedTime
-				: -1.f
+				GroundOption.EstimatedTime
 			);
 
 
@@ -1399,7 +1407,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 		for (const FPokemonMobilityOption& Option : MobilityOptions)
 		{
-			if (Option.Type == EPokemonMobilityOptionType::GroundPath && Option.bValid)
+			if (Option.Type == EPokemonMobilityOptionType::GroundPath && Option.bTransportValid)
 			{
 				++ValidGroundMobilityCount;
 			}
@@ -1462,6 +1470,19 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			}
 			else
 			{
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeStanceSelection] "
+					"RequestId=%s | "
+					"Event=NoViableCandidate | "
+					"Angle=%+.0f | "
+					"Alignment=%.3f"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					MeleeStanceSelectionAngle,
+					CurrentSelection ? CurrentSelection->ForwardAlignment : 0.f
+				);
+
 				bHasMeleeStanceSelection = false;
 				SelectedMeleeStance.Reset();
 			}
@@ -1624,7 +1645,10 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 		TraversalStances.Reserve(SearchCandidates.Num());
 
 		const FMeleeTraversalStanceCandidate* BestTraversalStance = nullptr;
+
 		int32 TraversalViableCount = 0;
+		int32 RunJumpTransportValidCount = 0;
+		int32 RunJumpMeleeCompatibleCount = 0;
 
 		for (const FMeleeStanceSearchCandidate& Search : SearchCandidates)
 		{
@@ -1659,6 +1683,33 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 					TraversalStance.Requirement,
 					TraversalStance.Traversal,
 					&GroundTime);
+
+			FPokemonMobilityOption RunJumpOption;
+
+			RunJumpOption.Type = EPokemonMobilityOptionType::RunAndJump;
+
+			RunJumpOption.StanceAngleOffsetDegrees = Search.AngleOffsetDegrees;
+
+			RunJumpOption.bTransportEvaluated = true;
+
+			RunJumpOption.bTransportValid = TraversalStance.bTraversalPlanFound;
+
+			if (RunJumpOption.bTransportValid)
+			{
+				RunJumpOption.GroundTime = GroundTime;
+
+				RunJumpOption.FlightTime = TraversalStance.Traversal.FlightTime;
+
+				RunJumpOption.EstimatedTime = RunJumpOption.GroundTime + RunJumpOption.FlightTime;
+
+				RunJumpOption.TraversalRequirement = TraversalStance.Requirement;
+
+				RunJumpOption.TraversalCandidate = TraversalStance.Traversal;
+
+				++RunJumpTransportValidCount;
+			}
+
+			MobilityOptions.Add(RunJumpOption);
 
 			if (!TraversalStance.bTraversalPlanFound)
 			{
@@ -1748,15 +1799,64 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				TraversalStance.IsViable()
 			);
 
-			if (TraversalStance.IsViable())
+			const bool bMeleeCompatible = TraversalStance.IsViable();
+
+			if (bMeleeCompatible)
 			{
+				++RunJumpMeleeCompatibleCount;
+
 				TraversalViableCount++;
 				if (!BestTraversalStance || TraversalStance.TotalTime < BestTraversalStance->TotalTime)
 				{
 					BestTraversalStance = &TraversalStance;
-				}	
+				}
 			}
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MobilityOption] "
+				"RequestId=%s | "
+				"Angle=%+.0f | "
+				"Type=RunAndJump | "
+				"TransportEvaluated=%d | "
+				"TransportValid=%d | "
+				"GroundTime=%.3f | "
+				"FlightTime=%.3f | "
+				"EstimatedTime=%.3f | "
+				"MeleeCompatible=%d"
+			),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				RunJumpOption.StanceAngleOffsetDegrees,
+				RunJumpOption.bTransportEvaluated,
+				RunJumpOption.bTransportValid,
+				RunJumpOption.GroundTime,
+				RunJumpOption.FlightTime,
+				RunJumpOption.bTransportValid
+				? RunJumpOption.EstimatedTime
+				: -1.f,
+				bMeleeCompatible
+			);
 		}
+
+		UE_LOG(
+			LogTemp,
+			Display,
+			TEXT(
+				"[RunJumpMobilitySummary] "
+				"RequestId=%s | "
+				"Options=%d | "
+				"TransportValid=%d | "
+				"MeleeCompatible=%d | "
+				"TraversalViableCount=%d | "
+				"MeleeMatch=%d"
+			),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			TraversalStances.Num(),
+			RunJumpTransportValidCount,
+			RunJumpMeleeCompatibleCount,
+			TraversalViableCount,
+			RunJumpMeleeCompatibleCount
+			== TraversalViableCount
+		);
 
 		UE_LOG(LogTemp, Display, TEXT(
 			"[MeleeTraversalStanceSummary] "
