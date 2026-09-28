@@ -1288,7 +1288,9 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				GroundOption.bTransportEvaluated,
 				GroundOption.bTransportValid,
 				GroundOption.GroundDistance,
+				GroundOption.bTransportValid?
 				GroundOption.EstimatedTime
+				: -1.f
 			);
 
 
