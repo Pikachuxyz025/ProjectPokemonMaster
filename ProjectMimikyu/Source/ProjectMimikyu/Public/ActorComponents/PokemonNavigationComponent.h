@@ -178,6 +178,8 @@ private:
 	float MeleeStanceSelectionAngle = 0.f;
 	FMeleeStanceRuntimeSelection SelectedMeleeStance;
 
+	bool bMeleeTraversalStanceCommitted = false;
+
 	UPROPERTY()
 	TObjectPtr<APawn> OwnerPawn;
 

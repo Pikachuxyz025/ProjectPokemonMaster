@@ -1032,6 +1032,114 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		EPokemonDebugVerbosity::Detailed
 	);
 
+	if (bMeleeTraversalStanceCommitted)
+	{
+		const bool bCommitmentBelongsToRequest = SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId);
+
+		if (!bCommitmentBelongsToRequest)
+		{
+			bMeleeTraversalStanceCommitted = false;
+		}
+		else
+		{
+			// Evaluate contact from the actor's ACTUAL landed
+			// root position, but using the COMMITTED facing.
+			const FVector CurrentRoot = Pokemon->GetActorLocation();
+
+			const FVector CommittedContactCenter = CurrentRoot + SelectedMeleeStance.Facing.RotateVector(Plan.RootSpaceContactOffset);
+
+			const float CommittedContactError = FVector::Dist(CommittedContactCenter, TargetLocation);
+
+			const bool bContactValidAfterFacing = CommittedContactError <= Candidate.Radius;
+
+			bool bExposedSideValid = false;
+
+			float SurfaceSideDot = 0.f;
+
+			if (CurrentNavigationRequest.bHasTargetImpactNormal)
+			{
+				const FVector SurfaceNormal = CurrentNavigationRequest.TargetImpactNormal.GetSafeNormal();
+
+				if (!SurfaceNormal.IsNearlyZero())
+				{
+					SurfaceSideDot = FVector::DotProduct(CurrentRoot - TargetLocation, SurfaceNormal);
+
+					bExposedSideValid = SurfaceSideDot > 0.f;
+				}
+			}
+
+			const UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+			const FVector CurrentFeet = Movement ? Movement->GetActorFeetLocation() : CurrentRoot;
+
+			const float LandingDelta2D = FVector::Dist2D(CurrentFeet, SelectedMeleeStance.NavGoal);
+
+			const float LandingDeltaZ = FMath::Abs(CurrentFeet.Z - SelectedMeleeStance.NavGoal.Z);
+
+
+			if (bContactValidAfterFacing && bExposedSideValid)
+			{
+				CachedAIController->StopMovement();
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeTraversalCommitment] "
+					"RequestId=%s | "
+					"Event=Preserved | "
+					"Angle=%+.0f | "
+					"SelectedYaw=%.2f | "
+					"ContactIfFaced=%.2f | "
+					"Radius=%.2f | "
+					"SideDot=%.2f | "
+					"LandingDelta2D=%.2f | "
+					"LandingDeltaZ=%.2f"
+				),
+					*CurrentNavigationRequest
+					.RequestId.ToString(),
+					SelectedMeleeStance
+					.AngleOffsetDegrees,
+					SelectedMeleeStance.Facing.Yaw,
+					CommittedContactError,
+					Candidate.Radius,
+					SurfaceSideDot,
+					LandingDelta2D,
+					LandingDeltaZ);
+
+				return true;
+			}
+
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeTraversalCommitment] "
+				"RequestId=%s | "
+				"Event=Released | "
+				"Angle=%+.0f | "
+				"ContactIfFaced=%.2f | "
+				"Radius=%.2f | "
+				"Exposed=%d | "
+				"SideDot=%.2f | "
+				"LandingDelta2D=%.2f | "
+				"LandingDeltaZ=%.2f"
+			),
+				*CurrentNavigationRequest
+				.RequestId.ToString(),
+				SelectedMeleeStance
+				.AngleOffsetDegrees,
+				CommittedContactError,
+				Candidate.Radius,
+				bExposedSideValid,
+				SurfaceSideDot,
+				LandingDelta2D,
+				LandingDeltaZ);
+
+			bMeleeTraversalStanceCommitted = false;
+
+			bHasMeleeStanceSelection = false;
+
+			SelectedMeleeStance.Reset();
+		}
+	}
+
+	
+
 	if (FVector::DistSquared(Candidate.PlannedContactCenter, TargetLocation) <= FMath::Square(Candidate.Radius))
 	{
 		CachedAIController->StopMovement();
@@ -1912,6 +2020,8 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			SelectedMeleeStance.RequestId = CurrentNavigationRequest.RequestId;
 
+			bMeleeTraversalStanceCommitted = true;
+
 			SelectedMeleeStance.bValid = true;
 
 			SelectedMeleeStance.AngleOffsetDegrees = SelectedTraversal.AngleOffsetDegrees;
@@ -2611,8 +2721,12 @@ bool UPokemonNavigationComponent::IsCoordinatorApproachRequest() const
 void UPokemonNavigationComponent::ResetCoordinatorApproachRuntime()
 {
 	CoordinatorApproachElapsedTime = 0.f;
+
 	bCoordinatorApproachTimeoutPausedForTraversal = false;
+
 	bCoordinatorApproachTraversalCompletedSinceLastTick = false;
+
+	bMeleeTraversalStanceCommitted = false;
 }
 
 void UPokemonNavigationComponent::TickCoordinatorApproachAction(float DeltaTime)
