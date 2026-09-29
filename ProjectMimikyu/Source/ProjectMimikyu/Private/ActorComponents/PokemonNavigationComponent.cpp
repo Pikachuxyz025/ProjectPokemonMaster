@@ -1052,7 +1052,7 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 
 			const bool bContactValidAfterFacing = CommittedContactError <= Candidate.Radius;
 
-			bool bExposedSideValid = false;
+			bool bExposedSideValid = true;
 
 			float SurfaceSideDot = 0.f;
 
@@ -2014,15 +2014,9 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
             // Execution-stance authority
             // --------------------------------------------------------
 
-			bHasMeleeStanceSelection = true;
-
-			MeleeStanceSelectionAngle = SelectedTraversal.AngleOffsetDegrees;
+			SelectedMeleeStance.Reset();
 
 			SelectedMeleeStance.RequestId = CurrentNavigationRequest.RequestId;
-
-			bMeleeTraversalStanceCommitted = true;
-
-			SelectedMeleeStance.bValid = true;
 
 			SelectedMeleeStance.AngleOffsetDegrees = SelectedTraversal.AngleOffsetDegrees;
 
@@ -2036,7 +2030,19 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			SelectedMeleeStance.ContactError = SelectedTraversal.ContactError;
 
-			SelectedMeleeStance.ContactSlack = FMath::Max(0.0f, Candidate.Radius - SelectedTraversal.ContactError);
+			SelectedMeleeStance.ContactSlack = FMath::Max(0.f,Candidate.Radius- SelectedTraversal.ContactError);
+
+			// Snapshot is complete.
+			SelectedMeleeStance.bValid = true;
+
+			MeleeStanceSelectionRequestId = CurrentNavigationRequest.RequestId;
+
+			MeleeStanceSelectionAngle = SelectedTraversal.AngleOffsetDegrees;
+
+			bHasMeleeStanceSelection = true;
+
+			// Publish last.
+			bMeleeTraversalStanceCommitted = true;
 
 			if (CachedAIController)
 			{
