@@ -6,6 +6,7 @@
 #include "AbilitySystem/PokemonAbilityTypes.h"
 #include "Characters/CharacterTypes.h"
 #include "Combat/PokemonImpactTypes.h"
+#include "Combat/PokemonExecutionTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "Combat/PokemonMeleeContact.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
@@ -45,6 +46,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float IdealRange = 50.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution")
+	EPokemonExecutionMotionPolicy ExecutionMotionPolicy = EPokemonExecutionMotionPolicy::StationaryOnly;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float SpeedMultiplier = 1.f;
@@ -97,6 +101,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach")
 	FPokemonMeleeApproachProfile MeleeApproachProfile;
+
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach", meta = (ClampMin = "0.0"))
 	float ApproachTimeout = 3.f;
