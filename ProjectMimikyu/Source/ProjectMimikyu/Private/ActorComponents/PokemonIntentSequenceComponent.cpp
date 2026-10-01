@@ -3,6 +3,8 @@
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "HAL/IConsoleManager.h"
+#include "AbilitySystem/Abilities/PokemonDamageGameplayAbilities.h"
+#include "DataAssets/PokemonMoveDataAsset.h"
 #include "Intent/PokemonNavigateToLocationAction.h"
 #include "Intent/PokemonAttackExecutionAction.h"
 #include "Intent/PokemonCombatApproachAction.h"
@@ -11,6 +13,43 @@ namespace
 {
 	TAutoConsoleVariable<int32> CVarPokemonIntentDebug(TEXT("pokemon.Intent.Debug"), 0,
 		TEXT("Log Pokemon intent/action lifecycle events."), ECVF_Cheat);
+
+	FPokemonAttackExecutionPlan BuildInitialAttackExecutionPlan(const UPokemonMoveDataAsset* Move)
+	{
+		FPokemonAttackExecutionPlan Plan;
+
+		if (!IsValid(Move) || !Move->Ability)
+		{
+			return Plan;
+		}
+
+		const UPokemonDamageGameplayAbilities* MoveCDO = Cast<UPokemonDamageGameplayAbilities>(Move->Ability->GetDefaultObject());
+		if (!MoveCDO)
+		{
+			return Plan;
+		}
+		Plan.MotionPolicy = MoveCDO->ExecutionMotionPolicy;
+
+		switch (Plan.MotionPolicy)
+		{
+		case EPokemonExecutionMotionPolicy::StationaryOnly:
+			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Stationary;
+			break;
+
+		case EPokemonExecutionMotionPolicy::MomentumRequired:
+			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Momentum;
+			break;
+
+		case EPokemonExecutionMotionPolicy::MomentumAllowed:
+
+		default:
+			// Requires target / attacker / situation context.
+			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
+			break;
+		}
+
+		return Plan;
+	}
 }
 
 UPokemonIntentSequenceComponent::UPokemonIntentSequenceComponent()
@@ -72,12 +111,14 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	{
 		return FGuid();
 	}
+	const FPokemonAttackExecutionPlan ExecutionPlan = BuildInitialAttackExecutionPlan(Move);
 
 	FPokemonIntentActionSpec ApproachSpec;
 
 	ApproachSpec.Type = EPokemonIntentActionType::CombatApproach;
 
 	ApproachSpec.AttackMove = Move;
+	ApproachSpec.ExecutionPlan = ExecutionPlan;
 	ApproachSpec.CommandTarget = CommandTarget;
 
 
@@ -519,9 +560,11 @@ void UPokemonIntentSequenceComponent::LogEvent(const TCHAR* Event) const
 	if (CVarPokemonIntentDebug.GetValueOnGameThread() == 0 || CurrentSequence.Actions.IsEmpty()) return;
 	const int32 Index = FMath::Min(CurrentSequence.ActiveActionIndex, CurrentSequence.Actions.Num() - 1);
 	const FPokemonIntentActionRecord& Action = CurrentSequence.Actions[Index];
-	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s ActionId=%s ActionIndex=%d ActionType=%s ActionState=%s ExecutorRequestId=%s AttackCommandId=%s SequenceState=%s Reason=%s Type=%s Outcome=%s"),
+	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s | ActionId=%s | ActionIndex=%d | ActionType=%s | MotionPolicy=%s | ResolvedMotion=%s | ActionState=%s | ExecutorRequestId=%s | AttackCommandId=%s | SequenceState=%s | Reason=%s | Type=%s | Outcome=%s"),
 		Event, *CurrentSequence.IntentId.ToString(), *Action.ActionId.ToString(), Index,
 		*StaticEnum<EPokemonIntentActionType>()->GetNameStringByValue(static_cast<int64>(Action.Spec.Type)),
+		*StaticEnum<EPokemonExecutionMotionPolicy>()->GetNameStringByValue(static_cast<int64>(Action.Spec.ExecutionPlan.MotionPolicy)),
+		*StaticEnum<EPokemonResolvedExecutionMotion>()->GetNameStringByValue(static_cast<int64>(Action.Spec.ExecutionPlan.ResolvedMotion)),
 		*StaticEnum<EPokemonIntentActionState>()->GetNameStringByValue(static_cast<int64>(Action.State)),
 		*Action.ExecutorRequestId.ToString(),
 		*CurrentSequence.AttackCommandId.ToString(),

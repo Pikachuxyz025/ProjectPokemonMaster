@@ -40,3 +40,28 @@ enum class EPokemonExecutionMotionPolicy : uint8
 	 */
 	MomentumRequired UMETA(DisplayName = "Momentum Required")
 };
+
+UENUM(BlueprintType)
+enum class EPokemonResolvedExecutionMotion :uint8
+{
+	Unresolved UMETA(DisplayName = "Unresolved"),
+	Stationary UMETA(DisplayName = "Stationary"),
+	Momentum UMETA(DisplayName = "Momentum")
+};
+
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonAttackExecutionPlan
+{
+	GENERATED_BODY()
+
+	// Capability authored by the move.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
+	EPokemonExecutionMotionPolicy MotionPolicy = EPokemonExecutionMotionPolicy::StationaryOnly;
+
+	// Choice for the particular execution.
+	// MomentumAllowed remains Unresolved until contextual planning chooses.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
+	EPokemonResolvedExecutionMotion ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
+
+	bool IsResolved() const { return ResolvedMotion != EPokemonResolvedExecutionMotion::Unresolved; }
+};

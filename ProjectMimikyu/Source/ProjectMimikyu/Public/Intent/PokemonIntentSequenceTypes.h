@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Command/PokemonCommandTypes.h"
+#include "Combat/PokemonExecutionTypes.h"
 #include "PokemonIntentSequenceTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -58,7 +59,11 @@ struct PROJECTMIMIKYU_API FPokemonIntentActionSpec
 	TObjectPtr<class UPokemonMoveDataAsset> AttackMove = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FPokemonAttackExecutionPlan ExecutionPlan;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FPokemonCommandTarget CommandTarget;
+
 };
 
 USTRUCT(BlueprintType)
