@@ -150,6 +150,7 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	ExecutionSpec.Type = EPokemonIntentActionType::AttackExecution;
 
 	ExecutionSpec.AttackMove = Move;
+	ExecutionSpec.ExecutionPlan = ExecutionPlan;
 	ExecutionSpec.CommandTarget = CommandTarget;
 
 	
