@@ -14,40 +14,61 @@ namespace
 	TAutoConsoleVariable<int32> CVarPokemonIntentDebug(TEXT("pokemon.Intent.Debug"), 0,
 		TEXT("Log Pokemon intent/action lifecycle events."), ECVF_Cheat);
 
-	FPokemonAttackExecutionPlan BuildInitialAttackExecutionPlan(const UPokemonMoveDataAsset* Move)
+	FPokemonAttackExecutionPlan ResolveAttackExecutionPlan(const UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target, FName& OutReason)
 	{
 		FPokemonAttackExecutionPlan Plan;
+		OutReason = NAME_None;
 
 		if (!IsValid(Move) || !Move->Ability)
 		{
+			OutReason = TEXT("MoveUnavailable");
 			return Plan;
 		}
 
 		const UPokemonDamageGameplayAbilities* MoveCDO = Cast<UPokemonDamageGameplayAbilities>(Move->Ability->GetDefaultObject());
+
 		if (!MoveCDO)
 		{
+			OutReason = TEXT("DamageAbilityUnavailable");
 			return Plan;
 		}
+
 		Plan.MotionPolicy = MoveCDO->ExecutionMotionPolicy;
 
 		switch (Plan.MotionPolicy)
 		{
 		case EPokemonExecutionMotionPolicy::StationaryOnly:
+
 			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Stationary;
+			OutReason = TEXT("PolicyRequiresStationary");
+
 			break;
 
 		case EPokemonExecutionMotionPolicy::MomentumRequired:
+
 			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Momentum;
+			OutReason = TEXT("PolicyRequiresMomentum");
 			break;
 
 		case EPokemonExecutionMotionPolicy::MomentumAllowed:
+			switch (Target.TargetType)
+			{
+			case EPokemonCommandTargetType::Interactable:
+			case EPokemonCommandTargetType::Environment:
+				
+				Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Stationary;
+				OutReason = TEXT("StaticTargetPrefersStationary");
 
-		default:
-			// Requires target / attacker / situation context.
-			Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
+				break;
+			default:
+				
+				Plan.ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
+				OutReason = TEXT("ContextRequired");
+
+				break;
+			}
 			break;
 		}
-
 		return Plan;
 	}
 }
@@ -111,7 +132,9 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	{
 		return FGuid();
 	}
-	const FPokemonAttackExecutionPlan ExecutionPlan = BuildInitialAttackExecutionPlan(Move);
+
+	FName ExecutionPlanReason;
+	const FPokemonAttackExecutionPlan ExecutionPlan = ResolveAttackExecutionPlan(Move, CommandTarget, ExecutionPlanReason);
 
 	FPokemonIntentActionSpec ApproachSpec;
 
@@ -129,7 +152,21 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	ExecutionSpec.AttackMove = Move;
 	ExecutionSpec.CommandTarget = CommandTarget;
 
-
+	
+	UE_LOG(LogTemp,Display,TEXT(
+			"[AttackExecutionPlan] "
+			"Move=%s | "
+			"TargetType=%s | "
+			"MotionPolicy=%s | "
+			"ResolvedMotion=%s | "
+			"Reason=%s"
+		),
+		*GetNameSafe(Move),
+		*StaticEnum<EPokemonCommandTargetType>()->GetNameStringByValue(static_cast<int64>(CommandTarget.TargetType)),
+		*StaticEnum<EPokemonExecutionMotionPolicy>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.MotionPolicy)),
+		*StaticEnum<EPokemonResolvedExecutionMotion>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.ResolvedMotion)),
+		*ExecutionPlanReason.ToString()
+	);
 	return SubmitSequence({ ApproachSpec,ExecutionSpec }, EPokemonIntentType::Attack);
 }
 
