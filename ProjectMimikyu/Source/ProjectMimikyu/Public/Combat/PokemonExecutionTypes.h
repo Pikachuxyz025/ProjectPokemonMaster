@@ -75,23 +75,6 @@ enum class EPokemonAirborneExecutionTiming :uint8
 };
 
 USTRUCT(BlueprintType)
-struct PROJECTMIMIKYU_API FPokemonAttackExecutionPlan
-{
-	GENERATED_BODY()
-
-	// Capability authored by the move.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
-	EPokemonExecutionMotionPolicy MotionPolicy = EPokemonExecutionMotionPolicy::StationaryOnly;
-
-	// Choice for the particular execution.
-	// MomentumAllowed remains Unresolved until contextual planning chooses.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
-	EPokemonResolvedExecutionMotion ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
-
-	bool IsResolved() const { return ResolvedMotion != EPokemonResolvedExecutionMotion::Unresolved; }
-};
-
-USTRUCT(BlueprintType)
 struct PROJECTMIMIKYU_API FPokemonAirborneExecutionProfile
 {
 	GENERATED_BODY()
@@ -112,6 +95,32 @@ struct PROJECTMIMIKYU_API FPokemonAirborneExecutionProfile
 	 *
 	 * This is move timing, not traversal timing.
 	 */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0",Units = "s"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0", Units = "s"))
 	float ExecutionLeadTime = 0.0f;
+};
+
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonAttackExecutionPlan
+{
+	GENERATED_BODY()
+
+	// Capability authored by the move.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
+	EPokemonExecutionMotionPolicy MotionPolicy = EPokemonExecutionMotionPolicy::StationaryOnly;
+
+	// Choice for the particular execution.
+	// MomentumAllowed remains Unresolved until contextual planning chooses.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution")
+	EPokemonResolvedExecutionMotion ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
+
+	// Airborne execution capability authored by the move.
+	// This is copied into the intent snapshot but is not yet
+	// consumed by navigation.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne")
+	FPokemonAirborneExecutionProfile AirborneExecutionProfile;
+
+	bool IsResolved() const 
+	{ 
+		return ResolvedMotion != EPokemonResolvedExecutionMotion::Unresolved;
+	}
 };

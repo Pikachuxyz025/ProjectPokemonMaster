@@ -34,6 +34,7 @@ namespace
 		}
 
 		Plan.MotionPolicy = MoveCDO->ExecutionMotionPolicy;
+		Plan.AirborneExecutionProfile = MoveCDO->AirborneExecutionProfile;
 
 		switch (Plan.MotionPolicy)
 		{
@@ -155,17 +156,21 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 
 	
 	UE_LOG(LogTemp,Display,TEXT(
-			"[AttackExecutionPlan] "
-			"Move=%s | "
-			"TargetType=%s | "
-			"MotionPolicy=%s | "
-			"ResolvedMotion=%s | "
-			"Reason=%s"
+		"[AttackExecutionPlan] "
+		"Move=%s | "
+		"TargetType=%s | "
+		"MotionPolicy=%s | "
+		"ResolvedMotion=%s | "
+		"AirborneTiming=%s | "
+		"ExecutionLeadTime=%.3f | "
+		"Reason=%s"
 		),
 		*GetNameSafe(Move),
 		*StaticEnum<EPokemonCommandTargetType>()->GetNameStringByValue(static_cast<int64>(CommandTarget.TargetType)),
 		*StaticEnum<EPokemonExecutionMotionPolicy>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.MotionPolicy)),
 		*StaticEnum<EPokemonResolvedExecutionMotion>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.ResolvedMotion)),
+		*StaticEnum<EPokemonAirborneExecutionTiming>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.AirborneExecutionProfile.Timing)),
+		ExecutionPlan.AirborneExecutionProfile.ExecutionLeadTime,
 		*ExecutionPlanReason.ToString()
 	);
 	return SubmitSequence({ ApproachSpec,ExecutionSpec }, EPokemonIntentType::Attack);
@@ -598,11 +603,13 @@ void UPokemonIntentSequenceComponent::LogEvent(const TCHAR* Event) const
 	if (CVarPokemonIntentDebug.GetValueOnGameThread() == 0 || CurrentSequence.Actions.IsEmpty()) return;
 	const int32 Index = FMath::Min(CurrentSequence.ActiveActionIndex, CurrentSequence.Actions.Num() - 1);
 	const FPokemonIntentActionRecord& Action = CurrentSequence.Actions[Index];
-	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s | ActionId=%s | ActionIndex=%d | ActionType=%s | MotionPolicy=%s | ResolvedMotion=%s | ActionState=%s | ExecutorRequestId=%s | AttackCommandId=%s | SequenceState=%s | Reason=%s | Type=%s | Outcome=%s"),
+	UE_LOG(LogTemp, Log, TEXT("[PokemonIntent] %s IntentId=%s | ActionId=%s | ActionIndex=%d | ActionType=%s | MotionPolicy=%s | ResolvedMotion=%s | AirborneTiming=%s | ExecutionLeadTime=%.3f | ActionState=%s | ExecutorRequestId=%s | AttackCommandId=%s | SequenceState=%s | Reason=%s | Type=%s | Outcome=%s"),
 		Event, *CurrentSequence.IntentId.ToString(), *Action.ActionId.ToString(), Index,
 		*StaticEnum<EPokemonIntentActionType>()->GetNameStringByValue(static_cast<int64>(Action.Spec.Type)),
 		*StaticEnum<EPokemonExecutionMotionPolicy>()->GetNameStringByValue(static_cast<int64>(Action.Spec.ExecutionPlan.MotionPolicy)),
 		*StaticEnum<EPokemonResolvedExecutionMotion>()->GetNameStringByValue(static_cast<int64>(Action.Spec.ExecutionPlan.ResolvedMotion)),
+		*StaticEnum<EPokemonAirborneExecutionTiming>()->GetNameStringByValue(static_cast<int64>(Action.Spec.ExecutionPlan.AirborneExecutionProfile.Timing)),
+		Action.Spec.ExecutionPlan.AirborneExecutionProfile.ExecutionLeadTime,
 		*StaticEnum<EPokemonIntentActionState>()->GetNameStringByValue(static_cast<int64>(Action.State)),
 		*Action.ExecutorRequestId.ToString(),
 		*CurrentSequence.AttackCommandId.ToString(),
