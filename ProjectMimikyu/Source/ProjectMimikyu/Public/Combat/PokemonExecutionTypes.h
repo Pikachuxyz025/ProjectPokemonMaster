@@ -49,6 +49,31 @@ enum class EPokemonResolvedExecutionMotion :uint8
 	Momentum UMETA(DisplayName = "Momentum")
 };
 
+UENUM(BlueprintType)
+enum class EPokemonAirborneExecutionTiming :uint8
+{
+	/**
+	 * This move has no authored airborne execution requirement.
+	 */
+	Disabled UMETA(DisplayName = "Disabled"),
+
+	/**
+	 * The primary execution event should occur while the attacker
+	 * is still ascending, before the apex of the trajectory.
+	 *
+	 * Example: Mach Punch making contact during ascent.
+	 */
+	Ascending UMETA(DisplayName = "Ascending"),
+
+	/**
+	 * The primary execution event should occur at or near the apex
+	 * of the trajectory.
+	 *
+	 * Example: releasing a projectile at the top of a jump.
+     */
+	Apex UMETA(DisplayName = "Apex")
+};
+
 USTRUCT(BlueprintType)
 struct PROJECTMIMIKYU_API FPokemonAttackExecutionPlan
 {
@@ -64,4 +89,29 @@ struct PROJECTMIMIKYU_API FPokemonAttackExecutionPlan
 	EPokemonResolvedExecutionMotion ResolvedMotion = EPokemonResolvedExecutionMotion::Unresolved;
 
 	bool IsResolved() const { return ResolvedMotion != EPokemonResolvedExecutionMotion::Unresolved; }
+};
+
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonAirborneExecutionProfile
+{
+	GENERATED_BODY()
+
+	/**
+	 * Which phase of a jump this move is capable of using
+	 * for its primary execution event.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne")
+	EPokemonAirborneExecutionTiming Timing = EPokemonAirborneExecutionTiming::Disabled;
+
+	/**
+	 * Time, in seconds, between beginning the move's execution
+	 * and the desired primary execution event.
+	 *
+	 * For a melee attack this can represent wind-up before contact.
+	 * For a projectile it can represent wind-up before release.
+	 *
+	 * This is move timing, not traversal timing.
+	 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0",Units = "s"))
+	float ExecutionLeadTime = 0.0f;
 };

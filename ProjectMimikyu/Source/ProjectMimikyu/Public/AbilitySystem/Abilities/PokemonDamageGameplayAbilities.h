@@ -7,6 +7,7 @@
 #include "Characters/CharacterTypes.h"
 #include "Combat/PokemonImpactTypes.h"
 #include "Combat/PokemonExecutionTypes.h"
+#include "Combat/PokemonExecutionTypes.h"
 #include "GameplayTags/PokemonGameplayTags.h"
 #include "Combat/PokemonMeleeContact.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
@@ -49,6 +50,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution")
 	EPokemonExecutionMotionPolicy ExecutionMotionPolicy = EPokemonExecutionMotionPolicy::StationaryOnly;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution|Airborne")
+	FPokemonAirborneExecutionProfile AirborneExecutionProfile;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float SpeedMultiplier = 1.f;
