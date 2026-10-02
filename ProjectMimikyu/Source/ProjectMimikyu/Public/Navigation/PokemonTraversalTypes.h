@@ -8,17 +8,19 @@ enum class EPokemonTraversalCircumstance :uint8
 {
 	Unclassified UMETA(DisplayName = "Unclassified"),
 	VerticalAccess UMETA(DisplayName = "Vertical Access"),
-	GapTraversal UMETA(DisplayName = "Gap Traversal")
+	GapTraversal UMETA(DisplayName = "Gap Traversal"),
+	AirborneExecution UMETA(DisplayName = "Airborne Execution")
 };
 
 UENUM(BlueprintType)
-
 enum class EPokemonTraversalEvidence :uint8
 {
 	NavigationFailure,
 	SuppliedMeasurement,
 	MeasuredDiscontinuity,
-	AuthoredJumpLink
+	AuthoredJumpLink,
+
+	AttackExecutionRequirement
 };
 
 UENUM(BlueprintType)

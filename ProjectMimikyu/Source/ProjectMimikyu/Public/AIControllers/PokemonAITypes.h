@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Combat/PokemonMeleeContact.h"
+#include "Combat/PokemonExecutionTypes.h"
 #include "Navigation/PokemonTraversalTypes.h"
 #include "PokemonAITypes.generated.h"
 
@@ -82,6 +83,11 @@ struct FAgentNavigationRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Approach")
 	bool bFaceTargetDuringApproach = true;
+
+	// Authored move requirement captured by the parent attack intent.
+    // Navigation may use this when evaluating airborne execution opportunities.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Approach|Execution|Airborne")
+	FPokemonAirborneExecutionProfile AirborneExecutionProfile;
 
 	// Execution modality is independent of Physical/Special damage category.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Traversal")

@@ -58,7 +58,7 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 
 	if (Request.bHasTargetImpactNormal)
 	{
-		Request.TargetImpactNormal =Spec.CommandTarget.ImpactNormal.GetSafeNormal();
+		Request.TargetImpactNormal = Spec.CommandTarget.ImpactNormal.GetSafeNormal();
 	}
 
 	Request.DesiredDistance = MoveCDO->IdealRange;
@@ -85,6 +85,12 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 	Request.bResolveApproachAsAction = true;
 
 	Request.bFaceTargetDuringApproach = MoveCDO->bFaceTargetDuringApproach;
+
+	Request.AirborneExecutionProfile = Spec.ExecutionPlan.AirborneExecutionProfile;
+
+	Request.bTraversalRequiresLanding = true;
+
+	Request.bParentMayCompleteWhileAirborne = Request.AirborneExecutionProfile.Timing != EPokemonAirborneExecutionTiming::Disabled;
 
 	if (Request.MeleeContact.SocketTag.IsValid())
 	{
@@ -130,7 +136,10 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 		"Point=%s | "
 		"Location=%s | "
 		"Range=%.1f | "
-		"Timeout=%.2f"
+		"Timeout=%.2f | "
+		"AirborneTiming=%s | "
+		"ExecutionLeadTime=%.3f | "
+		"ParentMayCompleteAirborne=%d"
 	),
 		*GetNameSafe(Pokemon),
 		*Request.RequestId.ToString(),
@@ -139,7 +148,11 @@ FPokemonNavigationSubmission FPokemonCombatApproachAction::Start(APokemon_Parent
 		*Request.TargetPointTag.ToString(),
 		*Request.TargetLocation.ToString(),
 		Request.AcceptableRadius,
-		Request.ApproachTimeout);
+		Request.ApproachTimeout,
+		*StaticEnum<EPokemonAirborneExecutionTiming>()->GetNameStringByValue(static_cast<int64>(Request.AirborneExecutionProfile.Timing)),
+		Request.AirborneExecutionProfile.ExecutionLeadTime,
+		Request.bParentMayCompleteWhileAirborne
+	);
 
 	return Submission;
 }
