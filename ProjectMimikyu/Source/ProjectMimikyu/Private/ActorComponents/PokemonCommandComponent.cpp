@@ -189,6 +189,15 @@ FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromAimData(co
 		return Result;
 	}
 
+	if (AimData.bHasAimHitResult && AimData.AimHitResult.GetActor())
+	{
+		Result.TargetActor = AimData.AimHitResult.GetActor();
+
+		Result.TargetType = EPokemonCommandTargetType::Environment;
+
+		return Result;
+	}
+
 	if (!AimData.AimWorldLocation.IsNearlyZero())
 	{
 		Result.TargetType = EPokemonCommandTargetType::Location;
@@ -197,7 +206,6 @@ FPokemonCommandTarget UPokemonCommandComponent::BuildCommandTargetFromAimData(co
 
 	Result.TargetType = EPokemonCommandTargetType::None;
 	
-
 	return Result;
 }
 
