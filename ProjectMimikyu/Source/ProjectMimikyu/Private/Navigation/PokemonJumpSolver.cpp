@@ -70,18 +70,30 @@ FPokemonJumpCapabilitySnapshot FPokemonJumpSolver::CaptureCapabilities(APokemon_
 	// excludes move multipliers; instantaneous velocity is a separate contribution.
 	Result.EffectiveMovementSpeed = NonnegativeFinite(Pokemon.GetNaturalTraversalMovementSpeed());
 	Result.GravityMagnitude = NonnegativeFinite(-Movement->GetGravityZ());
+
 	const float NaturalHorizontal = Result.EffectiveMovementSpeed * FMath::Clamp(NonnegativeFinite(HorizontalScale.GetValueOnGameThread()), 0.f, 10.f);
 	const float Reference = FMath::Max(1.f, NonnegativeFinite(AttackReference.GetValueOnGameThread()));
+
 	const double Attack = Result.EffectiveAttack;
 	const float NormalizedAttack = static_cast<float>(Attack / (Attack + Reference));
-	const float SecondaryFraction = FMath::Clamp(NonnegativeFinite(AttackSecondaryFraction.GetValueOnGameThread()), 0.f, 0.5f);
-	Result.AttackHorizontalDeltaV = NormalizedAttack * FMath::Min(NonnegativeFinite(AttackHorizontalCap.GetValueOnGameThread()), NaturalHorizontal * SecondaryFraction);
-	Result.AttackVerticalDeltaV = NormalizedAttack * FMath::Min(NonnegativeFinite(AttackVerticalCap.GetValueOnGameThread()), Result.BaseVerticalLaunchVelocity * SecondaryFraction);
+
+	const float SecondaryFraction = FMath::Clamp(
+		NonnegativeFinite(AttackSecondaryFraction.GetValueOnGameThread()),
+		0.f, 
+		0.5f
+	);
+
+	Result.AttackHorizontalDeltaV = NormalizedAttack * FMath::Min(NonnegativeFinite(AttackHorizontalCap.GetValueOnGameThread()),
+		NaturalHorizontal * SecondaryFraction);
+
+	Result.AttackVerticalDeltaV = NormalizedAttack * FMath::Min(NonnegativeFinite(AttackVerticalCap.GetValueOnGameThread()), 
+		Result.BaseVerticalLaunchVelocity * SecondaryFraction);
 
 	const FVector PlanarDirection = Direction.ContainsNaN() ? FVector::ZeroVector : Direction.GetSafeNormal2D();
 	const FVector CurrentVelocity = Pokemon.GetVelocity();
 	const float AlignedSpeed = CurrentVelocity.ContainsNaN() ? 0.f
 		: NonnegativeFinite(static_cast<float>(FVector::DotProduct(CurrentVelocity, PlanarDirection)));
+
 	Result.InheritedAlignedSpeed = FMath::Min(AlignedSpeed, Result.EffectiveMovementSpeed);
 
 	// Excess movement is permitted only by explicit provenance from the active
@@ -94,16 +106,22 @@ FPokemonJumpCapabilitySnapshot FPokemonJumpSolver::CaptureCapabilities(APokemon_
 		&& !Request.AuthorizedMoveMomentum.ContainsNaN())
 	{
 		const FVector CommandMomentum = Command->GetAuthorizedTraversalMomentum(Request.ParentAttackCommandId);
-		const float RequestAligned = NonnegativeFinite(static_cast<float>(FVector::DotProduct(Request.AuthorizedMoveMomentum, PlanarDirection)));
+
+		const float RequestAligned = NonnegativeFinite(
+			static_cast<float>(FVector::DotProduct(Request.AuthorizedMoveMomentum, PlanarDirection)));
+
 		const float CommandAligned = CommandMomentum.ContainsNaN() ? 0.f
 			: NonnegativeFinite(static_cast<float>(FVector::DotProduct(CommandMomentum, PlanarDirection)));
+
 		Result.AuthorizedMoveAlignedSpeed = FMath::Min(FMath::Min(RequestAligned, CommandAligned),
 			FMath::Max(0.f, AlignedSpeed - Result.InheritedAlignedSpeed));
 	}
 
 	Result.AvailableHorizontalSpeed = NaturalHorizontal + Result.AttackHorizontalDeltaV
 		+ Result.InheritedAlignedSpeed + Result.AuthorizedMoveAlignedSpeed;
+
 	Result.AvailableVerticalSpeed = Result.BaseVerticalLaunchVelocity + Result.AttackVerticalDeltaV;
+
 	return Result;
 }
 
@@ -111,7 +129,9 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	const FPokemonJumpCapabilitySnapshot& Capabilities, EPokemonJumpTrajectoryPreference Preference)
 {
 	using namespace PokemonJumpSolver;
+
 	FPokemonTraversalCandidate Base;
+
 	Base.ParentRequestId = Requirement.ParentRequestId;
 	Base.StartFeetLocation = Requirement.StartFeetLocation;
 	Base.DestinationFeetLocation = Requirement.DestinationFeetLocation;
@@ -119,6 +139,7 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	Base.CapabilityProfileId = TEXT("PhysicalJump0.2");
 	Base.GravityMagnitude = Capabilities.GravityMagnitude;
 	Base.TrajectoryPreference = Preference;
+
 	const auto Reject = [&Base](const TCHAR* Reason)
 	{
 		Base.FailureReason = FName(Reason);
@@ -129,33 +150,46 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	{
 		return Reject(TEXT("InvalidParentRequestOrAnchors"));
 	}
+
 	if (Requirement.Circumstance == EPokemonTraversalCircumstance::Unclassified)
 	{
 		return Reject(TEXT("UnclassifiedCircumstance"));
 	}
-	if (Requirement.Evidence != EPokemonTraversalEvidence::SuppliedMeasurement
-		&& Requirement.Evidence != EPokemonTraversalEvidence::MeasuredDiscontinuity
-		&& Requirement.Evidence != EPokemonTraversalEvidence::AuthoredJumpLink)
+
+	const bool bHasPhysicalTraversalEvidence = Requirement.Evidence == EPokemonTraversalEvidence::SuppliedMeasurement
+		|| Requirement.Evidence == EPokemonTraversalEvidence::MeasuredDiscontinuity
+		|| Requirement.Evidence == EPokemonTraversalEvidence::AuthoredJumpLink;
+
+	const bool bHasExecutionTraversalEvidence = Requirement.Circumstance == EPokemonTraversalCircumstance::AirborneExecution
+		&& Requirement.Evidence == EPokemonTraversalEvidence::AttackExecutionRequirement;
+
+	if (!bHasExecutionTraversalEvidence	
+		&& !bHasPhysicalTraversalEvidence)
 	{
 		return Reject(TEXT("ClassificationEvidenceMissing"));
 	}
+
 	if (!Requirement.bStartSupportKnown || !Requirement.bDestinationSupportKnown)
 	{
 		return Reject(!Requirement.bStartSupportKnown ? TEXT("StartSupportUnknown") : TEXT("DestinationSupportUnknown"));
 	}
+
 	// 0.2 may let a parent execute while airborne, but always plans a real landing.
 	if (!Requirement.bLandingRequired)
 	{
 		return Reject(TEXT("LandingRequiredForJump02"));
 	}
+
 	if (!Capabilities.bCanNaturallyJump || Capabilities.BaseVerticalLaunchVelocity <= 0.f)
 	{
 		return Reject(TEXT("NaturalJumpUnavailable"));
 	}
+
 	if (!HasFiniteCapability(Capabilities))
 	{
 		return Reject(TEXT("InvalidPhysicalCapability"));
 	}
+
 
 	const double Horizontal = Requirement.HorizontalSeparation();
 	const double Vertical = Requirement.VerticalSeparation();

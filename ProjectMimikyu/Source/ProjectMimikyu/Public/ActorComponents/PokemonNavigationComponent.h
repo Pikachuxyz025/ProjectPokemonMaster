@@ -286,7 +286,9 @@ private:
 	bool SearchTakeoffAnchors(const FVector& DestinationFeet, FName Trigger,
 		const UNavigationPath* GroundPath,
 		FPokemonTraversalRequirement& OutRequirement,
-		FPokemonTraversalCandidate& OutCandidate, float* OutGroundTime = nullptr);
+		FPokemonTraversalCandidate& OutCandidate, float* OutGroundTime = nullptr,
+		EPokemonTraversalCircumstance ForcedCircumstance = EPokemonTraversalCircumstance::Unclassified,
+		EPokemonTraversalEvidence ForcedEvidence = EPokemonTraversalEvidence::NavigationFailure);
 
 public:
 	UFUNCTION(BlueprintCallable)
