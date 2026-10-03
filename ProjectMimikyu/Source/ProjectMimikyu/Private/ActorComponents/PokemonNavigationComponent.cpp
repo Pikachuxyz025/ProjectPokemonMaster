@@ -81,7 +81,7 @@ namespace
 
 		FVector VelocityAtContact = FVector::ZeroVector;
 
-		bool HasPredicedContact() const
+		bool HasPredictedContact() const
 		{
 			return bEvaluated && bContactValid && bAscendingAtContact;
 		}
@@ -239,7 +239,7 @@ namespace
 			return Result;
 		}
 
-		Result.bEvaluated;
+		Result.bEvaluated = true;
 
 		const FVector ContactOffset = Facing.RotateVector(RootSpaceContactOffset);
 
@@ -261,7 +261,7 @@ namespace
 		int32 BestSample = 0;
 		float BestErrorSq = TNumericLimits<float>::Max();\
 
-			for (int32 Index = 0; Index < SampleCount; ++Index)
+			for (int32 Index = 0; Index <= SampleCount; ++Index)
 			{
 				const float Time = Result.ApexTime * static_cast<float>(Index) / static_cast<float>(SampleCount);
 				const float ErrorSq = ErrorSqAtTime(Time);
@@ -309,7 +309,9 @@ namespace
 		Result.ContactFeet = FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
 			Trajectory, Result.ContactTime);
 
-		Result.ContactRoot = Result.ContactRoot + ContactOffset;
+		Result.ContactRoot = Result.ContactFeet + RootAboveFeet;
+
+		Result.ContactCenter = Result.ContactRoot + ContactOffset;
 
 		Result.VelocityAtContact = FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(
 			Trajectory, Result.ContactTime);
@@ -326,7 +328,7 @@ namespace
 
 		Result.bLeadTimeSatisfied = Result.TriggerTime >= 0.f;
 
-		Result.TimeToContact = GroundTime + Result.TriggerTime;
+		Result.TimeToContact = GroundTime + Result.ContactTime;
 
 		return Result;
 	}
@@ -414,6 +416,22 @@ namespace
 			DebugDuration,
 			FLinearColor::White,
 			12,
+			2.f,
+			EPokemonDebugVerbosity::Detailed);
+
+		//
+		// Predicted Mach Punch contact volume.
+		//
+		UPokemonDebugLibrary::DrawSphere(
+			DebugSource,
+			PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+			Prediction.ContactCenter,
+			ContactRadius,
+			DebugDuration,
+			Prediction.bContactValid
+			? FLinearColor::Green
+			: FLinearColor::Red,
+			20,
 			2.f,
 			EPokemonDebugVerbosity::Detailed);
 
