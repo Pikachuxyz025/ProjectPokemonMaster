@@ -494,3 +494,18 @@ bool FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(APokemon_Parent& Poke
 		? EPokemonTraversalCircumstance::VerticalAccess : EPokemonTraversalCircumstance::GapTraversal;
 	return true;
 }
+
+FVector FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(const FPokemonTraversalCandidate& Candidate, float Time)
+{
+	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.FlightTime);
+	
+	return Candidate.StartFeetLocation + Candidate.FinalLaunchVelocity * ClampedTime
+		- FVector::UpVector * (0.5f * Candidate.GravityMagnitude * ClampedTime * ClampedTime); // s = v_0 * t - 1/2 * g * t^2
+}
+
+FVector FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(const FPokemonTraversalCandidate& Candidate, float Time)
+{
+	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.FlightTime);
+
+	return Candidate.FinalLaunchVelocity - FVector::UpVector * (Candidate.GravityMagnitude * ClampedTime); // v = v_0 - g * t
+}

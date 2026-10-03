@@ -30,4 +30,10 @@ struct PROJECTMIMIKYU_API FPokemonJumpTrajectoryValidator
 	// discontinuity between supported endpoints can classify an emergent traversal request.
 	static bool MeasureDiscontinuity(APokemon_Parent& Pokemon, const FVector& StartFeet,
 		const FVector& DestinationFeet, FPokemonTraversalRequirement& OutRequirement);
+
+	// Evaluate the excat ballistic trajectory retained by the solved
+	// traversal candidate. These functions do not re-solve the jump.
+	static FVector EvaluateFeetAtTime(const FPokemonTraversalCandidate& Candidate, float Time);
+
+	static FVector EvaluateVelocityAtTime(const FPokemonTraversalCandidate& Candidate, float Time);
 };

@@ -58,6 +58,34 @@ namespace
 			return TEXT("Unknown");
 		}
 	}
+	
+	struct FMeleeAirborneExecutionCandidate
+	{
+		bool bEvaluated = false;
+
+		bool bContactValid = false;
+		bool bAscendingAtContact = false;
+		bool bLeadTimeSatisfied = false;
+
+		float ApexTime = 0.f;
+		float ContactTime = 0.f;
+		float TriggerTime = 0.f;
+
+		float ContactError = TNumericLimits<float>::Max();
+
+		float TimeToContact = TNumericLimits<float>::Max();
+
+		FVector ContactFeet = FVector::ZeroVector;
+		FVector ContactRoot = FVector::ZeroVector;
+		FVector ContactCenter = FVector::ZeroVector;
+
+		FVector VelocityAtContact = FVector::ZeroVector;
+
+		bool HasPredicedContact() const
+		{
+			return bEvaluated && bContactValid && bAscendingAtContact;
+		}
+	};
 
 	struct FMeleeStanceSearchCandidate
 	{
@@ -165,6 +193,7 @@ namespace
 
 		FPokemonTraversalRequirement Requirement;
 		FPokemonTraversalCandidate Traversal;
+		FMeleeAirborneExecutionCandidate AirborneExecution;
 
 		bool IsViable() const
 		{
@@ -185,6 +214,242 @@ namespace
 		45.f,
 		-45.f
 	};
+
+	static FMeleeAirborneExecutionCandidate EvaluateAirborneMeleeExecution(
+		const FPokemonTraversalCandidate& Trajectory, const FRotator& Facing,
+		const FVector& RootAboveFeet, const FVector& RootSpaceContactOffset,
+		const FVector& TargetLocation, float ContactRadius,
+		float ExecutionLeadTime, float GroundTime)
+	{
+		FMeleeAirborneExecutionCandidate Result;
+
+		if (!Trajectory.IsExecutable()
+			|| Trajectory.GravityMagnitude <= KINDA_SMALL_NUMBER
+			|| Trajectory.FinalLaunchVelocity.Z <= KINDA_SMALL_NUMBER)
+		{
+			return Result;
+		}
+
+		Result.ApexTime = FMath::Clamp(
+			Trajectory.FinalLaunchVelocity.Z / Trajectory.GravityMagnitude,
+			0.f, Trajectory.FlightTime);
+
+		if(Result.ApexTime<=KINDA_SMALL_NUMBER)
+		{
+			return Result;
+		}
+
+		Result.bEvaluated;
+
+		const FVector ContactOffset = Facing.RotateVector(RootSpaceContactOffset);
+
+		const auto ContactCenterAtTime = [&](float Time)
+			{
+				const FVector Feet = FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(Trajectory, Time);
+
+				const FVector Root = Feet + RootAboveFeet;
+				return Root + ContactOffset;
+			};
+
+		const auto ErrorSqAtTime = [&](float Time)
+			{
+				return FVector::DistSquared(ContactCenterAtTime(Time), TargetLocation);
+			};
+
+		constexpr int32 SampleCount = 32;
+
+		int32 BestSample = 0;
+		float BestErrorSq = TNumericLimits<float>::Max();\
+
+			for (int32 Index = 0; Index < SampleCount; ++Index)
+			{
+				const float Time = Result.ApexTime * static_cast<float>(Index) / static_cast<float>(SampleCount);
+				const float ErrorSq = ErrorSqAtTime(Time);
+
+				if (ErrorSq < BestErrorSq)
+				{
+					BestErrorSq = ErrorSq;
+					BestSample = Index;
+				}
+			}
+
+		//
+		// Refine around the best coarse sample.
+		//
+		float LowerTime = Result.ApexTime
+			* static_cast<float>(FMath::Max(0, BestSample - 1))
+			/ static_cast<float>(SampleCount);
+		
+		float UpperTime = Result.ApexTime
+			* static_cast<float>(FMath::Min(SampleCount, BestSample + 1))
+			/ static_cast<float>(SampleCount);
+
+		constexpr int32 RefinementIterations = 10;
+
+		for (int32 Iteration = 0; Iteration < RefinementIterations; ++Iteration)
+		{
+			const float Third = (UpperTime - LowerTime) / 3.f;
+
+			const float Time1 = LowerTime + Third;
+			
+			const float Time2 = UpperTime - Third;
+
+			if (ErrorSqAtTime(Time1) < ErrorSqAtTime(Time2))
+			{
+				UpperTime = Time2;
+			}
+			else
+			{
+				LowerTime = Time1;
+			}
+		}
+
+		Result.ContactTime = 0.5f * (LowerTime + UpperTime);
+
+		Result.ContactFeet = FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
+			Trajectory, Result.ContactTime);
+
+		Result.ContactRoot = Result.ContactRoot + ContactOffset;
+
+		Result.VelocityAtContact = FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(
+			Trajectory, Result.ContactTime);
+
+		Result.ContactError = FVector::Dist(Result.ContactCenter, TargetLocation);
+
+		Result.bContactValid = Result.ContactError <= ContactRadius;
+
+		Result.bAscendingAtContact =
+			Result.VelocityAtContact.Z > KINDA_SMALL_NUMBER 
+			&& Result.ContactTime < Result.ApexTime;
+
+		Result.TriggerTime = Result.ContactTime - FMath::Max(0.f, ExecutionLeadTime);
+
+		Result.bLeadTimeSatisfied = Result.TriggerTime >= 0.f;
+
+		Result.TimeToContact = GroundTime + Result.TriggerTime;
+
+		return Result;
+	}
+	static void DrawAirborneExecutionPrediction(
+		const UObject* DebugSource,
+		const FPokemonTraversalCandidate& Trajectory,
+		const FMeleeAirborneExecutionCandidate& Prediction,
+		const FVector& RootAboveFeet,
+		const FRotator& Facing,
+		const FVector& RootSpaceContactOffset,
+		const FVector& TargetLocation, float ContactRadius
+	)
+	{
+		if (!Prediction.bEvaluated)
+		{
+			return;
+		}
+
+		constexpr int32 ArcSegments = 24;
+		constexpr float DebugDuration = 4.f;
+
+		const FVector ContactOffset = Facing.RotateVector(RootSpaceContactOffset);
+
+		const auto RootAtTime = [&](float Time)
+			{
+				return FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
+					Trajectory, Time)
+					+ RootAboveFeet;
+			};
+
+		FVector PreviousRoot = RootAtTime(0.f);
+
+		for (int32 Index = 1; Index <= ArcSegments; ++Index)
+		{
+			const float Time = Trajectory.FlightTime * static_cast<float>(Index) / static_cast<float>(ArcSegments);
+
+			const FVector CurrentRoot = RootAtTime(Time);
+
+			const bool bAscending = Time <= Prediction.ApexTime;
+
+			const FLinearColor ArcColor = bAscending
+				? FLinearColor(
+					0.f, 1.f, 1.f, 1.f)
+				: FLinearColor(
+					0.35f,
+					0.35f,
+					0.35f,
+					1.f);
+
+			UPokemonDebugLibrary::DrawLine(
+				DebugSource,
+				PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+				PreviousRoot,
+				CurrentRoot,
+				DebugDuration,
+				ArcColor,
+				2.f,
+				EPokemonDebugVerbosity::Detailed
+			);
+
+			PreviousRoot = CurrentRoot;
+		}
+
+		const FVector ApexRoot = RootAtTime(Prediction.ApexTime);
+
+		UPokemonDebugLibrary::DrawSphere(
+			DebugSource,
+			PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+			ApexRoot,
+			10.f,
+			DebugDuration,
+			FLinearColor::Yellow,
+			12,
+			3.f,
+			EPokemonDebugVerbosity::Detailed);
+
+		//
+		// Target.
+		//
+		UPokemonDebugLibrary::DrawSphere(
+			DebugSource,
+			PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+			TargetLocation,
+			8.f,
+			DebugDuration,
+			FLinearColor::White,
+			12,
+			2.f,
+			EPokemonDebugVerbosity::Detailed);
+
+		//
+		// Root -> contact-center relationship at predicted strike.
+		//
+		UPokemonDebugLibrary::DrawLine(
+			DebugSource,
+			PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+			Prediction.ContactRoot,
+			Prediction.ContactCenter,
+			DebugDuration,
+			Prediction.bContactValid
+			? FLinearColor::Green
+			: FLinearColor::Red,
+			3.f,
+			EPokemonDebugVerbosity::Detailed);
+
+		//
+		// Animation/execution start.
+		//
+		if (Prediction.bLeadTimeSatisfied)
+		{
+			const FVector TriggerRoot = RootAtTime(Prediction.TriggerTime);
+			UPokemonDebugLibrary::DrawSphere(
+				DebugSource,
+				PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+				TriggerRoot,
+				9.f,
+				DebugDuration,
+				FLinearColor::Blue,
+				12,
+				2.f,
+				EPokemonDebugVerbosity::Detailed);
+		}
+	}
 }
 
 namespace PokemonNavigationUtils
@@ -1851,6 +2116,64 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				continue;
 			}
 
+			if (bAirborneExecutionRequired)
+			{
+				TraversalStance.AirborneExecution =
+					EvaluateAirborneMeleeExecution(
+						TraversalStance.Traversal,
+						TraversalStance.Facing,
+						RootAboveFeet,
+						RootSpaceContactOffset,
+						TargetLocation,
+						Candidate.Radius,
+						CurrentNavigationRequest.AirborneExecutionProfile.ExecutionLeadTime,
+						GroundTime
+					);
+
+				const FMeleeAirborneExecutionCandidate& Airborne = TraversalStance.AirborneExecution;
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeAirborneExecutionPrediction] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"FlightTime=%.3f | "
+					"ApexTime=%.3f | "
+					"ContactTime=%.3f | "
+					"TriggerTime=%.3f | "
+					"ContactVz=%.2f | "
+					"ContactError=%.2f | "
+					"Radius=%.2f | "
+					"Contact=%d | "
+					"Ascending=%d | "
+					"LeadOK=%d | "
+					"TimeToContact=%.3f"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					TraversalStance.AngleOffsetDegrees,
+					TraversalStance.Traversal.FlightTime,
+					Airborne.ApexTime,
+					Airborne.ContactTime,
+					Airborne.TriggerTime,
+					Airborne.VelocityAtContact.Z,
+					Airborne.ContactError,
+					Candidate.Radius,
+					Airborne.bContactValid,
+					Airborne.bAscendingAtContact,
+					Airborne.bLeadTimeSatisfied,
+					Airborne.TimeToContact);
+
+				DrawAirborneExecutionPrediction(
+					GetOwner(),
+					TraversalStance.Traversal,
+					Airborne,
+					RootAboveFeet,
+					TraversalStance.Facing,
+					RootSpaceContactOffset,
+					TargetLocation,
+					Candidate.Radius);
+			}
+
+			
 			TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
 
 			TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
@@ -3883,25 +4206,30 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 		bool bExecutable = FPokemonJumpTrajectoryValidator::ResolveLanding(
 			*Pokemon, Anchor.Feet, SupportedFeet, AnchorFailure);
 
-		Requirement.StartFeetLocation = SupportedFeet;
-		Requirement.bStartSupportKnown = true;
+		Requirement.bStartSupportKnown = false;
 
-		if (bExecutable && IsCompositePlayerMove() && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
+		if (bExecutable)
 		{
-			// ResolveLanding can adjust height. Prove the actual selected feet are
-			// reachable and cost the real approach, not a chord or the partial endpoint.
-			UNavigationPath* ApproachPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-				GetWorld(), CurrentFeet, SupportedFeet, OwnerPawn,
-				CachedAIController ? CachedAIController->GetDefaultNavigationFilterClass() : nullptr);
-			bExecutable = ApproachPath && ApproachPath->IsValid() && !ApproachPath->IsPartial();
+			Requirement.StartFeetLocation = SupportedFeet;
+			Requirement.bStartSupportKnown = true;
 
-			if (bExecutable)
+			if (IsCompositePlayerMove() && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
 			{
-				GroundDistance = ApproachPath->GetPathLength();
-			}
-			else
-			{
-				AnchorFailure = TEXT("TakeoffAnchorGroundUnreachable");
+				// ResolveLanding can adjust height. Prove the actual selected feet are
+				// reachable and cost the real approach, not a chord or the partial endpoint.
+				UNavigationPath* ApproachPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+					GetWorld(), CurrentFeet, SupportedFeet, OwnerPawn,
+					CachedAIController ? CachedAIController->GetDefaultNavigationFilterClass() : nullptr);
+				bExecutable = ApproachPath && ApproachPath->IsValid() && !ApproachPath->IsPartial();
+
+				if (bExecutable)
+				{
+					GroundDistance = ApproachPath->GetPathLength();
+				}
+				else
+				{
+					AnchorFailure = TEXT("TakeoffAnchorGroundUnreachable");
+				}
 			}
 		}
 

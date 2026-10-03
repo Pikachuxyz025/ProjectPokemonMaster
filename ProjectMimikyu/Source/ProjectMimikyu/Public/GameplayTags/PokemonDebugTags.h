@@ -27,6 +27,7 @@ namespace PokemonDebugTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Search);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Occupancy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal_AirborneExecution);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Addition);
@@ -35,7 +36,6 @@ namespace PokemonDebugTags
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Targeting);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Targeting_Trace);
-
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile_Spawn);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Projectile_Impact);
