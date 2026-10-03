@@ -1163,7 +1163,9 @@ bool UPokemonNavigationComponent::ProcessMeleeApproach(const FVector& TargetLoca
 		GroundedReachClassification = EMeleeGroundedReachClassification::BelowGroundedReach;
 	}
 
-	const bool bAirborneExecutionRequired = CurrentNavigationRequest.AirborneExecutionProfile.IsEnabled() && GroundedReachClassification != EMeleeGroundedReachClassification::AboveGroundedReach;
+	const bool bAirborneExecutionRequired =
+		CurrentNavigationRequest.AirborneExecutionProfile.Timing == EPokemonAirborneExecutionTiming::Ascending
+		&& GroundedReachClassification == EMeleeGroundedReachClassification::AboveGroundedReach;
 
 	UE_LOG(LogTemp, Display, TEXT(
 		"[MeleeReach] "
@@ -1786,7 +1788,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				UNavigationSystemV1::FindPathToLocationSynchronously(
 					GetWorld(),
 					TraversalPathStart,
-					Search.RequiredFeet,
+					TraversalDestinationFeet,
 					OwnerPawn);
 
 			TraversalStance.bTraversalPlanFound =
@@ -3881,6 +3883,9 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 		bool bExecutable = FPokemonJumpTrajectoryValidator::ResolveLanding(
 			*Pokemon, Anchor.Feet, SupportedFeet, AnchorFailure);
 
+		Requirement.StartFeetLocation = SupportedFeet;
+		Requirement.bStartSupportKnown = true;
+
 		if (bExecutable && IsCompositePlayerMove() && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
 		{
 			// ResolveLanding can adjust height. Prove the actual selected feet are
@@ -3953,13 +3958,13 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 			const float GroundTime = GroundDistance / DecisionGroundSpeed;
 			const float JumpTime = bExecutable ? CandidateFlightTime : 0.f;
 			const float Score = bExecutable ? GroundTime + JumpTime : TNumericLimits<float>::Max();
-			EPokemonTraversalCircumstance Circumstance = bExecutable? BestRequirement.Circumstance : EPokemonTraversalCircumstance::Unclassified;
-			EPokemonTraversalEvidence Evidence = bExecutable ? BestRequirement.Evidence : EPokemonTraversalEvidence::NavigationFailure;
+			const EPokemonTraversalCircumstance LoggedCircumstance = Requirement.Circumstance;
+			const EPokemonTraversalEvidence LoggedEvidence = Requirement.Evidence;
 			UE_LOG(LogTemp, Display,
 				TEXT("[Jump02] TakeoffSearch | RequestId=%s | Candidate=%d/%d | Source=%s | Takeoff=%s | GroundDistance=%.1f | GroundTime=%.3f | JumpTime=%.3f | Executable=%d | Circumstance=%s | Evidence=%s | Score=%s | Reason=%s"),
 				*CurrentNavigationRequest.RequestId.ToString(), Index, Anchors.Num(), *Anchor.Source.ToString(),
 				*Anchor.Feet.ToCompactString(), GroundDistance, GroundTime, JumpTime, bExecutable,
-				*UEnum::GetValueAsString(Circumstance), *UEnum::GetValueAsString(Evidence),
+				*UEnum::GetValueAsString(LoggedCircumstance), *UEnum::GetValueAsString(LoggedEvidence),
 				bExecutable ? *FString::Printf(TEXT("%.3f"), Score) : TEXT("inf"), *AnchorFailure.ToString());
 		}
 		if (!bExecutable && !AnchorFailure.IsNone())
