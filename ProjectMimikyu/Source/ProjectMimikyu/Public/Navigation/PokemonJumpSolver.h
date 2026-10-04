@@ -4,7 +4,9 @@
 #include "Navigation/PokemonTraversalTypes.h"
 
 class APokemon_Parent;
+
 struct FAgentNavigationRequest;
+struct FPokemonAirborneExecutionProfile;
 
 // Stateless capability capture and constant-gravity ballistic solving.
 // This class never starts movement or activates an ability.
@@ -18,18 +20,21 @@ public:
 	// NoSolution candidate with a structured reason; never executable by itself.
 	static TArray<FPokemonTraversalCandidate> Solve(const FPokemonTraversalRequirement& Requirement,
 		const FPokemonJumpCapabilitySnapshot& Capabilities, EPokemonJumpTrajectoryPreference Preference);
-
-	static bool SolveToAirborneContact(const FVector& StartFeet, FVector& RequiredContactFeet, 
-		const FPokemonJumpCapabilitySnapshot& Capabilities, const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, EPokemonJumpTrajectoryPreference TrajectoryPreference);
+	
+	// Airborne execution:
+	// support takeoff -> required attack-contact state.
+	// 
+	// RequiredContactFeet is an intermediate execution constraint,
+	// NOT a landing destination.
+	static TArray<FPokemonAirborneExecutionTrajectoryCandidate> SolveToAirborneContact(
+		const FGuid& ParentRequestId, const FVector& StartFeet,
+		const FVector& RequiredContactFeet, const FPokemonJumpCapabilitySnapshot& Capabilities,
+		const FPokemonAirborneExecutionProfile& AirborneExecutionProfile,
+		EPokemonJumpTrajectoryPreference TrajectoryPreference);
 
 	// Check a stable plan against current inputs without re-solving its geometry.
 	static bool CanExecuteWithCapabilities(const FPokemonTraversalCandidate& Candidate,
 		const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason);
 
 	static bool IsDebugEnabled();
-};
-
-class PROJECTMIMIKYU_API FPokemonAirborneExecutionSolver
-{
-	// Might be the better option later
 };

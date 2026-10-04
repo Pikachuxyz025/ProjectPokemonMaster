@@ -27,6 +27,7 @@ namespace PokemonDebugTags
 	UE_DEFINE_GAMEPLAY_TAG(Navigation_Stance_Occupancy, "Debug.Navigation.Stance.Occupancy");
 	UE_DEFINE_GAMEPLAY_TAG(Navigation_Traversal, "Debug.Navigation.Traversal");
 	UE_DEFINE_GAMEPLAY_TAG(Navigation_Traversal_AirborneExecution, "Debug.Navigation.Traversal.AirborneExecution");
+	UE_DEFINE_GAMEPLAY_TAG(Navigation_Traversal_AirborneExecution_Search, "Debug.Navigation.Traversal.AirborneExecution.Search");
 
 	UE_DEFINE_GAMEPLAY_TAG(Ability, "Debug.Ability");
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Addition, "Debug.Ability.Addition");

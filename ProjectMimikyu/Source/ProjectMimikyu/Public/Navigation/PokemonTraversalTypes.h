@@ -249,59 +249,92 @@ struct PROJECTMIMIKYU_API FPokemonAirborneExecutionTrajectoryCandidate
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	FGuid ParentRequestId;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	FName FailureReason = TEXT("NotEvaluated");
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
+	FName CapabilityProfileId = NAME_None;
+
 	// Supported point from which the ballistic motion begins.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	FVector StartFeetLocation = FVector::ZeroVector;
 
 	// NOT a landing.
-	// Feet position Lucario must occupy at attack contact.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	// This is the position the attacker must pass though
+	// when the authored attack contact occurs.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	FVector RequiredContactFeet = FVector::ZeroVector;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FVector FinalLaunchVelocity = FVector::ZeroVector;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FVector VelocityAtContact = FVector::ZeroVector;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float GravityMagnitude = 0.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	float ContactTime = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
+	FVector FinalLaunchVelocity = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
+	FVector VelocityAtContact = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
+	float GravityMagnitude = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	float ApexTime = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
+	float TriggerTime = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	float RequiredHorizontalLaunchSpeed = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	float RequiredVerticalLaunchSpeed = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Traversal|AirborneExecution")
 	FPokemonJumpCapabilitySnapshot CapabilitySnapshot;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
+	EPokemonJumpTrajectoryPreference TrajectoryPreference =	EPokemonJumpTrajectoryPreference::Direct;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
+	FName TrajectoryReason = NAME_None;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
+	bool bAuthorizedMoveMomentumContributed = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
 	bool bPhysicsSolved = false;
-	bool bPreContactCLearanceValidated = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
+	bool bPreContactClearanceValidated = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
 	bool bAscendingAtContact = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Traversal|AirborneExecution")
 	bool bLeadTimeSatisfied = false;
 
-	bool IsExecutableToContact() const
+	bool IsValidForPlanning() const  
 	{
 		return ParentRequestId.IsValid()
 			&& FailureReason.IsNone()
 			&& bPhysicsSolved
-			&& bPreContactCLearanceValidated
-			&& bAscendingAtContact
-			&& bLeadTimeSatisfied
+			&& FMath::IsFinite(ContactTime)
 			&& ContactTime > 0.f
+			&&FMath::IsFinite(GravityMagnitude)
+			&& GravityMagnitude > 0.f
+			&& !StartFeetLocation.ContainsNaN()
+			&& !RequiredContactFeet.ContainsNaN()
 			&& !FinalLaunchVelocity.ContainsNaN();
+	}
+
+	bool IsExecutableToContact() const
+	{
+		return IsValidForPlanning()
+			&& bPreContactClearanceValidated
+			&& bAscendingAtContact
+			&& bLeadTimeSatisfied;
 	}
 };

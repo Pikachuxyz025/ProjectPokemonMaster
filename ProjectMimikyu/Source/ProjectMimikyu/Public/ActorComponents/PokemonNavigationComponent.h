@@ -290,6 +290,10 @@ private:
 		EPokemonTraversalCircumstance ForcedCircumstance = EPokemonTraversalCircumstance::Unclassified,
 		EPokemonTraversalEvidence ForcedEvidence = EPokemonTraversalEvidence::NavigationFailure);
 
+	bool SearchAirborneExecutionTakeoffAnchors(const FVector& RequiredContactFeet, FName Trigger,
+		const UNavigationPath* GroundPath,FPokemonTraversalRequirement& OutRequirement,
+		const FPokemonAirborneExecutionProfile& AirborneExecutionProfile,
+		FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate, float* OutGroundTime = nullptr);
 public:
 	UFUNCTION(BlueprintCallable)
 	void DebugFollowTarget(AActor* TargetActor);

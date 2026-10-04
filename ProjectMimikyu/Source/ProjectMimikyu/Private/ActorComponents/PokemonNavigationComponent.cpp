@@ -58,7 +58,7 @@ namespace
 			return TEXT("Unknown");
 		}
 	}
-	
+
 	struct FMeleeAirborneExecutionCandidate
 	{
 		bool bEvaluated = false;
@@ -174,7 +174,7 @@ namespace
 		FVector ResolvedLandingFeet = FVector::ZeroVector;
 
 		FVector ResolvedRoot = FVector::ZeroVector;
-		FVector ResolvedContact = FVector::ZeroVector; 
+		FVector ResolvedContact = FVector::ZeroVector;
 
 		float ContactError = 0.f;
 		float SurfaceSideDot = 0.f;
@@ -184,6 +184,9 @@ namespace
 		float TotalTime = TNumericLimits<float>::Max();
 
 		bool bTraversalPlanFound = false;
+
+		bool bUsesAirborneExecution = false;
+
 		bool bContactValid = false;
 		bool bExposedSide = false;
 
@@ -192,15 +195,38 @@ namespace
 		bool bPlacementValid = false;
 
 		FPokemonTraversalRequirement Requirement;
-		FPokemonTraversalCandidate Traversal;
-		FMeleeAirborneExecutionCandidate AirborneExecution;
 
-		bool IsViable() const
+		// Ordinary run-and-jump landing trajectory.
+		FPokemonTraversalCandidate Traversal;
+
+		// Contact-constrained airborne execution trajectory.
+		FPokemonAirborneExecutionTrajectoryCandidate AirborneTrajectory;
+
+		bool IsGroundedTraversalViable() const
 		{
 			return bTraversalPlanFound
+				&& !bUsesAirborneExecution
+				&& Traversal.IsExecutable()
 				&& bContactValid
 				&& bExposedSide
 				&& bPlacementValid;
+		}
+
+		bool IsAirborneExecutionViable() const
+		{
+			return bTraversalPlanFound
+				&& bUsesAirborneExecution
+				&& AirborneTrajectory.IsExecutableToContact()
+				&& bContactValid
+				&& bExposedSide
+				&& bPlacementValid;
+		}
+
+		bool IsViable() const
+		{
+			return bUsesAirborneExecution
+				? IsAirborneExecutionViable()
+				: IsGroundedTraversalViable();
 		}
 	};
 
@@ -234,7 +260,7 @@ namespace
 			Trajectory.FinalLaunchVelocity.Z / Trajectory.GravityMagnitude,
 			0.f, Trajectory.FlightTime);
 
-		if(Result.ApexTime<=KINDA_SMALL_NUMBER)
+		if (Result.ApexTime <= KINDA_SMALL_NUMBER)
 		{
 			return Result;
 		}
@@ -259,7 +285,7 @@ namespace
 		constexpr int32 SampleCount = 32;
 
 		int32 BestSample = 0;
-		float BestErrorSq = TNumericLimits<float>::Max();\
+		float BestErrorSq = TNumericLimits<float>::Max(); \
 
 			for (int32 Index = 0; Index <= SampleCount; ++Index)
 			{
@@ -279,7 +305,7 @@ namespace
 		float LowerTime = Result.ApexTime
 			* static_cast<float>(FMath::Max(0, BestSample - 1))
 			/ static_cast<float>(SampleCount);
-		
+
 		float UpperTime = Result.ApexTime
 			* static_cast<float>(FMath::Min(SampleCount, BestSample + 1))
 			/ static_cast<float>(SampleCount);
@@ -291,7 +317,7 @@ namespace
 			const float Third = (UpperTime - LowerTime) / 3.f;
 
 			const float Time1 = LowerTime + Third;
-			
+
 			const float Time2 = UpperTime - Third;
 
 			if (ErrorSqAtTime(Time1) < ErrorSqAtTime(Time2))
@@ -321,7 +347,7 @@ namespace
 		Result.bContactValid = Result.ContactError <= ContactRadius;
 
 		Result.bAscendingAtContact =
-			Result.VelocityAtContact.Z > KINDA_SMALL_NUMBER 
+			Result.VelocityAtContact.Z > KINDA_SMALL_NUMBER
 			&& Result.ContactTime < Result.ApexTime;
 
 		Result.TriggerTime = Result.ContactTime - FMath::Max(0.f, ExecutionLeadTime);
@@ -332,6 +358,7 @@ namespace
 
 		return Result;
 	}
+
 	static void DrawAirborneExecutionPrediction(
 		const UObject* DebugSource,
 		const FPokemonTraversalCandidate& Trajectory,
@@ -339,8 +366,7 @@ namespace
 		const FVector& RootAboveFeet,
 		const FRotator& Facing,
 		const FVector& RootSpaceContactOffset,
-		const FVector& TargetLocation, float ContactRadius
-	)
+		const FVector& TargetLocation, float ContactRadius)
 	{
 		if (!Prediction.bEvaluated)
 		{
@@ -467,6 +493,130 @@ namespace
 				2.f,
 				EPokemonDebugVerbosity::Detailed);
 		}
+	}
+
+	static void DrawAirborneExecutionTrajectory(
+		const UObject* DebugSource,
+		const FPokemonAirborneExecutionTrajectoryCandidate& Trajectory,
+		const FVector& RootAboveFeet,
+		const FRotator& Facing,
+		const FVector& RootSpaceContactOffset,
+		const FVector& TargetLocation,
+		float ContactRadius,
+		bool bSearchDiagnostic)
+	{
+		if (!Trajectory.IsValidForPlanning())
+		{
+			return;
+		}
+
+		constexpr int32 ArcSegments = 24;
+		constexpr float DebugDuration = 4.f;
+
+		const FVector ContactOffset = Facing.RotateVector(RootSpaceContactOffset);
+
+		const auto RootAtTime = [&](float Time)
+			{
+				return FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
+					Trajectory, Time)
+					+ RootAboveFeet;
+			};
+
+		const auto DrawArcLine = [&](const FVector& Start, const FVector& End,
+			const FLinearColor& Color, float Thickness)
+			{
+				if (bSearchDiagnostic)
+				{
+					UPokemonDebugLibrary::DrawLine(
+						DebugSource,
+						PokemonDebugTags::Navigation_Traversal_AirborneExecution_Search,
+						Start,
+						End,
+						DebugDuration,
+						Color,
+						Thickness,
+						EPokemonDebugVerbosity::Detailed);
+				}
+				else
+				{
+					UPokemonDebugLibrary::DrawLine(
+						DebugSource,
+						PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+						Start,
+						End,
+						DebugDuration,
+						Color,
+						Thickness,
+						EPokemonDebugVerbosity::Detailed);
+				}
+			};
+	
+		const auto DrawArcSphere = [&](const FVector& Location, float Radius,
+			const FLinearColor& Color, float Thickness)
+			{
+				if (bSearchDiagnostic)
+				{
+					UPokemonDebugLibrary::DrawSphere(
+						DebugSource,
+						PokemonDebugTags::Navigation_Traversal_AirborneExecution_Search,
+						Location,
+						Radius,
+						DebugDuration,
+						Color,
+						16,
+						Thickness,
+						EPokemonDebugVerbosity::Detailed);
+				}
+				else
+				{
+					UPokemonDebugLibrary::DrawSphere(
+						DebugSource,
+						PokemonDebugTags::Navigation_Traversal_AirborneExecution,
+						Location,
+						Radius,
+						DebugDuration,
+						Color,
+						16,
+						Thickness,
+						EPokemonDebugVerbosity::Detailed);
+				}
+			};
+
+    // --------------------------------------------------------
+	// Authoritative trajectory:
+	// takeoff -> contact only
+	// --------------------------------------------------------
+
+		FVector PreviousRoot = RootAtTime(0.f);
+
+		for (int32 Index = 1; Index <= ArcSegments; ++Index)
+		{
+			const float Time = Trajectory.ContactTime * static_cast<float>(Index) / static_cast<float>(ArcSegments);
+			
+			const FVector CurrentRoot = RootAtTime(Time);
+
+			DrawArcLine(PreviousRoot, CurrentRoot,
+				FLinearColor(0.f, 1.f, 1.f, 1.f),
+				bSearchDiagnostic ?
+				1.f : 3.f);
+
+			PreviousRoot = CurrentRoot;
+		}
+
+		const FVector ContactFeet = FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
+			Trajectory, Trajectory.ContactTime);
+
+		const FVector ContactRoot = ContactFeet + RootAboveFeet;
+
+		const FVector ContactCenter = ContactRoot + ContactOffset;
+
+		DrawArcSphere(TargetLocation, 8.f, FLinearColor::White, 2.f);
+
+		DrawArcSphere(ContactCenter, ContactRadius, Trajectory.IsExecutableToContact() ?
+			FLinearColor::Green : FLinearColor::Red, bSearchDiagnostic ? 1.f : 3.f);
+
+		DrawArcLine(ContactRoot, ContactCenter,
+			FLinearColor::Yellow,2.f);
 	}
 }
 
@@ -2035,7 +2185,9 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 		}
 		return true;
 	}
-	else if (!bHasSelectedSearchCandidate && CurrentNavigationRequest.bAllowSpecialTraversal && SearchCandidates.Num() > 0)
+	else if (!bHasSelectedSearchCandidate
+		&& CurrentNavigationRequest.bAllowSpecialTraversal
+		&& SearchCandidates.Num() > 0)
 	{
 		TArray<FMeleeTraversalStanceCandidate> TraversalStances;
 
@@ -2058,6 +2210,8 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			TraversalStance.RequestedFeet = Search.RequiredFeet;
 
+			TraversalStance.bUsesAirborneExecution = bAirborneExecutionRequired;
+
 			float GroundTime = 0.f;
 
 			const FVector TraversalPathStart =
@@ -2065,51 +2219,71 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
 				: OwnerPawn->GetActorLocation();
 
-			const FVector TraversalDestinationFeet = bAirborneExecutionRequired ? Search.NavGoal : Search.RequiredFeet;
-
-			if(bAirborneExecutionRequired)
+			if (!Search.bProjectionValid)
 			{
-				SearchTakeoffAnchors(
-					TraversalDestinationFeet,
-					bAirborneExecutionRequired
-					? FName(TEXT("MeleeAirborneTraversal"))
-					: FName(TEXT("MeleeStanceTraversal")),
-					TraversalGroundPath,
-					TraversalStance.Requirement,
-					TraversalStance.Traversal,
-					&GroundTime,
-					bAirborneExecutionRequired
-					? EPokemonTraversalCircumstance::AirborneExecution
-					: EPokemonTraversalCircumstance::Unclassified,
-					bAirborneExecutionRequired
-					? EPokemonTraversalEvidence::AttackExecutionRequirement
-					: EPokemonTraversalEvidence::NavigationFailure);
+				if (bAirborneExecutionRequired)
+				{
+					TraversalStance.AirborneTrajectory.ParentRequestId = CurrentNavigationRequest.RequestId;
+
+					TraversalStance.AirborneTrajectory.RequiredContactFeet = Search.RequiredFeet;
+
+					TraversalStance.AirborneTrajectory.FailureReason = FName(TEXT("AirborneGroundSearchProjectionFailed"));
+				}
+				else
+				{
+					TraversalStance.Traversal.ParentRequestId = CurrentNavigationRequest.RequestId;
+
+					TraversalStance.Traversal.FailureReason = FName(TEXT("TraversalProjectionFailed"));
+				}
+
+				continue;
 			}
-			else
-			{ }
+
+			// For airborne execution Search.NavGoal is only the
+			// GROUND region used to discover reachable takeoff anchors.
+			//
+			// Search.RequiredFeet remains the airborne contact constraint.
+			const FVector GroundPathGoal = bAirborneExecutionRequired
+				? Search.NavGoal
+				: Search.RequiredFeet;
+
 			UNavigationPath* TraversalGroundPath =
 				UNavigationSystemV1::FindPathToLocationSynchronously(
 					GetWorld(),
 					TraversalPathStart,
-					TraversalDestinationFeet,
+					GroundPathGoal,
 					OwnerPawn);
 
-			TraversalStance.bTraversalPlanFound =
-				SearchTakeoffAnchors(
-					TraversalDestinationFeet,
-					bAirborneExecutionRequired
-					? FName(TEXT("MeleeAirborneTraversal"))
-					: FName(TEXT("MeleeStanceTraversal")),
+			// --------------------------------------------------------
+			// Solve transport
+			// --------------------------------------------------------
+
+			if (bAirborneExecutionRequired)
+			{
+				TraversalStance.bTraversalPlanFound = SearchAirborneExecutionTakeoffAnchors(
+					Search.RequiredFeet,
+					FName(TEXT("MeleeAirborneTraversal")),
 					TraversalGroundPath,
 					TraversalStance.Requirement,
-					TraversalStance.Traversal,
-					&GroundTime,
-					bAirborneExecutionRequired
-					? EPokemonTraversalCircumstance::AirborneExecution
-					: EPokemonTraversalCircumstance::Unclassified,
-					bAirborneExecutionRequired
-					? EPokemonTraversalEvidence::AttackExecutionRequirement
-					: EPokemonTraversalEvidence::NavigationFailure);
+					CurrentNavigationRequest.AirborneExecutionProfile,
+					TraversalStance.AirborneTrajectory,
+					&GroundTime);
+			}
+			else
+			{
+				TraversalStance.bTraversalPlanFound =
+					SearchTakeoffAnchors(
+						Search.RequiredFeet,
+						FName(TEXT("MeleeStanceTraversal")),
+						TraversalGroundPath,
+						TraversalStance.Requirement,
+						TraversalStance.Traversal,
+						&GroundTime);
+			}
+
+			// --------------------------------------------------------
+			// Mobility diagnostic
+			// --------------------------------------------------------
 
 			FPokemonMobilityOption RunJumpOption;
 
@@ -2125,13 +2299,21 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			{
 				RunJumpOption.GroundTime = GroundTime;
 
-				RunJumpOption.FlightTime = TraversalStance.Traversal.FlightTime;
+				RunJumpOption.FlightTime = bAirborneExecutionRequired
+					? TraversalStance.AirborneTrajectory.ContactTime
+					: TraversalStance.Traversal.FlightTime;
 
 				RunJumpOption.EstimatedTime = RunJumpOption.GroundTime + RunJumpOption.FlightTime;
 
 				RunJumpOption.TraversalRequirement = TraversalStance.Requirement;
 
-				RunJumpOption.TraversalCandidate = TraversalStance.Traversal;
+				// FPokemonMobilityOption still carries the ordinary
+				// landing candidate type. Do not manufacture one for
+				// airborne contact.
+				if (!bAirborneExecutionRequired)
+				{
+					RunJumpOption.TraversalCandidate = TraversalStance.Traversal;
+				}
 
 				++RunJumpTransportValidCount;
 			}
@@ -2140,158 +2322,167 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			if (!TraversalStance.bTraversalPlanFound)
 			{
+				const FName FailureReason = bAirborneExecutionRequired
+					? TraversalStance.AirborneTrajectory.FailureReason
+					: TraversalStance.Traversal.FailureReason;
+
 				UE_LOG(LogTemp, Display, TEXT(
 					"[MeleeTraversalStanceCandidate] "
 					"RequestId=%s | "
 					"Angle=%+.0f | "
 					"RequestedFeet=%s | "
 					"PlanFound=0 | "
+					"Airborne=%d | "
 					"FailureReason=%s"),
 					*CurrentNavigationRequest.RequestId.ToString(),
 					TraversalStance.AngleOffsetDegrees,
 					*TraversalStance.RequestedFeet.ToString(),
-					*TraversalStance.Traversal.FailureReason.ToString());
+					bAirborneExecutionRequired,
+					*FailureReason.ToString());
+
 				continue;
 			}
 
+			// --------------------------------------------------------
+			// Airborne execution geometry
+			// --------------------------------------------------------
+
 			if (bAirborneExecutionRequired)
 			{
-				TraversalStance.AirborneExecution =
-					EvaluateAirborneMeleeExecution(
-						TraversalStance.Traversal,
-						TraversalStance.Facing,
-						RootAboveFeet,
-						RootSpaceContactOffset,
-						TargetLocation,
-						Candidate.Radius,
-						CurrentNavigationRequest.AirborneExecutionProfile.ExecutionLeadTime,
-						GroundTime
-					);
+				const FPokemonAirborneExecutionTrajectoryCandidate& Airborne = TraversalStance.AirborneTrajectory;
 
-				const FMeleeAirborneExecutionCandidate& Airborne = TraversalStance.AirborneExecution;
+				const FVector ContactFeet = FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(
+					Airborne,
+					Airborne.ContactTime);
 
-				UE_LOG(LogTemp, Display, TEXT(
-					"[MeleeAirborneExecutionPrediction] "
-					"RequestId=%s | "
-					"Angle=%+.0f | "
-					"FlightTime=%.3f | "
-					"ApexTime=%.3f | "
-					"ContactTime=%.3f | "
-					"TriggerTime=%.3f | "
-					"ContactVz=%.2f | "
-					"ContactError=%.2f | "
-					"Radius=%.2f | "
-					"Contact=%d | "
-					"Ascending=%d | "
-					"LeadOK=%d | "
-					"TimeToContact=%.3f"
-				),
-					*CurrentNavigationRequest.RequestId.ToString(),
-					TraversalStance.AngleOffsetDegrees,
-					TraversalStance.Traversal.FlightTime,
-					Airborne.ApexTime,
-					Airborne.ContactTime,
-					Airborne.TriggerTime,
-					Airborne.VelocityAtContact.Z,
-					Airborne.ContactError,
-					Candidate.Radius,
-					Airborne.bContactValid,
-					Airborne.bAscendingAtContact,
-					Airborne.bLeadTimeSatisfied,
-					Airborne.TimeToContact);
+				TraversalStance.ResolvedRoot = ContactFeet + RootAboveFeet;
 
-				DrawAirborneExecutionPrediction(
+				TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot +
+					TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
+
+				TraversalStance.ContactError = static_cast<float>(
+					FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
+
+				TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
+
+				const FVector ContactToRoot = TraversalStance.ResolvedRoot - TargetLocation;
+
+				TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToRoot, SurfaceNormal);
+
+				TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
+
+				// The pre-contact validator already performed the
+				// full-capsule collision proof.
+				TraversalStance.bPlacementValid = Airborne.bPreContactClearanceValidated;
+
+				TraversalStance.GroundTime = GroundTime;
+
+				// "FlightTime" is only used by this local comparison
+				// struct. For airborne execution it means time to
+				// contact, NOT time to landing.
+				TraversalStance.FlightTime = Airborne.ContactTime;
+
+				TraversalStance.TotalTime =
+					TraversalStance.GroundTime
+					+ Airborne.ContactTime;
+
+				DrawAirborneExecutionTrajectory(
 					GetOwner(),
-					TraversalStance.Traversal,
 					Airborne,
 					RootAboveFeet,
 					TraversalStance.Facing,
 					RootSpaceContactOffset,
 					TargetLocation,
-					Candidate.Radius);
+					Candidate.Radius,
+					true);
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeAirborneExecutionTrajectory] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"Takeoff=%s | "
+					"RequiredContactFeet=%s | "
+					"ContactTime=%.3f | "
+					"ApexTime=%.3f | "
+					"TriggerTime=%.3f | "
+					"ContactVz=%.2f | "
+					"ContactError=%.2f | "
+					"Radius=%.2f | "
+					"Ascending=%d | "
+					"LeadOK=%d | "
+					"Clear=%d | "
+					"Exposed=%d | "
+					"Viable=%d"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(), TraversalStance.AngleOffsetDegrees,
+					*Airborne.StartFeetLocation.ToCompactString(), *Airborne.RequiredContactFeet.ToCompactString(),
+					Airborne.ContactTime, Airborne.ApexTime,
+					Airborne.TriggerTime, Airborne.VelocityAtContact.Z,
+					TraversalStance.ContactError, Candidate.Radius,
+					Airborne.bAscendingAtContact, Airborne.bLeadTimeSatisfied,
+					Airborne.bPreContactClearanceValidated, TraversalStance.bExposedSide,
+					TraversalStance.IsAirborneExecutionViable());
 			}
-
-			
-			TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
-
-			TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
-
-			TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot + TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
-
-			TraversalStance.ContactError = static_cast<float>(FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
-
-			TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
-
-			const FVector ContactToResolvedRoot = TraversalStance.ResolvedRoot - TargetLocation;
-
-			TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToResolvedRoot, SurfaceNormal);
-
-			TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
-
-			TraversalStance.bOccupancyTestAvailable = bOccupancyTestAvailable;
-
-			if (TraversalStance.bOccupancyTestAvailable)
+			else
 			{
-				TArray<FOverlapResult> TraversalOverlaps;
+				// ----------------------------------------------------
+				// Existing landing-based melee traversal path
+				// ----------------------------------------------------
 
-				TraversalStance.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
-					TraversalOverlaps,
-					TraversalStance.ResolvedRoot,
-					TraversalStance.Facing.Quaternion(),
-					Capsule->GetCollisionObjectType(),
-					OccupancyShape,
-					OccupancyQuery,
-					OccupancyResponse
-				);
-				TraversalStance.bPlacementValid = !TraversalStance.bCapsuleBlocked;
+				TraversalStance.ResolvedLandingFeet = TraversalStance.Requirement.DestinationFeetLocation;
+
+				TraversalStance.ResolvedRoot = TraversalStance.ResolvedLandingFeet + RootAboveFeet;
+
+				TraversalStance.ResolvedContact = TraversalStance.ResolvedRoot +
+					TraversalStance.Facing.RotateVector(RootSpaceContactOffset);
+
+				TraversalStance.ContactError = static_cast<float>(
+					FVector::Dist(TraversalStance.ResolvedContact, TargetLocation));
+
+				TraversalStance.bContactValid = TraversalStance.ContactError <= Candidate.Radius;
+
+				const FVector ContactToResolvedRoot = TraversalStance.ResolvedRoot - TargetLocation;
+
+				TraversalStance.SurfaceSideDot = FVector::DotProduct(ContactToResolvedRoot, SurfaceNormal);
+
+				TraversalStance.bExposedSide = TraversalStance.SurfaceSideDot > 0.f;
+
+				TraversalStance.bOccupancyTestAvailable = bOccupancyTestAvailable;
+
+				if (TraversalStance.bOccupancyTestAvailable)
+				{
+					TArray<FOverlapResult> TraversalOverlaps;
+
+
+					TraversalStance.bCapsuleBlocked = GetWorld()->OverlapMultiByChannel(
+						TraversalOverlaps,
+						TraversalStance.ResolvedRoot,
+						TraversalStance.Facing.Quaternion(),
+						Capsule->GetCollisionObjectType(),
+						OccupancyShape,
+						OccupancyQuery,
+						OccupancyResponse
+					);
+
+					TraversalStance.bPlacementValid = !TraversalStance.bCapsuleBlocked;
+				}
+
+				TraversalStance.GroundTime = GroundTime;
+
+				TraversalStance.FlightTime = TraversalStance.Traversal.FlightTime;
+
+				TraversalStance.TotalTime = TraversalStance.GroundTime + TraversalStance.Traversal.FlightTime;
 			}
-
-			TraversalStance.GroundTime = GroundTime;
-
-			TraversalStance.FlightTime = TraversalStance.Traversal.FlightTime;
-
-			TraversalStance.TotalTime = TraversalStance.GroundTime + TraversalStance.FlightTime;
-
-			UE_LOG(LogTemp, Display, TEXT(
-				"[MeleeTraversalStanceCandidate] "
-				"RequestId=%s | "
-				"Angle=%+.0f | "
-				"RequestedFeet=%s | "
-				"PlanFound=%d | "
-				"ResolvedFeet=%s | "
-				"ContactError=%.2f | "
-				"Contact=%d | "
-				"SideDot=%.2f | "
-				"Exposed=%d | "
-				"Placement=%d | "
-				"GroundTime=%.3f | "
-				"FlightTime=%.3f | "
-				"TotalTime=%.3f | "
-				"Viable=%d"),
-				*CurrentNavigationRequest.RequestId.ToString(),
-				TraversalStance.AngleOffsetDegrees,
-				*TraversalStance.RequestedFeet.ToString(),
-				TraversalStance.bTraversalPlanFound,
-				*TraversalStance.ResolvedLandingFeet.ToString(),
-				TraversalStance.ContactError,
-				TraversalStance.bContactValid,
-				TraversalStance.SurfaceSideDot,
-				TraversalStance.bExposedSide,
-				TraversalStance.bPlacementValid,
-				TraversalStance.GroundTime,
-				TraversalStance.FlightTime,
-				TraversalStance.TotalTime,
-				TraversalStance.IsViable()
-			);
 
 			const bool bMeleeCompatible = TraversalStance.IsViable();
 
 			if (bMeleeCompatible)
 			{
 				++RunJumpMeleeCompatibleCount;
+				++TraversalViableCount;
 
-				TraversalViableCount++;
-				if (!BestTraversalStance || TraversalStance.TotalTime < BestTraversalStance->TotalTime)
+				if ((!BestTraversalStance
+					|| TraversalStance.TotalTime < BestTraversalStance->TotalTime))
 				{
 					BestTraversalStance = &TraversalStance;
 				}
@@ -2302,24 +2493,23 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				"RequestId=%s | "
 				"Angle=%+.0f | "
 				"Type=RunAndJump | "
+				"AirborneContact=%d | "
 				"TransportEvaluated=%d | "
 				"TransportValid=%d | "
 				"GroundTime=%.3f | "
-				"FlightTime=%.3f | "
+				"FlightOrContactTime=%.3f | "
 				"EstimatedTime=%.3f | "
 				"MeleeCompatible=%d"
 			),
 				*CurrentNavigationRequest.RequestId.ToString(),
 				RunJumpOption.StanceAngleOffsetDegrees,
+				bAirborneExecutionRequired,
 				RunJumpOption.bTransportEvaluated,
 				RunJumpOption.bTransportValid,
 				RunJumpOption.GroundTime,
 				RunJumpOption.FlightTime,
-				RunJumpOption.bTransportValid
-				? RunJumpOption.EstimatedTime
-				: -1.f,
-				bMeleeCompatible
-			);
+				RunJumpOption.bTransportValid ? RunJumpOption.EstimatedTime : -1.f,
+				bMeleeCompatible);
 		}
 
 		UE_LOG(
@@ -2357,9 +2547,65 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			BestTraversalStance ? BestTraversalStance->TotalTime : 0.f
 		);
 
+
+
 		if (BestTraversalStance)
 		{
 			const FMeleeTraversalStanceCandidate SelectedTraversal = *BestTraversalStance;
+
+			if (SelectedTraversal.bUsesAirborneExecution)
+			{
+				const FPokemonAirborneExecutionTrajectoryCandidate& Airborne = SelectedTraversal.AirborneTrajectory;
+
+				// Main debug category shows only the winner
+				DrawAirborneExecutionTrajectory(
+					GetOwner(),
+					Airborne,
+					RootAboveFeet,
+					SelectedTraversal.Facing,
+					RootSpaceContactOffset,
+					TargetLocation,
+					Candidate.Radius,
+					false);
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeAirborneExecutionPlanSelected] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"Takeoff=%s | "
+					"ContactFeet=%s | "
+					"FacingYaw=%.2f | "
+					"GroundTime=%.3f | "
+					"ContactTime=%.3f | "
+					"TotalTime=%.3f | "
+					"ContactVz=%.2f | "
+					"PlannerOnly=1"
+				),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					SelectedTraversal.AngleOffsetDegrees,
+					*Airborne.StartFeetLocation.ToCompactString(),
+					*Airborne.RequiredContactFeet.ToCompactString(),
+					SelectedTraversal.Facing.Yaw,
+					SelectedTraversal.GroundTime,
+					Airborne.ContactTime,
+					SelectedTraversal.TotalTime,
+					Airborne.VelocityAtContact.Z);
+
+				// Step 6A ends here.
+				//
+				// Do NOT convert this into LastTraversalCandidate.
+				// FPokemonTraversalCandidate still means
+				// "takeoff -> validated landing".
+				//
+				// Step 6B will give the execution component an explicit
+				// airborne-contact execution contract.
+				if (CachedAIController)
+				{
+					CachedAIController->StopMovement();
+				}
+
+				return false;
+			}
 
 			const FVector CurrentFeet = Pokemon->GetCharacterMovement()
 				? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
@@ -2368,8 +2614,8 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			const bool bAtSelectedTakeoff = FVector::Dist(CurrentFeet, SelectedTraversal.Requirement.StartFeetLocation) <= 6.f;
 
 			// --------------------------------------------------------
-            // Traversal authority
-            // --------------------------------------------------------
+			// Traversal authority
+			// --------------------------------------------------------
 
 			bPlayerMovePlanningOnly = true;
 
@@ -2383,11 +2629,11 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			bTraversalPlanReady = bAtSelectedTakeoff;
 
-			TakeoffApproachElapsed = 0.f;	
+			TakeoffApproachElapsed = 0.f;
 
 			// --------------------------------------------------------
-            // Execution-stance authority
-            // --------------------------------------------------------
+			// Execution-stance authority
+			// --------------------------------------------------------
 
 			SelectedMeleeStance.Reset();
 
@@ -2405,7 +2651,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			SelectedMeleeStance.ContactError = SelectedTraversal.ContactError;
 
-			SelectedMeleeStance.ContactSlack = FMath::Max(0.f,Candidate.Radius- SelectedTraversal.ContactError);
+			SelectedMeleeStance.ContactSlack = FMath::Max(0.f, Candidate.Radius - SelectedTraversal.ContactError);
 
 			// Snapshot is complete.
 			SelectedMeleeStance.bValid = true;
@@ -2428,7 +2674,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			if (bReachingTakeoff)
 			{
-				if(!IssueTakeoffApproachMove())
+				if (!IssueTakeoffApproachMove())
 				{
 					bReachingTakeoff = false;
 
@@ -2440,18 +2686,18 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				}
 			}
 
-			UE_LOG(LogTemp,Display,TEXT(
-					"[MeleeTraversalAuthority] "
-					"RequestId=%s | "
-					"Angle=%+.0f | "
-					"Takeoff=%s | "
-					"LandingFeet=%s | "
-					"FacingYaw=%.2f | "
-					"GroundTime=%.3f | "
-					"FlightTime=%.3f | "
-					"TotalTime=%.3f | "
-					"AtTakeoff=%d"
-				),
+			UE_LOG(LogTemp, Display, TEXT(
+				"[MeleeTraversalAuthority] "
+				"RequestId=%s | "
+				"Angle=%+.0f | "
+				"Takeoff=%s | "
+				"LandingFeet=%s | "
+				"FacingYaw=%.2f | "
+				"GroundTime=%.3f | "
+				"FlightTime=%.3f | "
+				"TotalTime=%.3f | "
+				"AtTakeoff=%d"
+			),
 				*CurrentNavigationRequest.RequestId.ToString(),
 				SelectedTraversal.AngleOffsetDegrees,
 				*SelectedTraversal.Requirement
@@ -2465,6 +2711,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			);
 
 			return false;
+
 		}
 	}
 
@@ -2502,7 +2749,9 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 			*UEnum::GetValueAsString(Plan.Source),
 			*Plan.ProfileId.ToString(),
 			*Candidate.RootLocation.ToString());
+
 		CachedAIController->StopMovement();
+
 		return false;
 	}
 
@@ -2887,6 +3136,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 	return true;
 }
+
 
 bool UPokemonNavigationComponent::ProcessFlee()
 {
@@ -3312,23 +3562,17 @@ bool UPokemonNavigationComponent::HasReachedCoordinatorApproachExecutionPosition
 
 		const FString SelectedAngleText =
 			bHasAuthoritativeStance
-			? FString::Printf(
-				TEXT("%+.0f"),
-				SelectedMeleeStance.AngleOffsetDegrees)
+			? FString::Printf(TEXT("%+.0f"),SelectedMeleeStance.AngleOffsetDegrees)
 			: TEXT("None");
 
 		const FString SelectedYawText =
 			bHasAuthoritativeStance
-			? FString::Printf(
-				TEXT("%.2f"),
-				SelectedMeleeStance.Facing.Yaw)
+			? FString::Printf(TEXT("%.2f"),SelectedMeleeStance.Facing.Yaw)
 			: TEXT("None");
 
 		const FString FacingErrorText =
 			bHasAuthoritativeStance
-			? FString::Printf(
-				TEXT("%.2f"),
-				FacingErrorDegrees)
+			? FString::Printf(TEXT("%.2f"),FacingErrorDegrees)
 			: TEXT("N/A");
 
 		UE_LOG(LogTemp, Display, TEXT(
@@ -4377,6 +4621,368 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 			TEXT("[Jump02] TakeoffSearch | RequestId=%s | CandidateCount=%d | SelectedCandidate=None | Reason=%s"),
 			*CurrentNavigationRequest.RequestId.ToString(), Anchors.Num(), *BestFailure.ToString());
 	}
+	return false;
+}
+
+bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FVector& RequiredContactFeet, FName Trigger,
+	const UNavigationPath* GroundPath, FPokemonTraversalRequirement& OutRequirement,
+	const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate,
+	float* OutGroundTime)
+{
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	UCapsuleComponent* Capsule = IsValid(Pokemon) ? Pokemon->GetCapsuleComponent() : nullptr;
+
+	if (!Pokemon || !Capsule || !bHasActiveRequest || IsAttackJumpConsumed())
+	{
+		OutCandidate = FPokemonAirborneExecutionTrajectoryCandidate();
+		OutCandidate.ParentRequestId = CurrentNavigationRequest.RequestId;
+		OutCandidate.FailureReason = FName(TEXT("AirborneTakeoffSearchUnavailable"));
+		return false;
+	}
+
+	// --------------------------------------------------------
+	// Base execution requirement
+	// --------------------------------------------------------
+
+	FPokemonTraversalRequirement BaseRequirement;
+
+	if (!BuildTraversalRequirement(RequiredContactFeet, Trigger, BaseRequirement))
+	{
+		OutCandidate = FPokemonAirborneExecutionTrajectoryCandidate();
+		OutCandidate.ParentRequestId = CurrentNavigationRequest.RequestId;
+		OutCandidate.RequiredContactFeet = RequiredContactFeet;
+		OutCandidate.FailureReason = FName(TEXT("AirborneTakeoffRequirementBuildFailed"));
+		return false;
+	}
+
+	BaseRequirement.Circumstance = EPokemonTraversalCircumstance::AirborneExecution;
+
+	BaseRequirement.Evidence = EPokemonTraversalEvidence::AttackExecutionRequirement;
+
+	// Contact is not support.
+	BaseRequirement.DestinationFeetLocation = RequiredContactFeet;
+
+	BaseRequirement.bDestinationSupportKnown = false;
+
+	BaseRequirement.bLandingRequired = false;
+
+	BaseRequirement.bParentMayCompleteWhileAirborne = true;
+
+	// --------------------------------------------------------
+	// Candidate takeoff anchors
+	// --------------------------------------------------------
+
+	struct FAnchor
+	{
+		FVector Feet = FVector::ZeroVector;
+		float GroundDistance = 0.f;
+		FName Source = NAME_None;
+	};
+
+	TArray<FAnchor> Anchors;
+
+	const UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	const FVector CurrentFeet =
+		Movement ? Movement->GetActorFeetLocation()
+		: Pokemon->GetActorLocation() - FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight());
+
+	const auto AddAnchor = [&Anchors](const FVector& Feet, float GroundDistance, FName Source)
+		{
+			if (Feet.ContainsNaN())
+			{
+				return;
+			}
+
+			for (const FAnchor& Existing : Anchors)
+			{
+				if (FVector::DistSquared(Existing.Feet, Feet) <= FMath::Square(10.f))
+				{
+					return;
+				}
+			}
+			FAnchor& Added = Anchors.AddDefaulted_GetRef();
+			Added.Feet = Feet;
+			Added.GroundDistance = FMath::Max(0.f, GroundDistance);
+			Added.Source = Source;
+		};
+
+	// The current suppoprted location is alwaysd a legitimate launch candidate.
+	AddAnchor(CurrentFeet, 0.f, FName(TEXT("CurrentSupportedFeet")));
+
+	TArray<FVector> PathFeet;
+	TArray<float> PathDistances;
+
+	if (GroundPath && GroundPath->IsValid()
+		&& GroundPath->PathPoints.Num() > 0)
+	{
+		const int32 PathCount = GroundPath->PathPoints.Num();
+
+		constexpr int32 MaxPathPoints = 12;
+
+		FVector PreviousFeet = CurrentFeet;
+
+		float CumulativeDistance = 0.f;
+
+		for (int32 Index = 0; Index < PathCount; ++Index)
+		{
+			const bool bKeepPoint = PathCount <= MaxPathPoints
+				|| Index == 0
+				|| Index == PathCount - 1
+				|| (Index % FMath::Max(1, PathCount / MaxPathPoints) == 0);
+
+			const FVector Feet = GroundPath->PathPoints[Index];
+
+			CumulativeDistance += FVector::Dist(PreviousFeet, Feet);
+
+			PreviousFeet = Feet;
+
+			if (bKeepPoint)
+			{
+				PathFeet.Add(Feet);
+				PathDistances.Add(CumulativeDistance);
+			}
+		}
+
+		if (PathFeet.Num() == 2 && TakeoffAnchorInterpolationCount > 0)
+		{
+			const FVector FirstFeet = PathFeet[0];
+			const FVector LastFeet = PathFeet.Last();
+
+			const float FirstDistance = PathDistances[0];
+			const float LastDistance = PathDistances.Last();
+
+			for (int32 Sample = 1; Sample <= TakeoffAnchorInterpolationCount; ++Sample)
+			{
+				const float Alpha = static_cast<float>(Sample) / static_cast<float>(TakeoffAnchorInterpolationCount + 1);
+				AddAnchor(
+					FMath::Lerp(FirstFeet, LastFeet, Alpha),
+					FMath::Lerp(FirstDistance, LastDistance, Alpha),
+					FName(TEXT("InterpolatedReachablePath")));
+			}
+		}
+
+		for (int32 Index = 0; Index < PathFeet.Num(); ++Index)
+		{
+			AddAnchor(PathFeet[Index], PathDistances[Index], FName(TEXT("ReachablePathPoint")));
+		}
+	}
+
+	// --------------------------------------------------------
+	// Search state
+	// --------------------------------------------------------
+
+	OutRequirement = BaseRequirement;
+
+	OutCandidate = FPokemonAirborneExecutionTrajectoryCandidate();
+
+	OutCandidate.ParentRequestId = CurrentNavigationRequest.RequestId;
+
+	OutCandidate.RequiredContactFeet = RequiredContactFeet;
+
+	OutCandidate.StartFeetLocation = CurrentFeet;
+
+	FName BestFailure = FName(TEXT("NoValidAirborneTakeoffAnchor"));
+
+	float BestScore = TNumericLimits<float>::Max();
+
+	float BestGroundTime = 0.f;
+
+	int32 BestAnchorIndex = INDEX_NONE;
+
+	FPokemonTraversalRequirement BestRequirement;
+
+	FPokemonAirborneExecutionTrajectoryCandidate BestCandidate;
+
+	const float DecisionGroundSpeed = GetTraversalGroundDecisionSpeed();
+
+	// --------------------------------------------------------
+	// Evaluate each reachable supported takeoff
+	// --------------------------------------------------------
+
+	for (int32 Index = 0; Index < Anchors.Num(); ++Index)
+	{
+		const FAnchor& Anchor = Anchors[Index];
+
+		float GroundDistance = Anchor.GroundDistance;
+
+		FVector SupportedFeet = FVector::ZeroVector;
+
+		FName AnchorFailure = NAME_None;
+
+		bool bSupported = FPokemonJumpTrajectoryValidator::ResolveLanding(
+			*Pokemon, Anchor.Feet, SupportedFeet, AnchorFailure);
+
+		bool bGroundReachable = bSupported;
+
+		// ResolveLanding can adjust Z slightly.
+		// Prove that the ACTUAL resolved feet can be
+		// occupied by normal navigation.
+		if (bGroundReachable && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
+		{
+			UNavigationPath* ApproachPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+				GetWorld(), CurrentFeet, SupportedFeet, OwnerPawn,
+				CachedAIController ? CachedAIController->GetDefaultNavigationFilterClass() : nullptr);
+
+			bGroundReachable = ApproachPath && ApproachPath->IsValid() && !ApproachPath->IsPartial();
+
+			if (bGroundReachable)
+			{
+				GroundDistance = static_cast<float>(ApproachPath->GetPathLength());
+			}
+			else
+			{
+				AnchorFailure = FName(TEXT("AirborneTakeoffGroundUnreachable"));
+			}
+		}
+
+		bool bExecutable = false;
+
+		FPokemonAirborneExecutionTrajectoryCandidate AnchorCandidate;
+
+		if (bGroundReachable)
+		{
+			const FVector LaunchDirection = (RequiredContactFeet - SupportedFeet).GetSafeNormal();
+
+			const FPokemonJumpCapabilitySnapshot Capability = FPokemonJumpSolver::CaptureCapabilities(
+				*Pokemon, CurrentNavigationRequest, LaunchDirection);
+
+			const TArray<FPokemonAirborneExecutionTrajectoryCandidate> Candidates = FPokemonJumpSolver::SolveToAirborneContact(
+				CurrentNavigationRequest.RequestId, SupportedFeet,
+				RequiredContactFeet, Capability,
+				AirborneExecutionProfile, CurrentNavigationRequest.JumpTrajectoryPreference);
+
+			for (FPokemonAirborneExecutionTrajectoryCandidate Candidate : Candidates)
+			{
+				AnchorCandidate = Candidate;
+
+				if (!Candidate.IsValidForPlanning())
+				{
+					AnchorFailure = Candidate.FailureReason;
+					continue;
+				}
+
+				if (FPokemonJumpTrajectoryValidator::ValidateToAirborneContact(*Pokemon, Candidate)
+					&& Candidate.IsExecutableToContact())
+				{
+					AnchorCandidate = Candidate;
+
+					bExecutable = true;
+
+					break;
+				}
+
+				AnchorCandidate = Candidate;
+
+				AnchorFailure = Candidate.FailureReason;
+			}
+		}
+
+		const float GroundTime = GroundDistance / FMath::Max(1.f, DecisionGroundSpeed);
+
+		const float ContactTime = bExecutable ? AnchorCandidate.ContactTime : 0.f;
+
+		const float Score = bExecutable ? GroundTime + ContactTime : TNumericLimits<float>::Max();
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[AirborneExecutionTakeoffSearch] "
+			"RequestId=%s | "
+			"Candidate=%d/%d | "
+			"Source=%s | "
+			"Takeoff=%s | "
+			"RequiredContact=%s | "
+			"GroundDistance=%.1f | "
+			"GroundTime=%.3f | "
+			"ContactTime=%.3f | "
+			"ContactVz=%.2f | "
+			"Executable=%d | "
+			"Score=%s | "
+			"Reason=%s"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			Index, Anchors.Num(), *Anchor.Source.ToString(),
+			*SupportedFeet.ToCompactString(), *RequiredContactFeet.ToCompactString(),
+			GroundDistance, GroundTime, ContactTime,
+			bExecutable ? AnchorCandidate.VelocityAtContact.Z : 0.f,
+			bExecutable,
+			bExecutable ? *FString::Printf(TEXT("%.3f"), Score) : TEXT("inf"),
+			*AnchorFailure.ToString());
+
+		if (bExecutable && Score < BestScore)
+		{
+			BestScore = Score;
+
+			BestGroundTime = GroundTime;
+
+			BestAnchorIndex = Index;
+
+			BestRequirement = BaseRequirement;
+
+			BestRequirement.StartFeetLocation = SupportedFeet;
+
+			BestRequirement.bStartSupportKnown = true;
+
+			BestCandidate = AnchorCandidate;
+		}
+		else if (!bExecutable && !AnchorFailure.IsNone())
+		{
+			BestFailure = AnchorFailure;
+		}
+	}
+	// --------------------------------------------------------
+	// Winner
+	// --------------------------------------------------------
+
+	if (BestAnchorIndex != INDEX_NONE)
+	{
+		OutRequirement = BestRequirement;
+		OutCandidate = BestCandidate;
+
+		if (OutGroundTime)
+		{
+			*OutGroundTime = BestGroundTime;
+		}
+
+		UE_LOG(LogTemp, Display, TEXT(
+			"[AirborneExecutionTakeoffSelected] "
+			"RequestId=%s | "
+			"CandidateCount=%d | "
+			"SelectedCandidate=%d | "
+			"Takeoff=%s | "
+			"ContactFeet=%s | "
+			"ContactTime=%.3f | "
+			"ApexTime=%.3f | "
+			"TriggerTime=%.3f | "
+			"ContactVz=%.2f | "
+			"Launch=%s | "
+			"GroundTime=%.3f | "
+			"TotalTime=%.3f"
+		),
+			*CurrentNavigationRequest.RequestId.ToString(),
+			Anchors.Num(), BestAnchorIndex,
+			*BestCandidate.StartFeetLocation.ToCompactString(),
+			*BestCandidate.RequiredContactFeet.ToCompactString(),
+			BestCandidate.ContactTime, BestCandidate.ApexTime,
+			BestCandidate.TriggerTime, BestCandidate.VelocityAtContact.Z,
+			*BestCandidate.FinalLaunchVelocity.ToCompactString(),
+			BestGroundTime, BestScore);
+
+		return true;
+	}
+
+	OutRequirement = BaseRequirement;
+
+	OutCandidate = FPokemonAirborneExecutionTrajectoryCandidate();
+
+	OutCandidate.ParentRequestId = CurrentNavigationRequest.RequestId;
+
+	OutCandidate.StartFeetLocation = CurrentFeet;
+
+	OutCandidate.RequiredContactFeet = RequiredContactFeet;
+
+	OutCandidate.FailureReason = BestFailure;
+
 	return false;
 }
 

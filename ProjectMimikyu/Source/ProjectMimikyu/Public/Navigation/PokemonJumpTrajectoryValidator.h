@@ -4,6 +4,7 @@
 
 class APokemon_Parent;
 struct FPokemonTraversalCandidate;
+struct FPokemonAirborneExecutionTrajectoryCandidate;
 struct FPokemonTraversalRequirement;
 struct FPokemonJumpCapabilitySnapshot;
 struct FPokemonTraversalExitSearchSettings;
@@ -26,6 +27,10 @@ struct PROJECTMIMIKYU_API FPokemonJumpTrajectoryValidator
 	// Confirms the saved geometry; never moves a solved endpoint to a nav projection or new floor.
 	static bool Validate(APokemon_Parent& Pokemon, FPokemonTraversalCandidate& Candidate);
 
+	// Airborne execution validation:
+	// takeoff -> attack contact.
+	//
+	// Nothing after ContactTime is validated or implied.
 	static bool ValidateToAirborneContact(APokemon_Parent& Pokemon, FPokemonAirborneExecutionTrajectoryCandidate& Candidate);
 
 	// A failed route is not evidence. Only measured missing support / an unwalkable height
@@ -33,9 +38,15 @@ struct PROJECTMIMIKYU_API FPokemonJumpTrajectoryValidator
 	static bool MeasureDiscontinuity(APokemon_Parent& Pokemon, const FVector& StartFeet,
 		const FVector& DestinationFeet, FPokemonTraversalRequirement& OutRequirement);
 
-	// Evaluate the excat ballistic trajectory retained by the solved
+	// Evaluate the exact ballistic trajectory retained by the solved
 	// traversal candidate. These functions do not re-solve the jump.
+	// Ordinary traversal evaluation.
 	static FVector EvaluateFeetAtTime(const FPokemonTraversalCandidate& Candidate, float Time);
 
 	static FVector EvaluateVelocityAtTime(const FPokemonTraversalCandidate& Candidate, float Time);
+
+	// Airborne-contact trajectory evaluation.
+	static FVector EvaluateFeetAtTime(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, float Time);
+
+	static FVector EvaluateVelocityAtTime(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, float Time);
 };

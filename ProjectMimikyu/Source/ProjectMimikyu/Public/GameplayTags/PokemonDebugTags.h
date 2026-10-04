@@ -28,6 +28,7 @@ namespace PokemonDebugTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Stance_Occupancy);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal_AirborneExecution);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Navigation_Traversal_AirborneExecution_Search);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Addition);

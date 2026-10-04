@@ -2,6 +2,7 @@
 
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "ActorComponents/PokemonCommandComponent.h"
+#include "Combat/PokemonExecutionTypes.h"
 #include "AIControllers/PokemonAITypes.h"
 #include "Characters/Pokemon_Parent.h"
 #include "DataAssets/PokemonDataAsset.h"
@@ -283,51 +284,279 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	return Results;
 }
 
-bool FPokemonJumpSolver::SolveToAirborneContact(const FVector& StartFeet, FVector& RequiredContactFeet, const FPokemonJumpCapabilitySnapshot& Capabilities, const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, EPokemonJumpTrajectoryPreference TrajectoryPreference)
+TArray<FPokemonAirborneExecutionTrajectoryCandidate> FPokemonJumpSolver::SolveToAirborneContact(
+	const FGuid& ParentRequestId, const FVector& StartFeet,
+	const FVector& RequiredContactFeet, const FPokemonJumpCapabilitySnapshot& Capabilities,
+	const FPokemonAirborneExecutionProfile& AirborneExecutionProfile,
+	EPokemonJumpTrajectoryPreference TrajectoryPreference)
 {
-	// First calculate StartFeet + V0*t + 0.5*g * t^2 = RequiredContactFeet
-	RequiredContactFeet = StartFeet + FVector::UpVector * Capabilities.BaseVerticalLaunchVelocity * AirborneExecutionProfile.ExecutionLeadTime
-		- FVector::UpVector * 0.5f * Capabilities.GravityMagnitude * FMath::Square(AirborneExecutionProfile.ExecutionLeadTime);
-	
+	using namespace PokemonJumpSolver;
+
+	FPokemonAirborneExecutionTrajectoryCandidate Base;
+
+	Base.ParentRequestId = ParentRequestId;
+	Base.StartFeetLocation = StartFeet;
+	Base.RequiredContactFeet = RequiredContactFeet;
+	Base.CapabilitySnapshot = Capabilities;
+	Base.CapabilityProfileId = TEXT("AirborneExecution0.1");
+	Base.GravityMagnitude = Capabilities.GravityMagnitude;
+	Base.TrajectoryPreference = TrajectoryPreference;
+
+	const auto Reject = [&Base](const TCHAR* Reason)
+		{
+			Base.FailureReason = FName(Reason);
+			return TArray<FPokemonAirborneExecutionTrajectoryCandidate>{ Base };
+		};
+
+	// --------------------------------------------------------------------
+	// Basic Request Validation
+	// --------------------------------------------------------------------
+
+	if (!ParentRequestId.IsValid())
+	{
+		return Reject(TEXT("InvalidParentRequest"));
+	}
+
+	if (StartFeet.ContainsNaN() || RequiredContactFeet.ContainsNaN())
+	{
+		return Reject(TEXT("InvalidAirborneExecutionCoordinates"));
+	}
+
+	if (!FMath::IsFinite(AirborneExecutionProfile.ExecutionLeadTime)
+		|| AirborneExecutionProfile.ExecutionLeadTime <= 0.f
+		|| !FMath::IsFinite(AirborneExecutionProfile.MinAscendingExecutionVelocity)
+		|| AirborneExecutionProfile.MinAscendingExecutionVelocity < 0.f)
+	{
+		return Reject(TEXT("InvalidAirborneExecutionProfile"));
+	}
+
+	if (!Capabilities.bCanNaturallyJump || Capabilities.BaseVerticalLaunchVelocity <= 0.f)
+	{
+		return Reject(TEXT("NaturalJumpUnavailable"));
+	}
+
 	const FVector Delta = RequiredContactFeet - StartFeet;
 
-	const float HorizontalDistance = Delta.Size2D();
+	const double Horizontal = static_cast<double>(Delta.Size2D());
+
+	const double Vertical = static_cast<double>(Delta.Z);
+
+	const double Gravity = static_cast<double>(Capabilities.GravityMagnitude);
+
+	const double HorizontalLimit = static_cast<double>(Capabilities.AvailableHorizontalSpeed);
+
+	const double VerticalLimit = static_cast<double>(Capabilities.AvailableVerticalSpeed);
+
+	// An ascending trajectory cannot reach a point below or
+	// level with its launch point at t > 0.
+	if (Vertical <= UE_DOUBLE_SMALL_NUMBER)
+	{
+		return Reject(TEXT("AirborneExecutionContactBelowLaunch"));
+	}
+
+	if (Horizontal > UE_DOUBLE_SMALL_NUMBER
+		&& HorizontalLimit <= UE_DOUBLE_SMALL_NUMBER)
+	{
+		return Reject(TEXT("AirborneExecutionHorizontalCapabilityInsufficient"));
+	}
+
+	// ----------------------------------------------------------------
+	// Minimum time from horizontal capability
+	// ----------------------------------------------------------------
+
+	const double HorizontalMinimumTime = Horizontal > UE_DOUBLE_SMALL_NUMBER
+		? Horizontal / HorizontalLimit : 0.0;
+
+	// ----------------------------------------------------------------
+	// Time interval allowed by maximum launch Vz
+	//
+	// Required launch vertical velocity is:
+	//
+	// Vz0 = dz/t + 0.5*g*t
+	//
+	// We require:
+	//
+	// Vz0 <= AvailableVerticalSpeed
+	// ----------------------------------------------------------------
+
+	const double VerticalDiscriminant = VerticalLimit * VerticalLimit - 2.0 * Gravity * Vertical;
+
+	if (VerticalDiscriminant < -UE_DOUBLE_SMALL_NUMBER)
+	{
+		return Reject(TEXT("VerticalCapabilityInsufficient"));
+	}
+
+	const double VerticalRoot = FMath::Sqrt(FMath::Max(0.0, VerticalDiscriminant));
+
+	// Stable version of:
+	//
+	// (VerticalLimit - VerticalRoot) / Gravity
+
+	const double VerticalMinimumTime = (2.0 * Vertical) / FMath::Max(UE_DOUBLE_SMALL_NUMBER,
+		VerticalLimit + FMath::Sqrt(FMath::Max(0.0, VerticalDiscriminant)));
+
+	const double VerticalMaximumTime = (VerticalLimit + VerticalRoot) / Gravity;
+
+	// ----------------------------------------------------------------
+	// Maxmium time that still guarantees meaningful ascent
+	//
+	// Contact vetrtical velocity:
+	//
+	// VxContact = dz/t - 0.5*g*t
+	//
+	// Require:
+	//
+	// VzContact >= MinAscendingExecutionVelocity
+	//
+	// Solving the equality gives our upper bound.
+	// ----------------------------------------------------------------
+
+	const double MinimumContactVerticalSpeed = FMath::Max(
+		static_cast<double>(AirborneExecutionProfile.MinAscendingExecutionVelocity), MinimumUpwardLaunchSpeed);
+
+	const double AscendingDiscriminant = MinimumContactVerticalSpeed * MinimumContactVerticalSpeed
+		+ 2.0 * Gravity * Vertical;
+
+
+	const double AscendingRoot = FMath::Sqrt(FMath::Max(0.0, AscendingDiscriminant));
+
+	// Stable version of:
+	//
+	// (-MinVz + sqrt(MinVz^2 + 2*g*dz)) / g
+	const double MaximumAscendingContactTime = (2.0 * Vertical)
+		/ FMath::Max(UE_DOUBLE_SMALL_NUMBER, MinimumContactVerticalSpeed + AscendingRoot);
+
+	// ----------------------------------------------------------------
+	// Final feasible interval
+	// ----------------------------------------------------------------
+
+	double MinimumTime = FMath::Max(MinimumFlightTime, HorizontalMinimumTime);
+
+	MinimumTime = FMath::Max(MinimumTime, VerticalMinimumTime);
+
+	// The move cannot begin before takeoff.
+	//
+	// TriggerTime = ContactTime - ExecutionLeadTime
+	//
+	// Therefore:
+	//
+	// ContactTime >= ExecutionLeadTime
+	MinimumTime = FMath::Max(MinimumTime, static_cast<double>(AirborneExecutionProfile.ExecutionLeadTime));
+
+	const double MaximumTime = FMath::Min(VerticalMaximumTime, MaximumAscendingContactTime);
+
+	if (!FMath::IsFinite(MinimumTime) || !FMath::IsFinite(MaximumTime) || MinimumTime > MaximumTime + UE_DOUBLE_SMALL_NUMBER)
+	{
+		return Reject(TEXT("NoFeasibleAirborneContactTime"));
+	}
+
+	MinimumTime = FMath::Min(MinimumTime, MaximumTime);
 
 	const FVector HorizontalDirection = Delta.GetSafeNormal2D();
 
-	const float RequiredHorizontalSpeed = HorizontalDistance / AirborneExecutionProfile.ExecutionLeadTime;
+	// --------------------------------------------------------
+	// Deterministic physical alternatives
+	//
+	// This mirrors the normal jump solver's philosophy:
+	// prove an interval, then test a small ordered set of
+	// concrete trajectories against world geometry.
+	// --------------------------------------------------------
 
-	const float RequiredVerticalSpeed = Delta.Z / AirborneExecutionProfile.ExecutionLeadTime
-		+ 0.5f * Capabilities.GravityMagnitude * AirborneExecutionProfile.ExecutionLeadTime;
-	const FVector LaunchVelocity = HorizontalDirection * RequiredHorizontalSpeed 
-		+ FVector::UpVector * RequiredVerticalSpeed;
+	constexpr int32 AlternativeCount = 5;
 
-	const FVector VelocityAtContact = LaunchVelocity - FVector::UpVector * Capabilities.GravityMagnitude * AirborneExecutionProfile.ExecutionLeadTime;
+	TArray<FPokemonAirborneExecutionTrajectoryCandidate> Results;
 
-	const float Apextime = LaunchVelocity.Z / Capabilities.GravityMagnitude;
+	for (int32 Index = 0; Index < AlternativeCount; ++Index)
+	{
+		const int32 OrderedIndex = TrajectoryPreference == EPokemonJumpTrajectoryPreference::Projectile
+			? AlternativeCount - 1 - Index : Index;
 
-	// Now for validation, check if the velocity at contact is above the minimum required for ascending execution
-	/**
-	 * RequiredHorizontalSpeed
-			<= Capability.AvailableHorizontalSpeed;
+		const double Alpha = static_cast<double>(OrderedIndex) / (AlternativeCount - 1);
 
-       RequiredVerticalSpeed
-           <= Capability.AvailableVerticalSpeed;
+		const double Time = FMath::Lerp(MinimumTime, MaximumTime, Alpha);
 
-       VelocityAtContact.Z
-           >= Profile.MinAscendingExecutionVelocity;
+		if (!Results.IsEmpty() && FMath::IsNearlyEqual(static_cast<double>(Results.Last().ContactTime), Time, 0.00001))
+		{
+			continue;
+		}
 
-       ContactTime
-           < ApexTime;
+		FPokemonAirborneExecutionTrajectoryCandidate Candidate = Base;
 
-       ContactTime
-           >= Profile.ExecutionLeadTime;
-	*/
-	bool bCanExecute = RequiredHorizontalSpeed <= Capabilities.AvailableHorizontalSpeed
-		&& RequiredVerticalSpeed <= Capabilities.AvailableVerticalSpeed
-		&& VelocityAtContact.Z >= AirborneExecutionProfile.MinAscendingExecutionVelocity
-		&& AirborneExecutionProfile.ExecutionLeadTime < Apextime;
-	return  bCanExecute;
+		Candidate.ContactTime = static_cast<float>(Time);
+		const double RetainedTime = Candidate.ContactTime;
+
+		if (!FMath::IsFinite(RetainedTime) || RetainedTime <= UE_DOUBLE_SMALL_NUMBER)
+		{
+			Candidate.FailureReason = FName(TEXT("InvalidRetainedContactTime"));
+			Results.Add(MoveTemp(Candidate));
+			continue;
+		}
+
+		// ----------------------------------------------------
+		// Solve launch state required to hit contact feet
+		// ----------------------------------------------------
+
+		Candidate.RequiredHorizontalLaunchSpeed = static_cast<float>(Horizontal / RetainedTime);
+
+		Candidate.RequiredVerticalLaunchSpeed = static_cast<float>(Vertical / RetainedTime + 0.5 * Gravity * RetainedTime);
+
+		Candidate.FinalLaunchVelocity = HorizontalDirection * Candidate.RequiredHorizontalLaunchSpeed
+			+ FVector::UpVector * Candidate.RequiredVerticalLaunchSpeed;
+
+		// ----------------------------------------------------
+		// Evaluate state at contact
+		// ----------------------------------------------------
+
+		Candidate.VelocityAtContact = Candidate.FinalLaunchVelocity - FVector::UpVector * static_cast<float>(Gravity * RetainedTime);
+
+		Candidate.ApexTime = static_cast<float>(Candidate.RequiredVerticalLaunchSpeed / Candidate.GravityMagnitude);
+
+		Candidate.TriggerTime = Candidate.ContactTime - FMath::Max(0.f, AirborneExecutionProfile.ExecutionLeadTime);
+
+		// ----------------------------------------------------
+		// Capability/profile proof
+		// ----------------------------------------------------
+
+		const bool bHorizontalWithinCapability = Candidate.RequiredHorizontalLaunchSpeed
+			<= Capabilities.AvailableHorizontalSpeed + VelocityTolerance;
+
+		const bool bVerticalWitinCapability = Candidate.RequiredVerticalLaunchSpeed
+			>= MinimumUpwardLaunchSpeed - VelocityTolerance
+			&& Candidate.RequiredVerticalLaunchSpeed
+			<= Capabilities.AvailableVerticalSpeed + VelocityTolerance;
+
+		Candidate.bAscendingAtContact = Candidate.VelocityAtContact.Z
+			>= MinimumContactVerticalSpeed - VelocityTolerance
+			&& Candidate.ContactTime < Candidate.ApexTime;
+
+		Candidate.bLeadTimeSatisfied = Candidate.TriggerTime >= -UE_KINDA_SMALL_NUMBER;
+
+		if (!bHorizontalWithinCapability
+			|| !bVerticalWitinCapability
+			|| !Candidate.bAscendingAtContact
+			|| !Candidate.bLeadTimeSatisfied)
+		{
+			continue;
+		}
+
+		Candidate.bAuthorizedMoveMomentumContributed = Candidate.RequiredHorizontalLaunchSpeed
+			> Capabilities.AvailableHorizontalSpeed - Capabilities.AuthorizedMoveAlignedSpeed + VelocityTolerance;
+
+		Candidate.TrajectoryReason = TrajectoryPreference == EPokemonJumpTrajectoryPreference::Projectile
+			? FName(TEXT("ProjectileLongerPreContactWindow")) : FName(TEXT("DirectFastAirborneContact"));
+
+		Candidate.bPhysicsSolved = true;
+		Candidate.FailureReason = NAME_None;
+
+		Results.Add(MoveTemp(Candidate));
+	}
+
+	if (Results.IsEmpty())
+	{
+		return Reject(TEXT("NoAirborneContactSoluiton"));
+	}
+
+	return Results;
 }
 
 bool FPokemonJumpSolver::CanExecuteWithCapabilities(const FPokemonTraversalCandidate& Candidate,

@@ -181,6 +181,12 @@ namespace PokemonJumpValidation
 			- FVector::UpVector * (0.5 * Candidate.GravityMagnitude * Time * Time);
 	}
 
+	static FVector AirborneContactArcFeet(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, double Time)
+	{
+		return Candidate.StartFeetLocation + Candidate.FinalLaunchVelocity * Time
+			- FVector::UpVector * (0.5 * Candidate.GravityMagnitude * Time * Time);
+	}
+
 	static void DrawResult(const FBodyQueries& Body, const FPokemonTraversalCandidate& Candidate,
 		const FHitResult* Obstruction)
 	{
@@ -428,7 +434,178 @@ bool FPokemonJumpTrajectoryValidator::Validate(APokemon_Parent& Pokemon, FPokemo
 
 bool FPokemonJumpTrajectoryValidator::ValidateToAirborneContact(APokemon_Parent& Pokemon, FPokemonAirborneExecutionTrajectoryCandidate& Candidate)
 {
-	return false;
+	using namespace PokemonJumpValidation;
+	
+	Candidate.bPreContactClearanceValidated = false;
+
+	FBodyQueries Body;
+	FHitResult Obstruction;
+
+	const auto Finish = [&](const FName Failure)
+		{
+			Candidate.FailureReason = Failure;
+
+			if (CVarDebug.GetValueOnGameThread() > 0)
+			{
+				UE_LOG(LogPokemonJumpValidation, Log,
+					TEXT("[AirborneContactValidation] "
+						"Request=%s | "
+						"Pokemon=%s | "
+						"StartFeet=%s | "
+						"ContactFeet=%s | "
+						"ContactTime=%.3f | "
+						"ContactVz=%.2f | "
+						"PhysicsSolved=%d | "
+						"Clearance=%d | "
+						"Ascending=%d | "
+						"LeadOK=%d | "
+						"Failure=%s | "
+						"Obstruction=%s"),
+					*Candidate.ParentRequestId.ToString(),*Pokemon.GetName(),
+					*Candidate.StartFeetLocation.ToCompactString(),
+					*Candidate.RequiredContactFeet.ToCompactString(),
+					Candidate.ContactTime,Candidate.VelocityAtContact.Z,
+					Candidate.bPhysicsSolved,Candidate.bPreContactClearanceValidated,
+					Candidate.bAscendingAtContact,Candidate.bLeadTimeSatisfied,
+					*Failure.ToString(),
+					*GetNameSafe(Obstruction.GetActor()));
+			}
+
+			return Failure.IsNone();
+		};
+
+	FName Failure;
+
+	// --------------------------------------------------------
+	// Body/collision environment
+	// --------------------------------------------------------
+
+	if (!Body.Init(Pokemon, Failure))
+	{
+		Candidate.bPhysicsSolved = false;
+
+		return Finish(Failure);
+	}
+
+	// --------------------------------------------------------
+	// Saved trajectory state
+	// --------------------------------------------------------
+
+	if(!Candidate.IsValidForPlanning()||!FMath::IsFinite(Candidate.ContactTime)
+		|| Candidate.ContactTime<=0.f||!FMath::IsFinite(Candidate.GravityMagnitude)
+		||Candidate.GravityMagnitude<=0.f||Candidate.StartFeetLocation.ContainsNaN()
+		||Candidate.RequiredContactFeet.ContainsNaN()||Candidate.FinalLaunchVelocity.ContainsNaN()
+		|| Candidate.VelocityAtContact.ContainsNaN())
+	{
+		Candidate.bPhysicsSolved = false;
+
+		return Finish(TEXT("AirborneContactPhysicsNotSolved"));
+	}
+
+	// --------------------------------------------------------
+	// Runtime gravity must still match solved gravity
+	// --------------------------------------------------------
+
+	if (!FMath::IsNearlyEqual(
+		-Body.Movement->GetGravityZ(),
+		Candidate.GravityMagnitude,0.1f	))
+	{
+		Candidate.bPhysicsSolved = false;
+
+		return Finish(TEXT("AirborneContactGravityChanged"));
+	}
+
+	const APhysicsVolume* Volume = Body.Movement->GetPhysicsVolume();
+
+	if(!Volume||Volume->bWaterVolume)
+	{
+		return Finish(TEXT("UnsupportedAirborneContactPhysicsVolume"));
+	}
+
+	const FVector SolvedContactFeet = AirborneContactArcFeet(Candidate, Candidate.ContactTime);
+
+	if (!SolvedContactFeet.Equals(Candidate.RequiredContactFeet, LockedEndpointTolerance))
+	{
+		Candidate.bPhysicsSolved = false;
+
+		return Finish(TEXT("AirborneContactEndpointMismatch"));
+	}
+
+	const FVector SolvedContactVelocity = Candidate.FinalLaunchVelocity 
+		- FVector::UpVector * (Candidate.GravityMagnitude * Candidate.ContactTime);
+
+	if (!SolvedContactVelocity.Equals(Candidate.VelocityAtContact, 0.1f))
+	{
+		Candidate.bPhysicsSolved = false;
+
+		return Finish(TEXT("AirborneContactVelocityMismatch"));
+	}
+
+	if (!Candidate.bAscendingAtContact)
+	{
+		return Finish(TEXT("AirborneContactNotAscending"));
+	}
+
+	if (!Candidate.bLeadTimeSatisfied)
+	{
+		return Finish(TEXT("AirborneContactLeadTimeInvalid"));
+	}
+		
+	// --------------------------------------------------------
+	// Takeoff must still be genuinely supported
+	// --------------------------------------------------------
+
+	if(Body.IsOccupied(Body.Center(Candidate.StartFeetLocation)))
+	{
+		return Finish(TEXT("AirborneContactStartCapsuleBlocked"));
+	}
+
+	FFindFloorResult StartFloor;
+
+	const float StartFloorDistance = UCharacterMovementComponent::MAX_FLOOR_DIST + 1.f;
+
+	Body.Movement->ComputeFloorDist(Body.Center(Candidate.StartFeetLocation),
+		StartFloorDistance, StartFloorDistance, 
+		StartFloor, Body.Radius);
+
+	if (!StartFloor.IsWalkableFloor() || StartFloor.HitResult.bStartPenetrating)
+	{
+		return Finish(TEXT("AirborneContactStartSuppportMissing"));
+	}
+
+	// --------------------------------------------------------
+	// PRE-CONTACT collision validation
+	//
+	// Deliberately stops at ContactTime.
+	//
+	// We make no statement about what happens after the attack
+	// becomes active.
+	// --------------------------------------------------------
+
+	const int32 Segments = FMath::Clamp(
+		CVarArcSegments.GetValueOnGameThread(), 4, 64);
+
+	FVector Previous = Body.Center(Candidate.StartFeetLocation);
+
+	for (int32 Index = 1; Index <= Segments; ++Index)
+	{
+		const double Time =static_cast<double>(Candidate.ContactTime) * (static_cast<double>(Index) / static_cast<double>(Segments));
+		
+		const FVector Feet = Body.Center(AirborneContactArcFeet(Candidate, Time));
+
+		const FVector Position = Body.Center(Feet);
+
+		if (Body.Sweep(Previous, Position, Obstruction))
+		{
+			return Finish(TEXT("AirborneContactArcCapsuleBlocked"));
+		}
+
+		Previous = Position;
+	}
+
+	Candidate.bPreContactClearanceValidated = true;
+
+	return Finish(NAME_None);
 }
 
 bool FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(APokemon_Parent& Pokemon, const FVector& StartFeet,
@@ -511,6 +688,21 @@ FVector FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(const FPokemonTraver
 FVector FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(const FPokemonTraversalCandidate& Candidate, float Time)
 {
 	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.FlightTime);
+
+	return Candidate.FinalLaunchVelocity - FVector::UpVector * (Candidate.GravityMagnitude * ClampedTime); // v = v_0 - g * t
+}
+
+FVector FPokemonJumpTrajectoryValidator::EvaluateFeetAtTime(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, float Time)
+{
+	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.ContactTime);
+	
+	return Candidate.StartFeetLocation + Candidate.FinalLaunchVelocity * ClampedTime
+		- FVector::UpVector * (0.5f * Candidate.GravityMagnitude * ClampedTime * ClampedTime); // s = v_0 * t - 1/2 * g * t^2
+}
+
+FVector FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, float Time)
+{
+	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.ContactTime);
 
 	return Candidate.FinalLaunchVelocity - FVector::UpVector * (Candidate.GravityMagnitude * ClampedTime); // v = v_0 - g * t
 }
