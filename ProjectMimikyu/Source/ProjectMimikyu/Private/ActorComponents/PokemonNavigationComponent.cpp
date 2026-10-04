@@ -2067,6 +2067,26 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			const FVector TraversalDestinationFeet = bAirborneExecutionRequired ? Search.NavGoal : Search.RequiredFeet;
 
+			if(bAirborneExecutionRequired)
+			{
+				SearchTakeoffAnchors(
+					TraversalDestinationFeet,
+					bAirborneExecutionRequired
+					? FName(TEXT("MeleeAirborneTraversal"))
+					: FName(TEXT("MeleeStanceTraversal")),
+					TraversalGroundPath,
+					TraversalStance.Requirement,
+					TraversalStance.Traversal,
+					&GroundTime,
+					bAirborneExecutionRequired
+					? EPokemonTraversalCircumstance::AirborneExecution
+					: EPokemonTraversalCircumstance::Unclassified,
+					bAirborneExecutionRequired
+					? EPokemonTraversalEvidence::AttackExecutionRequirement
+					: EPokemonTraversalEvidence::NavigationFailure);
+			}
+			else
+			{ }
 			UNavigationPath* TraversalGroundPath =
 				UNavigationSystemV1::FindPathToLocationSynchronously(
 					GetWorld(),

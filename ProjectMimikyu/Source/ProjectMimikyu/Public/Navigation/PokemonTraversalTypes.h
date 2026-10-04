@@ -243,3 +243,65 @@ struct PROJECTMIMIKYU_API FPokemonTraversalCandidate
 			&& !FinalLaunchVelocity.ContainsNaN();
 	}
 };
+
+USTRUCT(BlueprintType)
+struct PROJECTMIMIKYU_API FPokemonAirborneExecutionTrajectoryCandidate
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid ParentRequestId;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FName FailureReason = TEXT("NotEvaluated");
+
+	// Supported point from which the ballistic motion begins.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FVector StartFeetLocation = FVector::ZeroVector;
+
+	// NOT a landing.
+	// Feet position Lucario must occupy at attack contact.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FVector RequiredContactFeet = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FVector FinalLaunchVelocity = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FVector VelocityAtContact = FVector::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float GravityMagnitude = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float ContactTime = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float ApexTime = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float RequiredHorizontalLaunchSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float RequiredVerticalLaunchSpeed = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FPokemonJumpCapabilitySnapshot CapabilitySnapshot;
+
+	bool bPhysicsSolved = false;
+	bool bPreContactCLearanceValidated = false;
+	bool bAscendingAtContact = false;
+	bool bLeadTimeSatisfied = false;
+
+	bool IsExecutableToContact() const
+	{
+		return ParentRequestId.IsValid()
+			&& FailureReason.IsNone()
+			&& bPhysicsSolved
+			&& bPreContactCLearanceValidated
+			&& bAscendingAtContact
+			&& bLeadTimeSatisfied
+			&& ContactTime > 0.f
+			&& !FinalLaunchVelocity.ContainsNaN();
+	}
+};

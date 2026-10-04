@@ -283,6 +283,53 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	return Results;
 }
 
+bool FPokemonJumpSolver::SolveToAirborneContact(const FVector& StartFeet, FVector& RequiredContactFeet, const FPokemonJumpCapabilitySnapshot& Capabilities, const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, EPokemonJumpTrajectoryPreference TrajectoryPreference)
+{
+	// First calculate StartFeet + V0*t + 0.5*g * t^2 = RequiredContactFeet
+	RequiredContactFeet = StartFeet + FVector::UpVector * Capabilities.BaseVerticalLaunchVelocity * AirborneExecutionProfile.ExecutionLeadTime
+		- FVector::UpVector * 0.5f * Capabilities.GravityMagnitude * FMath::Square(AirborneExecutionProfile.ExecutionLeadTime);
+	
+	const FVector Delta = RequiredContactFeet - StartFeet;
+
+	const float HorizontalDistance = Delta.Size2D();
+
+	const FVector HorizontalDirection = Delta.GetSafeNormal2D();
+
+	const float RequiredHorizontalSpeed = HorizontalDistance / AirborneExecutionProfile.ExecutionLeadTime;
+
+	const float RequiredVerticalSpeed = Delta.Z / AirborneExecutionProfile.ExecutionLeadTime
+		+ 0.5f * Capabilities.GravityMagnitude * AirborneExecutionProfile.ExecutionLeadTime;
+	const FVector LaunchVelocity = HorizontalDirection * RequiredHorizontalSpeed 
+		+ FVector::UpVector * RequiredVerticalSpeed;
+
+	const FVector VelocityAtContact = LaunchVelocity - FVector::UpVector * Capabilities.GravityMagnitude * AirborneExecutionProfile.ExecutionLeadTime;
+
+	const float Apextime = LaunchVelocity.Z / Capabilities.GravityMagnitude;
+
+	// Now for validation, check if the velocity at contact is above the minimum required for ascending execution
+	/**
+	 * RequiredHorizontalSpeed
+			<= Capability.AvailableHorizontalSpeed;
+
+       RequiredVerticalSpeed
+           <= Capability.AvailableVerticalSpeed;
+
+       VelocityAtContact.Z
+           >= Profile.MinAscendingExecutionVelocity;
+
+       ContactTime
+           < ApexTime;
+
+       ContactTime
+           >= Profile.ExecutionLeadTime;
+	*/
+	bool bCanExecute = RequiredHorizontalSpeed <= Capabilities.AvailableHorizontalSpeed
+		&& RequiredVerticalSpeed <= Capabilities.AvailableVerticalSpeed
+		&& VelocityAtContact.Z >= AirborneExecutionProfile.MinAscendingExecutionVelocity
+		&& AirborneExecutionProfile.ExecutionLeadTime < Apextime;
+	return  bCanExecute;
+}
+
 bool FPokemonJumpSolver::CanExecuteWithCapabilities(const FPokemonTraversalCandidate& Candidate,
 	const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason)
 {

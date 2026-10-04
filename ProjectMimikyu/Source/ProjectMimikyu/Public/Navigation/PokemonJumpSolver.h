@@ -19,9 +19,17 @@ public:
 	static TArray<FPokemonTraversalCandidate> Solve(const FPokemonTraversalRequirement& Requirement,
 		const FPokemonJumpCapabilitySnapshot& Capabilities, EPokemonJumpTrajectoryPreference Preference);
 
+	static bool SolveToAirborneContact(const FVector& StartFeet, FVector& RequiredContactFeet, 
+		const FPokemonJumpCapabilitySnapshot& Capabilities, const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, EPokemonJumpTrajectoryPreference TrajectoryPreference);
+
 	// Check a stable plan against current inputs without re-solving its geometry.
 	static bool CanExecuteWithCapabilities(const FPokemonTraversalCandidate& Candidate,
 		const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason);
 
 	static bool IsDebugEnabled();
+};
+
+class PROJECTMIMIKYU_API FPokemonAirborneExecutionSolver
+{
+	// Might be the better option later
 };

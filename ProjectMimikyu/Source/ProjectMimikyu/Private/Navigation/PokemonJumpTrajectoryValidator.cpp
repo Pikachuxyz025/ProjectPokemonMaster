@@ -426,6 +426,11 @@ bool FPokemonJumpTrajectoryValidator::Validate(APokemon_Parent& Pokemon, FPokemo
 	return Finish(NAME_None);
 }
 
+bool FPokemonJumpTrajectoryValidator::ValidateToAirborneContact(APokemon_Parent& Pokemon, FPokemonAirborneExecutionTrajectoryCandidate& Candidate)
+{
+	return false;
+}
+
 bool FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(APokemon_Parent& Pokemon, const FVector& StartFeet,
 	const FVector& DestinationFeet, FPokemonTraversalRequirement& OutRequirement)
 {

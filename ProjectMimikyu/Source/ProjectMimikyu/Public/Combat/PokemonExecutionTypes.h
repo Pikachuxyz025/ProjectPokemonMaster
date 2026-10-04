@@ -98,6 +98,9 @@ struct PROJECTMIMIKYU_API FPokemonAirborneExecutionProfile
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0", Units = "s"))
 	float ExecutionLeadTime = 0.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0", Units = "cm/s"))
+	float MinAscendingExecutionVelocity = 50.f;
+
 	bool IsEnabled() const
 	{
 		return Timing != EPokemonAirborneExecutionTiming::Disabled;

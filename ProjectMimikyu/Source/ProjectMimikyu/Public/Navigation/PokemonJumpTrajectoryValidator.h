@@ -26,6 +26,8 @@ struct PROJECTMIMIKYU_API FPokemonJumpTrajectoryValidator
 	// Confirms the saved geometry; never moves a solved endpoint to a nav projection or new floor.
 	static bool Validate(APokemon_Parent& Pokemon, FPokemonTraversalCandidate& Candidate);
 
+	static bool ValidateToAirborneContact(APokemon_Parent& Pokemon, FPokemonAirborneExecutionTrajectoryCandidate& Candidate);
+
 	// A failed route is not evidence. Only measured missing support / an unwalkable height
 	// discontinuity between supported endpoints can classify an emergent traversal request.
 	static bool MeasureDiscontinuity(APokemon_Parent& Pokemon, const FVector& StartFeet,
