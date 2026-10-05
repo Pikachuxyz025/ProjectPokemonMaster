@@ -586,3 +586,42 @@ bool FPokemonJumpSolver::CanExecuteWithCapabilities(const FPokemonTraversalCandi
 	}
 	return OutFailureReason.IsNone();
 }
+
+bool FPokemonJumpSolver::CanExecuteWithCapabilities(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate, const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason)
+{
+	using namespace PokemonJumpSolver;
+	OutFailureReason = NAME_None;
+
+	if(!Candidate.IsValidForPlanning()
+		|| !Candidate.bPhysicsSolved
+		|| !Candidate.bAscendingAtContact
+		|| !Candidate.bLeadTimeSatisfied
+		||!FMath::IsFinite(Candidate.ContactTime)
+		|| Candidate.ContactTime <= 0.f
+		|| Candidate.FinalLaunchVelocity.ContainsNaN())
+	{
+		OutFailureReason = TEXT("InvalidAirborneExecutionPlan");
+	}
+	else if (!Capabilities.bCanNaturallyJump
+		|| Capabilities.BaseVerticalLaunchVelocity <= 0.f
+		|| !HasFiniteCapability(Capabilities))
+	{
+		OutFailureReason = TEXT("TakeoffCapabilityUnavailable");
+	}
+	else if (!FMath::IsFinite(Candidate.GravityMagnitude)
+		|| !FMath::IsNearlyEqual(Candidate.GravityMagnitude, Capabilities.GravityMagnitude, 0.01f))
+	{
+		OutFailureReason = TEXT("GravityChangedBeforeTakeoff");
+	}
+	else if (!FMath::IsFinite(Candidate.RequiredHorizontalLaunchSpeed)
+		|| !FMath::IsFinite(Candidate.RequiredVerticalLaunchSpeed)
+		|| Candidate.RequiredHorizontalLaunchSpeed < 0.f
+		|| Candidate.RequiredVerticalLaunchSpeed< MinimumUpwardLaunchSpeed - VelocityTolerance
+		|| Candidate.RequiredHorizontalLaunchSpeed> Capabilities.AvailableHorizontalSpeed + VelocityTolerance
+		|| Candidate.RequiredVerticalLaunchSpeed> Capabilities.AvailableVerticalSpeed + VelocityTolerance)
+	{
+		OutFailureReason = TEXT("TakeoffCapabilityReduced");
+	}
+
+	return OutFailureReason.IsNone();
+}

@@ -57,7 +57,7 @@ class PROJECTMIMIKYU_API UPokemonNavigationComponent : public UActorComponent
 public:	
 	UPokemonNavigationComponent();
 
-virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -172,6 +172,13 @@ private:
 	uint32 TraversalSegmentSerial = 0;
 	FPokemonCompositeMoveCost SelectedCompositeCost;
 
+	bool bHasPendingAirborneExecution = false;
+
+	FPokemonAirborneExecutionTrajectoryCandidate PendingAirborneExecutionCandidate;
+
+	FRotator PendingAirborneExecutionFacing = FRotator::ZeroRotator;
+
+	float PendingAirborneExecutionAngle = 0.f;
 
 	FGuid MeleeStanceSelectionRequestId;
 	bool bHasMeleeStanceSelection = false;
@@ -277,6 +284,23 @@ private:
 	void EvaluateGroundTraversalFailure(const FVector& DestinationFeet,FName Trigger);
 
 	void EvaluateTraversalRequirement(const FPokemonTraversalRequirement& Requirement);
+
+	bool HasPendingAirborneExecutionForCurrentRequest() const;
+
+	bool BuildExecutableAirborneExecutionPlan(
+		const FVector& SupportedStartFeet,
+		const FVector& RequiredContactFeet,
+		const FPokemonAirborneExecutionProfile& Profile,
+		FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate,
+		FName& OutFailureReason);
+
+	bool TryRevalidateAirborneExecutionFromCurrentTakeoff(const FVector& CurrentFeet);
+
+	void AbandonPendingAirborneExecution(FName Reason);
+
+	void HandleAirborneExecutionTrigger(FGuid RequestId);
+
+	void HandleAirborneExecutionFinished(FGuid RequestId, bool bReachedContact, FName Reason);
 
 	bool BuildExecutableTraversalPlan(const FPokemonTraversalRequirement& Requirement,
 		FPokemonTraversalRequirement& OutResolvedRequirement,

@@ -21,8 +21,18 @@ enum class EPokemonJumpExecutionState : uint8
 	Airborne
 };
 
+UENUM(BlueprintType)
+enum class EPokemonJumpExecutionContract :uint8
+{
+	None,
+	LandingTraversal,
+	AirborneContact
+};
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FPokemonJumpTakeoffSignature, FGuid);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FPokemonJumpFinishedSignature, FGuid, bool, FName);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPokemonAirborneExecutionTriggerSignature, FGuid);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FPokemonAirborneExecutionFinishedSignature, FGuid, bool, FName);
 
 // Owns only the short preparation and physical jump. Navigation owns the retained intent.
 UCLASS(ClassGroup = (Pokemon), meta = (BlueprintSpawnableComponent))
@@ -45,7 +55,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Traversal|Jump")
 	bool HasTakenOff() const { return State == EPokemonJumpExecutionState::Airborne; }
 
-	FGuid GetParentRequestId() const { return ActiveCandidate.ParentRequestId; }
+	bool PrepareAirborneExecution(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate,
+		const FPokemonTraversalRequirement& Requirement, const FAgentNavigationRequest& ParentRequest,
+		const FRotator& LockedFacing);
+
+	FGuid GetParentRequestId() const;
+
+	bool IsAirborneContactExecutionFor(const FGuid& RequestId) const;
+
+	bool HasAirborneExecutionTriggered() const
+	{
+		return ActiveContract == EPokemonJumpExecutionContract::AirborneContact
+			&& bAirborneExecutionTriggerFired;
+	}
+
+	void CancelForParentResolution(FGuid RequestId, FName Reason);
 
 	// A future animation notify calls this same handoff; it never resolves a new trajectory.
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Pokemon|Traversal|Jump")
@@ -53,6 +77,8 @@ public:
 
 	FPokemonJumpTakeoffSignature OnJumpTakeoff;
 	FPokemonJumpFinishedSignature OnJumpFinished;
+	FPokemonAirborneExecutionFinishedSignature OnAirborneExecutionFinished;
+	FPokemonAirborneExecutionTriggerSignature OnAirborneExecutionTrigger;
 
 protected:
 	virtual void BeginPlay() override;
@@ -84,6 +110,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Traversal|Jump|Development", meta = (ClampMin = "0.1"))
 	float FlightTimeoutGrace = 2.f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Traversal|Jump|Airborne", meta = (ClampMin = "0.0"))
+	float AirborneContactPositionTolerance = 15.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Traversal|Jump|Airborne", meta = (ClampMin = "0.0"))
+	float AirborneContactTimingGrace = 0.08f;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<APokemon_Parent> PokemonOwner;
@@ -96,6 +128,39 @@ private:
 
 	UPROPERTY(Transient)
 	FAgentNavigationRequest ActiveParentRequest;
+
+	UPROPERTY(Transient)
+	EPokemonJumpExecutionContract ActiveContract = EPokemonJumpExecutionContract::None;
+
+	UPROPERTY(Transient)
+	FPokemonAirborneExecutionTrajectoryCandidate ActiveAirborneCandidate;
+
+	FRotator LockedAirborneFacing = FRotator::ZeroRotator;
+
+	bool bAirborneExecutionTriggerFired = false;
+	double AirborneExecutionElapsed = 0.0;
+
+	bool bOrientationSettingsSaved = false;
+	bool bSavedUseControllerRotationYaw = false;
+	bool bSavedOrientRotationToMovement = false;
+	bool bSavedUseControllerDesiredRotation = false;
+
+	bool RevalidatePreparedAirborneExecution(FName& OutFailureReason) const;
+
+	FPokemonJumpCapabilitySnapshot CaptureCurrentCapabilitiesForReservedPlan(
+		const FPokemonJumpCapabilitySnapshot& ReservedSnapshot,
+		const FVector& LaunchDirection) const;
+
+	FVector GetActiveLaunchVelocity() const;
+
+	void FinishActiveExecution(bool bSucceeded, FName Reason, bool bBroadcast = true);
+
+	void FinishAirborneExecution(bool bReachedContact, FName Reason, bool bBroadcast = true);
+
+	void TryBroadcastAirborneExecutionTrigger();
+
+	float CalculateAirborneContactSegmentError(
+		const FVector& OldFeet, const FVector& CurrentFeet);
 
 	FTimerHandle PreparationTimer;
 	double PhaseStartTime = 0.;

@@ -54,11 +54,25 @@ void UPokemonNavigationComponent::ResetLocalTraversal()
 {
 	bTraversalPlanReady = false;
 	bReachingTakeoff = false;
+
 	TakeoffApproachElapsed = 0.f;
+
 	PendingTraversalRequirement = FPokemonTraversalRequirement();
+
 	LastTraversalRequirement = FPokemonTraversalRequirement();
+
 	LastTraversalCandidate = FPokemonTraversalCandidate();
+
+	bHasPendingAirborneExecution = false;
+
+	PendingAirborneExecutionCandidate = FPokemonAirborneExecutionTrajectoryCandidate();
+
+	PendingAirborneExecutionFacing = FRotator::ZeroRotator;
+
+	PendingAirborneExecutionAngle = 0.f;
+
 	ActiveJumpLink.Reset();
+
 	SelectedCompositeCost = FPokemonCompositeMoveCost();
 }
 
@@ -215,6 +229,7 @@ bool UPokemonNavigationComponent::SearchCompositeTraversal(const UNavigationPath
 		Exits.Add(CurrentNavigationRequest.TargetLocation);
 	}
 	bool bSelected = false;
+
 	for (int32 Index = 0; Index < Exits.Num(); ++Index)
 	{
 		FPokemonTraversalRequirement Requirement;

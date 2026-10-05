@@ -551,6 +551,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Combat|State")
 	UPokemonCombatStateComponent* GetCombatStateComponent() const { return CombatStateComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|JumpExecution")
+	UPokemonJumpExecutionComponent* GetJumpExecutionComponent() const { return JumpExecutionComponent; }
+
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() const;
 

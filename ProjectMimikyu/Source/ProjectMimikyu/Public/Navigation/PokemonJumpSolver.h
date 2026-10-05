@@ -36,5 +36,8 @@ public:
 	static bool CanExecuteWithCapabilities(const FPokemonTraversalCandidate& Candidate,
 		const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason);
 
+	static bool CanExecuteWithCapabilities(const FPokemonAirborneExecutionTrajectoryCandidate& Candidate,
+		const FPokemonJumpCapabilitySnapshot& Capabilities, FName& OutFailureReason);
+
 	static bool IsDebugEnabled();
 };

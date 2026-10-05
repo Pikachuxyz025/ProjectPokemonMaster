@@ -642,7 +642,7 @@ UPokemonNavigationComponent::UPokemonNavigationComponent()
 
 void UPokemonNavigationComponent::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 
 	OwnerPawn = Cast<APawn>(GetOwner());
 
@@ -653,8 +653,14 @@ void UPokemonNavigationComponent::BeginPlay()
 	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
 	{
 		Executor->OnJumpTakeoff.AddUObject(this, &UPokemonNavigationComponent::HandleJumpTakeoff);
+
 		Executor->OnJumpFinished.AddUObject(this, &UPokemonNavigationComponent::HandleJumpFinished);
+
+		Executor->OnAirborneExecutionTrigger.AddUObject(this, &UPokemonNavigationComponent::HandleAirborneExecutionTrigger);
+
+		Executor->OnAirborneExecutionFinished.AddUObject(this, &UPokemonNavigationComponent::HandleAirborneExecutionFinished);
 	}
+
 	if (UNavigationSystemV1* Nav = UNavigationSystemV1::GetCurrent(GetWorld()))
 	{
 		Nav->OnNavigationGenerationFinishedDelegate.AddDynamic(this, &ThisClass::HandleNavigationGenerationFinished);
@@ -797,11 +803,23 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 	if (!bHasActiveRequest || !OwnedRequestId.IsValid() || CurrentNavigationRequest.RequestId != OwnedRequestId)
 	{
 		return false;
-	}	
+	}
 
 	const bool bWasCoordinatorApproach = IsCoordinatorApproachRequest();
 
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon)
+	{
+		return false;
+	}
+
+	UPokemonJumpExecutionComponent* Executor = Pokemon->JumpExecutionComponent;
+
+	const bool bPreserveTriggeredAirborneExecution = Result == EPokemonNavigationResolution::Succeeded
+		&& Executor
+		&& Executor->IsAirborneContactExecutionFor(OwnedRequestId)
+		&& Executor->HasAirborneExecutionTriggered();
 
 	const uint64 ThisMutation = ++NavigationMutationSerial;
 	// Clear every piece of old ownership before any synchronous executor/listener callback.
@@ -822,9 +840,10 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 
 	LastTraversalRequirement = FPokemonTraversalRequirement();
 	LastTraversalCandidate = FPokemonTraversalCandidate();
-	if (UPokemonJumpExecutionComponent* Executor = GetOwner()->FindComponentByClass<UPokemonJumpExecutionComponent>())
+
+	if (Executor && !bPreserveTriggeredAirborneExecution)
 	{
-		Executor->CancelBeforeTakeoff(Reason);
+		Executor->CancelForParentResolution(OwnedRequestId,Reason);
 	}
 
 	if (CachedAIController && NavigationMutationSerial == ThisMutation)
@@ -832,7 +851,7 @@ bool UPokemonNavigationComponent::ResolveNavigationRequest(FGuid OwnedRequestId,
 		CachedAIController->StopMovement();
 	}
 
-	if (bWasCoordinatorApproach && Pokemon)
+	if (bWasCoordinatorApproach)
 	{
 		Pokemon->SetMovementSpeed(EMovementSpeed::EMS_Running);
 	}
@@ -1049,7 +1068,8 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 
 		if (!ApproachPokemon || !ApproachPokemon->CanAct())
 		{
-			ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
+			ResolveNavigationRequest(CurrentNavigationRequest.RequestId, 
+				EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
 			return;
 		}
 
@@ -1076,7 +1096,8 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 
 	if (!OwnerPokemon || !OwnerPokemon->CanAct())
 	{
-		ResolveNavigationRequest(CurrentNavigationRequest.RequestId, EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
+		ResolveNavigationRequest(CurrentNavigationRequest.RequestId,
+			EPokemonNavigationResolution::Failed, TEXT("OwnerCannotAct"));
 		return;
 	}
 	if (OwnerPokemon->JumpExecutionComponent && OwnerPokemon->JumpExecutionComponent->IsBusy())
@@ -1100,16 +1121,35 @@ void UPokemonNavigationComponent::TickNavigation(float DeltaTime)
 			LogCompositeEvent(TEXT("Continue"), TEXT("LocalRegionChanged"));
 		}
 	}
+
 	if (bReachingTakeoff)
 	{
 		TickTakeoffApproach(DeltaTime);
 		return;
 	}
+
+	if (bTraversalPlanReady && HasPendingAirborneExecutionForCurrentRequest())
+	{
+		constexpr float AirborneFacingTolerance = 5.f;
+
+		const float FacingError = FMath::Abs(FMath::FindDeltaAngleDegrees(
+			OwnerPawn->GetActorRotation().Yaw,
+			PendingAirborneExecutionFacing.Yaw));
+
+		if (FacingError > AirborneFacingTolerance)
+		{
+			FaceCoordinatorApproachTarget(DeltaTime);
+
+			return;
+		}
+	}
+
 	if (bTraversalPlanReady)
 	{
 		StartPreparedTraversal();
 		return;
 	}
+
 	if (bPlayerMovePlanningOnly)
 	{
 		return;
@@ -2555,9 +2595,10 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			if (SelectedTraversal.bUsesAirborneExecution)
 			{
-				const FPokemonAirborneExecutionTrajectoryCandidate& Airborne = SelectedTraversal.AirborneTrajectory;
+				const FPokemonAirborneExecutionTrajectoryCandidate&
+					Airborne =
+					SelectedTraversal.AirborneTrajectory;
 
-				// Main debug category shows only the winner
 				DrawAirborneExecutionTrajectory(
 					GetOwner(),
 					Airborne,
@@ -2568,41 +2609,95 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 					Candidate.Radius,
 					false);
 
-				UE_LOG(LogTemp, Display, TEXT(
-					"[MeleeAirborneExecutionPlanSelected] "
-					"RequestId=%s | "
-					"Angle=%+.0f | "
-					"Takeoff=%s | "
-					"ContactFeet=%s | "
-					"FacingYaw=%.2f | "
-					"GroundTime=%.3f | "
-					"ContactTime=%.3f | "
-					"TotalTime=%.3f | "
-					"ContactVz=%.2f | "
-					"PlannerOnly=1"
-				),
-					*CurrentNavigationRequest.RequestId.ToString(),
-					SelectedTraversal.AngleOffsetDegrees,
-					*Airborne.StartFeetLocation.ToCompactString(),
-					*Airborne.RequiredContactFeet.ToCompactString(),
-					SelectedTraversal.Facing.Yaw,
-					SelectedTraversal.GroundTime,
-					Airborne.ContactTime,
-					SelectedTraversal.TotalTime,
-					Airborne.VelocityAtContact.Z);
+				const FVector CurrentFeet =
+					Pokemon->GetCharacterMovement()
+					? Pokemon->GetCharacterMovement()
+					->GetActorFeetLocation()
+					: OwnerPawn->GetActorLocation();
 
-				// Step 6A ends here.
-				//
-				// Do NOT convert this into LastTraversalCandidate.
-				// FPokemonTraversalCandidate still means
-				// "takeoff -> validated landing".
-				//
-				// Step 6B will give the execution component an explicit
-				// airborne-contact execution contract.
+				bPlayerMovePlanningOnly = true;
+
+				LastTraversalRequirement =
+					SelectedTraversal.Requirement;
+
+				PendingTraversalRequirement =
+					SelectedTraversal.Requirement;
+
+				bHasPendingAirborneExecution = true;
+
+				PendingAirborneExecutionCandidate =
+					Airborne;
+
+				PendingAirborneExecutionFacing =
+					SelectedTraversal.Facing;
+
+				PendingAirborneExecutionAngle =
+					SelectedTraversal.AngleOffsetDegrees;
+
+				bTraversalPlanReady = false;
+
+				const bool bAtSelectedTakeoff =
+					FVector::Dist(
+						CurrentFeet,
+						Airborne.StartFeetLocation)
+					<= 6.f;
+
+				bReachingTakeoff =
+					!bAtSelectedTakeoff;
+
+				TakeoffApproachElapsed = 0.f;
+
 				if (CachedAIController)
 				{
 					CachedAIController->StopMovement();
 				}
+
+				ClearTakeoffApproachMoveOwnership();
+
+				if (bReachingTakeoff)
+				{
+					if (!IssueTakeoffApproachMove())
+					{
+						AbandonPendingAirborneExecution(
+							TEXT("AirborneTakeoffApproachUnreachable"));
+
+						return false;
+					}
+				}
+				else
+				{
+					// Even when planning says we are already there,
+					// launch authority comes only from a fresh solve
+					// using the actual supported feet.
+					if (!TryRevalidateAirborneExecutionFromCurrentTakeoff(
+						CurrentFeet))
+					{
+						AbandonPendingAirborneExecution(
+							TEXT("AirborneTakeoffRevalidationRejected"));
+
+						return false;
+					}
+				}
+
+				UE_LOG(LogTemp, Display, TEXT(
+					"[MeleeAirborneExecutionAuthority] "
+					"RequestId=%s | "
+					"Angle=%+.0f | "
+					"PlannedTakeoff=%s | "
+					"ContactFeet=%s | "
+					"FacingYaw=%.2f | "
+					"GroundTime=%.3f | "
+					"ContactTime=%.3f | "
+					"TriggerTime=%.3f | "
+					"TotalTime=%.3f | "
+					"AtTakeoff=%d"),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					SelectedTraversal.AngleOffsetDegrees,
+					*Airborne.StartFeetLocation.ToCompactString(),
+					*Airborne.RequiredContactFeet.ToCompactString(),
+					SelectedTraversal.Facing.Yaw, SelectedTraversal.GroundTime,
+					Airborne.ContactTime, Airborne.TriggerTime,
+					SelectedTraversal.TotalTime, bAtSelectedTakeoff);
 
 				return false;
 			}
@@ -3626,10 +3721,13 @@ bool UPokemonNavigationComponent::IsOwnedCoordinatorApproachTraversalBusy() cons
 
 	const UPokemonJumpExecutionComponent* Jump = Pokemon ? Pokemon->JumpExecutionComponent : nullptr;
 
-	const bool bOwnedTakeoffPhase = (bReachingTakeoff || bTraversalPlanReady) && LastTraversalCandidate.ParentRequestId == CurrentNavigationRequest.RequestId;
+	const bool bOwnedTakeoffPhase = (bReachingTakeoff || bTraversalPlanReady)
+		&& PendingTraversalRequirement.ParentRequestId == CurrentNavigationRequest.RequestId;
 
-	const bool bOwnedJump=Jump && Jump->IsBusy() && Jump->GetParentRequestId() == CurrentNavigationRequest.RequestId;
-	
+	const bool bOwnedJump = Jump
+		&& Jump->IsBusy()
+		&& Jump->GetParentRequestId() == CurrentNavigationRequest.RequestId;
+
 	return bOwnedTakeoffPhase || bOwnedJump;
 }
 
@@ -3729,7 +3827,11 @@ void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime)
 
 	if (CurrentNavigationRequest.MeleeContact.SocketTag.IsValid())
 	{
-		if (SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId))
+		if (HasPendingAirborneExecutionForCurrentRequest())
+		{
+			TargetRotation = PendingAirborneExecutionFacing;
+		}
+		else if (SelectedMeleeStance.MatchesRequest(CurrentNavigationRequest.RequestId))
 		{
 			TargetRotation = SelectedMeleeStance.Facing;
 		}
@@ -3737,7 +3839,13 @@ void UPokemonNavigationComponent::FaceCoordinatorApproachTarget(float DeltaTime)
 		{
 			FPokemonMeleeExecutionCandidate Candidate;
 
-			if (!UPokemonMeleeContactLibrary::BuildExecutionCandidate(OwnerPawn, CurrentNavigationRequest.MeleeApproach, TargetLocation, Candidate))
+			if (!UPokemonMeleeContactLibrary::
+				BuildExecutionCandidate(
+					OwnerPawn,
+					CurrentNavigationRequest
+					.MeleeApproach,
+					TargetLocation,
+					Candidate))
 			{
 				return;
 			}
@@ -4843,39 +4951,19 @@ bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FV
 
 		if (bGroundReachable)
 		{
-			const FVector LaunchDirection = (RequiredContactFeet - SupportedFeet).GetSafeNormal();
+			FName PlanFailure;
 
-			const FPokemonJumpCapabilitySnapshot Capability = FPokemonJumpSolver::CaptureCapabilities(
-				*Pokemon, CurrentNavigationRequest, LaunchDirection);
+			bExecutable =
+				BuildExecutableAirborneExecutionPlan(
+					SupportedFeet,
+					RequiredContactFeet,
+					AirborneExecutionProfile,
+					AnchorCandidate,
+					PlanFailure);
 
-			const TArray<FPokemonAirborneExecutionTrajectoryCandidate> Candidates = FPokemonJumpSolver::SolveToAirborneContact(
-				CurrentNavigationRequest.RequestId, SupportedFeet,
-				RequiredContactFeet, Capability,
-				AirborneExecutionProfile, CurrentNavigationRequest.JumpTrajectoryPreference);
-
-			for (FPokemonAirborneExecutionTrajectoryCandidate Candidate : Candidates)
+			if (!bExecutable)
 			{
-				AnchorCandidate = Candidate;
-
-				if (!Candidate.IsValidForPlanning())
-				{
-					AnchorFailure = Candidate.FailureReason;
-					continue;
-				}
-
-				if (FPokemonJumpTrajectoryValidator::ValidateToAirborneContact(*Pokemon, Candidate)
-					&& Candidate.IsExecutableToContact())
-				{
-					AnchorCandidate = Candidate;
-
-					bExecutable = true;
-
-					break;
-				}
-
-				AnchorCandidate = Candidate;
-
-				AnchorFailure = Candidate.FailureReason;
+				AnchorFailure = PlanFailure;
 			}
 		}
 
@@ -5049,9 +5137,275 @@ void UPokemonNavigationComponent::EvaluateTraversalRequirement(const FPokemonTra
 			C.IsExecutable(), *C.FailureReason.ToString());
 	}
 }
+bool UPokemonNavigationComponent::HasPendingAirborneExecutionForCurrentRequest() const
+{
+	return bHasPendingAirborneExecution
+		&& bHasActiveRequest
+		&& PendingAirborneExecutionCandidate.ParentRequestId == CurrentNavigationRequest.RequestId
+		&& PendingTraversalRequirement.ParentRequestId == CurrentNavigationRequest.RequestId;
+}
+
+bool UPokemonNavigationComponent::BuildExecutableAirborneExecutionPlan(
+	const FVector& SupportedStartFeet, const FVector& RequiredContactFeet, 
+	const FPokemonAirborneExecutionProfile& Profile, FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate, FName& OutFailureReason)
+{
+	OutFailureReason =FName(TEXT("NoValidAirborneContactTrajectory"));
+
+	OutCandidate =FPokemonAirborneExecutionTrajectoryCandidate();
+
+	OutCandidate.ParentRequestId =CurrentNavigationRequest.RequestId;
+
+	OutCandidate.StartFeetLocation =SupportedStartFeet;
+
+	OutCandidate.RequiredContactFeet =RequiredContactFeet;
+
+	APokemon_Parent* Pokemon =Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon
+		|| !bHasActiveRequest
+		|| !CurrentNavigationRequest.RequestId.IsValid())
+	{
+		OutFailureReason =TEXT("AirborneExecutionPlanningUnavailable");
+
+		OutCandidate.FailureReason =OutFailureReason;
+
+		return false;
+	}
+
+	RefreshTraversalAuthorization();
+
+	const FVector LaunchDirection =(RequiredContactFeet - SupportedStartFeet).GetSafeNormal2D();
+
+	const FPokemonJumpCapabilitySnapshot Capability =
+		FPokemonJumpSolver::CaptureCapabilities(*Pokemon,CurrentNavigationRequest,LaunchDirection);
+
+	const TArray<
+		FPokemonAirborneExecutionTrajectoryCandidate>
+		Candidates =FPokemonJumpSolver::SolveToAirborneContact(
+			CurrentNavigationRequest.RequestId,
+			SupportedStartFeet,
+			RequiredContactFeet,
+			Capability,
+			Profile,
+			CurrentNavigationRequest
+			.JumpTrajectoryPreference);
+
+	for (FPokemonAirborneExecutionTrajectoryCandidate
+		Candidate : Candidates)
+	{
+		OutCandidate = Candidate;
+
+		if (!Candidate.IsValidForPlanning())
+		{
+			OutFailureReason =Candidate.FailureReason;
+
+			continue;
+		}
+
+		if (FPokemonJumpTrajectoryValidator::
+			ValidateToAirborneContact(*Pokemon,Candidate)
+			&& Candidate.IsExecutableToContact())
+		{
+			OutCandidate = Candidate;
+			OutFailureReason = NAME_None;
+
+			return true;
+		}
+
+		OutCandidate = Candidate;
+
+		OutFailureReason =Candidate.FailureReason;
+	}
+
+	OutCandidate.FailureReason =OutFailureReason;
+
+	return false;
+}
+
+bool UPokemonNavigationComponent::TryRevalidateAirborneExecutionFromCurrentTakeoff(const FVector& CurrentFeet)
+{
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+
+	if (!Pokemon
+		|| !HasPendingAirborneExecutionForCurrentRequest()
+		|| IsAttackJumpConsumed())
+	{
+		return false;
+	}
+
+	FVector SupportedTakeoff;
+	FName SupportFailure;
+
+	if (!FPokemonJumpTrajectoryValidator::ResolveLanding(*Pokemon, CurrentFeet,
+		SupportedTakeoff, SupportFailure))
+	{
+		return false;
+	}
+
+	const FVector PreviousTakeoff = PendingAirborneExecutionCandidate.StartFeetLocation;
+
+	const FVector RequiredContactFeet = PendingAirborneExecutionCandidate.RequiredContactFeet;
+
+	FPokemonAirborneExecutionTrajectoryCandidate RevalidatedCandidate;
+
+	FName FailureReason;
+
+	if (!BuildExecutableAirborneExecutionPlan(
+		SupportedTakeoff, RequiredContactFeet,
+		CurrentNavigationRequest.AirborneExecutionProfile,
+		RevalidatedCandidate, FailureReason))
+	{
+		UE_LOG(LogTemp, Display, TEXT(
+			"[AirborneExecutionTakeoffRevalidationRejected] "
+			"RequestId=%s | "
+			"CurrentFeet=%s | "
+			"SupportedFeet=%s | "
+			"OriginalTakeoff=%s | "
+			"ContactFeet=%s | "
+			"Reason=%s"),
+			*CurrentNavigationRequest
+			.RequestId.ToString(),
+			*CurrentFeet.ToCompactString(),
+			*SupportedTakeoff.ToCompactString(),
+			*PreviousTakeoff.ToCompactString(),
+			*RequiredContactFeet.ToCompactString(),
+			*FailureReason.ToString());
+
+		return false;
+	}
+
+	PendingTraversalRequirement.StartFeetLocation = SupportedTakeoff;
+
+	PendingTraversalRequirement.bStartSupportKnown = true;
+
+	LastTraversalRequirement = PendingTraversalRequirement;
+
+	PendingAirborneExecutionCandidate = RevalidatedCandidate;
+
+	bReachingTakeoff = false;
+
+	bTraversalPlanReady = RevalidatedCandidate.IsExecutableToContact();
+
+	ClearTakeoffApproachMoveOwnership();
+
+	if (CachedAIController)
+	{
+		CachedAIController->StopMovement();
+	}
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[AirborneExecutionTakeoffRevalidated] "
+		"RequestId=%s | "
+		"PreviousTakeoff=%s | "
+		"ActualTakeoff=%s | "
+		"Shift=%.2f | "
+		"ContactFeet=%s | "
+		"ContactTime=%.3f | "
+		"TriggerTime=%.3f | "
+		"ContactVz=%.2f"),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*PreviousTakeoff.ToCompactString(),
+		*SupportedTakeoff.ToCompactString(),
+		FVector::Dist(PreviousTakeoff, SupportedTakeoff),
+		*RevalidatedCandidate.RequiredContactFeet.ToCompactString(),
+		RevalidatedCandidate.ContactTime,
+		RevalidatedCandidate.TriggerTime,
+		RevalidatedCandidate.VelocityAtContact.Z);
+
+	return bTraversalPlanReady;
+}
+
+void UPokemonNavigationComponent::AbandonPendingAirborneExecution(FName Reason)
+{
+	UE_LOG(LogTemp,Display,TEXT(
+			"[AirborneExecutionPlanAbandoned] "
+			"RequestId=%s | Reason=%s"),
+		*CurrentNavigationRequest.RequestId.ToString(),
+		*Reason.ToString());
+
+	bHasPendingAirborneExecution = false;
+
+	PendingAirborneExecutionCandidate =FPokemonAirborneExecutionTrajectoryCandidate();
+
+	PendingAirborneExecutionFacing = FRotator::ZeroRotator;
+
+	PendingAirborneExecutionAngle = 0.f;
+
+	PendingTraversalRequirement = FPokemonTraversalRequirement();
+
+	LastTraversalRequirement = FPokemonTraversalRequirement();
+
+	bTraversalPlanReady = false;
+	bReachingTakeoff = false;
+
+	ClearTakeoffApproachMoveOwnership();
+
+	if (CachedAIController)
+	{
+		CachedAIController->StopMovement();
+	}
+
+	// No physical jump occurred, so the discrete
+	// attack may legitimately search again.
+	bPlayerMovePlanningOnly = false;
+
+	TimeSinceLastNavigationThink = NavigationThinkInterval;
+}
+
+void UPokemonNavigationComponent::HandleAirborneExecutionTrigger(FGuid RequestId)
+{
+	if (!bHasActiveRequest
+		|| RequestId != CurrentNavigationRequest.RequestId
+		|| !IsCoordinatorApproachRequest())
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[CombatApproachAction] "
+		"AirborneExecutionTriggerReached | "
+		"RequestId=%s | "
+		"CommandId=%s"),
+		*RequestId.ToString(),
+		*CurrentNavigationRequest.ParentAttackCommandId.ToString());
+
+	ResolveNavigationRequest(RequestId, EPokemonNavigationResolution::Succeeded, TEXT("AirborneExecutionTriggerReached"));
+}
+
+void UPokemonNavigationComponent::HandleAirborneExecutionFinished(FGuid RequestId, bool bReachedContact, FName Reason)
+{
+	UE_LOG(LogTemp, Display, TEXT(
+		"[CombatApproachAction] "
+		"AirborneExecutionFinished | "
+		"RequestId=%s | "
+		"ReachedContact=%d | "
+		"Reason=%s | "
+		"NavigationStillOwnsRequest=%d"),
+		*RequestId.ToString(), bReachedContact,
+		*Reason.ToString(),
+		bHasActiveRequest && CurrentNavigationRequest.RequestId == RequestId);
+
+	// Normally the parent navigation action was already
+	// retired at TriggerTime.
+	//
+	// If physical execution fails BEFORE TriggerTime,
+	// Navigation still owns A1 and must fail it.
+	if (bHasActiveRequest && CurrentNavigationRequest.RequestId == RequestId)
+	{
+		ResolveNavigationRequest(
+			RequestId, bReachedContact
+			? EPokemonNavigationResolution::Succeeded
+			: EPokemonNavigationResolution::Failed,
+			bReachedContact
+			? FName(TEXT("AirborneExecutionContactReached")) : Reason);
+	}
+}
+
 bool UPokemonNavigationComponent::DebugEvaluateRetainedMoveTraversal(EPokemonTraversalCircumstance ConfirmedCircumstance,bool bDestinationSupportConfirmed)
 {
-	if (!GetOwner()|| !GetOwner()->HasAuthority()|| !bHasActiveRequest|| !bPlayerMovePlanningOnly|| !CurrentNavigationRequest.bAllowSpecialTraversal|| !CurrentNavigationRequest.IntentTag.MatchesTagExact(PokemonAITags::NavIntent_PlayerCommand_Move))
+	if (!GetOwner()|| !GetOwner()->HasAuthority()|| !bHasActiveRequest
+		|| !bPlayerMovePlanningOnly|| !CurrentNavigationRequest.bAllowSpecialTraversal
+		|| !CurrentNavigationRequest.IntentTag.MatchesTagExact(PokemonAITags::NavIntent_PlayerCommand_Move))
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[Traversal] DebugEvaluationSkipped | ")
@@ -5062,7 +5416,8 @@ bool UPokemonNavigationComponent::DebugEvaluateRetainedMoveTraversal(EPokemonTra
 
 	FPokemonTraversalRequirement Requirement;
 
-	if (!BuildTraversalRequirement(CurrentNavigationRequest.TargetLocation,FName(TEXT("DebugMeasuredFixture")),Requirement))
+	if (!BuildTraversalRequirement(CurrentNavigationRequest.TargetLocation,
+		FName(TEXT("DebugMeasuredFixture")), Requirement))
 	{
 		return false;
 	}
@@ -5096,7 +5451,9 @@ void UPokemonNavigationComponent::RefreshTraversalAuthorization()
 	{
 		if (const UPokemonCommandComponent* Command = GetOwner()->FindComponentByClass<UPokemonCommandComponent>())
 		{
-			CurrentNavigationRequest.AuthorizedMoveMomentum = Command->GetAuthorizedTraversalMomentum(CurrentNavigationRequest.ParentAttackCommandId);
+			CurrentNavigationRequest.AuthorizedMoveMomentum = Command->GetAuthorizedTraversalMomentum(
+				CurrentNavigationRequest.ParentAttackCommandId);
+
 			CurrentNavigationRequest.bTrainerAuthorizedMoveMomentum = !CurrentNavigationRequest.AuthorizedMoveMomentum.IsNearlyZero();
 		}
 	}
@@ -5106,7 +5463,8 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 {
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 
-	if (!Pokemon || PendingTraversalRequirement.ParentRequestId != CurrentNavigationRequest.RequestId || IsAttackJumpConsumed())
+	if (!Pokemon || PendingTraversalRequirement.ParentRequestId != CurrentNavigationRequest.RequestId
+		|| IsAttackJumpConsumed())
 	{
 		bReachingTakeoff = false;
 		return;
@@ -5115,7 +5473,8 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 
 	TakeoffApproachElapsed += DeltaTime;
 
-	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+	const FVector CurrentFeet = Pokemon->GetActorLocation() - FVector(0.f, 0.f, 
+		Pokemon->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 
 	const FVector Takeoff = PendingTraversalRequirement.StartFeetLocation;
 
@@ -5133,9 +5492,20 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 	{
 		ClearTakeoffApproachMoveOwnership();
 
+		if (HasPendingAirborneExecutionForCurrentRequest())
+		{
+			if (!TryRevalidateAirborneExecutionFromCurrentTakeoff(CurrentFeet))
+			{
+				AbandonPendingAirborneExecution(TEXT("AirborneTakeoffRevalidationRejected"));
+			}
+
+			return;
+		}
+
+		// Existing landing-traversal behavior.
 		bReachingTakeoff = false;
 
-		bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+		bTraversalPlanReady =LastTraversalCandidate.IsExecutable();
 
 		CachedAIController->StopMovement();
 
@@ -5146,7 +5516,9 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 	{
 		UE_LOG(LogTemp, Display,
 			TEXT("[Jump02] TakeoffApproach | RequestId=%s | CurrentFeet=%s | Takeoff=%s | Distance3D=%.2f | Distance2D=%.2f | VerticalDelta=%.2f | Speed2D=%.2f | MoveStatus=%d"),
-			*CurrentNavigationRequest.RequestId.ToString(), *CurrentFeet.ToCompactString(), *Takeoff.ToCompactString(), Distance3D, Distance2D, VerticalDelta, Speed2D,
+			*CurrentNavigationRequest.RequestId.ToString(), 
+			*CurrentFeet.ToCompactString(), *Takeoff.ToCompactString(), 
+			Distance3D, Distance2D, VerticalDelta, Speed2D,
 			static_cast<int32>(MoveStatus));
 	}
 
@@ -5160,10 +5532,27 @@ void UPokemonNavigationComponent::TickTakeoffApproach(float DeltaTime)
 		|| MoveStatus != EPathFollowingStatus::Moving;
 
 
-	if (bNearTakeoff && bApproachHasSlowed && TryRevalidateTraversalFromCurrentTakeoff(CurrentFeet))
+	if (bNearTakeoff && bApproachHasSlowed)
 	{
-		ClearTakeoffApproachMoveOwnership();
-		return;
+		if (HasPendingAirborneExecutionForCurrentRequest())
+		{
+			if (TryRevalidateAirborneExecutionFromCurrentTakeoff(CurrentFeet))
+			{
+				ClearTakeoffApproachMoveOwnership();
+			}
+			else
+			{
+				AbandonPendingAirborneExecution(TEXT("AirborneTakeoffRevalidationRejected"));
+			}
+
+			return;
+		}
+
+		if (TryRevalidateTraversalFromCurrentTakeoff(CurrentFeet))
+		{
+			ClearTakeoffApproachMoveOwnership();
+			return;
+		}
 	}
 
 
@@ -5228,13 +5617,47 @@ void UPokemonNavigationComponent::StartPreparedTraversal()
 	ClearTakeoffApproachMoveOwnership();
 
 	bTraversalPlanReady = false;
+
 	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
-	if (!Pokemon || bNavigationSuspended || IsAttackJumpConsumed() || !LastTraversalCandidate.IsExecutable()
-		|| LastTraversalCandidate.ParentRequestId != CurrentNavigationRequest.RequestId || !Pokemon->JumpExecutionComponent)
+
+	if (!Pokemon || bNavigationSuspended || IsAttackJumpConsumed()
+		|| !Pokemon->JumpExecutionComponent)
 	{
 		return;
 	}
-	if (!Pokemon->JumpExecutionComponent->PrepareJump(LastTraversalCandidate, LastTraversalRequirement, CurrentNavigationRequest))
+
+	if (HasPendingAirborneExecutionForCurrentRequest())
+	{
+		if (!PendingAirborneExecutionCandidate.IsExecutableToContact())
+		{
+			AbandonPendingAirborneExecution(TEXT("AirborneExecutorCandidateInvalid"));
+
+			return;
+		}
+
+		if (!Pokemon->JumpExecutionComponent->PrepareAirborneExecution(
+			PendingAirborneExecutionCandidate,
+			PendingTraversalRequirement,
+			CurrentNavigationRequest,
+			PendingAirborneExecutionFacing))
+		{
+			AbandonPendingAirborneExecution(TEXT("AirborneExecutorPreparationRejected"));
+		}
+
+		return;
+	}
+
+	// Existing takeoff -> landing path.
+	if (!LastTraversalCandidate.IsExecutable() || LastTraversalCandidate.ParentRequestId
+		!= CurrentNavigationRequest.RequestId)
+	{
+		return;
+	}
+
+	if (!Pokemon->JumpExecutionComponent->PrepareJump(
+		LastTraversalCandidate,
+		LastTraversalRequirement,
+		CurrentNavigationRequest))
 	{
 		HoldCompositeFailure(TEXT("ExecutorPreparationRejected"));
 	}
