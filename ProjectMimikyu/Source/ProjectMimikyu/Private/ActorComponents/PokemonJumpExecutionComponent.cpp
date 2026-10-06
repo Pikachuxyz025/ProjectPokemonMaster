@@ -136,7 +136,7 @@ bool UPokemonJumpExecutionComponent::CanPrepareOrTakeoff(FName& OutFailureReason
 	}
 	if (!Movement->PendingLaunchVelocity.IsZero()
 		&& (State != EPokemonJumpExecutionState::LaunchPending
-			|| !Movement->PendingLaunchVelocity.Equals(ActiveCandidate.FinalLaunchVelocity)))
+			|| !Movement->PendingLaunchVelocity.Equals(GetActiveLaunchVelocity())))
 	{
 		OutFailureReason = TEXT("ExternalLaunchPending");
 		return false;
@@ -282,7 +282,7 @@ void UPokemonJumpExecutionComponent::TriggerTakeoff()
 
 	PhaseStartTime = GetWorld()->GetTimeSeconds();
 
-	PokemonOwner->LaunchCharacter(ActiveCandidate.FinalLaunchVelocity, true, true);
+	PokemonOwner->LaunchCharacter(GetActiveLaunchVelocity(), true, true);
 
 	LogLifecycle(TEXT("LaunchQueued"));
 }
@@ -499,16 +499,16 @@ void UPokemonJumpExecutionComponent::HandleMovementModeChanged(ACharacter* Chara
 
 			LogLifecycle(TEXT("Takeoff"));
 
-			OnJumpTakeoff.Broadcast(ActiveCandidate.ParentRequestId);
+			OnJumpTakeoff.Broadcast(GetParentRequestId());
 		}
 		else
 		{
-			FinishJump(false, TEXT("LaunchOverriddenBeforeTakeoff"));
+			FinishActiveExecution(false, TEXT("LaunchOverriddenBeforeTakeoff"));
 		}
 	}
 	else if (State == EPokemonJumpExecutionState::Preparing && !Movement->IsMovingOnGround())
 	{
-		FinishJump(false, TEXT("GroundLostDuringPreparation"));
+		FinishActiveExecution(false, TEXT("GroundLostDuringPreparation"));
 	}
 }
 
@@ -563,11 +563,9 @@ void UPokemonJumpExecutionComponent::HandleMovementUpdated(float DeltaSeconds, F
 		return;
 	}
 
-	if (ActiveContract
-		== EPokemonJumpExecutionContract::AirborneContact)
+	if (ActiveContract == EPokemonJumpExecutionContract::AirborneContact)
 	{
-		AirborneExecutionElapsed +=
-			FMath::Max(0.f, DeltaSeconds);
+		AirborneExecutionElapsed += FMath::Max(0.f, DeltaSeconds);
 
 		TryBroadcastAirborneExecutionTrigger();
 
@@ -582,9 +580,7 @@ void UPokemonJumpExecutionComponent::HandleMovementUpdated(float DeltaSeconds, F
 
 		if (bRuntimeObstructionObserved)
 		{
-			FinishAirborneExecution(
-				false,
-				TEXT("RuntimeObstruction"));
+			FinishAirborneExecution(false, TEXT("RuntimeObstruction"));
 
 			return;
 		}
@@ -594,25 +590,18 @@ void UPokemonJumpExecutionComponent::HandleMovementUpdated(float DeltaSeconds, F
 
 		if (!Capsule)
 		{
-			FinishAirborneExecution(
-				false,
-				TEXT("CapsuleUnavailable"));
+			FinishAirborneExecution(false, TEXT("CapsuleUnavailable"));
 
 			return;
 		}
 
-		const float HalfHeight =
-			Capsule->GetScaledCapsuleHalfHeight();
+		const float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
 
-		const FVector OldFeet =
-			OldLocation
-			- FVector::UpVector * HalfHeight;
+		const FVector OldFeet = OldLocation - FVector::UpVector * HalfHeight;
 
-		const FVector CurrentFeet =
-			Movement->GetActorFeetLocation();
+		const FVector CurrentFeet = Movement->GetActorFeetLocation();
 
-		if (AirborneExecutionElapsed + UE_KINDA_SMALL_NUMBER
-			>= ActiveAirborneCandidate.ContactTime)
+		if (AirborneExecutionElapsed + UE_KINDA_SMALL_NUMBER >= ActiveAirborneCandidate.ContactTime)
 		{
 			const float ContactError = CalculateAirborneContactSegmentError(
 				OldFeet, CurrentFeet);
@@ -642,9 +631,7 @@ void UPokemonJumpExecutionComponent::HandleMovementUpdated(float DeltaSeconds, F
 	// Existing landing contract.
 	if (bLandingObserved)
 	{
-		FinishJump(
-			bLandedAtDestination,
-			LandingReason);
+		FinishJump(bLandedAtDestination,LandingReason);
 	}
 }
 
@@ -675,12 +662,12 @@ void UPokemonJumpExecutionComponent::TickComponent(float DeltaTime, ELevelTick T
 		FName FailureReason;
 		if (!CanPrepareOrTakeoff(FailureReason))
 		{
-			FinishJump(false, FailureReason);
+			FinishActiveExecution(false, FailureReason);
 		}
 		else if (PhaseElapsed > (State == EPokemonJumpExecutionState::Preparing
 			? FMath::Max(PreparationTimeout, PreparationDuration + 0.25f) : PendingLaunchTimeout))
 		{
-			FinishJump(false, TEXT("TakeoffTimeout"));
+			FinishActiveExecution(false, TEXT("TakeoffTimeout"));
 		}
 		return;
 	}
@@ -1000,7 +987,7 @@ float UPokemonJumpExecutionComponent::CalculateAirborneContactSegmentError(const
 {
 	const FVector Segment = CurrentFeet - OldFeet;
 
-	const float SegmentLengthSq = Segment.SizeSquared2D();
+	const float SegmentLengthSq = Segment.SizeSquared();
 
 	if (SegmentLengthSq <= KINDA_SMALL_NUMBER)
 	{
