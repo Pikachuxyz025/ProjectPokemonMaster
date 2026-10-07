@@ -87,14 +87,19 @@ struct PROJECTMIMIKYU_API FPokemonAirborneExecutionProfile
 	EPokemonAirborneExecutionTiming Timing = EPokemonAirborneExecutionTiming::Disabled;
 
 	/**
-	 * Time, in seconds, between beginning the move's execution
-	 * and the desired primary execution event.
-	 *
-	 * For a melee attack this can represent wind-up before contact.
-	 * For a projectile it can represent wind-up before release.
-	 *
-	 * This is move timing, not traversal timing.
-	 */
+     * Resolved time, in seconds, between beginning the move's
+     * execution and the desired primary execution event.
+     *
+     * For a melee attack this can represent wind-up before contact.
+     * For a projectile it can represent wind-up before release.
+     *
+     * The authored AirborneExecutionProfile may provide this value
+     * directly, or attack-plan resolution may derive it from another
+     * authoritative move-timing source such as fallback timing or,
+     * later, an authored animation event.
+     *
+     * This is move timing, not traversal timing.
+     */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat|Execution|Airborne", meta = (ClampMin = "0.0", Units = "s"))
 	float ExecutionLeadTime = 0.0f;
 

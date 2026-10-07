@@ -84,6 +84,31 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 }
 
 
+float UPokemonDamageGameplayAbilities::GetPrimaryExecutionLeadTimeForPlanning() const
+{
+	if (bUseFallbackMoveTimingForExecutionLeadTime)
+	{
+		return FMath::Max(0.f,MoveTimingSequence.AnticipationDuration);
+	}
+
+	return FMath::Max(0.f,AirborneExecutionProfile.ExecutionLeadTime);
+}
+
+FPokemonAirborneExecutionProfile UPokemonDamageGameplayAbilities::ResolveAirborneExecutionProfileForPlanning() const
+{
+	FPokemonAirborneExecutionProfile ResolvedProfile = AirborneExecutionProfile;
+
+	if (!ResolvedProfile.IsEnabled())
+	{
+		return ResolvedProfile;
+	}
+
+	ResolvedProfile.ExecutionLeadTime = GetPrimaryExecutionLeadTimeForPlanning();
+
+	return ResolvedProfile;
+}
+
+
 FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamageParams(AActor* TargetActor, FDamageEffectParams DamageEffectParams, FPokemonImpactResolution& OutImpactResolution)
 {
 	AActor* Attacker = GetAvatarActorFromActorInfo();

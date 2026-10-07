@@ -34,7 +34,7 @@ namespace
 		}
 
 		Plan.MotionPolicy = MoveCDO->ExecutionMotionPolicy;
-		Plan.AirborneExecutionProfile = MoveCDO->AirborneExecutionProfile;
+		Plan.AirborneExecutionProfile = MoveCDO->ResolveAirborneExecutionProfileForPlanning();
 
 		switch (Plan.MotionPolicy)
 		{
@@ -145,6 +145,7 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	ApproachSpec.ExecutionPlan = ExecutionPlan;
 	ApproachSpec.CommandTarget = CommandTarget;
 
+	const UPokemonDamageGameplayAbilities* MoveCDO = Cast<UPokemonDamageGameplayAbilities>(Move->Ability->GetDefaultObject());
 
 	FPokemonIntentActionSpec ExecutionSpec;
 
@@ -155,7 +156,7 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 	ExecutionSpec.CommandTarget = CommandTarget;
 
 	
-	UE_LOG(LogTemp,Display,TEXT(
+	UE_LOG(LogTemp, Display, TEXT(
 		"[AttackExecutionPlan] "
 		"Move=%s | "
 		"TargetType=%s | "
@@ -163,14 +164,16 @@ FGuid UPokemonIntentSequenceComponent::SubmitAttackIntent(int32 MoveIndex, const
 		"ResolvedMotion=%s | "
 		"AirborneTiming=%s | "
 		"ExecutionLeadTime=%.3f | "
+		"LeadTimeSource=%s | "
 		"Reason=%s"
-		),
+	),
 		*GetNameSafe(Move),
 		*StaticEnum<EPokemonCommandTargetType>()->GetNameStringByValue(static_cast<int64>(CommandTarget.TargetType)),
 		*StaticEnum<EPokemonExecutionMotionPolicy>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.MotionPolicy)),
 		*StaticEnum<EPokemonResolvedExecutionMotion>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.ResolvedMotion)),
 		*StaticEnum<EPokemonAirborneExecutionTiming>()->GetNameStringByValue(static_cast<int64>(ExecutionPlan.AirborneExecutionProfile.Timing)),
 		ExecutionPlan.AirborneExecutionProfile.ExecutionLeadTime,
+		MoveCDO->bUseFallbackMoveTimingForExecutionLeadTime ? TEXT("MoveTiming.Anticipation") : TEXT("AirborneProfile"),
 		*ExecutionPlanReason.ToString()
 	);
 	return SubmitSequence({ ApproachSpec,ExecutionSpec }, EPokemonIntentType::Attack);

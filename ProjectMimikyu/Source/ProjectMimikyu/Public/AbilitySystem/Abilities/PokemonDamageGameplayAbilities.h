@@ -53,6 +53,32 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution|Airborne")
 	FPokemonAirborneExecutionProfile AirborneExecutionProfile;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution|Airborne|Timing")
+	bool bUseFallbackMoveTimingForExecutionLeadTime = false;
+
+	/**
+	 * Resolves the time between AttackExecution activation and the
+	 * move's primary execution event.
+	 *
+	 * Animation-less/provisional moves may source this from
+	 * MoveTimingSequence.AnticipationDuration.
+	 *
+	 * Authored moves may instead use the explicit value stored in
+	 * AirborneExecutionProfile.ExecutionLeadTime until animation-event
+	 * timing becomes the authoritative source.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Combat|Execution|Airborne|Timing")
+	float GetPrimaryExecutionLeadTimeForPlanning() const;
+
+	/**
+     * Returns the authored airborne profile with execution-time values
+     * resolved for the current move implementation.
+     *
+     * The returned value is suitable for copying into an attack-intent
+     * execution snapshot. It does not mutate the ability CDO.
+     */
+	FPokemonAirborneExecutionProfile ResolveAirborneExecutionProfileForPlanning() const;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float SpeedMultiplier = 1.f;
 

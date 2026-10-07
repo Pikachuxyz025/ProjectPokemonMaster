@@ -56,6 +56,10 @@ class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 public:
 	// The command component binds this before Blueprint ActivateAbility can run/end.
 	FGuid GetSequencedCommandId() const { return SequencedCommandId; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
+	bool IsSequencedExecution() const { return SequencedCommandId.IsValid(); }
+
 	void EndSequencedExecution(FGuid OwnedCommandId, bool bWasCancelled);
 	bool CanEndSequencedExecutionImmediately() const { return ScopeLockCount == 0 && !bSequencedEndInProgress; }
 
