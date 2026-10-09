@@ -253,8 +253,17 @@ namespace
 
 	float GetAirborneArcDecisionScore(const FPokemonAirborneExecutionTrajectoryCandidate& Arc,float ActualTotalTime)
 	{
-		return ActualTotalTime + (IsPreferredAirborneArc(Arc)
-			? 0.f : ForwardArcNonPreferredCost);
+		constexpr float PreferredMaxContactVz = 600.f;
+
+		constexpr float ExcessVerticalSpeedPenaltyScale = 0.000833f; // 1/1200
+
+		const float SpanPenalty = IsPreferredAirborneArc(Arc) ? 0.f : ForwardArcNonPreferredCost;
+
+		const float ExcessContactVz = FMath::Max(0.f, Arc.VelocityAtContact.Z - PreferredMaxContactVz);
+
+		const float VerticalSpeedPenalty = ExcessContactVz * ExcessVerticalSpeedPenaltyScale;
+
+		return ActualTotalTime + SpanPenalty + VerticalSpeedPenalty;
 	}
 
 	static constexpr float MeleeStanceSearchAngles[] =
