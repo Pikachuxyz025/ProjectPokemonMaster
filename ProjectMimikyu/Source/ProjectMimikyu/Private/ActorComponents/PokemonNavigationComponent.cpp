@@ -28,6 +28,8 @@
 
 namespace
 {
+	
+
 	enum class EMeleeGroundedReachClassification :uint8
 	{
 		WithinGroundedReach,
@@ -229,6 +231,31 @@ namespace
 				: IsGroundedTraversalViable();
 		}
 	};
+
+	// Step 6B.1: prefer a forward-moving airborne contact arc,
+	// without rejecting valid steep/vertical fallback trajectories.
+	constexpr float ForwardArcMinSpan = 100.f;
+	constexpr float ForwardArcMaxSpan = 250.f;
+
+	// Decision penalty only; never modifies physical flight time.
+	constexpr float ForwardArcNonPreferredCost = 0.5f;
+
+	float GetAirborneArcSpan(const FPokemonAirborneExecutionTrajectoryCandidate& Arc)
+	{
+		return FVector::Dist2D(Arc.StartFeetLocation, Arc.RequiredContactFeet);
+	}
+
+	bool IsPreferredAirborneArc(const FPokemonAirborneExecutionTrajectoryCandidate& Arc)
+	{
+		const float Span = GetAirborneArcSpan(Arc);
+		return Span >= ForwardArcMinSpan && Span <= ForwardArcMaxSpan;
+	}
+
+	float GetAirborneArcDecisionScore(const FPokemonAirborneExecutionTrajectoryCandidate& Arc,float ActualTotalTime)
+	{
+		return ActualTotalTime + (IsPreferredAirborneArc(Arc)
+			? 0.f : ForwardArcNonPreferredCost);
+	}
 
 	static constexpr float MeleeStanceSearchAngles[] =
 	{
@@ -2304,6 +2331,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 					Search.RequiredFeet,
 					FName(TEXT("MeleeAirborneTraversal")),
 					TraversalGroundPath,
+					Search.NavGoal, Search.Facing,
 					TraversalStance.Requirement,
 					CurrentNavigationRequest.AirborneExecutionProfile,
 					TraversalStance.AirborneTrajectory,
@@ -2521,11 +2549,22 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				++RunJumpMeleeCompatibleCount;
 				++TraversalViableCount;
 
-				if ((!BestTraversalStance
-					|| TraversalStance.TotalTime < BestTraversalStance->TotalTime))
+				const float CandidateScore = bAirborneExecutionRequired ?
+					GetAirborneArcDecisionScore(TraversalStance.AirborneTrajectory, TraversalStance.TotalTime)
+					: TraversalStance.TotalTime;
+
+				const float CurrentBestScore = BestTraversalStance ?
+					(bAirborneExecutionRequired ?
+						GetAirborneArcDecisionScore(BestTraversalStance->AirborneTrajectory, BestTraversalStance->TotalTime)
+						: BestTraversalStance->TotalTime)
+					: TNumericLimits<float>::Max();
+
+
+				if (CandidateScore < CurrentBestScore)
 				{
 					BestTraversalStance = &TraversalStance;
 				}
+
 			}
 
 			UE_LOG(LogTemp, Display, TEXT(
@@ -2595,9 +2634,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 			if (SelectedTraversal.bUsesAirborneExecution)
 			{
-				const FPokemonAirborneExecutionTrajectoryCandidate&
-					Airborne =
-					SelectedTraversal.AirborneTrajectory;
+				const FPokemonAirborneExecutionTrajectoryCandidate& Airborne = SelectedTraversal.AirborneTrajectory;
 
 				DrawAirborneExecutionTrajectory(
 					GetOwner(),
@@ -2611,39 +2648,28 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 
 				const FVector CurrentFeet =
 					Pokemon->GetCharacterMovement()
-					? Pokemon->GetCharacterMovement()
-					->GetActorFeetLocation()
+					? Pokemon->GetCharacterMovement()->GetActorFeetLocation()
 					: OwnerPawn->GetActorLocation();
 
 				bPlayerMovePlanningOnly = true;
 
-				LastTraversalRequirement =
-					SelectedTraversal.Requirement;
+				LastTraversalRequirement =SelectedTraversal.Requirement;
 
-				PendingTraversalRequirement =
-					SelectedTraversal.Requirement;
+				PendingTraversalRequirement =SelectedTraversal.Requirement;
 
 				bHasPendingAirborneExecution = true;
 
-				PendingAirborneExecutionCandidate =
-					Airborne;
+				PendingAirborneExecutionCandidate =Airborne;
 
-				PendingAirborneExecutionFacing =
-					SelectedTraversal.Facing;
+				PendingAirborneExecutionFacing =SelectedTraversal.Facing;
 
-				PendingAirborneExecutionAngle =
-					SelectedTraversal.AngleOffsetDegrees;
+				PendingAirborneExecutionAngle =SelectedTraversal.AngleOffsetDegrees;
 
 				bTraversalPlanReady = false;
 
-				const bool bAtSelectedTakeoff =
-					FVector::Dist(
-						CurrentFeet,
-						Airborne.StartFeetLocation)
-					<= 6.f;
+				const bool bAtSelectedTakeoff =FVector::Dist(CurrentFeet,Airborne.StartFeetLocation)<= 6.f;
 
-				bReachingTakeoff =
-					!bAtSelectedTakeoff;
+				bReachingTakeoff =!bAtSelectedTakeoff;
 
 				TakeoffApproachElapsed = 0.f;
 
@@ -2658,8 +2684,7 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 				{
 					if (!IssueTakeoffApproachMove())
 					{
-						AbandonPendingAirborneExecution(
-							TEXT("AirborneTakeoffApproachUnreachable"));
+						AbandonPendingAirborneExecution(TEXT("AirborneTakeoffApproachUnreachable"));
 
 						return false;
 					}
@@ -2698,6 +2723,26 @@ TArray<FMeleeStanceSearchCandidate> SearchCandidates;
 					SelectedTraversal.Facing.Yaw, SelectedTraversal.GroundTime,
 					Airborne.ContactTime, Airborne.TriggerTime,
 					SelectedTraversal.TotalTime, bAtSelectedTakeoff);
+
+				UE_LOG(
+					LogTemp,
+					Display,
+					TEXT(
+						"[AirborneArcSelected] "
+						"RequestId=%s | "
+						"Angle=%.1f | "
+						"HorizontalSpan=%.1f | "
+						"PreferredArc=%d | "
+						"TotalTime=%.3f | "
+						"DecisionScore=%.3f"
+					),
+					*CurrentNavigationRequest.RequestId.ToString(),
+					SelectedTraversal.AngleOffsetDegrees,
+					GetAirborneArcSpan(SelectedTraversal.AirborneTrajectory),
+					static_cast<int32>(IsPreferredAirborneArc(SelectedTraversal.AirborneTrajectory)),
+					SelectedTraversal.TotalTime,
+					GetAirborneArcDecisionScore(SelectedTraversal.AirborneTrajectory, SelectedTraversal.TotalTime)
+				);
 
 				return false;
 			}
@@ -4733,7 +4778,7 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 }
 
 bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FVector& RequiredContactFeet, FName Trigger,
-	const UNavigationPath* GroundPath, FPokemonTraversalRequirement& OutRequirement,
+	const UNavigationPath* GroundPath,const FVector& GroundApproachGoal, const FRotator& AttackFacing, FPokemonTraversalRequirement& OutRequirement,
 	const FPokemonAirborneExecutionProfile& AirborneExecutionProfile, FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate,
 	float* OutGroundTime)
 {
@@ -4819,6 +4864,29 @@ bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FV
 	// The current suppoprted location is alwaysd a legitimate launch candidate.
 	AddAnchor(CurrentFeet, 0.f, FName(TEXT("CurrentSupportedFeet")));
 
+	// Generate additional takeoff hypotheses behind the
+    // attack's grounded approach reference.
+    //
+    // These are only hypotheses.
+    // Existing support, path, and trajectory validation
+    // must approve each position before execution.
+	const FVector Forward2D = AttackFacing.Vector().GetSafeNormal2D();
+
+	if (!Forward2D.IsNearlyZero())
+	{
+		static constexpr float RunUpDistances[] =
+		{
+			75.f,150.f,225.f
+		};
+
+		for (const float BackDistance : RunUpDistances)
+		{
+			const FVector ProposedTakeoff = GroundApproachGoal - Forward2D * BackDistance;
+
+			AddAnchor(ProposedTakeoff, 0, FName(TEXT("AttackRunUpHypothesis")));
+		}
+	}
+
 	TArray<FVector> PathFeet;
 	TArray<float> PathDistances;
 
@@ -4894,6 +4962,8 @@ bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FV
 	FName BestFailure = FName(TEXT("NoValidAirborneTakeoffAnchor"));
 
 	float BestScore = TNumericLimits<float>::Max();
+
+	float BestDecisionScore = TNumericLimits<float>::Max();
 
 	float BestGroundTime = 0.f;
 
@@ -4973,6 +5043,8 @@ bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FV
 
 		const float Score = bExecutable ? GroundTime + ContactTime : TNumericLimits<float>::Max();
 
+		const float DecisionScore = bExecutable ? GetAirborneArcDecisionScore(AnchorCandidate,Score) : TNumericLimits<float>::Max();
+
 		UE_LOG(LogTemp, Display, TEXT(
 			"[AirborneExecutionTakeoffSearch] "
 			"RequestId=%s | "
@@ -4997,9 +5069,43 @@ bool UPokemonNavigationComponent::SearchAirborneExecutionTakeoffAnchors(const FV
 			bExecutable ? *FString::Printf(TEXT("%.3f"), Score) : TEXT("inf"),
 			*AnchorFailure.ToString());
 
-		if (bExecutable && Score < BestScore)
+		if (bExecutable)
+		{
+			UE_LOG(LogTemp,Display,TEXT(
+					"[AirborneArcCandidate] "
+					"RequestId=%s | "
+					"Anchor=%d | "
+					"Source=%s | "
+					"HorizontalSpan=%.1f | "
+					"LaunchSpeed2D=%.1f | "
+					"LaunchVz=%.1f | "
+					"ContactTime=%.3f | "
+					"ContactVz=%.1f | "
+					"GroundTime=%.3f | "
+					"TotalTime=%.3f | "
+					"PreferredArc=%d | "
+					"DecisionScore=%.3f"
+				),
+				*CurrentNavigationRequest.RequestId.ToString(),
+				Index,
+				*Anchor.Source.ToString(),
+				GetAirborneArcSpan(AnchorCandidate),
+				AnchorCandidate.FinalLaunchVelocity.Size2D(),
+				AnchorCandidate.FinalLaunchVelocity.Z,
+				AnchorCandidate.ContactTime,
+				AnchorCandidate.VelocityAtContact.Z,
+				GroundTime,
+				Score,
+				static_cast<int32>(IsPreferredAirborneArc(AnchorCandidate)),
+				DecisionScore
+			);
+		}
+
+		if (bExecutable && DecisionScore < BestDecisionScore)
 		{
 			BestScore = Score;
+
+			BestDecisionScore = DecisionScore;
 
 			BestGroundTime = GroundTime;
 
@@ -5711,12 +5817,16 @@ void UPokemonNavigationComponent::HandleJumpLinkReached(APokemonJumpNavLink* Lin
 		}
 		Requirement.StartFeetLocation = SupportedEntry;
 	}
+
 	Requirement.Circumstance = FMath::Abs(Requirement.VerticalSeparation()) > 1.f
 		? EPokemonTraversalCircumstance::VerticalAccess : EPokemonTraversalCircumstance::GapTraversal;
+
 	ActiveJumpLink = Link;
 	bPlayerMovePlanningOnly = true;
 	EvaluateTraversalRequirement(Requirement);
+
 	bTraversalPlanReady = LastTraversalCandidate.IsExecutable();
+	
 	if (IsCompositePlayerMove())
 	{
 		if (bTraversalPlanReady)
@@ -5735,6 +5845,7 @@ void UPokemonNavigationComponent::HandleJumpLinkReached(APokemonJumpNavLink* Lin
 			HoldCompositeFailure(LastTraversalCandidate.FailureReason);
 		}
 	}
+
 	// Unreal has already reached the Smart Link entry. Retire this path while retaining its parent.
 	CachedAIController->StopMovement();
 }

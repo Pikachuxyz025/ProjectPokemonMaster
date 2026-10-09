@@ -315,7 +315,8 @@ private:
 		EPokemonTraversalEvidence ForcedEvidence = EPokemonTraversalEvidence::NavigationFailure);
 
 	bool SearchAirborneExecutionTakeoffAnchors(const FVector& RequiredContactFeet, FName Trigger,
-		const UNavigationPath* GroundPath,FPokemonTraversalRequirement& OutRequirement,
+		const UNavigationPath* GroundPath,const FVector& GroundApproachGoal,
+		const FRotator& AttackFacing,FPokemonTraversalRequirement& OutRequirement,
 		const FPokemonAirborneExecutionProfile& AirborneExecutionProfile,
 		FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate, float* OutGroundTime = nullptr);
 public:

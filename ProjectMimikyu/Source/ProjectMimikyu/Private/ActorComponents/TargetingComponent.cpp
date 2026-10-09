@@ -1038,10 +1038,12 @@ ATrainerHUD* UTargetingComponent::GetTrainerHUD()
 		return OwnerTrainerHUD;
 
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+
 	if (!OwnerPawn)
 	{
 		return nullptr;
 	}
+
 	if (APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController()))
 	{
 		if (OwnerTrainerHUD = Cast<ATrainerHUD>(PC->GetHUD()))
@@ -1049,5 +1051,6 @@ ATrainerHUD* UTargetingComponent::GetTrainerHUD()
 			return OwnerTrainerHUD;
 		}
 	}
+
 	return nullptr;
 }

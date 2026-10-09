@@ -16,7 +16,7 @@ namespace
 {
 	TAutoConsoleVariable<int32> CVarPokemonJumpExecutionDebug(
 		TEXT("pokemon.Traversal.JumpExecutionDebug"), 0,
-		TEXT("Log Jump Execution 0.2 preparation/takeoff/landing and interruption events."), ECVF_Default);
+		TEXT("Log Jump Execution preparation, takeoff, airborne contact, landing and interruption events."), ECVF_Default);
 	constexpr float PendingLaunchTimeout = 0.5f;
 
 #if !UE_BUILD_SHIPPING
@@ -789,15 +789,46 @@ void UPokemonJumpExecutionComponent::FinishJump(bool bReachedDestination, FName 
 
 void UPokemonJumpExecutionComponent::LogLifecycle(const TCHAR* Event, FName Reason) const
 {
-	if (CVarPokemonJumpExecutionDebug.GetValueOnGameThread() > 0)
+	if (CVarPokemonJumpExecutionDebug.GetValueOnGameThread() <= 0)
 	{
-		UE_LOG(LogPokemonJumpExecution, Display,
-			TEXT("[Jump0.2] Event=%s | RequestId=%s | Owner=%s | State=%d | StartFeet=%s | DestinationFeet=%s | CurrentFeet=%s | Reason=%s"),
-			Event, *ActiveCandidate.ParentRequestId.ToString(), *GetNameSafe(PokemonOwner), static_cast<int32>(State),
-			*ActiveCandidate.StartFeetLocation.ToCompactString(), *ActiveCandidate.DestinationFeetLocation.ToCompactString(),
-			PokemonOwner && PokemonOwner->GetCharacterMovement()
-				? *PokemonOwner->GetCharacterMovement()->GetActorFeetLocation().ToCompactString() : TEXT("Unavailable"), *Reason.ToString());
+		return;
 	}
+
+	const bool bAirborneContact = ActiveContract == EPokemonJumpExecutionContract::AirborneContact;
+
+	FVector StartFeet = bAirborneContact ? ActiveAirborneCandidate.StartFeetLocation : ActiveCandidate.StartFeetLocation;
+	FVector GoalFeet = bAirborneContact ? ActiveAirborneCandidate.RequiredContactFeet : ActiveCandidate.DestinationFeetLocation;
+
+	const TCHAR* ContractName = bAirborneContact
+		? TEXT("AirborneContact")
+		: ActiveContract == EPokemonJumpExecutionContract::LandingTraversal
+		? TEXT("LandingTraversal")
+		: TEXT("None");
+
+	UE_LOG(LogPokemonJumpExecution, Display, TEXT(
+		"[Jump0.2] "
+		"Event=%s | "
+		"Contract=%s | "
+		"RequestId=%s | "
+		"Owner=%s | "
+		"State=%d | "
+		"StartFeet=%s | "
+		"GoalFeet=%s | "
+		"CurrentFeet=%s | "
+		"Reason=%s"
+	),
+		Event,
+		ContractName,
+		*GetParentRequestId().ToString(),
+		*GetNameSafe(PokemonOwner),
+		static_cast<int32>(State),
+		*StartFeet.ToCompactString(),
+		*GoalFeet.ToCompactString(),
+		PokemonOwner && PokemonOwner->GetCharacterMovement()
+		? *PokemonOwner->GetCharacterMovement()->GetActorFeetLocation().ToCompactString()
+		: TEXT("Unavailable"),
+		*Reason.ToString()
+	);
 }
 
 bool UPokemonJumpExecutionComponent::RevalidatePreparedAirborneExecution(FName& OutFailureReason) const
@@ -816,7 +847,7 @@ bool UPokemonJumpExecutionComponent::RevalidatePreparedAirborneExecution(FName& 
 	}
 
 	if (FVector::Dist(Movement->GetActorFeetLocation(), ActiveAirborneCandidate.StartFeetLocation)
-> FMath::Max(0.f, TakeoffPositionTolerance))
+			> FMath::Max(0.f, TakeoffPositionTolerance))
 	{
 		OutFailureReason = TEXT("TakeoffAnchorMoved");
 		return false;
@@ -829,7 +860,7 @@ bool UPokemonJumpExecutionComponent::RevalidatePreparedAirborneExecution(FName& 
 	const FPokemonJumpCapabilitySnapshot Current = CaptureCurrentCapabilitiesForReservedPlan(
 		ActiveAirborneCandidate.CapabilitySnapshot, LaunchDirection);
 
-	if (!FPokemonJumpSolver::CanExecuteWithCapabilities(ActiveAirborneCandidate, 
+	if (!FPokemonJumpSolver::CanExecuteWithCapabilities(ActiveAirborneCandidate,
 		Current, OutFailureReason))
 	{
 		return false;
