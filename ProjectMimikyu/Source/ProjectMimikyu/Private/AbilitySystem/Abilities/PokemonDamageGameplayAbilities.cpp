@@ -10,6 +10,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 
+#include "Engine/World.h"
+
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
@@ -87,6 +89,102 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	return Params;
 }
 
+
+bool UPokemonDamageGameplayAbilities::ConfirmAirborneMissAtActiveWindowEnd()
+{
+	APokemon_Parent* Pokemon = GetAvatarPokemon();
+
+	if (!Pokemon || !Pokemon->HasAuthority() || !IsActive())
+	{
+		return false;
+	}
+
+	UPokemonCommandComponent* Command = Pokemon->GetCommandComponent();
+
+	const FGuid CommandId = GetSequencedCommandId();
+
+	if (!Command || !Command->IsSequencedCommand(CommandId)
+		|| Command->HasSequencedContact(CommandId) || LastReportedWhiffCommandId == CommandId)
+	{
+		return false;
+	}
+
+	UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	if (!Movement || !Movement->IsFalling())
+	{
+		return false;
+	}
+
+	// At this point, the Blueprint must have completed
+	// the entire attack contact window
+	LastReportedWhiffCommandId = CommandId;
+
+	// Prototype floor prediction.
+	// This is advisory; actual OnLanded remains authoritative.
+
+	const FVector Start = Movement->GetActorFeetLocation() + FVector(0.f, 0.f, 5.f);
+
+	const FVector End = Start - FVector(0.f, 0.f, 2500.f);
+
+	FCollisionQueryParams QueryParams(SCENE_QUERY_STAT(PokemonAirborneMissLanding), false);
+
+	QueryParams.AddIgnoredActor(Pokemon);
+
+	FHitResult GroundHit;
+
+	const bool bTraceHit = Pokemon->GetWorld()->LineTraceSingleByChannel(GroundHit, Start, End, ECC_Visibility, QueryParams);
+
+	const bool bGroundFound = bTraceHit && Movement->IsWalkable(GroundHit);
+
+	float EstimatedTimeToLand = -01.f;
+
+	if (bGroundFound)
+	{
+		const float Height = FMath::Max(0.f, Movement->GetActorFeetLocation().Z - GroundHit.ImpactPoint.Z);
+
+		const float VerticalVelocity = Movement->Velocity.Z;
+
+		const float Gravity = FMath::Max(1.f, -Movement->GetGravityZ());
+
+		// Height = Vz * t -0.5 * g * t^2
+		// Solve for the future landing time t.
+
+		EstimatedTimeToLand = (VerticalVelocity
+			+ FMath::Sqrt(FMath::Square(VerticalVelocity)
+				+ 2.f * Gravity * Height)) / Gravity; // t = (Vz + sqrt(Vz^2 + 2 * g * h)) / g
+	}
+
+	const float MinimumUsefulRecoveryTime = 0.1f;
+
+	const float TimeUntilOrientationAllowed = PrototypeOrientationWindowDelay + MinimumUsefulRecoveryTime;
+
+	const bool bMayEnterAirborneRecovery = bCanRecoverMidair
+		&& (!bGroundFound || EstimatedTimeToLand > TimeUntilOrientationAllowed);
+
+	UE_LOG(LogTemp, Display, TEXT(
+		"[AirborneMiss] "
+		"CommandId=%s | "
+		"Pokemon=%s | "
+		"CanRecoverMidair=%d | "
+		"GroundFound=%d | "
+		"EstimatedLanding=%.3f | "
+		"RecoveryFeasible=%d | "
+		"Velocity=%s"
+	),
+		*CommandId.ToString(),
+		*GetNameSafe(Pokemon),
+		static_cast<int32>(bCanRecoverMidair),
+		static_cast<int32>(bGroundFound),
+		EstimatedTimeToLand,
+		static_cast<int32>(bMayEnterAirborneRecovery),
+		*Movement->Velocity.ToCompactString()
+	);
+
+	OnAirborneWhiffConfirmed(bMayEnterAirborneRecovery, bGroundFound, EstimatedTimeToLand);
+
+	return true;
+}
 
 float UPokemonDamageGameplayAbilities::GetPrimaryExecutionLeadTimeForPlanning() const
 {

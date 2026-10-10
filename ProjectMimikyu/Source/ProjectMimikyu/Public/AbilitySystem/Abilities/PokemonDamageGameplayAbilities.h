@@ -56,6 +56,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Execution|Airborne|Timing")
 	bool bUseFallbackMoveTimingForExecutionLeadTime = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Recovery|Airborne")
+	bool bCanRecoverMidair = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Recovery|Airborne")
+	float PrototypeOrientationWindowDelay = 0.20f;
+
+	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly,Category = "Combat|Recovery|Airborne")
+	bool ConfirmAirborneMissAtActiveWindowEnd();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Combat|Recovery|Airborne")
+	void OnAirborneWhiffConfirmed(bool bMayEnterAirborneRecovery, bool bGroundFound, float EstimatedTimeToLand);
 	/**
 	 * Resolves the time between AttackExecution activation and the
 	 * move's primary execution event.
@@ -152,4 +163,6 @@ protected:
 private:
 
 	FGameplayTag GetCooldownTag() const;
+
+	FGuid LastReportedWhiffCommandId;
 };

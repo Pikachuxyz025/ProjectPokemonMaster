@@ -331,6 +331,11 @@ bool UPokemonCommandComponent::IsSequencedCommand(FGuid CommandId) const
 	return bSequenceManaged && IsCommandActive() && CommandId.IsValid() && CommandId == ActiveTrainerCommandId;
 }
 
+bool UPokemonCommandComponent::HasSequencedContact(FGuid CommandId) const
+{
+	return IsSequencedCommand(CommandId) && bSequencedAttackConnected;
+}
+
 bool UPokemonCommandComponent::IsSequencedExecutionEnding() const
 {
 	const UPokemonGameplayAbilities* Ability = SequencedAbility.Get();

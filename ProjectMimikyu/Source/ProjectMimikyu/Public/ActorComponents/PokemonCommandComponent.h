@@ -33,14 +33,19 @@ public:
 	// Classification is independent of validation. Rejected melee never falls back to BT.
 	static bool IsSupportedSequencedMove(const UPokemonMoveDataAsset* Move);
 	UPokemonMoveDataAsset* ResolveMoveAtIndex(int32 MoveIndex, FName& OutReason) const;
+
 	FName ValidateSequencedCommand(UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target,
 		FGuid ReplacedOwnedCommandId = FGuid()) const;
+
 	FPokemonTrainerCommandSubmission ReserveSequencedCommand(UPokemonMoveDataAsset* Move,
 		const FPokemonCommandTarget& Target, FGuid ParentIntentId);
+
 	bool ExecuteSequencedCommand(FGuid CommandId);
 	bool CancelSequencedCommand(FGuid OwnedCommandId, FName Reason);
 	bool IsSequencedCommand(FGuid CommandId) const;
+	bool HasSequencedContact(FGuid CommandId) const;
 	bool IsSequencedExecutionEnding() const;
+
 	FGuid GetParentIntentId() const { return ParentIntentId; }
 	FPokemonTrainerCommandResolvedSignature OnTrainerCommandResolved;
 
