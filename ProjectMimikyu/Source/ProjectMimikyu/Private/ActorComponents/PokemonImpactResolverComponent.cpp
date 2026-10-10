@@ -391,48 +391,25 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 	{
 		switch (Result)
 		{
-		case EPokemonImpactResult::None:
-			break;
 		case EPokemonImpactResult::CleanHit:
-			break;
 		case EPokemonImpactResult::HeavyHit:
-			break;
-		case EPokemonImpactResult::GlancingHit:
-			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Brake;
-			OutResolution.AttackerHorizontalRetention = 0.6f;
-			OutResolution.AttackerVerticalRetention = 0.2f;
-			break;
-		case EPokemonImpactResult::Blocked:
-			break;
-		case EPokemonImpactResult::GuardBreak:
-			break;
-		case EPokemonImpactResult::NoSell:
-			break;
-		case EPokemonImpactResult::BounceOff:
-			break;
-		case EPokemonImpactResult::PushOff:
-			break;
-		case EPokemonImpactResult::Clash:
-			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Replace;
-			break;
-		case EPokemonImpactResult::ProjectileClash:
-			break;
-		case EPokemonImpactResult::BeamClash:
-			break;
+		case EPokemonImpactResult::Launch:
 		case EPokemonImpactResult::CounterHit:
 			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Brake;
 			OutResolution.AttackerHorizontalRetention = 0.15f;
 			OutResolution.AttackerVerticalRetention = 0.f;
 			break;
-		case EPokemonImpactResult::Stuffed:
+
+		case EPokemonImpactResult::GlancingHit:
+			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Brake;
+			OutResolution.AttackerHorizontalRetention = 0.6f;
+			OutResolution.AttackerVerticalRetention = 0.2f;
 			break;
-		case EPokemonImpactResult::Launch:
-			break;
-		case EPokemonImpactResult::WallBounce:
-			break;
-		case EPokemonImpactResult::GroundBounce:
-			break;
-		default:
+
+		case EPokemonImpactResult::BounceOff:
+		case EPokemonImpactResult::NoSell:
+		case EPokemonImpactResult::Clash:
+			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Replace;
 			break;
 		}
 	}
