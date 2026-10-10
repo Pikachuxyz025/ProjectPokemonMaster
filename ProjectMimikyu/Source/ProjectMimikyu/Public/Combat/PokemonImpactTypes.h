@@ -7,6 +7,14 @@
 class AActor;
 
 UENUM(BlueprintType)
+enum class EPokemonAttackerMotionPolicy :uint8
+{
+	Preserve,
+	Brake,
+	Replace
+};
+
+UENUM(BlueprintType)
 enum class EPokemonImpactResult : uint8
 {
 	None UMETA(DisplayName = "None"),
@@ -155,4 +163,13 @@ struct FPokemonImpactResolution
 
 	UPROPERTY(BlueprintReadWrite, Category = "Combat|Advantage")
 	bool bLeavesAttackerVulnerable = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat|Movement")
+	EPokemonAttackerMotionPolicy AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Preserve;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat|Movement")
+	float AttackerHorizontalRetention = 1.f;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Combat|Movement")
+	float AttackerVerticalRetention = 1.f;
 };
