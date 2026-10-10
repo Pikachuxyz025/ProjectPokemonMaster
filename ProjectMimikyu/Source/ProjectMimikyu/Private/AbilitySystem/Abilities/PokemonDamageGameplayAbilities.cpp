@@ -6,6 +6,10 @@
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
 #include "ActorComponents/MovesetComponent.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Character.h"
+
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
@@ -223,7 +227,13 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.bDefenderBraced = false
 		;
 	ContactContext.bDefenderAirborne = false;
-	ContactContext.bAttackerAirborne = false;
+	
+	const ACharacter* AttackingCharacter = Cast<ACharacter>(Attacker);
+
+	const UCharacterMovementComponent* AttackerMovement = AttackingCharacter 
+		? AttackingCharacter->GetCharacterMovement() : nullptr;
+
+	ContactContext.bAttackerAirborne = AttackerMovement && AttackerMovement->IsFalling();
 
 	OutImpactResolution = DefenderResolver->ResolveImpact(ContactContext);
 	// Real direct contact has been resolved. Latch before ApplyImpactResolution's

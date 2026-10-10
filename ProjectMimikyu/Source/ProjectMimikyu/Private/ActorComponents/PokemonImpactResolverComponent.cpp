@@ -93,10 +93,9 @@ FPokemonImpactResolution UPokemonImpactResolverComponent::ResolveAndApplyImpact(
 
 void UPokemonImpactResolverComponent::ApplyImpactResolution(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution)
 {
-	ApplyImpactImpulseToActor(
-		ContactContext.AttackingActor,
-		ImpactResolution.AttackerImpulse,
-		TEXT("Attacker")
+	ApplyAttackerPostImpactMotion(
+		ContactContext,
+		ImpactResolution
 	);
 
 	ApplyImpactImpulseToActor(
@@ -383,6 +382,60 @@ void UPokemonImpactResolverComponent::ConfigureResolutionForResult(FPokemonImpac
 		OutResolution.AdvantageTag = CombatTags.Combat_Advantage_NeutralReset;
 		break;
 	}
+
+	const bool bAirborneMelee = ContactContext.bAttackerAirborne
+		&& ContactContext.MoveActionTag.MatchesTagExact(
+			FPokemonGameplayTags::Get().PokemonMoves_MoveAction_Melee);
+
+	if (bAirborneMelee)
+	{
+		switch (Result)
+		{
+		case EPokemonImpactResult::None:
+			break;
+		case EPokemonImpactResult::CleanHit:
+			break;
+		case EPokemonImpactResult::HeavyHit:
+			break;
+		case EPokemonImpactResult::GlancingHit:
+			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Brake;
+			OutResolution.AttackerHorizontalRetention = 0.6f;
+			OutResolution.AttackerVerticalRetention = 0.2f;
+			break;
+		case EPokemonImpactResult::Blocked:
+			break;
+		case EPokemonImpactResult::GuardBreak:
+			break;
+		case EPokemonImpactResult::NoSell:
+			break;
+		case EPokemonImpactResult::BounceOff:
+			break;
+		case EPokemonImpactResult::PushOff:
+			break;
+		case EPokemonImpactResult::Clash:
+			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Replace;
+			break;
+		case EPokemonImpactResult::ProjectileClash:
+			break;
+		case EPokemonImpactResult::BeamClash:
+			break;
+		case EPokemonImpactResult::CounterHit:
+			OutResolution.AttackerMotionPolicy = EPokemonAttackerMotionPolicy::Brake;
+			OutResolution.AttackerHorizontalRetention = 0.15f;
+			OutResolution.AttackerVerticalRetention = 0.f;
+			break;
+		case EPokemonImpactResult::Stuffed:
+			break;
+		case EPokemonImpactResult::Launch:
+			break;
+		case EPokemonImpactResult::WallBounce:
+			break;
+		case EPokemonImpactResult::GroundBounce:
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void UPokemonImpactResolverComponent::ApplyImpactImpulseToActor(AActor* TargetActor, const FVector& Impulse, const TCHAR* RoleLabel) const
@@ -585,6 +638,117 @@ void UPokemonImpactResolverComponent::ApplyHitStopToActor(AActor* TargetActor, f
 		RoleLabel,
 		*GetNameSafe(TargetActor),
 		Duration
+	);
+}
+
+void UPokemonImpactResolverComponent::ApplyAttackerPostImpactMotion(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const
+{
+	AActor* Attacker = ContactContext.AttackingActor;
+
+	const bool bUseAirborneMotionPolicy = ContactContext.bAttackerAirborne
+		&& ContactContext.MoveActionTag.MatchesTagExact(
+			FPokemonGameplayTags::Get().PokemonMoves_MoveAction_Melee)
+		&& ImpactResolution.AttackerMotionPolicy != EPokemonAttackerMotionPolicy::Preserve;
+
+	// Preserve all existing grounded, projectile, and explicitly Preserve behavior
+	if (!bUseAirborneMotionPolicy)
+	{
+		ApplyImpactImpulseToActor(Attacker,
+			ImpactResolution.AttackerImpulse, TEXT("Attacker"));
+		return;
+	}
+
+
+	if (!IsValid(Attacker) || !Attacker->HasAuthority())
+	{
+		return;
+	}
+
+	if (const AActor* OwnerActor = GetOwner())
+	{
+		if (!OwnerActor->HasAuthority())
+		{
+			return;
+		}
+	}
+
+	ACharacter* Character = Cast<ACharacter>(Attacker);
+
+	UCharacterMovementComponent* Movement = Character ?
+		Character->GetCharacterMovement() : nullptr;
+
+	if (!Movement || !Movement->IsFalling())
+	{
+		// Physical state changed since contact was captured.
+		// Avoid applying an outdated airborne braking policy.
+		return;
+	}
+
+	const FVector IncomingVelocity = Movement->Velocity;
+	FVector RequestedVelocity = IncomingVelocity;
+
+	switch (ImpactResolution.AttackerMotionPolicy)
+	{
+	case EPokemonAttackerMotionPolicy::Brake:
+	{
+		const float HorizontalRetention = FMath::Clamp(
+			ImpactResolution.AttackerHorizontalRetention, 0.f, 1.f);
+		const float VerticalRetention = FMath::Clamp(
+			ImpactResolution.AttackerVerticalRetention, 0.f, 1.f);
+
+		RequestedVelocity.X *= HorizontalRetention;
+		RequestedVelocity.Y *= HorizontalRetention;
+
+		// Brake upward momentum, but don't erase an existing downward fall.
+		if (RequestedVelocity.Z > 0.f)
+		{
+			RequestedVelocity.Z *= VerticalRetention;
+		}
+		break;
+	}
+
+	case EPokemonAttackerMotionPolicy::Replace:
+		RequestedVelocity = ImpactResolution.AttackerImpulse;
+		break;
+
+	case EPokemonAttackerMotionPolicy::Preserve:
+		// Do nothing, preserve existing velocity.
+		break;
+
+	default:
+
+		UE_LOG(LogPokemonImpactResolver,Warning,
+			TEXT("[PokemonImpactResolver] Unknown AttackerMotionPolicy. Attacker=%s Policy=%d"),
+			*GetNameSafe(Attacker),
+			static_cast<int32>(ImpactResolution.AttackerMotionPolicy)
+		);
+		return;
+
+	}
+
+	// A zero launch vector is not a reliable way to request a complete stop
+	// through CharacterMovement's pending-launch mechanism.
+	if (RequestedVelocity.IsNearlyZero())
+	{
+		Movement->StopMovementImmediately();
+	}
+	else
+	{
+		Character->LaunchCharacter(RequestedVelocity, true, true);
+	}
+
+	UE_LOG(LogPokemonImpactResolver, Display, TEXT(
+		"[AirborneHitMotion] "
+		"Attacker=%s | Result=%s | Policy=%s | "
+		"Incoming=%s | Requested=%s"
+	),
+		*GetNameSafe(Attacker),
+		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(
+			static_cast<int64>(ImpactResolution.ImpactResult)),
+		*StaticEnum<EPokemonAttackerMotionPolicy>()->GetNameStringByValue(
+			static_cast<int64>(ImpactResolution.AttackerMotionPolicy)),
+		*IncomingVelocity.ToCompactString(),
+		*RequestedVelocity.ToCompactString()
 	);
 }
 

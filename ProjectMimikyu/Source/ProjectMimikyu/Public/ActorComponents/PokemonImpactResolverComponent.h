@@ -122,4 +122,6 @@ private:
 	void ApplyImpactHitStop(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
 
 	void ApplyHitStopToActor(AActor* TargetActor, float Duration, const TCHAR* RoleLabel) const;
+
+	void ApplyAttackerPostImpactMotion(const FPokemonMoveContactContext& ContactContext, const FPokemonImpactResolution& ImpactResolution) const;
 };
