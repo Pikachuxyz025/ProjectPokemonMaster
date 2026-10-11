@@ -246,6 +246,8 @@ bool UPokemonDamageGameplayAbilities::ConfirmAirborneMissAtActiveWindowEnd()
 	const bool bMayEnterAirborneRecovery = bCanRecoverMidair
 		&& (!bGroundFound || EstimatedTimeToLand > TimeUntilOrientationAllowed);
 
+	bLastWhiffRecoverable = bMayEnterAirborneRecovery;
+
 	UE_LOG(LogTemp, Display, TEXT(
 		"[AirborneMiss] "
 		"CommandId=%s | "
