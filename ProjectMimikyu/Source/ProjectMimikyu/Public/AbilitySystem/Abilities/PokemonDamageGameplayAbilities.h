@@ -184,7 +184,7 @@ protected:
 
 private:
 
-	void StopAirborneWhiffRecovery();
+	void StopAirborneWhiffRecovery(bool bKeepLandingIntent = false);
 	void FinishAirborneWhiffRecovery(FName Reason);
 
 private:

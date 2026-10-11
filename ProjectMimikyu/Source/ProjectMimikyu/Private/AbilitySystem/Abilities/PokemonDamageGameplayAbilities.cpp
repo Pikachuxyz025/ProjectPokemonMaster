@@ -6,7 +6,7 @@
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
 #include "ActorComponents/MovesetComponent.h"
-
+#include "ActorComponents/PokemonLandingOrientationComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 
@@ -157,6 +157,14 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 			TEXT("AirborneWhiffRecovery"));
 
 	if (!AirborneRecoveryTickTask)
+	{
+		StopAirborneWhiffRecovery();
+		return false;
+	}
+
+	UPokemonLandingOrientationComponent* Landing = Pokemon->GetPokemonLandingOrientationComponent();
+
+	if (!Landing || !Landing->ArmWhiffFacing(CommandId, Command->GetCommandTarget()))
 	{
 		StopAirborneWhiffRecovery();
 		return false;
@@ -744,8 +752,26 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 	}
 }
 
-void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery()
+void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery(bool bKeepLandingIntent)
 {
+	/**
+	* When bKeepLandingIntent is false, cancel the matching command's pending landing-facing intention before resetting RecoveryCommandId. 
+	* This covers cancellation, failed task initialization, and invalidated command ownership.
+	*/
+
+	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
+
+
+	if (!bKeepLandingIntent && RecoveryPokemon.IsValid() && RecoveryCommandId.IsValid())
+	{
+		if (Pokemon)
+		{
+			if (auto* Landing = Pokemon->GetLandingOrientationComponent())
+			{
+				Landing->CancelLandingFacing(RecoveryCommandId);
+			}
+		}
+	}
 
 	if (AirborneRecoveryTickTask)
 	{
@@ -754,7 +780,7 @@ void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery()
 	}
 	if (bAirborneRecoveryActive)
 	{
-		if (APokemon_Parent* Pokemon = RecoveryPokemon.Get())
+		if (Pokemon)
 		{
 			if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
 			{
@@ -784,13 +810,22 @@ void UPokemonDamageGameplayAbilities::FinishAirborneWhiffRecovery(FName Reason)
 	}
 
 	const FGuid FinishedCommandId = RecoveryCommandId;
+	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
+	
+	StopAirborneWhiffRecovery();
+
+	if (Pokemon)
+	{
+		if(auto* Landing=Pokemon->GetLandingOrientationComponent())
+		{
+			Landing->ReleaseAfterAirborneRecovery(FinishedCommandId);
+		}
+	}
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[AirborneRecovery] Finished | CommandId=%s | Reason=%s"),
 		*FinishedCommandId.ToString(),
 		*Reason.ToString());
-
-	StopAirborneWhiffRecovery();
 
 	if (IsActive())
 	{

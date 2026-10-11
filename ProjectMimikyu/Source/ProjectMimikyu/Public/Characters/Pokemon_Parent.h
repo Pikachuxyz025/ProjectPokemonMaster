@@ -44,6 +44,7 @@ class UPokemonFieldPresenceComponent;
 class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
 class UPokemonCombatStateComponent;
+class UPokemonLandingOrientationComponent;
 class UPokemonHitStopComponent;
 class UPokemonStaminaComponent;
 class UTargetableComponent;
@@ -472,6 +473,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonNavigationComponent> NavigationComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonLandingOrientationComponent> LandingOrientationComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -553,6 +557,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|JumpExecution")
 	UPokemonJumpExecutionComponent* GetJumpExecutionComponent() const { return JumpExecutionComponent; }
+
+	UFUNCTION(BlueprintPure, Category = "Pokemon|LandingOrientation")
+	UPokemonLandingOrientationComponent* GetLandingOrientationComponent() const { return LandingOrientationComponent; }
 
 	UFUNCTION(BlueprintCallable,BlueprintPure)
 	FVector GetDodgeDirection() const;
