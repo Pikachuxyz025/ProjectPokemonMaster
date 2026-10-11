@@ -12,6 +12,8 @@
 
 #include "Engine/World.h"
 
+#include "TimerManager.h"
+
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
@@ -89,6 +91,79 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	return Params;
 }
 
+void UPokemonDamageGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	StopAirborneWhiffRecovery();
+
+	Super::EndAbility(Handle,
+		ActorInfo,
+		ActivationInfo,
+		bReplicateEndAbility,
+		bWasCancelled);
+}
+
+
+bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
+{
+	APokemon_Parent* Pokemon = GetAvatarPokemon();
+
+	if (!Pokemon || !Pokemon->HasAuthority() || !IsActive()||bAirborneRecoveryActive)
+	{
+		return false;
+	}
+
+	const FGuid CommandId = GetSequencedCommandId();
+
+	UPokemonCommandComponent* Command =Pokemon->GetCommandComponent();
+
+	UCharacterMovementComponent* Movement =Pokemon->GetCharacterMovement();
+
+	if (!Command || !Movement ||!Movement->IsFalling() ||
+		!Command->IsSequencedCommand(CommandId) ||
+		LastReportedWhiffCommandId != CommandId ||
+		!bLastWhiffRecoverable)
+	{
+		return false;
+	}
+
+	UWorld* World = Pokemon->GetWorld();
+	if (!World)
+	{
+		return false;
+	}
+
+	RecoveryPokemon = Pokemon;
+	RecoveryCommandId = CommandId;
+
+	RecoveryStartTime = World->GetTimeSeconds();
+	PreviousRecoveryTickTime = RecoveryStartTime;
+
+	LockedRecoveryYaw = Pokemon->GetActorRotation().Yaw;
+
+	bSavedControllerYaw = Pokemon->bUseControllerRotationYaw;
+	bSavedOrientToMovement = Movement->bOrientRotationToMovement;
+	bSavedControllerDesiredRotation = Movement->bUseControllerDesiredRotation;
+
+	Pokemon->bUseControllerRotationYaw = false;
+	Movement->bOrientRotationToMovement = false;
+	Movement->bUseControllerDesiredRotation = false; 
+
+	bOrientationUnlocked = false;
+	bAirborneRecoveryActive = true;
+
+	World->GetTimerManager().SetTimer(
+		AirborneRecoveryTimer, 
+		this, &UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery,
+		0.033f,
+		true);
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[AirborneRecovery] Start | CommandId=%s | Yaw=%.1f"),
+		*CommandId.ToString(),
+		LockedRecoveryYaw);
+
+	return true;
+}
 
 bool UPokemonDamageGameplayAbilities::ConfirmAirborneMissAtActiveWindowEnd()
 {
@@ -561,6 +636,155 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 	}
 
 	return true;
+}
+
+void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery()
+{
+	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
+
+	if (!bAirborneRecoveryActive || !Pokemon || !IsActive())
+	{
+		StopAirborneWhiffRecovery();
+		return;
+	}
+
+	UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	UPokemonCommandComponent* Command = Pokemon->GetCommandComponent();
+
+	if (!Movement || !Command ||
+		!Command->IsSequencedCommand(RecoveryCommandId))
+	{
+		StopAirborneWhiffRecovery();
+		return;
+	}
+
+    UWorld* World = Pokemon->GetWorld();
+    if (!World)
+    {
+        StopAirborneWhiffRecovery();
+        return;
+    }
+
+	const float Now = World->GetTimeSeconds();
+	const float DeltaSeconds = FMath::Max(0.f, Now - PreviousRecoveryTickTime);
+
+	PreviousRecoveryTickTime = Now;
+
+	const float Elapsed = Now - RecoveryStartTime;
+
+	if(!Movement->IsFalling())
+	{
+		FinishAirborneWhiffRecovery(TEXT("LandedEarly"));
+		return;
+	}
+
+	FRotator Rotation = Pokemon->GetActorRotation();
+
+	if (Elapsed < PrototypeOrientationWindowDelay)
+	{
+		Rotation.Yaw = LockedRecoveryYaw;
+		Pokemon->SetActorRotation(Rotation);
+		return;
+	}
+
+	if (!bOrientationUnlocked)
+	{
+		bOrientationUnlocked = true;
+
+		UE_LOG(LogTemp, Display,
+			TEXT("[AirborneRecovery] OrientationUnlocked | CommandId=%s"),
+			*RecoveryCommandId.ToString());
+	}
+
+	FVector TargetLocation;
+
+	if (Command->ResolveCurrentCommandTargetLocation(TargetLocation))
+	{
+		FVector ToTarget = TargetLocation - Pokemon->GetActorLocation();
+
+		ToTarget.Z = 0.f;
+
+		if (!ToTarget.IsNearlyZero())
+		{
+			const float DesiredYaw=ToTarget.Rotation().Yaw;
+			const float PreviousYaw = Rotation.Yaw;
+
+			Rotation.Yaw = FMath::FixedTurn(
+				PreviousYaw,
+				DesiredYaw,
+				PrototypeYawTurnSpeed * DeltaSeconds
+			);
+
+			Pokemon->SetActorRotation(Rotation);
+
+			UE_LOG(LogTemp, Verbose,
+				TEXT("[AirborneRecoveryTurn] Current=%.1f | Target=%.1f | New=%.1f | Velocity=%s"),
+				PreviousYaw,
+				DesiredYaw,
+				Rotation.Yaw,
+				*Movement->Velocity.ToCompactString());
+		}
+	}
+
+	const float TotalDuration = FMath::Max(PrototypeOrientationWindowDelay,
+		PrototypeAirborneRecoveryDuration);
+	
+	if (Elapsed >= TotalDuration)
+	{
+		FinishAirborneWhiffRecovery(TEXT("Completed"));
+	}
+}
+
+void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery()
+{
+	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
+
+	if (Pokemon)
+	{
+		if (UWorld* World = Pokemon->GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(AirborneRecoveryTimer);
+		}
+
+		if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
+		{
+			Pokemon->bUseControllerRotationYaw = bSavedControllerYaw;
+
+			Movement->bOrientRotationToMovement = bSavedOrientToMovement;
+
+			Movement->bUseControllerDesiredRotation = bSavedControllerDesiredRotation;
+		}
+	}
+
+	bAirborneRecoveryActive = false;
+	bOrientationUnlocked = false;
+	bLastWhiffRecoverable = false;
+
+	RecoveryCommandId.Invalidate();
+	RecoveryPokemon.Reset();
+}
+
+void UPokemonDamageGameplayAbilities::FinishAirborneWhiffRecovery(FName Reason)
+{
+	if (!bAirborneRecoveryActive)
+	{
+		return;
+	}
+
+	const FGuid FinishedCommandId = RecoveryCommandId;
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[AirborneRecovery] Finished | CommandId=%s | Reason=%s"),
+		*FinishedCommandId.ToString(),
+		*Reason.ToString());
+
+	StopAirborneWhiffRecovery();
+
+	if (IsActive())
+	{
+		EndSequencedExecution(FinishedCommandId, false);
+	}
 }
 
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()

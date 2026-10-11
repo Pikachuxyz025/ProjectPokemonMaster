@@ -23,6 +23,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
+	virtual void EndAbility(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo,
+		bool bReplicateEndAbility,
+		bool bWasCancelled
+	) override;
+
 	UPROPERTY(EditAnywhere, meta = (Categories = "PokemonMoves.MoveType"))
 	FGameplayTag MoveTypeTag;
 
@@ -61,6 +69,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Recovery|Airborne")
 	float PrototypeOrientationWindowDelay = 0.20f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Recovery|Airborne",meta = (ClampMin = "0.0"))
+	float PrototypeAirborneRecoveryDuration = 0.65f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Recovery|Airborne", meta = (ClampMin = "0.0"))
+	float PrototypeYawTurnSpeed = 540.f;
+
+	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly,Category = "Combat|Recovery|Airborne")
+	bool BeginAirborneWhiffRecovery();
 
 	UFUNCTION(BlueprintCallable,BlueprintAuthorityOnly,Category = "Combat|Recovery|Airborne")
 	bool ConfirmAirborneMissAtActiveWindowEnd();
@@ -162,7 +179,31 @@ protected:
 
 private:
 
+	void TickAirborneWhiffRecovery();
+	void StopAirborneWhiffRecovery();
+	void FinishAirborneWhiffRecovery(FName Reason);
+
+private:
+
 	FGameplayTag GetCooldownTag() const;
 
 	FGuid LastReportedWhiffCommandId;
+	FGuid RecoveryCommandId;
+
+	FTimerHandle AirborneRecoveryTimer;
+
+	TWeakObjectPtr<APokemon_Parent> RecoveryPokemon;
+
+	float RecoveryStartTime = 0.f;
+	float PreviousRecoveryTickTime = 0.f;
+	float LockedRecoveryYaw = 0.f;
+
+	bool bAirborneRecoveryActive = false;
+	bool bLastWhiffRecoverable = false;
+	bool bOrientationUnlocked = false;
+
+	bool bSavedControllerYaw = false;
+	bool bSavedOrientToMovement = false;
+	bool bSavedControllerDesiredRotation = false;
+
 };
