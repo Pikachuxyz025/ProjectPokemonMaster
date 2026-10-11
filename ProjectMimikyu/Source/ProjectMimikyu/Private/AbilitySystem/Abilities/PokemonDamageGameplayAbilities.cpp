@@ -19,6 +19,7 @@
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "Interfaces/PokemonCombatInterface.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AbilityTasks/AT_TickTask.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
@@ -135,9 +136,6 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 	RecoveryPokemon = Pokemon;
 	RecoveryCommandId = CommandId;
 
-	RecoveryStartTime = World->GetTimeSeconds();
-	PreviousRecoveryTickTime = RecoveryStartTime;
-
 	LockedRecoveryYaw = Pokemon->GetActorRotation().Yaw;
 
 	bSavedControllerYaw = Pokemon->bUseControllerRotationYaw;
@@ -151,11 +149,22 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 	bOrientationUnlocked = false;
 	bAirborneRecoveryActive = true;
 
-	World->GetTimerManager().SetTimer(
-		AirborneRecoveryTimer, 
-		this, &UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery,
-		0.033f,
-		true);
+	RecoveryElapsedTime = 0.f;
+
+	AirborneRecoveryTickTask =
+		UAT_TickTask::CreateTickTaskNode(
+			this,
+			TEXT("AirborneWhiffRecovery"));
+
+	if (!AirborneRecoveryTickTask)
+	{
+		StopAirborneWhiffRecovery();
+		return false;
+	}
+
+	AirborneRecoveryTickTask->OnTick.AddDynamic(this, &ThisClass::TickAirborneWhiffRecovery);
+
+	AirborneRecoveryTickTask->ReadyForActivation();
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[AirborneRecovery] Start | CommandId=%s | Yaw=%.1f"),
@@ -638,8 +647,12 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 	return true;
 }
 
-void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery()
+void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 {
+	RecoveryElapsedTime += FMath::Max(0.f, DeltaTime);
+
+	const float Elapsed = RecoveryElapsedTime;
+
 	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
 
 	if (!bAirborneRecoveryActive || !Pokemon || !IsActive())
@@ -665,13 +678,6 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery()
         StopAirborneWhiffRecovery();
         return;
     }
-
-	const float Now = World->GetTimeSeconds();
-	const float DeltaSeconds = FMath::Max(0.f, Now - PreviousRecoveryTickTime);
-
-	PreviousRecoveryTickTime = Now;
-
-	const float Elapsed = Now - RecoveryStartTime;
 
 	if(!Movement->IsFalling())
 	{
@@ -713,7 +719,7 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery()
 			Rotation.Yaw = FMath::FixedTurn(
 				PreviousYaw,
 				DesiredYaw,
-				PrototypeYawTurnSpeed * DeltaSeconds
+				PrototypeYawTurnSpeed * DeltaTime
 			);
 
 			Pokemon->SetActorRotation(Rotation);
@@ -742,9 +748,10 @@ void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery()
 
 	if (Pokemon)
 	{
-		if (UWorld* World = Pokemon->GetWorld())
+		if (AirborneRecoveryTickTask)
 		{
-			World->GetTimerManager().ClearTimer(AirborneRecoveryTimer);
+			AirborneRecoveryTickTask->EndTask();
+			AirborneRecoveryTickTask = nullptr;
 		}
 
 		if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())

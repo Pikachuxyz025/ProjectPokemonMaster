@@ -11,9 +11,8 @@
 #include "Combat/PokemonMeleeContact.h"
 #include "PokemonDamageGameplayAbilities.generated.h"
 
-/**
- * 
- */
+class UAT_TickTask;
+
 UCLASS()
 class PROJECTMIMIKYU_API UPokemonDamageGameplayAbilities : public UPokemonGameplayAbilities
 {
@@ -159,7 +158,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach")
 	FPokemonMeleeApproachProfile MeleeApproachProfile;
 
+	UPROPERTY(Transient)
+	TObjectPtr<UAT_TickTask> AirborneRecoveryTickTask = nullptr;
 
+	float RecoveryElapsedTime = 0.f;
+
+	UFUNCTION()
+	void TickAirborneWhiffRecovery(float DeltaTime);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat|Melee|Approach", meta = (ClampMin = "0.0"))
 	float ApproachTimeout = 3.f;
@@ -179,7 +184,7 @@ protected:
 
 private:
 
-	void TickAirborneWhiffRecovery();
+	void TickAirborneWhiffRecovery(float DeltaTime);
 	void StopAirborneWhiffRecovery();
 	void FinishAirborneWhiffRecovery(FName Reason);
 
@@ -190,12 +195,8 @@ private:
 	FGuid LastReportedWhiffCommandId;
 	FGuid RecoveryCommandId;
 
-	FTimerHandle AirborneRecoveryTimer;
-
 	TWeakObjectPtr<APokemon_Parent> RecoveryPokemon;
 
-	float RecoveryStartTime = 0.f;
-	float PreviousRecoveryTickTime = 0.f;
 	float LockedRecoveryYaw = 0.f;
 
 	bool bAirborneRecoveryActive = false;
