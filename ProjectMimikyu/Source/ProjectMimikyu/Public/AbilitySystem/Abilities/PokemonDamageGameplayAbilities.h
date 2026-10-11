@@ -184,7 +184,6 @@ protected:
 
 private:
 
-	void TickAirborneWhiffRecovery(float DeltaTime);
 	void StopAirborneWhiffRecovery();
 	void FinishAirborneWhiffRecovery(FName Reason);
 

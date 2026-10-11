@@ -724,7 +724,7 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 
 			Pokemon->SetActorRotation(Rotation);
 
-			UE_LOG(LogTemp, Verbose,
+			UE_LOG(LogTemp, Display,
 				TEXT("[AirborneRecoveryTurn] Current=%.1f | Target=%.1f | New=%.1f | Velocity=%s"),
 				PreviousYaw,
 				DesiredYaw,
@@ -744,29 +744,31 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 
 void UPokemonDamageGameplayAbilities::StopAirborneWhiffRecovery()
 {
-	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
 
-	if (Pokemon)
+	if (AirborneRecoveryTickTask)
 	{
-		if (AirborneRecoveryTickTask)
+		AirborneRecoveryTickTask->EndTask();
+		AirborneRecoveryTickTask = nullptr;
+	}
+	if (bAirborneRecoveryActive)
+	{
+		if (APokemon_Parent* Pokemon = RecoveryPokemon.Get())
 		{
-			AirborneRecoveryTickTask->EndTask();
-			AirborneRecoveryTickTask = nullptr;
-		}
+			if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
+			{
+				Pokemon->bUseControllerRotationYaw = bSavedControllerYaw;
 
-		if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
-		{
-			Pokemon->bUseControllerRotationYaw = bSavedControllerYaw;
+				Movement->bOrientRotationToMovement = bSavedOrientToMovement;
 
-			Movement->bOrientRotationToMovement = bSavedOrientToMovement;
-
-			Movement->bUseControllerDesiredRotation = bSavedControllerDesiredRotation;
+				Movement->bUseControllerDesiredRotation = bSavedControllerDesiredRotation;
+			}
 		}
 	}
 
 	bAirborneRecoveryActive = false;
 	bOrientationUnlocked = false;
 	bLastWhiffRecoverable = false;
+	RecoveryElapsedTime = 0.f;
 
 	RecoveryCommandId.Invalidate();
 	RecoveryPokemon.Reset();
