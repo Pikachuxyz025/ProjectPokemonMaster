@@ -41,6 +41,7 @@ class UPokemonCommandComponent;
 class UPokemonIntentSequenceComponent;
 class UPokemonOwnershipComponent;
 class UPokemonFieldPresenceComponent;
+class UMovesetComponent;
 class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
 class UPokemonCombatStateComponent;
@@ -322,9 +323,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UPokemonDataAsset* PokemonDataAsset;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	class UMovesetComponent* MovesetComponent;
-
 	UFUNCTION(BlueprintCallable)
 	void SetMovementSpeed(EMovementSpeed NewMovementSpeed, float MoveMultiplier = 1.f);
 
@@ -476,6 +474,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonLandingOrientationComponent> LandingOrientationComponent;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UMovesetComponent> MovesetComponent;
+
 	FPokemonInfo SetupPokemonInfo();
 
 	TArray<AActor*>IgnoreActors;
@@ -547,6 +548,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Intent")
 	UPokemonIntentSequenceComponent* GetIntentSequenceComponent() const { return IntentSequenceComponent; }
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Moveset")
 	UMovesetComponent* GetMovesetComponent() const { return MovesetComponent; }
 
 	UFUNCTION(BlueprintPure,Category = "Combat|Impact")

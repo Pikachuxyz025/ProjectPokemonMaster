@@ -30,7 +30,7 @@ bool UPokemonLandingOrientationComponent::ArmWhiffFacing(FGuid CommandId, const 
 
 	ArmedWorldTime = GetWorld()->GetTimeSeconds();
 	SetComponentTickEnabled(true);
-	return false;
+	return true;
 }
 
 void UPokemonLandingOrientationComponent::ReleaseAfterAirborneRecovery(FGuid CommandId)
@@ -40,6 +40,22 @@ void UPokemonLandingOrientationComponent::ReleaseAfterAirborneRecovery(FGuid Com
 		bAirborneOwnsYaw = false;
 		TryBeginGroundedPivot();
 	}
+}
+
+void UPokemonLandingOrientationComponent::CancelLandingFacing(FGuid ExpectedCommandId)
+{
+	// verify the expected command ID,
+	// release the pending target,
+	// restore rotation settings if a pivot owns them,
+	// and disable component ticking
+	if (ExpectedCommandId.IsValid() && ExpectedCommandId != SourceCommandId)
+	{
+		return;
+	}
+
+	ReleaseAfterAirborneRecovery(SourceCommandId);
+
+
 }
 
 
@@ -60,6 +76,10 @@ void UPokemonLandingOrientationComponent::BeginPlay()
 	}
 }
 
+void UPokemonLandingOrientationComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+}
+
 
 // Called every frame
 void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -68,10 +88,27 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 
 	APokemon_Parent* Pokemon = PokemonOwner.Get();
 
-	if (!Pokemon)
+	if (!Pokemon||!bArmed)
 	{
 		return;
 	}
+
+	// The airborne Gameplay Ability still controls orientation,
+	// or the grounded pivot has not yet begun
+	if (bAirborneOwnsYaw || !bPivotActive)
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	if (!Movement || !Movement->IsMovingOnGround())
+	{
+		CancelLandingFacing(SourceCommandId);
+		return;
+	}
+
+	PivotElapsedTime += FMath::Max(0.f, DeltaTime);
 
 	FVector TargetLocation;
 
@@ -126,7 +163,15 @@ void UPokemonLandingOrientationComponent::HandleMovementModeChanged(ACharacter* 
 
 void UPokemonLandingOrientationComponent::TryBeginGroundedPivot()
 {
+	if (!bArmed || !bLandingObserved || bAirborneOwnsYaw || bPivotActive)
+	{
+		return;
+	}
+}
 
+bool UPokemonLandingOrientationComponent::ResolveFacingTarget(FVector& OutLocation) const
+{
+	return false;
 }
 
 

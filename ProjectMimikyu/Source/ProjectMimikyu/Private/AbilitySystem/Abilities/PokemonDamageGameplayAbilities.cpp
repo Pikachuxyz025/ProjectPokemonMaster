@@ -162,7 +162,7 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 		return false;
 	}
 
-	UPokemonLandingOrientationComponent* Landing = Pokemon->GetPokemonLandingOrientationComponent();
+	UPokemonLandingOrientationComponent* Landing = Pokemon->GetLandingOrientationComponent();
 
 	if (!Landing || !Landing->ArmWhiffFacing(CommandId, Command->GetCommandTarget()))
 	{
@@ -812,7 +812,7 @@ void UPokemonDamageGameplayAbilities::FinishAirborneWhiffRecovery(FName Reason)
 	const FGuid FinishedCommandId = RecoveryCommandId;
 	APokemon_Parent* Pokemon = RecoveryPokemon.Get();
 	
-	StopAirborneWhiffRecovery();
+	StopAirborneWhiffRecovery(true);
 
 	if (Pokemon)
 	{
