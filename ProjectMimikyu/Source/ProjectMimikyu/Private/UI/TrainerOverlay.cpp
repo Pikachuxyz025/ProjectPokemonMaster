@@ -400,7 +400,7 @@ TMap<EDirectionPoint, UPokemonMoveDataAsset*> UTrainerOverlay::SetupMovesetOfAct
 	if (!OwnerCharacter || !OwnerCharacter->GetCurrentPokemon())
 		return NewMoveset;
 	APokemon_Parent* CurrentPokemon = OwnerCharacter->GetCurrentPokemon();
-	UMovesetComponent* PokemonMoveset = CurrentPokemon->MovesetComponent;
+	UMovesetComponent* PokemonMoveset = CurrentPokemon->GetMovesetComponent();
 	for (int32 i = 0; i < PokemonMoveset->CurrentPokemonMoves.Num(); i++)
 	{
 		EDirectionPoint GamepadDirection = static_cast<EDirectionPoint>(i);
