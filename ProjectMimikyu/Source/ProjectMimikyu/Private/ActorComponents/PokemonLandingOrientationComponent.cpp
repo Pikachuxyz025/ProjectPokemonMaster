@@ -112,6 +112,13 @@ void UPokemonLandingOrientationComponent::BeginPlay()
 
 void UPokemonLandingOrientationComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (APokemon_Parent* Pokemon = PokemonOwner.Get())
+	{
+		Pokemon->LandedDelegate.RemoveDynamic(this, &UPokemonLandingOrientationComponent::HandleLanded);
+		Pokemon->MovementModeChangedDelegate.RemoveDynamic(this, &UPokemonLandingOrientationComponent::HandleMovementModeChanged);
+	}
+	CancelLandingFacing();
+	Super::EndPlay(EndPlayReason);
 }
 
 
@@ -135,6 +142,21 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 	// or the grounded pivot has not yet begun
 	if (bAirborneOwnsYaw || !bPivotActive)
 	{
+		const UWorld* World = GetWorld();
+
+		if (World && PendingFacingTimeout > 0.f)
+		{
+			const float TimeWaiting = World->GetTimeSeconds() - ArmedWorldTime;
+
+			if (TimeWaiting >= PendingFacingTimeout)
+			{
+				UE_LOG(LogTemp, Display, TEXT("[LandingOrientation] PendingTimeout | CommandId=%s"),
+					*SourceCommandId.ToString());
+
+				CancelLandingFacing(SourceCommandId);
+			}
+		} 
+	
 		return;
 	}
 
@@ -177,7 +199,16 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 					TEXT("[LandingOrientation] PivotFinished | Reason=Aligned"));
 
 				CancelLandingFacing(SourceCommandId);
+				return;
 			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Display,
+				TEXT("[LandingOrientation] PivotCancelled | Reason=TargetLost"));
+
+			CancelLandingFacing(SourceCommandId);
+			return;
 		}
 	}
 
