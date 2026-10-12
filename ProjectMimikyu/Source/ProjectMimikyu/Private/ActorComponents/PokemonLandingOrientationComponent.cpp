@@ -114,6 +114,12 @@ void UPokemonLandingOrientationComponent::EndPlay(const EEndPlayReason::Type End
 {
 }
 
+
+//
+// Custom summary:
+// The tick component function is current being used to pivot the Pokemon's rotation to face a target after landing.
+// Once the pivot is complete, or if the pivot times out, the component will release control back to the character movement component.
+//
 void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
