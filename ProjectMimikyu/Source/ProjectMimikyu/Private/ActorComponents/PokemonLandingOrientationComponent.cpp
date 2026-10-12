@@ -2,6 +2,7 @@
 
 
 #include "ActorComponents/PokemonLandingOrientationComponent.h"
+#include "ActorComponents/TargetableComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -42,20 +43,53 @@ void UPokemonLandingOrientationComponent::ReleaseAfterAirborneRecovery(FGuid Com
 	}
 }
 
+//
+// Custom summary:
+// The cancel landing facing function clears the component's state
+// and restores the Pokemon's rotation ownership if it was previously acquired.
+// It'll also disable ticking to prevent further updates until a new command is issued.
+//
 void UPokemonLandingOrientationComponent::CancelLandingFacing(FGuid ExpectedCommandId)
 {
-	// verify the expected command ID,
-	// release the pending target,
-	// restore rotation settings if a pivot owns them,
-	// and disable component ticking
+	// 1. If the caller is expecting a specific command, ignore if it doesn't match
+	// Only cancel the intended command.
 	if (ExpectedCommandId.IsValid() && ExpectedCommandId != SourceCommandId)
 	{
 		return;
 	}
 
-	ReleaseAfterAirborneRecovery(SourceCommandId);
+	// 2. Restore rotation owneship if we aquired it
+	if (bPivotActive)
+	{
+		if (APokemon_Parent* Pokemon = PokemonOwner.Get())
+		{
+			Pokemon->bUseControllerRotationYaw = bSavedControllerYaw;
+			if (UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement())
+			{
+				Movement->bOrientRotationToMovement = bSavedOrientToMovement;
+				Movement->bUseControllerDesiredRotation = bSavedDesiredRotation;
+			}
+		}
+	}
 
+	// 3. Clear our runtime state
+	bPivotActive = false;
+	bArmed = false;
+	bAirborneOwnsYaw = false;
+	bLandingObserved = false;
+	bHasFixedTarget = false;
 
+	FacingTargetActor.Reset();
+	FacingTargetPointTag = FGameplayTag();
+	FixedTargetLocation = FVector::ZeroVector;
+
+	SourceCommandId.Invalidate();
+
+	PivotElapsedTime = 0.f;
+	ArmedWorldTime = 0.f;
+
+	// 4. Disable ticking. No further updates are needed
+	SetComponentTickEnabled(false);
 }
 
 
@@ -80,8 +114,6 @@ void UPokemonLandingOrientationComponent::EndPlay(const EEndPlayReason::Type End
 {
 }
 
-
-// Called every frame
 void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -130,7 +162,24 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 				PrototypePivotYawSpeed * DeltaTime);
 
 			Pokemon->SetActorRotation(Current);
+
+			const float RemainingYaw = FMath::Abs(FMath::FindDeltaAngleDegrees(Current.Yaw, DesiredYaw));
+
+			if (RemainingYaw <= PivotAlignmentTolerance)
+			{
+				UE_LOG(LogTemp, Display,
+					TEXT("[LandingOrientation] PivotFinished | Reason=Aligned"));
+
+				CancelLandingFacing(SourceCommandId);
+			}
 		}
+	}
+
+	if (PivotElapsedTime >= PrototypePivotDuration)
+	{
+		UE_LOG(LogTemp, Display, TEXT("[LandingOrientation] PivotFinished | Reason=Timeout"));
+
+		CancelLandingFacing(SourceCommandId);
 	}
 }
 
@@ -161,16 +210,114 @@ void UPokemonLandingOrientationComponent::HandleMovementModeChanged(ACharacter* 
 	}
 }
 
+// The trybegin grounded pivot function is called when the Pokemon has landed
+	// and the airborne ability has released orientation control.
+	// The pokemon will set its rotation to face the target over a short duration, 
+	// then release control back to the character movement component.
+
 void UPokemonLandingOrientationComponent::TryBeginGroundedPivot()
 {
+	// The facing intention must be ready for grounded handoff
 	if (!bArmed || !bLandingObserved || bAirborneOwnsYaw || bPivotActive)
 	{
 		return;
 	}
+
+	
+	APokemon_Parent* Pokemon = PokemonOwner.Get();
+
+	if (!Pokemon||!Pokemon->HasAuthority())
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
+
+	// LandedDelegate may fire before movement mode changes.
+	if (!Movement || !Movement->IsMovingOnGround())
+	{
+		return;
+	}
+
+	// if there's a target location, begin pivoting to face it
+	FVector TargetLocation;
+
+	if (!ResolveFacingTarget(TargetLocation))
+	{
+		CancelLandingFacing(SourceCommandId);
+		return;
+	}
+
+	// Save the character's existing rotation configuration.
+	bSavedControllerYaw = Pokemon->bUseControllerRotationYaw;
+
+	bSavedOrientToMovement = Movement->bOrientRotationToMovement;
+
+	bSavedDesiredRotation = Movement->bUseControllerDesiredRotation;
+
+	// The landing component now owns actor yaw
+	Pokemon->bUseControllerRotationYaw = false;
+	Movement->bOrientRotationToMovement = false;
+	Movement->bUseControllerDesiredRotation = false;
+
+	PivotElapsedTime = 0.f;
+	bPivotActive = true;
+
+	SetComponentTickEnabled(true);
+
+	UE_LOG(LogTemp, Display, TEXT("[LandingOrientation] Begin Pivot | CommandId=%s"), *SourceCommandId.ToString());
 }
 
+//
+// Custom summary:
+// The resolve facing target function determines the appropriate
+// location for the Pokemon to face with a living target as its priority.
+// If a living target isn't available, it will fall back to a fixed world location if one was provided.
+//
 bool UPokemonLandingOrientationComponent::ResolveFacingTarget(FVector& OutLocation) const
 {
+	OutLocation = FVector::ZeroVector;
+
+	// No active facing intention
+	if (!bArmed)
+	{
+		return false;
+	}
+
+	// Prefer the current position of a living target actor
+	if (AActor* TargetActor = FacingTargetActor.Get())
+	{
+		if (IsValid(TargetActor))
+		{
+			// Try the specific target point selected
+			// when the original command was issued.
+			if (UTargetableComponent* Targetable = TargetActor->FindComponentByClass<UTargetableComponent>())
+			{
+				FVector PointLocation;
+				if (Targetable->GetTargetPointWorldLocation(FacingTargetPointTag, PointLocation)
+					&& !PointLocation.ContainsNaN())
+				{
+					OutLocation = PointLocation;
+					return true;
+				}
+			}
+
+			// The actor exists, but its target point
+			// could not be resolved. Use the actor's current location instead.
+			OutLocation = TargetActor->GetActorLocation();
+			return true;
+		}
+	}
+
+	// Static world-location command do not require
+	// an actor to remain alive
+	if (bHasFixedTarget && !FixedTargetLocation.ContainsNaN())
+	{
+		OutLocation = FixedTargetLocation;
+		return true;
+	}
+
+	// No valid facing target remains
 	return false;
 }
 

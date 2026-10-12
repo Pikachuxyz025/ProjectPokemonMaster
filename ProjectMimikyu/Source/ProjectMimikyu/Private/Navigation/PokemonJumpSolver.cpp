@@ -126,6 +126,17 @@ FPokemonJumpCapabilitySnapshot FPokemonJumpSolver::CaptureCapabilities(APokemon_
 	return Result;
 }
 
+//
+// Custom Summary:
+// The Solve function evaluates the feasibility of a jump traversal based on the provided requirements and capabilities.
+// It checks for valid input parameters, evidence of traversal, and support conditions.
+// If any of these checks fail, it returns a rejection with a specific failure reason.
+// Eventually, it calculates the necessary flight time and checks if the jump is physically possible given the character's capabilities.
+// The for loop iterates through potential flight times to find a suitable launch velocity that meets the requirements.
+// It's designed to return a list of traversal candidates, which may include a successful candidate or a rejection with a failure reason.
+// Its equations include kinematic calculations for vertical and horizontal motion, 
+// ensuring that the jump can be executed within the character's physical limits.
+//
 TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTraversalRequirement& Requirement,
 	const FPokemonJumpCapabilitySnapshot& Capabilities, EPokemonJumpTrajectoryPreference Preference)
 {
@@ -194,22 +205,27 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 
 	const double Horizontal = Requirement.HorizontalSeparation();
 	const double Vertical = Requirement.VerticalSeparation();
+
 	if (!FMath::IsFinite(Horizontal) || !FMath::IsFinite(Vertical))
 	{
 		return Reject(TEXT("InvalidSeparation"));
 	}
+
 	if (Horizontal <= UE_SMALL_NUMBER && FMath::Abs(Vertical) <= UE_SMALL_NUMBER)
 	{
 		return Reject(TEXT("TraversalDisplacementMissing"));
 	}
+
 	if (Requirement.Circumstance == EPokemonTraversalCircumstance::GapTraversal && Horizontal <= UE_SMALL_NUMBER)
 	{
 		return Reject(TEXT("HorizontalSeparationMissing"));
 	}
+
 	if (Requirement.Circumstance == EPokemonTraversalCircumstance::VerticalAccess && FMath::Abs(Vertical) <= UE_SMALL_NUMBER)
 	{
 		return Reject(TEXT("VerticalSeparationMissing"));
 	}
+
 	if (Horizontal > UE_SMALL_NUMBER && Capabilities.AvailableHorizontalSpeed <= UE_SMALL_NUMBER)
 	{
 		return Reject(TEXT("HorizontalCapabilityInsufficient"));
@@ -226,10 +242,12 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	}
 	const double Root = FMath::Sqrt(FMath::Max(0.0, Discriminant));
 	const double MaximumTime = (VerticalLimit + Root) / Gravity;
+
 	// Stable form of the smaller root avoids cancellation for small positive dz.
 	const double VerticalMinimumTime = Vertical > 0.0 ? (2.0 * Vertical) / (VerticalLimit + Root) : 0.0;
 	const double HorizontalMinimumTime = Horizontal > UE_SMALL_NUMBER ? Horizontal / Capabilities.AvailableHorizontalSpeed : 0.0;
 	double MinimumTime = FMath::Max(MinimumFlightTime, FMath::Max(VerticalMinimumTime, HorizontalMinimumTime));
+
 	// A platform must be reached descending (or at the apex), never from below.
 	// On this branch Vz(t) is monotone increasing, so time ordering expresses both
 	// direct/low and projectile/high preference without a damage-category heuristic.
@@ -237,46 +255,58 @@ TArray<FPokemonTraversalCandidate> FPokemonJumpSolver::Solve(const FPokemonTrave
 	{
 		MinimumTime = FMath::Max(MinimumTime, FMath::Sqrt(2.0 * Vertical / Gravity));
 	}
+
 	// Even a drop must actually take off upward. This is the positive quadratic
 	// root for Vz(t) >= 1 cm/s on the descending-landing branch.
 	const double MinimumLaunchDiscriminant = MinimumUpwardLaunchSpeed * MinimumUpwardLaunchSpeed - 2.0 * Gravity * Vertical;
+
 	if (MinimumLaunchDiscriminant >= 0.0)
 	{
 		MinimumTime = FMath::Max(MinimumTime, (MinimumUpwardLaunchSpeed + FMath::Sqrt(MinimumLaunchDiscriminant)) / Gravity);
 	}
+
 	if (!FMath::IsFinite(MinimumTime) || !FMath::IsFinite(MaximumTime) || MinimumTime > MaximumTime + UE_DOUBLE_SMALL_NUMBER)
 	{
 		return Reject(TEXT("HorizontalCapabilityInsufficient"));
 	}
+
 	MinimumTime = FMath::Min(MinimumTime, MaximumTime);
 	const FVector PlanarDirection = (Requirement.DestinationFeetLocation - Requirement.StartFeetLocation).GetSafeNormal2D();
 	TArray<FPokemonTraversalCandidate> Results;
+
 	// These are deterministic obstacle alternatives within a proven interval, not
 	// samples used to guess whether the ballistic capability exists.
 	constexpr int32 AlternativeCount = 5;
+
 	for (int32 Index = 0; Index < AlternativeCount; ++Index)
 	{
 		const int32 OrderedIndex = Preference == EPokemonJumpTrajectoryPreference::Projectile ? AlternativeCount - 1 - Index : Index;
 		const double Alpha = static_cast<double>(OrderedIndex) / (AlternativeCount - 1);
 		const double Time = FMath::Lerp(MinimumTime, MaximumTime, Alpha);
+
 		if (!Results.IsEmpty() && FMath::IsNearlyEqual(static_cast<double>(Results.Last().FlightTime), Time, 0.00001))
 		{
 			continue;
 		}
 		FPokemonTraversalCandidate Candidate = Base;
 		Candidate.FlightTime = static_cast<float>(Time);
+
 		// Use retained float time for all geometry; validators reproduce the same arc.
 		const double RetainedTime = Candidate.FlightTime;
 		Candidate.RequiredHorizontalLaunchSpeed = static_cast<float>(Horizontal / RetainedTime);
 		Candidate.RequiredVerticalLaunchSpeed = static_cast<float>(Vertical / RetainedTime + 0.5 * Gravity * RetainedTime);
+
 		Candidate.FinalLaunchVelocity = PlanarDirection * Candidate.RequiredHorizontalLaunchSpeed
 			+ FVector::UpVector * Candidate.RequiredVerticalLaunchSpeed;
 		Candidate.Solution = EPokemonTraversalSolutionType::Jump;
+
 		Candidate.FailureReason = NAME_None;
 		Candidate.bPhysicsValidated = true;
 		Candidate.bRequiresPhysicsValidation = false;
+
 		Candidate.bAuthorizedMoveMomentumContributed = Candidate.RequiredHorizontalLaunchSpeed
 			> Capabilities.AvailableHorizontalSpeed - Capabilities.AuthorizedMoveAlignedSpeed + VelocityTolerance;
+
 		Candidate.TrajectoryReason = Preference == EPokemonJumpTrajectoryPreference::Projectile
 			? FName(TEXT("ProjectileLongerAirborneWindow")) : FName(TEXT("DirectLowerFasterContact"));
 		Results.Add(MoveTemp(Candidate));

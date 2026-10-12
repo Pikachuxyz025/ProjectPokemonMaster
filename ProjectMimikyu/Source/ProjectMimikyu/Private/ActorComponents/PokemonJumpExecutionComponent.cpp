@@ -989,18 +989,24 @@ void UPokemonJumpExecutionComponent::FinishAirborneExecution(bool bReachedContac
 	}
 }
 
+// 
+// Custom summary:
+// The try broadcast airborne execution trigger function checks if
+// the conditions are met to broadcast the trigger event.
+// It'll only broadcast if the active contract is airborne contact, the state is airborne, and the trigger hasn't already fired.
+// It sets the trigger fired flag to true and logs the trigger event before broadcasting
+// the airborne execution trigger with the parent request ID.
+// 
 void UPokemonJumpExecutionComponent::TryBroadcastAirborneExecutionTrigger()
 {
 	if (ActiveContract != EPokemonJumpExecutionContract::AirborneContact
-		|| State
-		!= EPokemonJumpExecutionState::Airborne
+		|| State != EPokemonJumpExecutionState::Airborne
 		|| bAirborneExecutionTriggerFired)
 	{
 		return;
 	}
 
-	if (AirborneExecutionElapsed + UE_KINDA_SMALL_NUMBER
-		< ActiveAirborneCandidate.TriggerTime)
+	if (AirborneExecutionElapsed + UE_KINDA_SMALL_NUMBER < ActiveAirborneCandidate.TriggerTime)
 	{
 		return;
 	}
