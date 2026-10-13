@@ -133,7 +133,7 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 
 	APokemon_Parent* Pokemon = PokemonOwner.Get();
 
-	if (!Pokemon||!bArmed)
+	if (!Pokemon || !bArmed)
 	{
 		return;
 	}
@@ -155,8 +155,8 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 
 				CancelLandingFacing(SourceCommandId);
 			}
-		} 
-	
+		}
+
 		return;
 	}
 
@@ -172,45 +172,65 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 
 	FVector TargetLocation;
 
-	if (ResolveFacingTarget(TargetLocation))
+	if (!ResolveFacingTarget(TargetLocation))
 	{
-		FVector Direction = TargetLocation - Pokemon->GetActorLocation();
+		UE_LOG(LogTemp, Display,
+			TEXT("[LandingOrientation] PivotCancelled | Reason=TargetLost"));
 
-		Direction.Z = 0.f;
-
-		if (!Direction.IsNearlyZero())
-		{
-			FRotator Current = Pokemon->GetActorRotation();
-
-			const float DesiredYaw = Direction.Rotation().Yaw;
-
-			Current.Yaw = FMath::FixedTurn(
-				Current.Yaw,
-				DesiredYaw,
-				PrototypePivotYawSpeed * DeltaTime);
-
-			Pokemon->SetActorRotation(Current);
-
-			const float RemainingYaw = FMath::Abs(FMath::FindDeltaAngleDegrees(Current.Yaw, DesiredYaw));
-
-			if (RemainingYaw <= PivotAlignmentTolerance)
-			{
-				UE_LOG(LogTemp, Display,
-					TEXT("[LandingOrientation] PivotFinished | Reason=Aligned"));
-
-				CancelLandingFacing(SourceCommandId);
-				return;
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Display,
-				TEXT("[LandingOrientation] PivotCancelled | Reason=TargetLost"));
-
-			CancelLandingFacing(SourceCommandId);
-			return;
-		}
+		CancelLandingFacing(SourceCommandId);
+		return;
 	}
+
+
+
+	FVector Direction = TargetLocation - Pokemon->GetActorLocation();
+
+	Direction.Z = 0.f;
+
+	if (Direction.IsNearlyZero())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[LandingOrientation] PivotFinished | Reason=NoPlanarDirection"));
+
+		CancelLandingFacing(SourceCommandId);
+		return;
+	}
+
+	FRotator Current = Pokemon->GetActorRotation();
+
+	const float DesiredYaw = Direction.Rotation().Yaw;
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[LandingOrientation] Pivoting | CommandId=%s | CurrentYaw=%.2f | DesiredYaw=%.2f | DeltaTime=%.3f"),
+		*SourceCommandId.ToString(),
+		Current.Yaw,
+		DesiredYaw,
+		DeltaTime);
+
+	Current.Yaw = FMath::FixedTurn(
+		Current.Yaw,
+		DesiredYaw,
+		PrototypePivotYawSpeed * DeltaTime);
+
+	Pokemon->SetActorRotation(Current);
+
+	const float RemainingYaw = FMath::Abs(FMath::FindDeltaAngleDegrees(Current.Yaw, DesiredYaw));
+
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[LandingOrientation] Pivoting | RemainingYaw=%.2f | ElapsedTime=%.3f"),
+		RemainingYaw,
+		PivotElapsedTime);
+
+	if (RemainingYaw <= PivotAlignmentTolerance)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[LandingOrientation] PivotFinished | Reason=Aligned"));
+
+		CancelLandingFacing(SourceCommandId);
+		return;
+	}
+
 
 	if (PivotElapsedTime >= PrototypePivotDuration)
 	{
