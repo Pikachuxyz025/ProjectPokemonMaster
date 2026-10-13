@@ -211,7 +211,7 @@ void UPokemonLandingOrientationComponent::TickComponent(float DeltaTime, ELevelT
 		Current.Yaw,
 		DesiredYaw,
 		PrototypePivotYawSpeed * DeltaTime);
-
+	
 	Pokemon->SetActorRotation(Current);
 
 	const float RemainingYaw = FMath::Abs(FMath::FindDeltaAngleDegrees(Current.Yaw, DesiredYaw));

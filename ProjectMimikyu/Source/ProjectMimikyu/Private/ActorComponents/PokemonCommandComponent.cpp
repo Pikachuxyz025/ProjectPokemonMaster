@@ -3,6 +3,7 @@
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "ActorComponents/PokemonNavigationComponent.h"
 #include "ActorComponents/TargetableComponent.h"
+#include "ActorComponents/PokemonLandingOrientationComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "ActorComponents/MovesetComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -275,6 +276,26 @@ FName UPokemonCommandComponent::ValidateSequencedCommand(UPokemonMoveDataAsset* 
 
 void UPokemonCommandComponent::InstallCommand(UPokemonMoveDataAsset* Move, const FPokemonCommandTarget& Target, FGuid IntentId)
 {
+	// A new command has passed reservation validation.
+	// Relinquish orientation left over from an earlier attack.
+	if (APokemon_Parent * Pokemon = GetOwnerPokemon())
+	{
+		if (Pokemon->HasAuthority())
+		{
+			if (UPokemonLandingOrientationComponent* LandingOrientation = Pokemon->GetLandingOrientationComponent())
+			{
+				if (LandingOrientation->IsPivoting())
+				{
+					UE_LOG(LogTemp, Display,
+						TEXT("[PokemonCommand] NewCommandInterruptsPivot | Move=%s"),
+						*GetNameSafe(Move));
+				}
+				LandingOrientation->CancelLandingFacing();
+			}
+		}
+	}
+
+
 	ActivePokemonMove = Move;
 	CurrentCommandTarget = Target;
 	ActiveTrainerCommandId = FGuid::NewGuid();
