@@ -222,11 +222,11 @@ void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit
 
 		if (!ImpactResolution.bApplyDamage)
 		{
-			DamageEffectParams.BasedDamage = 0.f;
+			DamageEffectParams.BaseDamage = 0.f;
 		}
 		else
 		{
-			DamageEffectParams.BasedDamage *= ImpactResolution.DamageMultiplier;
+			DamageEffectParams.BaseDamage *= ImpactResolution.DamageMultiplier;
 		}
 
 		DamageEffectParams.KnockbackForce = ImpactResolution.DefenderImpulse;
@@ -237,7 +237,7 @@ void AProjectileAttack::TryApplyDamage(AActor* OtherActor, const FHitResult& Hit
 			*GetNameSafe(SourceActor),
 			*GetNameSafe(OtherActor),
 			*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(ImpactResolution.ImpactResult)),
-			DamageEffectParams.BasedDamage,
+			DamageEffectParams.BaseDamage,
 			*DamageEffectParams.KnockbackForce.ToString(),
 			*ProjectileDirection.ToString()
 		);

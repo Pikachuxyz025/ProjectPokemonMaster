@@ -66,7 +66,7 @@ FPokemonImpactResolution UPokemonAttackAutomationAbility::Contact(AActor* Target
 	FDamageEffectParams Params;
 	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	Params.TargetAbilitySystemComponent = Cast<APokemon_Parent>(Target)->GetAbilitySystemComponent();
-	Params.BasedDamage = 20.f;
+	Params.BaseDamage = 20.f;
 	ResolveImpactAndModifyDamageParams(Target, Params, Result);
 	return Result;
 }

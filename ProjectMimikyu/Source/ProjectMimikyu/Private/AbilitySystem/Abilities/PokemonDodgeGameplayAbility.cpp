@@ -5,6 +5,7 @@
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
+#include "ActorComponents/PokemonLandingOrientationComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "GameFramework/RootMotionSource.h"
@@ -95,10 +96,10 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 
 	/*
 	 * Phase 2A is specifically a horizontal ground/combat dodge.
-     *
-     * Jump / aerial dodges can later deliberately introduce
-     * vertical motion instead of inheriting it accidentally here.
-     */
+	 *
+	 * Jump / aerial dodges can later deliberately introduce
+	 * vertical motion instead of inheriting it accidentally here.
+	 */
 
 	DodgeDirection.Z = 0.f;
 
@@ -111,7 +112,7 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 
 	const float DodgeStrength = ResolveDodgeStrength(Pokemon);
 
-	if(DodgeStrength<=KINDA_SMALL_NUMBER||DodgeDuration<=KINDA_SMALL_NUMBER)
+	if (DodgeStrength <= KINDA_SMALL_NUMBER || DodgeDuration <= KINDA_SMALL_NUMBER)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[PokemonDodgeGameplayAbility] ActivateAbility failed: DodgeStrength or DodgeDuration is zero on [%s]."), *GetNameSafe(this));
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -119,13 +120,13 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 	}
 
 	/*
-     * IMPORTANT:
-     *
-     * This lets GAS apply the Cost Gameplay Effect and Cooldown
-     * Gameplay Effect when we introduce stamina/cooldowns.
-     *
-     * Right now, with no cost assigned, this simply succeeds.
-     */
+	 * IMPORTANT:
+	 *
+	 * This lets GAS apply the Cost Gameplay Effect and Cooldown
+	 * Gameplay Effect when we introduce stamina/cooldowns.
+	 *
+	 * Right now, with no cost assigned, this simply succeeds.
+	 */
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
 	{
@@ -135,57 +136,86 @@ void UPokemonDodgeGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHan
 	}
 
 	/*
-     * Run the shared Pokemon ability setup:
-     * montage, ability events, ability windows, etc.
-     */
+	 * Run the shared Pokemon ability setup:
+	 * montage, ability events, ability windows, etc.
+	 */
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	const ERootMotionFinishVelocityMode FinishMode = bStopOnFinish ? ERootMotionFinishVelocityMode::SetVelocity : ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity;
-
-	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
+	// Blueprint activation may have ended the ability.
+	if (!IsActive())
 	{
-		bSavedOrientRotationToMovement = MoveComp->bOrientRotationToMovement;
-		bSavedUseControllerDesiredRotation = MoveComp->bUseControllerDesiredRotation;
-		bSavedUseControllerRotationYaw = Pokemon->bUseControllerRotationYaw;
-		bSavedRotationSettings = true;
-
-		// Remove residual navigation movement so the root-motion direction begins cleanly
-		MoveComp->StopMovementImmediately();
-		MoveComp->bOrientRotationToMovement = false;
-		MoveComp->bUseControllerDesiredRotation = false;
-		Pokemon->bUseControllerRotationYaw = false;
+		return;
 	}
 
+	const ERootMotionFinishVelocityMode FinishMode = bStopOnFinish 
+		?ERootMotionFinishVelocityMode::SetVelocity 
+		: ERootMotionFinishVelocityMode::MaintainLastRootMotionVelocity;
+
+	// Prepare the task before taking rotation ownership.
 	UAbilityTask_ApplyRootMotionConstantForce* DodgeTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
 		this,
-		FName("PokemonDodge"),
-		DodgeDirection ,
+	FName("PokemonDodge"),
+		DodgeDirection,
 		DodgeStrength,
 		DodgeDuration,
-		// Non-additive:
-		// this dodge controls horizontal movement.
 		false,
-	DodgeStrengthCurve,
+		DodgeStrengthCurve,
 		FinishMode,
-		// Used when FinishMode = SetVelocity
 		FVector::ZeroVector,
-		//Only relevant for ClampVelocity
 		0.f,
 		bEnableGravityDuringDodge
 	);
 
 	if (!DodgeTask)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[PokemonDodgeGameplayAbility] ActivateAbility failed: DodgeTask is null on [%s]."), *GetNameSafe(this));
+		UE_LOG(LogTemp, Warning,TEXT("[PokemonDodgeGameplayAbility] DodgeTask creation failed."));
+	
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
+	}
+
+	// The dodge has passed ability commitment and task preparation.
+	// Release the old facing intention BEFORE capturing rotation flags.
+	if (UPokemonLandingOrientationComponent* Landing = Pokemon->GetLandingOrientationComponent())
+	{
+		if (Landing->IsPivoting())
+		{
+			UE_LOG(LogTemp, Display,
+				TEXT("[PokemonDodge] DodgeInterruptsPivot | Pokemon=%s"),
+				*GetNameSafe(Pokemon));
+		}
+		Landing->CancelLandingFacing();
+	}
+
+	// Save the settings restored by the landing component.
+	if (UCharacterMovementComponent* MoveComp = Pokemon->GetCharacterMovement())
+	{
+		bSavedOrientRotationToMovement = MoveComp->bOrientRotationToMovement;
+		bSavedUseControllerDesiredRotation = MoveComp->bUseControllerDesiredRotation;
+		bSavedUseControllerDesiredRotation = Pokemon->bUseControllerRotationYaw;
+		bSavedUseControllerRotationYaw = Pokemon->bUseControllerRotationYaw;
+
+		bSavedRotationSettings = true;
+
+		MoveComp->StopMovementImmediately();
+		MoveComp->bOrientRotationToMovement = false;
+		MoveComp->bUseControllerDesiredRotation = false;
+		Pokemon->bUseControllerRotationYaw = false;
 	}
 
 	DodgeTask->OnFinish.AddDynamic(this, &UPokemonDodgeGameplayAbility::HandleDodgeFinished);
 
 	DodgeTask->ReadyForActivation();
 
-	UE_LOG(LogTemp, Display, TEXT("[PokemonDodgeGameplayAbility] ActivateAbility succeeded: DodgeTask started on [%s]. | Pokemon=%s | Direction=(%.2f %.2f %.2f) | Strength=%.1f | Duration=%.2f"), *GetNameSafe(this), *GetNameSafe(Pokemon), DodgeDirection.X, DodgeDirection.Y, DodgeDirection.Z, DodgeStrength, DodgeDuration);
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonDodgeGameplayAbility] ActivateAbility succeeded: DodgeTask started on [%s]. | Pokemon=%s | Direction=(%.2f %.2f %.2f) | Strength=%.1f | Duration=%.2f"),
+		*GetNameSafe(this),
+		*GetNameSafe(Pokemon),
+		DodgeDirection.X,
+		DodgeDirection.Y,
+		DodgeDirection.Z,
+		DodgeStrength,
+		DodgeDuration);
 }
 
 bool UPokemonDodgeGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags) const

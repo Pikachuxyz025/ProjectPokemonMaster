@@ -202,7 +202,7 @@ FGameplayEffectContextHandle UPokemonAbilitySystemLibrary::ApplyDamageEffect(con
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
 		EffectSpecHandle,
 		DamageEffectParams.MoveTypeTag,
-		DamageEffectParams.BasedDamage
+		DamageEffectParams.BaseDamage
 	);
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(

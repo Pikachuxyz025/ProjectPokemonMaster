@@ -27,7 +27,7 @@ struct FDamageEffectParams
 	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadWrite)
-	float BasedDamage = 0.f;
+	float BaseDamage = 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.f;

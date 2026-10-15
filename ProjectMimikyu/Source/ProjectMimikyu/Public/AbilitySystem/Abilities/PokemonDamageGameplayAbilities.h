@@ -46,9 +46,6 @@ public:
 	float Damage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float PowerPointCost = 5.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float CooldownTime = 3.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")

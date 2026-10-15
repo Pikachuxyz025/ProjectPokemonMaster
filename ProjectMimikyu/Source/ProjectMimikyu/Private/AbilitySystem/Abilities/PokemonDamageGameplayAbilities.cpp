@@ -34,7 +34,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromC
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.SourceAbilitySystemComponent = SourceASC;
 	Params.TargetAbilitySystemComponent = TargetASC;
-	Params.BasedDamage = Damage;
+	Params.BaseDamage = Damage;
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.MoveTypeTag = MoveTypeTag;
 	Params.DebuffChance = DebuffChance;
@@ -383,7 +383,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 		SourceSpeed,
 		TargetDefenseStat,
 		ImpactForce,
-		DamageEffectParams.BasedDamage
+		DamageEffectParams.BaseDamage
 	);
 
 	FPokemonMoveContactContext ContactContext;
@@ -397,7 +397,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	ContactContext.ContactPoint = TargetActor->GetActorLocation();
 	ContactContext.AttackDirection = AttackDirection;
 
-	ContactContext.Damage = DamageEffectParams.BasedDamage;
+	ContactContext.Damage = DamageEffectParams.BaseDamage;
 	ContactContext.ImpactForce = ImpactForce;
 	ContactContext.KnockbackForce = KnockbackForceMagnitude;
 
@@ -446,11 +446,11 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 
 	if (!OutImpactResolution.bApplyDamage)
 	{
-		DamageEffectParams.BasedDamage = 0.f;
+		DamageEffectParams.BaseDamage = 0.f;
 	}
 	else
 	{
-		DamageEffectParams.BasedDamage *= OutImpactResolution.DamageMultiplier;
+		DamageEffectParams.BaseDamage *= OutImpactResolution.DamageMultiplier;
 	}
 
 	DamageEffectParams.KnockbackForce = OutImpactResolution.DefenderImpulse;
@@ -460,7 +460,7 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 		TEXT("[ImpactParams] Result=%s DamageMultiplier=%.2f DamageAfter=%.2f Knockback=%s"),
 		*StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(static_cast<int64>(OutImpactResolution.ImpactResult)),
 		OutImpactResolution.DamageMultiplier,
-		DamageEffectParams.BasedDamage,
+		DamageEffectParams.BaseDamage,
 		*DamageEffectParams.KnockbackForce.ToString()
 	);
 
