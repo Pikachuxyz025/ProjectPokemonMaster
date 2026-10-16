@@ -11,6 +11,7 @@ using namespace UP;
 
 class UTexture2D;
 class UPokemonMoveDataAsset;
+class UPokemonMoveAnimationSet;
 
 USTRUCT(BlueprintType)
 struct FPokemonMovesetList
@@ -101,6 +102,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Moves")
 	TArray<FPokemonMovesetList> PokemonMoveInfo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation|Moves")
+	TObjectPtr<UPokemonMoveAnimationSet> MoveAnimationSet = nullptr;
 
 	int32 GetStatFromTag(const FGameplayTag& StatTag);
 	FText GetNameFromTag(const FGameplayTag& StatTag);

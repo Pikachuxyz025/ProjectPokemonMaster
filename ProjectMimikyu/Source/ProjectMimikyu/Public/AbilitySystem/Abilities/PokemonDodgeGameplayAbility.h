@@ -61,7 +61,7 @@ protected:
 	bool bStopOnFinish = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Dodge|Stamina",meta =(ClampMin="0.0"))
-	float DodgeStaminaCost = 250.f;
+	float DodgeStaminaCost = 20.f;
 
 private:
 	bool bSavedOrientRotationToMovement = false;

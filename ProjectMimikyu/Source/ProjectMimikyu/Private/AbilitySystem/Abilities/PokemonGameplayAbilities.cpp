@@ -4,6 +4,9 @@
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "DataAssets/PokemonDataAsset.h"
+#include "DataAssets/PokemonMoveDataAsset.h"
+#include "DataAssets/PokemonMoveAnimationSet.h"
 #include "ActorComponents/PokemonCombatStateComponent.h"
 #include "ActorComponents/PokemonCommandComponent.h"
 #include "Animation/AnimMontage.h"
@@ -209,37 +212,82 @@ bool UPokemonGameplayAbilities::HasActiveAbilityWindow(FGameplayTag AbilityWindo
 	return AbilityWindowTag.IsValid() && ActiveAbilityWindows.HasTagExact(AbilityWindowTag);
 }
 
+UAnimMontage* UPokemonGameplayAbilities::ResolveAbilityMontage() const
+{
+	const UPokemonMoveDataAsset* Move = Cast<UPokemonMoveDataAsset>(GetSourceObject(
+		GetCurrentAbilitySpecHandle(), GetCurrentActorInfo()));
+
+	const APokemon_Parent* Pokemon = GetAvatarPokemon();
+
+	const UPokemonDataAsset* PokemonData = Pokemon ? Pokemon->PokemonDataAsset : nullptr;
+
+	const UPokemonMoveAnimationSet* AnimationSet = PokemonData ? PokemonData->MoveAnimationSet.Get() : nullptr;
+
+	if (AnimationSet && Move)
+	{
+		if (UAnimMontage* SpeciesMontage = AnimationSet->FindMontageForMove(Move))
+		{
+			return SpeciesMontage;
+
+		}
+	}
+
+	return AbilityMontage;
+}
+
 UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 {
-	if (!AbilityMontage)
+	UAnimMontage* SelectedMontage = ResolveAbilityMontage();
+
+	if (!SelectedMontage)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayAbilityMontage called but AbilityMontage is null. Ability=%s"), *GetNameSafe(this));
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] No montage resolved. Ability=%s"),
+			*GetNameSafe(this));
+
 		return nullptr;
 	}
 
-	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AbilityMontage, MontagePlayRate, MontageStartSection);
-	
+	UAbilityTask_PlayMontageAndWait* MontageTask =
+		UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
+			this,
+			NAME_None,
+			SelectedMontage,
+			MontagePlayRate,
+			MontageStartSection
+		);
+
 	if (!MontageTask)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonGameplayAbilities] Failed to create montage task. Ability=%s Montage=%s"),
 			*GetNameSafe(this),
-			*GetNameSafe(AbilityMontage));
+			*GetNameSafe(SelectedMontage));
 
 		return nullptr;
 	}
 
-	MontageTask->OnCompleted.AddDynamic(this, &UPokemonGameplayAbilities::OnAbilityMontageCompleted);
-	MontageTask->OnBlendOut.AddDynamic(this, &UPokemonGameplayAbilities::OnAbilityMontageBlendOut);
-	MontageTask->OnInterrupted.AddDynamic(this, &UPokemonGameplayAbilities::OnAbilityMontageInterrupted);
-	MontageTask->OnCancelled.AddDynamic(this, &UPokemonGameplayAbilities::OnAbilityMontageCancelled);
+	MontageTask->OnCompleted.AddDynamic(
+		this, &UPokemonGameplayAbilities::OnAbilityMontageCompleted);
+
+	MontageTask->OnBlendOut.AddDynamic(
+		this, &UPokemonGameplayAbilities::OnAbilityMontageBlendOut);
+
+	MontageTask->OnInterrupted.AddDynamic(
+		this, &UPokemonGameplayAbilities::OnAbilityMontageInterrupted);
+
+	MontageTask->OnCancelled.AddDynamic(
+		this, &UPokemonGameplayAbilities::OnAbilityMontageCancelled);
 
 	MontageTask->ReadyForActivation();
 
 	UE_LOG(LogTemp, Display,
-		TEXT("[PokemonGameplayAbilities] Playing montage. Ability=%s Montage=%s PlayRate=%.2f StartSection=%s"),
+		TEXT("[PokemonGameplayAbilities] Playing montage. Ability=%s Montage=%s Source=%s PlayRate=%.2f StartSection=%s"),
 		*GetNameSafe(this),
-		*GetNameSafe(AbilityMontage),
+		*GetNameSafe(SelectedMontage),
+		SelectedMontage == AbilityMontage
+		? TEXT("AbilityDefault")
+		: TEXT("SpeciesMoveAnimationSet"),
 		MontagePlayRate,
 		*MontageStartSection.ToString());
 
@@ -392,10 +440,10 @@ float UPokemonGameplayAbilities::GetAbilityCombatLockDuration() const
 		MoveTimingSequence.AnticipationDuration +
 		MoveTimingSequence.ActiveDuration;
 
-	if (AbilityMontage)
+	if (const UAnimMontage* SelectedMontage = ResolveAbilityMontage())
 	{
 		const float SafePlayRate = FMath::Max(MontagePlayRate, 0.01f);
-		Duration = FMath::Max(Duration, AbilityMontage->GetPlayLength() / SafePlayRate);
+		Duration = FMath::Max(Duration, SelectedMontage->GetPlayLength() / SafePlayRate);
 	}
 
 	return FMath::Max(Duration, MinimumAttackStateDuration);

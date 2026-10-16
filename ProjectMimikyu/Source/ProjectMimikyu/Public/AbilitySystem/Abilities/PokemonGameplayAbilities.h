@@ -139,6 +139,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	bool bEndAbilityWhenMontageEnds = true;
 
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Animation")
+	UAnimMontage* ResolveAbilityMontage() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation")
 	UAbilityTask_PlayMontageAndWait* PlayAbilityMontage();
 
