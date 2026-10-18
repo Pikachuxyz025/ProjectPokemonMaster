@@ -158,15 +158,6 @@ void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGamep
 	// Child abilities can override this in C++ or Blueprint.
 }
 
-//
-// Custom Summary:
-// The DetermineNextPresentationAction function is responsible for determining the next section of an animation montage to play
-// based on the current presentation phase and the inputed attack outcome. It checks if the montage and animation instance are valid,
-// retrieves the current presentation phase,
-// and then uses a switch statement to determine the next section to play based on the inputed outcome (Hit or Miss). 
-// If the outcome is unresolved or invalid, it logs a warning message.
-// It'll fire off as a callback when the montage section changes or gets new feedback like notifying of a hit.
-//
 FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(const EAttackPresentationPhase CurrentPhase, const EAttackOutcome InputedOutcome)
 {
 	FSectionTransition Transition;
@@ -182,13 +173,6 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 		else if (InputedOutcome == EAttackOutcome::Miss)
 		{
 			Transition.NextSectionName = FName("WhiffFollowThrough");
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning,
-				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Strike phase. Ability=%s Outcome=%d"),
-				*GetNameSafe(this),
-				static_cast<int32>(InputedOutcome));
 		}
 		return Transition;
 
