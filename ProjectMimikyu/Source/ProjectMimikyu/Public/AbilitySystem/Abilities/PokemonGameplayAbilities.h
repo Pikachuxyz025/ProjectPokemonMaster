@@ -12,6 +12,25 @@ class APokemon_Parent;
 class UAbilityTask_PlayMontageAndWait;
 class UAbilityTask_WaitGameplayEvent;
 
+UENUM(BlueprintType)
+enum class EAttackOutcome : uint8
+{
+Hit,
+Miss,
+Unresolved
+};
+
+UENUM(BlueprintType)
+enum class EAttackPresentationPhase :uint8
+{
+	Strike,
+	Pending,
+	HitContact,
+	WhiffFollowThrough,
+	Recovery,
+	Complete
+};
+
 USTRUCT(BlueprintType)
 struct FPokemonInputInfo
 {
@@ -95,6 +114,9 @@ public:
 
 	virtual void OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload);
 
+	UFUNCTION()
+	void DetermineNextPresentationAction(const UAnimMontage* Montage, const EAttackOutcome InputedOutcome);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	bool bListenForAbilityWindowEvents = false;
 
@@ -126,6 +148,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	TObjectPtr<UAnimMontage> AbilityMontage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Pokemon|Animation")
+	bool bUseAbilityMontageOverride = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	float MontagePlayRate = 1.0f;
@@ -212,4 +237,6 @@ private:
 	FGuid SequencedCommandId;
 	FName SequencedActivationFailure = NAME_None;
 	bool bSequencedEndInProgress = false;
+
+	EAttackPresentationPhase GetCurrentPresentationPhase(const UAnimMontage* AnimMontage) const;
 };

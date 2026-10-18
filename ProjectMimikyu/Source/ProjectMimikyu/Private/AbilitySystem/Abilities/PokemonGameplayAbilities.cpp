@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+//#include "UObject/Class.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "DataAssets/PokemonMoveAnimationSet.h"
@@ -157,6 +158,64 @@ void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGamep
 	// Child abilities can override this in C++ or Blueprint.
 }
 
+//
+// Custom Summary:
+// The DetermineNextPresentationAction function is responsible for determining the next section of an animation montage to play
+// based on the current presentation phase and the inputed attack outcome. It checks if the montage and animation instance are valid,
+// retrieves the current presentation phase,
+// and then uses a switch statement to determine the next section to play based on the inputed outcome (Hit or Miss). 
+// If the outcome is unresolved or invalid, it logs a warning message.
+// It'll fire off as a callback when the montage section changes or gets new feedback like notifying of a hit.
+//
+void UPokemonGameplayAbilities::DetermineNextPresentationAction(const UAnimMontage* Montage, const EAttackOutcome InputedOutcome)
+{
+	if (!Montage)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with null montage. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	UAnimInstance* AnimInstance = GetCurrentActorInfo()->GetAnimInstance();
+
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with null AnimInstance. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	
+	EAttackPresentationPhase CurrentPhase = GetCurrentPresentationPhase(Montage);
+	FName PhaseName = UEnum::GetValueAsName(CurrentPhase);
+
+	// Based on the InputedOutcome, determine the next section to play in the montage.
+	switch (CurrentPhase)
+	{
+	case EAttackPresentationPhase::Strike:
+		if (InputedOutcome == EAttackOutcome::Hit)
+		{
+			FName NextSectionName = UEnum::GetValueAsName(EAttackPresentationPhase::HitContact);
+			AnimInstance->Montage_SetNextSection(PhaseName, NextSectionName, Montage);
+		}
+		else if (InputedOutcome == EAttackOutcome::Miss)
+		{
+			FName NextSectionName = UEnum::GetValueAsName(EAttackPresentationPhase::WhiffFollowThrough);
+			AnimInstance->Montage_SetNextSection(PhaseName, NextSectionName, Montage);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with unresolved outcome. Ability=%s Montage=%s"),
+				*GetNameSafe(this),
+				*GetNameSafe(Montage));
+		}
+		break;
+	}
+}
+
 void UPokemonGameplayAbilities::ListenForAbilityWindowEvents()
 { 
 	const FPokemonGameplayTags& PokemonTags = FPokemonGameplayTags::Get();
@@ -214,6 +273,11 @@ bool UPokemonGameplayAbilities::HasActiveAbilityWindow(FGameplayTag AbilityWindo
 
 UAnimMontage* UPokemonGameplayAbilities::ResolveAbilityMontage() const
 {
+	if (bUseAbilityMontageOverride && AbilityMontage)
+	{
+		return AbilityMontage;
+	}
+
 	const UPokemonMoveDataAsset* Move = Cast<UPokemonMoveDataAsset>(GetSourceObject(
 		GetCurrentAbilitySpecHandle(), GetCurrentActorInfo()));
 
@@ -645,4 +709,48 @@ void UPokemonGameplayAbilities::ApplyAbilityWindowCombatState(FGameplayTag Abili
 		CombatStateComponent->GetCombatStateRemainingTime(
 			CombatTags.Combat_State_Recovering)
 	);
+}
+
+EAttackPresentationPhase UPokemonGameplayAbilities::GetCurrentPresentationPhase(const UAnimMontage* AnimMontage) const
+{
+
+	if (!AnimMontage)
+	{
+		return EAttackPresentationPhase();
+	}
+
+	FName CurrentSection;
+
+	if (UAnimInstance* AnimInstance = GetCurrentActorInfo()->GetAnimInstance())
+	{
+		if (AnimInstance->Montage_IsPlaying(AnimMontage))
+		{
+			// Get the current section name of the montage
+			CurrentSection = AnimInstance->Montage_GetCurrentSection(AnimMontage);
+		}
+	}
+
+	if (CurrentSection == NAME_None)
+	{
+		return EAttackPresentationPhase();
+	}
+
+	const UEnum* EnumPtr = StaticEnum<EAttackPresentationPhase>();
+	if (!EnumPtr)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] Failed to find EAttackPresentationPhase enum. Ability=%s"),
+			*GetNameSafe(this));
+		return EAttackPresentationPhase();
+	}
+
+	int64 EnumValue = EnumPtr->GetValueByName(CurrentSection);
+
+	if (EnumValue != INDEX_NONE)
+	{
+		EAttackPresentationPhase AttackPresentation = static_cast<EAttackPresentationPhase>(EnumValue);
+		return AttackPresentation;
+	}
+
+	return EAttackPresentationPhase();
 }
