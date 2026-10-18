@@ -13,22 +13,6 @@ EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter
 
 bool FPokemonPresentationTest::RunTest(const FString& Parameters)
 {
-	FTestWorldWrapper TestWorld;
-	if (!TestWorld.CreateTestWorld(EWorldType::Game))
-	{
-		AddError(TEXT("Could not create transient automation world."));
-		return false;
-	}
-
-	UWorld* World = TestWorld.GetTestWorld();
-	if (!TestNotNull(TEXT("Transient automation world"), World))
-	{
-		return false;
-	}
-	if (!TestNotNull(TEXT("Transient world physics scene"), World->GetPhysicsScene()))
-	{
-		return false;
-	}
 
 	UPokemonGameplayAbilities* Ability = NewObject<UPokemonGameplayAbilities>();
 
@@ -37,13 +21,34 @@ bool FPokemonPresentationTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
-    const FSectionTransition Result =
+    const FSectionTransition ResultA =
         Ability->DetermineNextPresentationAction(
             EAttackPresentationPhase::Strike,
             EAttackOutcome::Hit
         );
 
-	if (!TestEqual(TEXT("Next section name for Strike phase with Hit outcome"), Result.NextSectionName, FName("HitContact")))
+	if (!TestEqual(TEXT("Next section name for Strike phase with Hit outcome"), ResultA.NextSectionName, FName("HitContact")))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultA.TransitionType, ESectionTransitionType::WaitForEndOfSection))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultB =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Strike,
+			EAttackOutcome::Miss
+		);
+
+	if (!TestEqual(TEXT("Next section name for Strike phase with Miss outcome"), ResultB.NextSectionName, FName("WhiffFollowThrough")))
+	{
+		return false;
+	}
+
+	if(!TestEqual(TEXT("Resulting Transition type "), ResultB.TransitionType, ESectionTransitionType::WaitForEndOfSection))
 	{
 		return false;
 	}
