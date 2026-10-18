@@ -165,19 +165,20 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 	switch (CurrentPhase)
 	{
 	case EAttackPresentationPhase::Strike:
-		Transition.TransitionType = ESectionTransitionType::WaitForEndOfSection;
 
 		if (InputedOutcome == EAttackOutcome::Hit)
 		{
 			Transition.NextSectionName = FName("HitContact");
+			Transition.TransitionType = ESectionTransitionType::WaitForEndOfSection;
 		}
 		else if (InputedOutcome == EAttackOutcome::Miss)
 		{
 			Transition.NextSectionName = FName("WhiffFollowThrough");
+			Transition.TransitionType = ESectionTransitionType::WaitForEndOfSection;
 		}
-		else if(InputedOutcome == EAttackOutcome::Unresolved)
+		else if (InputedOutcome == EAttackOutcome::Unresolved)
 		{
-			UE_LOG(LogTemp, Warning,
+			UE_LOG(LogTemp, Display,
 				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Strike phase. Leave to default transition. Next will automatically pending. Ability=%s Outcome=%d"),
 				*GetNameSafe(this),
 				static_cast<int32>(InputedOutcome));
@@ -185,31 +186,28 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 		break;
 
 	case EAttackPresentationPhase::Pending:
-		Transition.TransitionType = ESectionTransitionType::JumpImmediately;
 
 		if (InputedOutcome == EAttackOutcome::Hit)
 		{
 			Transition.NextSectionName = FName("HitContact");
+			Transition.TransitionType = ESectionTransitionType::JumpImmediately;
 		}
 		else if (InputedOutcome == EAttackOutcome::Miss)
 		{
 			Transition.NextSectionName = FName("WhiffFollowThrough");
+			Transition.TransitionType = ESectionTransitionType::JumpImmediately;
 		}
-		else if(InputedOutcome == EAttackOutcome::Unresolved)
+		else if (InputedOutcome == EAttackOutcome::Unresolved)
 		{
-			UE_LOG(LogTemp, Warning,
+			UE_LOG(LogTemp, Display,
 				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Pending phase. Return none. Remain in Pending. Ability=%s Outcome=%d"),
 				*GetNameSafe(this),
 				static_cast<int32>(InputedOutcome));
 		}
+
 		break;
 	default:
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Invalid phase. Ability=%s Phase=%d Outcome=%d"),
-			*GetNameSafe(this),
-			static_cast<int32>(CurrentPhase),
-			static_cast<int32>(InputedOutcome));
-		return Transition;
+		break;
 	}
 
 	return Transition;
