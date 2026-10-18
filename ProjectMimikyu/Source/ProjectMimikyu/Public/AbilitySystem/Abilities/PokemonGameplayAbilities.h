@@ -15,20 +15,42 @@ class UAbilityTask_WaitGameplayEvent;
 UENUM(BlueprintType)
 enum class EAttackOutcome : uint8
 {
-Hit,
-Miss,
-Unresolved
+	Unresolved,
+	Hit,
+	Miss
+};
+
+UENUM(BlueprintType)
+enum class ESectionTransitionType : uint8
+{
+	None,
+	JumpImmediately,
+	WaitForEndOfSection,
+	EndExecution
 };
 
 UENUM(BlueprintType)
 enum class EAttackPresentationPhase :uint8
 {
+	None,
 	Strike,
 	Pending,
 	HitContact,
 	WhiffFollowThrough,
 	Recovery,
 	Complete
+};
+
+USTRUCT(BlueprintType)
+struct FSectionTransition
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESectionTransitionType TransitionType = ESectionTransitionType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NextSectionName = NAME_None;
 };
 
 USTRUCT(BlueprintType)
@@ -115,7 +137,7 @@ public:
 	virtual void OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload);
 
 	UFUNCTION()
-	void DetermineNextPresentationAction(const UAnimMontage* Montage, const EAttackOutcome InputedOutcome);
+	FSectionTransition DetermineNextPresentationAction(const EAttackPresentationPhase CurrentPhase, const EAttackOutcome InputedOutcome);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	bool bListenForAbilityWindowEvents = false;
@@ -125,7 +147,7 @@ public:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	FGameplayTagContainer ActiveAbilityWindows;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	bool bApplyRecoveryStateFromAuthoredWindow = true;
 

@@ -167,53 +167,41 @@ void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGamep
 // If the outcome is unresolved or invalid, it logs a warning message.
 // It'll fire off as a callback when the montage section changes or gets new feedback like notifying of a hit.
 //
-void UPokemonGameplayAbilities::DetermineNextPresentationAction(const UAnimMontage* Montage, const EAttackOutcome InputedOutcome)
+FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(const EAttackPresentationPhase CurrentPhase, const EAttackOutcome InputedOutcome)
 {
-	if (!Montage)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with null montage. Ability=%s"),
-			*GetNameSafe(this));
-		return;
-	}
+	FSectionTransition Transition;
 
-	UAnimInstance* AnimInstance = GetCurrentActorInfo()->GetAnimInstance();
-
-	if (!AnimInstance)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with null AnimInstance. Ability=%s"),
-			*GetNameSafe(this));
-		return;
-	}
-
-	
-	EAttackPresentationPhase CurrentPhase = GetCurrentPresentationPhase(Montage);
-	FName PhaseName = UEnum::GetValueAsName(CurrentPhase);
-
-	// Based on the InputedOutcome, determine the next section to play in the montage.
 	switch (CurrentPhase)
 	{
 	case EAttackPresentationPhase::Strike:
+		Transition.TransitionType = ESectionTransitionType::WaitForEndOfSection;
 		if (InputedOutcome == EAttackOutcome::Hit)
 		{
-			FName NextSectionName = UEnum::GetValueAsName(EAttackPresentationPhase::HitContact);
-			AnimInstance->Montage_SetNextSection(PhaseName, NextSectionName, Montage);
+			Transition.NextSectionName = FName("HitContact");
 		}
 		else if (InputedOutcome == EAttackOutcome::Miss)
 		{
-			FName NextSectionName = UEnum::GetValueAsName(EAttackPresentationPhase::WhiffFollowThrough);
-			AnimInstance->Montage_SetNextSection(PhaseName, NextSectionName, Montage);
+			Transition.NextSectionName = FName("WhiffFollowThrough");
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning,
-				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction called with unresolved outcome. Ability=%s Montage=%s"),
+				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Strike phase. Ability=%s Outcome=%d"),
 				*GetNameSafe(this),
-				*GetNameSafe(Montage));
+				static_cast<int32>(InputedOutcome));
 		}
-		break;
+		return Transition;
+
+	default:
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Invalid phase. Ability=%s Phase=%d Outcome=%d"),
+			*GetNameSafe(this),
+			static_cast<int32>(CurrentPhase),
+			static_cast<int32>(InputedOutcome));
+		return Transition;
 	}
+
+	return Transition;
 }
 
 void UPokemonGameplayAbilities::ListenForAbilityWindowEvents()
