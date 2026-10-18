@@ -1,6 +1,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 #include "Misc/AutomationTest.h"
+#include "Tests/AutomationCommon.h"
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
 #include "Characters/Pokemon_Parent.h"
 
@@ -46,6 +47,8 @@ bool FPokemonPresentationTest::RunTest(const FString& Parameters)
 	{
 		return false;
 	}
+
+	return true;
 }
 
 #endif
