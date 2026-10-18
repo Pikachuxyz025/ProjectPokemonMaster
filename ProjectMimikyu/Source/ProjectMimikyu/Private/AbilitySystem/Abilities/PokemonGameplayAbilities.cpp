@@ -166,6 +166,7 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 	{
 	case EAttackPresentationPhase::Strike:
 		Transition.TransitionType = ESectionTransitionType::WaitForEndOfSection;
+
 		if (InputedOutcome == EAttackOutcome::Hit)
 		{
 			Transition.NextSectionName = FName("HitContact");
@@ -174,8 +175,34 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 		{
 			Transition.NextSectionName = FName("WhiffFollowThrough");
 		}
-		return Transition;
+		else if(InputedOutcome == EAttackOutcome::Unresolved)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Strike phase. Leave to default transition. Next will automatically pending. Ability=%s Outcome=%d"),
+				*GetNameSafe(this),
+				static_cast<int32>(InputedOutcome));
+		}
+		break;
 
+	case EAttackPresentationPhase::Pending:
+		Transition.TransitionType = ESectionTransitionType::JumpImmediately;
+
+		if (InputedOutcome == EAttackOutcome::Hit)
+		{
+			Transition.NextSectionName = FName("HitContact");
+		}
+		else if (InputedOutcome == EAttackOutcome::Miss)
+		{
+			Transition.NextSectionName = FName("WhiffFollowThrough");
+		}
+		else if(InputedOutcome == EAttackOutcome::Unresolved)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Unresolved outcome during Pending phase. Return none. Remain in Pending. Ability=%s Outcome=%d"),
+				*GetNameSafe(this),
+				static_cast<int32>(InputedOutcome));
+		}
+		break;
 	default:
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonGameplayAbilities] DetermineNextPresentationAction: Invalid phase. Ability=%s Phase=%d Outcome=%d"),
