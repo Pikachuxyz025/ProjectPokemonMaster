@@ -53,6 +53,71 @@ bool FPokemonPresentationTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
+
+	const FSectionTransition ResultC =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Pending,
+			EAttackOutcome::Miss
+		);
+
+	if (!TestEqual(TEXT("Next section name for Pending phase with Miss outcome"), ResultC.NextSectionName, FName("WhiffFollowThrough")))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultC.TransitionType, ESectionTransitionType::JumpImmediately))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultD =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Pending,
+			EAttackOutcome::Hit
+		);
+
+	if (!TestEqual(TEXT("Next section name for Pending phase with Hit outcome"), ResultD.NextSectionName, FName("HitContact")))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultD.TransitionType, ESectionTransitionType::JumpImmediately))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultE =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Pending,
+			EAttackOutcome::Unresolved
+		);
+
+	if (!TestEqual(TEXT("Next section name for Pending phase with Unresolved outcome"), ResultE.NextSectionName, FName("None")))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultE.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultF =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Strike,
+			EAttackOutcome::Unresolved
+		);
+
+	if (!TestEqual(TEXT("Next section name for Strike phase with Unresolved outcome"), ResultF.NextSectionName, FName("None")))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultF.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
 	return true;
 }
 
