@@ -260,7 +260,7 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection();
+	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection(PresentationMontage);
 
 	if (CurrentSection == NAME_None)
 	{
