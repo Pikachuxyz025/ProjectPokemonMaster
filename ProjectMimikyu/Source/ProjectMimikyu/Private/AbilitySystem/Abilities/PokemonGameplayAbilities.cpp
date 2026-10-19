@@ -216,6 +216,11 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 
 void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(const FSectionTransition Transition)
 {
+	if (Transition.TransitionType == ESectionTransitionType::None)
+	{
+		return;
+	}
+
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
 
 	if (!ASC)
@@ -246,7 +251,16 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	const FName CurrentSection = GetCurrentActorInfo()->GetAnimInstance()->Montage_GetCurrentSection();
+	UAnimInstance* AnimInstance = GetCurrentActorInfo()->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No AnimInstance found. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection();
 
 	if (CurrentSection == NAME_None)
 	{
