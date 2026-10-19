@@ -2,6 +2,7 @@
 
 
 #include "AbilitySystem/Abilities/PokemonGameplayAbilities.h"
+#include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 //#include "UObject/Class.h"
@@ -211,6 +212,66 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 	}
 
 	return Transition;
+}
+
+void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(const FSectionTransition Transition)
+{
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+
+	if (!ASC)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No ASC found. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	// First check if current montage is valid and playing
+	// We want to use either CurrentMontageSetNextSectionName(...) or CurrentMontageJumpToSection(...) depending on the TransitionType
+	UAnimMontage* CurrentMontage = ASC->GetCurrentMontage();
+	if (!CurrentMontage)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current montage found. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	if (Transition.NextSectionName == NAME_None)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Transition has no next section name. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	switch (Transition.TransitionType)
+	{
+	case ESectionTransitionType::JumpImmediately:
+		ASC->CurrentMontageJumpToSection(Transition.NextSectionName);
+		break;
+
+	case ESectionTransitionType::WaitForEndOfSection:
+		
+		const FName CurrentSection = GetCurrentActorInfo()->GetAnimInstance()->Montage_GetCurrentSection();
+
+		if (CurrentSection == NAME_None)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current section found in montage. Ability=%s"),
+				*GetNameSafe(this));
+			return;
+		}
+
+		ASC->CurrentMontageSetNextSectionName(CurrentSection, Transition.NextSectionName);
+
+		break;
+
+	case ESectionTransitionType::None:
+
+	default:
+		break;
+	}
 }
 
 void UPokemonGameplayAbilities::ListenForAbilityWindowEvents()
