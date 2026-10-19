@@ -228,8 +228,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 
 	// First check if current montage is valid and playing
 	// We want to use either CurrentMontageSetNextSectionName(...) or CurrentMontageJumpToSection(...) depending on the TransitionType
-	UAnimMontage* CurrentMontage = ASC->GetCurrentMontage();
-	if (!CurrentMontage)
+	UAnimMontage* PresentationMontage = ASC->GetCurrentMontage();
+
+	if (!PresentationMontage)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current montage found. Ability=%s"),
@@ -245,6 +246,16 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
+	const FName CurrentSection = GetCurrentActorInfo()->GetAnimInstance()->Montage_GetCurrentSection();
+
+	if (CurrentSection == NAME_None)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current section found in montage. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
 	switch (Transition.TransitionType)
 	{
 	case ESectionTransitionType::JumpImmediately:
@@ -252,16 +263,6 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		break;
 
 	case ESectionTransitionType::WaitForEndOfSection:
-		
-		const FName CurrentSection = GetCurrentActorInfo()->GetAnimInstance()->Montage_GetCurrentSection();
-
-		if (CurrentSection == NAME_None)
-		{
-			UE_LOG(LogTemp, Warning,
-				TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current section found in montage. Ability=%s"),
-				*GetNameSafe(this));
-			return;
-		}
 
 		ASC->CurrentMontageSetNextSectionName(CurrentSection, Transition.NextSectionName);
 
