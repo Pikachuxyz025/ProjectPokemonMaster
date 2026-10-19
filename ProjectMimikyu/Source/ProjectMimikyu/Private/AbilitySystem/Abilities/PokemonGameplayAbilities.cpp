@@ -204,7 +204,7 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 				*GetNameSafe(this),
 				static_cast<int32>(InputedOutcome));
 		}
-
+		
 		break;
 	default:
 		break;
