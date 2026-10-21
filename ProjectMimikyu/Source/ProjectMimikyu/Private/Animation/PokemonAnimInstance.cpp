@@ -16,6 +16,8 @@ void UPokemonAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
+	Presentation = FPokemonPresentationState();
+
 	if (!OwningPokemon)
 	{
 		CachePokemonReferences();
@@ -28,6 +30,12 @@ void UPokemonAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	UpdateMovementData(DeltaSeconds);
 	UpdateCombatStateData();
+
+	if (UPokemonPresentationComponent* PresentationComponent = OwningPokemon->PresentationComponent)
+	{
+		PresentationComponent->UpdatePresentation(DeltaSeconds);
+		Presentation = PresentationComponent->GetPresentationState();
+	}
 }
 
 void UPokemonAnimInstance::CachePokemonReferences()

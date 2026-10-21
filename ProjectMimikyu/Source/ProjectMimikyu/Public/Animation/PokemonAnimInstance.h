@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "GameplayTagContainer.h"
+#include "ActorComponents/PokemonPresentationComponent.h"
 #include "PokemonAnimInstance.generated.h"
 
 class APokemon_Parent;
@@ -60,6 +61,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Pokemon|Combat")
 	FGameplayTagContainer ActiveCombatStates;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Pokemon|Presentation")
+	FPokemonPresentationState Presentation;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Pokemon|Combat")
 	bool bIsRecovering = false;

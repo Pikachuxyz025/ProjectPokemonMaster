@@ -36,6 +36,7 @@ class UBehaviorTree;
 class APokemonAIController;
 struct FPropertyChangedEvent;
 class UPokemonNavigationComponent;
+class UPokemonPresentationComponent;
 class UPokemonJumpExecutionComponent;
 class UPokemonCommandComponent;
 class UPokemonIntentSequenceComponent;
@@ -69,6 +70,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Traversal")
 	TObjectPtr<UPokemonJumpExecutionComponent> JumpExecutionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonPresentationComponent> PresentationComponent;
 
 	EMovementSpeed TraversalMovementSpeedMode = EMovementSpeed::EMS_Running;
 
@@ -221,6 +225,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Pokemon|Ownership")
 	bool IsOwnedByTrainer(const AActor* TrainerActor) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Presentation")
+	void ReinitializePresentation();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool HasTrainer() const;

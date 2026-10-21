@@ -6,6 +6,7 @@
 #include "Characters/TrainerCharacter.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
+#include "DataAssets/PokemonPresentationProfile.h"
 #include "AIControllers/PokemonAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/PlayerInterface.h"
@@ -21,6 +22,7 @@
 #include "ActorComponents/PokemonCombatStateComponent.h"
 #include "ActorComponents/PokemonHitStopComponent.h"
 #include "ActorComponents/PokemonStaminaComponent.h"
+#include "ActorComponents/PokemonPresentationComponent.h"
 #include "ActorComponents/TargetableComponent.h"
 #include "ActorComponents/PokemonLandingOrientationComponent.h"
 
@@ -64,6 +66,7 @@ APokemon_Parent::APokemon_Parent()
 	StaminaComponent = CreateDefaultSubobject<UPokemonStaminaComponent>("Stamina Component");
 	TargetComponent = CreateDefaultSubobject<UTargetableComponent>("Target Component");
 	LandingOrientationComponent = CreateDefaultSubobject<UPokemonLandingOrientationComponent>("Landing Orientation Component");
+	PresentationComponent = CreateDefaultSubobject<UPokemonPresentationComponent>("Presentation Component");
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -152,6 +155,7 @@ void APokemon_Parent::BeginPlay()
 	AddPokemonAbilities();
 	InitAbilityActorInfo();
 	GetPokemonUIInfo(true);
+	ReinitializePresentation();
 }
 
 void APokemon_Parent::AddPokemonAbilities()
@@ -627,6 +631,15 @@ EPokemonStatus APokemon_Parent::GetPokemonStatus() const
 bool APokemon_Parent::IsOwnedByTrainer(const AActor* TrainerActor) const
 {
 	return OwnershipComponent && OwnershipComponent->IsOwnedByTrainer(TrainerActor);
+}
+
+void APokemon_Parent::ReinitializePresentation()
+{
+	if (PresentationComponent)
+	{
+		PresentationComponent->InitializePresentation(
+			PokemonDataAsset ? PokemonDataAsset->PresentationProfile.Get() : nullptr);
+	}
 }
 
 bool APokemon_Parent::HasTrainer() const

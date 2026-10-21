@@ -12,6 +12,7 @@ using namespace UP;
 class UTexture2D;
 class UPokemonMoveDataAsset;
 class UPokemonMoveAnimationSet;
+class UPokemonPresentationProfile;
 
 USTRUCT(BlueprintType)
 struct FPokemonMovesetList
@@ -105,6 +106,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation|Moves")
 	TObjectPtr<UPokemonMoveAnimationSet> MoveAnimationSet = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation|Presentation")
+	TObjectPtr<UPokemonPresentationProfile> PresentationProfile = nullptr;
 
 	int32 GetStatFromTag(const FGameplayTag& StatTag);
 	FText GetNameFromTag(const FGameplayTag& StatTag);
