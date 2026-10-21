@@ -221,6 +221,13 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
+	const FGameplayAbilityActorInfo* ActorInfo = GetCurrentActorInfo();
+
+	if (!ActorInfo)
+	{
+		return;
+	}
+
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
 
 	if (!ASC)
@@ -231,11 +238,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	// First check if current montage is valid and playing
-	// We want to use either CurrentMontageSetNextSectionName(...) or CurrentMontageJumpToSection(...) depending on the TransitionType
-	UAnimMontage* PresentationMontage = ASC->GetCurrentMontage();
+	UAnimMontage* PresentationMontage = ResolveAbilityMontage();
 
-	if (!PresentationMontage)
+	if (!PresentationMontage || ASC->GetCurrentMontage() != PresentationMontage)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current montage found. Ability=%s"),
@@ -251,16 +256,20 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	UAnimInstance* AnimInstance = GetCurrentActorInfo()->GetAnimInstance();
-	if (!AnimInstance)
+	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
+	UGameplayAbility* AnimatingAbility = ASC->GetAnimatingAbility();
+
+	if (!AnimInstance || AnimatingAbility != this)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No AnimInstance found. Ability=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No anim instance found or animating ability is not this ability. Ability=%s"),
 			*GetNameSafe(this));
 		return;
 	}
 
 	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection(PresentationMontage);
+
+	int32 NextSectionIndex = PresentationMontage->GetSectionIndex(Transition.NextSectionName);
 
 	if (CurrentSection == NAME_None)
 	{
@@ -365,7 +374,6 @@ UAnimMontage* UPokemonGameplayAbilities::ResolveAbilityMontage() const
 		if (UAnimMontage* SpeciesMontage = AnimationSet->FindMontageForMove(Move))
 		{
 			return SpeciesMontage;
-
 		}
 	}
 
