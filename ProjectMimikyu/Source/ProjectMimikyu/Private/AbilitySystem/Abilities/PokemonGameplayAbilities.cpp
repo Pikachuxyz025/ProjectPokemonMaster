@@ -214,9 +214,9 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 	return Transition;
 }
 
-void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(const FSectionTransition Transition)
+void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(const EAttackOutcome AttackOutcome)
 {
-	if (Transition.TransitionType == ESectionTransitionType::None)
+	if (AttackOutcome == EAttackOutcome::Unresolved)
 	{
 		return;
 	}
@@ -248,14 +248,6 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	if (Transition.NextSectionName == NAME_None)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Transition has no next section name. Ability=%s"),
-			*GetNameSafe(this));
-		return;
-	}
-
 	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
 	UGameplayAbility* AnimatingAbility = ASC->GetAnimatingAbility();
 
@@ -269,6 +261,30 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 
 	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection(PresentationMontage);
 
+	const bool bIsSectionGoodForTransition = (CurrentSection == FName(TEXT("Strike")) || CurrentSection == FName(TEXT("Pending")));
+	
+	if (CurrentSection == NAME_None || !bIsSectionGoodForTransition)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Current section is not valid for transition. Ability=%s CurrentSection=%s"),
+			*GetNameSafe(this),
+			*CurrentSection.ToString());
+		return;
+	}
+
+	FSectionTransition Transition = DetermineNextPresentationAction(
+		CurrentSection == FName(TEXT("Strike")) ? EAttackPresentationPhase::Strike : EAttackPresentationPhase::Pending,
+		AttackOutcome
+	);
+
+	if (Transition.NextSectionName == NAME_None)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Transition has no next section name. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
 	int32 NextSectionIndex = PresentationMontage->GetSectionIndex(Transition.NextSectionName);
 
 	if (NextSectionIndex == INDEX_NONE)
@@ -277,16 +293,6 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Next section name not found in montage. Ability=%s NextSection=%s"),
 			*GetNameSafe(this),
 			*Transition.NextSectionName.ToString());
-		return;
-	}
-
-	const bool bIsSectionGoodForTransition = (CurrentSection == FName(TEXT("Strike")) || CurrentSection == FName(TEXT("Pending")));
-	
-	if (CurrentSection == NAME_None || !bIsSectionGoodForTransition)
-	{
-		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current section found in montage. Ability=%s"),
-			*GetNameSafe(this));
 		return;
 	}
 

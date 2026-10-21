@@ -139,7 +139,7 @@ public:
 	UFUNCTION()
 	FSectionTransition DetermineNextPresentationAction(const EAttackPresentationPhase CurrentPhase, const EAttackOutcome InputedOutcome);
 
-	void SetPresentationPhaseBasedOnTransition_Sketch(const FSectionTransition Transition);
+	void SetPresentationPhaseBasedOnTransition_Sketch(const EAttackOutcome AttackOutcome);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	bool bListenForAbilityWindowEvents = false;
