@@ -280,7 +280,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		return;
 	}
 
-	if (CurrentSection == NAME_None)
+	const bool bIsSectionGoodForTransition = (CurrentSection == FName(TEXT("Strike")) || CurrentSection == FName(TEXT("Pending")));
+	
+	if (CurrentSection == NAME_None || !bIsSectionGoodForTransition)
 	{
 		UE_LOG(LogTemp, Warning,
 			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current section found in montage. Ability=%s"),
