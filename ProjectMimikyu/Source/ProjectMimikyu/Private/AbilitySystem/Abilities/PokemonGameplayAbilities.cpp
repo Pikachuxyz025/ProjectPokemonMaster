@@ -271,6 +271,15 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 
 	int32 NextSectionIndex = PresentationMontage->GetSectionIndex(Transition.NextSectionName);
 
+	if (NextSectionIndex == INDEX_NONE)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Next section name not found in montage. Ability=%s NextSection=%s"),
+			*GetNameSafe(this),
+			*Transition.NextSectionName.ToString());
+		return;
+	}
+
 	if (CurrentSection == NAME_None)
 	{
 		UE_LOG(LogTemp, Warning,
