@@ -150,6 +150,70 @@ bool FPokemonPresentationTest::RunTest(const FString& Parameters)
 		return false;
 	}
 
+	const FSectionTransition ResultI =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::WhiffFollowThrough,
+			EAttackOutcome::Miss
+		);
+
+	if (!TestEqual(TEXT("Next section name for Whiff phase with Miss outcome"), ResultI.NextSectionName, NAME_None))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultI.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultJ =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::HitContact,
+			EAttackOutcome::Hit
+		);
+
+	if (!TestEqual(TEXT("Next section name for HitContact phase with Hit outcome"), ResultJ.NextSectionName, NAME_None))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultJ.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultK =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Recovery,
+			EAttackOutcome::Hit
+		);
+	
+	if (!TestEqual(TEXT("Next section name for Recovery phase with Hit outcome"), ResultK.NextSectionName, NAME_None))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultK.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
+	const FSectionTransition ResultL =
+		Ability->DetermineNextPresentationAction(
+			EAttackPresentationPhase::Recovery,
+			EAttackOutcome::Miss
+		);
+
+	if (!TestEqual(TEXT("Next section name for Recovery phase with Miss outcome"), ResultL.NextSectionName, NAME_None))
+	{
+		return false;
+	}
+
+	if (!TestEqual(TEXT("Resulting Transition type "), ResultL.TransitionType, ESectionTransitionType::None))
+	{
+		return false;
+	}
+
 	return true;
 }
 

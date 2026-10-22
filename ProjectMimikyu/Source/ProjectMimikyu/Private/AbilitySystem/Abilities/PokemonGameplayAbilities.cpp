@@ -218,6 +218,10 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 {
 	if (AttackOutcome == EAttackOutcome::Unresolved)
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Unresolved outcome. No transition will be applied. Ability=%s Outcome=%d"),
+			*GetNameSafe(this),
+			static_cast<int32>(AttackOutcome));
 		return;
 	}
 
@@ -225,6 +229,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 
 	if (!ActorInfo)
 	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No ActorInfo found. Ability=%s"),
+			*GetNameSafe(this));
 		return;
 	}
 
@@ -243,8 +250,10 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!PresentationMontage || ASC->GetCurrentMontage() != PresentationMontage)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No current montage found. Ability=%s"),
-			*GetNameSafe(this));
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No valid montage found or current "
+				"montage is not the presentation montage.Ability = % s Montage = % s"),
+			*GetNameSafe(this),
+			*GetNameSafe(PresentationMontage));
 		return;
 	}
 
@@ -254,7 +263,8 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!AnimInstance || AnimatingAbility != this)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No anim instance found or animating ability is not this ability. Ability=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No anim instance found or animating ability "
+				"is not this ability.Ability = % s"),
 			*GetNameSafe(this));
 		return;
 	}
@@ -277,11 +287,13 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 		AttackOutcome
 	);
 
-	if (Transition.NextSectionName == NAME_None)
+	if (Transition.NextSectionName == NAME_None || Transition.TransitionType == ESectionTransitionType::None)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Transition has no next section name. Ability=%s"),
-			*GetNameSafe(this));
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No valid transition determined. Ability=%s CurrentSection=%s Outcome=%d"),
+			*GetNameSafe(this),
+			*CurrentSection.ToString(),
+			static_cast<int32>(AttackOutcome));
 		return;
 	}
 
@@ -293,6 +305,16 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Next section name not found in montage. Ability=%s NextSection=%s"),
 			*GetNameSafe(this),
 			*Transition.NextSectionName.ToString());
+		return;
+	}
+
+	bool bIsMontagePlaying = AnimInstance->Montage_IsPlaying(PresentationMontage);
+	if (!bIsMontagePlaying)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Montage is not playing. Ability=%s Montage=%s"),
+			*GetNameSafe(this),
+			*GetNameSafe(PresentationMontage));
 		return;
 	}
 
