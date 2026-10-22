@@ -236,6 +236,7 @@ protected:
 		return false;
 	}
 
+	// Returns true if the ability is currently in a state where it can finish its presentation-driven execution.
 	void TryFinishPresentationDrivenExecution();
 	void ApplyAbilityCombatStateLock();
 	void ClearAbilityCombatStateLock(bool bWasCancelled);
@@ -272,8 +273,14 @@ protected:
 	bool bSawRecoveryWindowThisActivation = false;
 
 private:
+	// The command ID that this ability is executing in sequence with, if any.
 	FGuid SequencedCommandId;
+
+	// The FName that indicates the reason for a sequenced activation failure, if any.
 	FName SequencedActivationFailure = NAME_None;
+	
+	// A bool that indicates whether the ability is currently in the process of ending its sequenced execution.
+	// This is used to prevent re-entrant calls to EndSequencedExecution.
 	bool bSequencedEndInProgress = false;
 
 	EAttackPresentationPhase GetCurrentPresentationPhase(const UAnimMontage* AnimMontage) const;

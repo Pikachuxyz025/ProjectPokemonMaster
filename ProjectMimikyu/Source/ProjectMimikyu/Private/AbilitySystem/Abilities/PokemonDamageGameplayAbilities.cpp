@@ -657,6 +657,11 @@ bool UPokemonDamageGameplayAbilities::CheckCost(const FGameplayAbilitySpecHandle
 	return true;
 }
 
+bool UPokemonDamageGameplayAbilities::HasPendingPresentationGameplayRecovery() const
+{
+	return bAirborneRecoveryActive;
+}
+
 void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 {
 	RecoveryElapsedTime += FMath::Max(0.f, DeltaTime);
@@ -827,10 +832,19 @@ void UPokemonDamageGameplayAbilities::FinishAirborneWhiffRecovery(FName Reason)
 		*FinishedCommandId.ToString(),
 		*Reason.ToString());
 
-	if (IsActive())
+	if (!IsActive())
 	{
-		EndSequencedExecution(FinishedCommandId, false);
+		return;
+		
 	}
+	
+	if(bEnablePresentationBranchTest)
+	{
+		TryFinishPresentationDrivenExecution();
+		return;
+	}
+
+	EndSequencedExecution(FinishedCommandId, false);
 }
 
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()

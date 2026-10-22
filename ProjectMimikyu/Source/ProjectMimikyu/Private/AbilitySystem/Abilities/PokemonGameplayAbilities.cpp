@@ -49,7 +49,9 @@ bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHan
 void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	SequencedCommandId.Invalidate();
+
 	SequencedActivationFailure = NAME_None;
+
 	if (APokemon_Parent* Pokemon = ActorInfo ? Cast<APokemon_Parent>(ActorInfo->AvatarActor.Get()) : nullptr)
 	{
 		if (UPokemonCommandComponent* Command = Pokemon->FindComponentByClass<UPokemonCommandComponent>())
@@ -58,6 +60,9 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 		}
 	}
 	const FGuid ActivatingCommandId = SequencedCommandId;
+
+	bPresentationMontageFinished = false;
+
 	// Run the Blueprint Event ActivateAbility first.
 	// This gives the Blueprint a chance to CommitPokemonMove().
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -594,20 +599,29 @@ void UPokemonGameplayAbilities::RecordSequencedActivationFailure(FName Reason)
 
 void UPokemonGameplayAbilities::TryFinishPresentationDrivenExecution()
 {
-	if (!bEnablePresentationBranchTest || !IsActive()) return;
-
-	if (bPresentationMontageFinished)
+	if (!bEnablePresentationBranchTest || !IsActive()) 
 	{
+		return;
+	}
+
+	if (!bPresentationMontageFinished)
+	{
+		return;
 
 	}
 
 	if (HasPendingPresentationGameplayRecovery())
 	{
 		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonGameplayAbilities] TryFinishPresentationDrivenExecution: Cannot finish execution due to pending gameplay recovery. Ability=%s"),
+			TEXT("[IT21Lifecycle] Waiting for gameplay recovery. Ability=%s"),
 			*GetNameSafe(this));
 		return;
 	}
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[IT21Lifecycle] Presentation and gameplay ready. Ending ability=%s"),
+		*GetNameSafe(this));
+
 
 	EndAbilityFromMontage(false);
 }
@@ -723,6 +737,13 @@ void UPokemonGameplayAbilities::OnAbilityMontageCompleted()
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonGameplayAbilities] Montage completed. Ability=%s"),
 		*GetNameSafe(this));
+
+	if (bEnablePresentationBranchTest)
+	{
+		bPresentationMontageFinished = true;
+		TryFinishPresentationDrivenExecution();
+		return;
+	}
 
 	EndAbilityFromMontage(false);
 }
