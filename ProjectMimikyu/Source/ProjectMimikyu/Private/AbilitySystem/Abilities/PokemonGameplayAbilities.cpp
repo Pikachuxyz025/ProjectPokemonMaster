@@ -153,6 +153,30 @@ void UPokemonGameplayAbilities::HandleAbilityAnimEventReceived(FGameplayEventDat
 	OnAbilityAnimEventReceived(Payload);
 }
 
+void UPokemonGameplayAbilities::PreviewConfirmedOutcome(EAttackOutcome Outcome)
+{
+	UE_LOG(LogTemp, Display,
+		TEXT("[PokemonGameplayAbilities] PreviewConfirmedOutcome called. Ability=%s Outcome=%d"),
+		*GetNameSafe(this),
+		static_cast<int32>(Outcome));
+
+	if (!bEnablePresentationBranchTest || !IsActive())
+	{
+		return;
+	}
+
+	if (Outcome == EAttackOutcome::Unresolved)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[PokemonGameplayAbilities] PreviewConfirmedOutcome: Unresolved outcome. No transition will be applied. Ability=%s Outcome=%d"),
+			*GetNameSafe(this),
+			static_cast<int32>(Outcome));
+		return;
+	}
+
+	SetPresentationPhaseBasedOnTransition_Sketch(Outcome);
+}
+
 void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload)
 {
 	// Base ability does nothing by default.
@@ -322,12 +346,21 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	{
 	case ESectionTransitionType::JumpImmediately:
 		ASC->CurrentMontageJumpToSection(Transition.NextSectionName);
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Jumping to section immediately. Ability=%s CurrentSection=%s NextSection=%s"),
+			*GetNameSafe(this),
+			*CurrentSection.ToString(),
+			*Transition.NextSectionName.ToString());
 		break;
 
 	case ESectionTransitionType::WaitForEndOfSection:
 
 		ASC->CurrentMontageSetNextSectionName(CurrentSection, Transition.NextSectionName);
-
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Will wait for end of section to transition. Ability=%s CurrentSection=%s NextSection=%s"),
+			*GetNameSafe(this),
+			*CurrentSection.ToString(),
+			*Transition.NextSectionName.ToString());
 		break;
 
 	case ESectionTransitionType::None:
@@ -480,8 +513,34 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 
 void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (bEnablePresentationBranchTest)
+	{
+		UAnimMontage* ExpectedMontage = ResolveAbilityMontage();
+
+		UAnimInstance* AnimInstance =
+			ActorInfo ? ActorInfo->GetAnimInstance() : nullptr;
+
+		const FName CurrentSection =
+			(AnimInstance && ExpectedMontage)
+			? AnimInstance->Montage_GetCurrentSection(ExpectedMontage)
+			: NAME_None;
+
+		const bool bMontagePlaying =
+			AnimInstance && ExpectedMontage &&
+			AnimInstance->Montage_IsPlaying(ExpectedMontage);
+
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT21Lifecycle] EndAbility | Ability=%s "
+				"Cancelled=%d Section=%s MontagePlaying=%d"),
+			*GetNameSafe(this),
+			bWasCancelled ? 1 : 0,
+			*CurrentSection.ToString(),
+			bMontagePlaying ? 1 : 0);
+	}
+
 	const FGuid EndingCommandId = SequencedCommandId;
 	TWeakObjectPtr<UPokemonCommandComponent> Command;
+
 	if (EndingCommandId.IsValid())
 	{
 		if (bSequencedEndInProgress || !IsEndAbilityValid(Handle, ActorInfo)) return;
@@ -496,6 +555,7 @@ void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Hand
 		bSequencedEndInProgress = true;
 		if (Command.IsValid()) ++Command->SequencedAbilityEndDepth;
 	}
+
 	ClearAbilityCombatStateLock(bWasCancelled);
 
 	ResetAbilityWindowRuntimeState();
@@ -530,6 +590,26 @@ void UPokemonGameplayAbilities::EndSequencedExecution(FGuid OwnedCommandId, bool
 void UPokemonGameplayAbilities::RecordSequencedActivationFailure(FName Reason)
 {
 	if (SequencedCommandId.IsValid()) SequencedActivationFailure = Reason;
+}
+
+void UPokemonGameplayAbilities::TryFinishPresentationDrivenExecution()
+{
+	if (!bEnablePresentationBranchTest || !IsActive()) return;
+
+	if (bPresentationMontageFinished)
+	{
+
+	}
+
+	if (HasPendingPresentationGameplayRecovery())
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[PokemonGameplayAbilities] TryFinishPresentationDrivenExecution: Cannot finish execution due to pending gameplay recovery. Ability=%s"),
+			*GetNameSafe(this));
+		return;
+	}
+
+	EndAbilityFromMontage(false);
 }
 
 void UPokemonGameplayAbilities::ApplyAbilityCombatStateLock()

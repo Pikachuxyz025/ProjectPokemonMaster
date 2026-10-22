@@ -170,6 +170,12 @@ public:
 	UFUNCTION()
 	void HandleAbilityAnimEventReceived(FGameplayEventData Payload);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Presentation|Testing")
+	bool bEnablePresentationBranchTest = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Presentation|Testing")
+	void PreviewConfirmedOutcome(EAttackOutcome Outcome);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation")
 	TObjectPtr<UAnimMontage> AbilityMontage = nullptr;
 
@@ -223,6 +229,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Combat State", meta = (ClampMin = "0.0"))
 	float MinimumAttackStateDuration = 0.1f;
 
+	bool bPresentationMontageFinished = false;
+
+	virtual bool HasPendingPresentationGameplayRecovery() const
+	{
+		return false;
+	}
+
+	void TryFinishPresentationDrivenExecution();
 	void ApplyAbilityCombatStateLock();
 	void ClearAbilityCombatStateLock(bool bWasCancelled);
 	float GetAbilityCombatLockDuration() const;
