@@ -23,6 +23,13 @@ public:
 	bool ArmWhiffFacing(FGuid CommandId, const FPokemonCommandTarget& Target);
 
 	void ReleaseAfterAirborneRecovery(FGuid CommandId);
+
+	//
+    // Custom summary:
+    // The cancel landing facing function clears the component's state
+    // and restores the Pokemon's rotation ownership if it was previously acquired.
+    // It'll also disable ticking to prevent further updates until a new command is issued.
+    //
 	void CancelLandingFacing(FGuid ExpectedCommandId = FGuid());
 
 	bool IsPivoting() const { return bPivotActive; }

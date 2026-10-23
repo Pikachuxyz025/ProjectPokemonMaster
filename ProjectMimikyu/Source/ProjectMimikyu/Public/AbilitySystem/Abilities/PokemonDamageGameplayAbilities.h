@@ -183,7 +183,7 @@ private:
 
 	void StopAirborneWhiffRecovery(bool bKeepLandingIntent = false);
 	void FinishAirborneWhiffRecovery(FName Reason);
-
+	void AbortAirborneWhiffRecovery(FName Reason);
 private:
 
 	FGameplayTag GetCooldownTag() const;

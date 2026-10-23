@@ -96,6 +96,25 @@ void UPokemonDamageGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandl
 {
 	StopAirborneWhiffRecovery();
 
+	// Recovery may already have released its landing intent and
+	// cleared RecoveryCommandId while the montage remianed active.
+	if (bEnablePresentationBranchTest && bWasCancelled && IsActive())
+	{
+		const FGuid EndingCommandId = GetSequencedCommandId();
+
+		// An invalid ID would cancel any landing intent.
+		if (EndingCommandId.IsValid())
+		{
+			if (APokemon_Parent* Pokemon = GetAvatarPokemon())
+			{
+				if(auto* Landing =Pokemon->GetLandingOrientationComponent())
+				{
+					Landing->CancelLandingFacing(EndingCommandId);
+				}
+			}
+		}
+	}
+
 	Super::EndAbility(Handle,
 		ActorInfo,
 		ActivationInfo,
@@ -119,10 +138,12 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 
 	UCharacterMovementComponent* Movement =Pokemon->GetCharacterMovement();
 
-	if (!Command || !Movement ||!Movement->IsFalling() ||
+	const bool bRecoveryUnavailable = !Command || !Movement || !Movement->IsFalling() ||
 		!Command->IsSequencedCommand(CommandId) ||
 		LastReportedWhiffCommandId != CommandId ||
-		!bLastWhiffRecoverable)
+		!bLastWhiffRecoverable;
+
+	if (bRecoveryUnavailable)
 	{
 		return false;
 	}
@@ -158,7 +179,7 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 
 	if (!AirborneRecoveryTickTask)
 	{
-		StopAirborneWhiffRecovery();
+		AbortAirborneWhiffRecovery(TEXT("RecoveryTickTaskUnavailable"));
 		return false;
 	}
 
@@ -166,7 +187,7 @@ bool UPokemonDamageGameplayAbilities::BeginAirborneWhiffRecovery()
 
 	if (!Landing || !Landing->ArmWhiffFacing(CommandId, Command->GetCommandTarget()))
 	{
-		StopAirborneWhiffRecovery();
+		AbortAirborneWhiffRecovery(TEXT("LandingFacingUnavailable"));
 		return false;
 	}
 
@@ -672,7 +693,7 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 
 	if (!bAirborneRecoveryActive || !Pokemon || !IsActive())
 	{
-		StopAirborneWhiffRecovery();
+		AbortAirborneWhiffRecovery(TEXT("RecoveryTickInvalid"));
 		return;
 	}
 
@@ -683,15 +704,15 @@ void UPokemonDamageGameplayAbilities::TickAirborneWhiffRecovery(float DeltaTime)
 	if (!Movement || !Command ||
 		!Command->IsSequencedCommand(RecoveryCommandId))
 	{
-		StopAirborneWhiffRecovery();
+		AbortAirborneWhiffRecovery(TEXT("RecoveryCommandUnavailable"));
 		return;
 	}
 
     UWorld* World = Pokemon->GetWorld();
     if (!World)
     {
-        StopAirborneWhiffRecovery();
-        return;
+		AbortAirborneWhiffRecovery(TEXT("RecoveryWorldUnavailable"));
+		return;
     }
 
 	if(!Movement->IsFalling())
@@ -845,6 +866,32 @@ void UPokemonDamageGameplayAbilities::FinishAirborneWhiffRecovery(FName Reason)
 	}
 
 	EndSequencedExecution(FinishedCommandId, false);
+}
+
+void UPokemonDamageGameplayAbilities::AbortAirborneWhiffRecovery(FName Reason)
+{
+	const bool bCancelTestExecution =
+		bEnablePresentationBranchTest && bAirborneRecoveryActive && IsActive();
+
+	StopAirborneWhiffRecovery();
+
+
+	if (!bCancelTestExecution || !IsActive())
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[IT21Lifecycle] Recovery aborted | Ability=%s Reason=%s"),
+		*GetNameSafe(this),
+		*Reason.ToString());
+
+	EndAbility(
+		CurrentSpecHandle,
+		CurrentActorInfo,
+		CurrentActivationInfo,
+		true,
+		true);
 }
 
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()

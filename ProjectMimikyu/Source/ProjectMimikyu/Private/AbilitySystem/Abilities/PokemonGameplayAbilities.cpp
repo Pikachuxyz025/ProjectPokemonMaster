@@ -467,6 +467,13 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 			TEXT("[PokemonGameplayAbilities] No montage resolved. Ability=%s"),
 			*GetNameSafe(this));
 
+		if (bEnablePresentationBranchTest && IsActive())
+		{
+			RecordSequencedActivationFailure(TEXT("PresentationMontageUnavailable"));
+
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		}
+
 		return nullptr;
 	}
 
@@ -476,7 +483,11 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 			NAME_None,
 			SelectedMontage,
 			MontagePlayRate,
-			MontageStartSection
+			MontageStartSection,
+			true,									// StopWhenAbilityEnds
+			1.0f,									// Root-Motion translation scale
+			0.0f,                                   // Start time.
+			bEnablePresentationBranchTest		    // Interrupt after blend-out.
 		);
 
 	if (!MontageTask)
@@ -485,6 +496,13 @@ UAbilityTask_PlayMontageAndWait* UPokemonGameplayAbilities::PlayAbilityMontage()
 			TEXT("[PokemonGameplayAbilities] Failed to create montage task. Ability=%s Montage=%s"),
 			*GetNameSafe(this),
 			*GetNameSafe(SelectedMontage));
+
+		if (bEnablePresentationBranchTest && IsActive())
+		{
+			RecordSequencedActivationFailure(TEXT("PresentationMontageTaskUnavailable"));
+
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		}
 
 		return nullptr;
 	}

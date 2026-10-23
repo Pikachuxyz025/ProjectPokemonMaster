@@ -43,12 +43,6 @@ void UPokemonLandingOrientationComponent::ReleaseAfterAirborneRecovery(FGuid Com
 	}
 }
 
-//
-// Custom summary:
-// The cancel landing facing function clears the component's state
-// and restores the Pokemon's rotation ownership if it was previously acquired.
-// It'll also disable ticking to prevent further updates until a new command is issued.
-//
 void UPokemonLandingOrientationComponent::CancelLandingFacing(FGuid ExpectedCommandId)
 {
 	// 1. If the caller is expecting a specific command, ignore if it doesn't match
