@@ -1,0 +1,24 @@
+[2026.10.24-19.01.28:842][265]LogTemp: Display: [IT50Diag] Armed Mode=Cancel Delay=0.050 NextAbility=GA_MachPunch_IT21_C
+[2026.10.24-19.01.37:974][871]LogTemp: Display: [IT50Diag] Captured CommandId=3289119A4E1205228F9C339DA0DA025E Ability=GA_MachPunch_IT21_C_0 Synthetic=0
+[2026.10.24-19.01.38:026][874]LogTemp: Display: [IT50Diag] CancelRequest CommandId=3289119A4E1205228F9C339DA0DA025E Playing=1 Section=Strike
+[2026.10.24-19.01.38:027][874]LogTemp: [PokemonCommand] Resolved CommandId=3289119A4E1205228F9C339DA0DA025E ParentIntentId=4D95BD6640D981535DB040A25D50363B Outcome=Interrupted Reason=Step50DiagnosticCancel
+[2026.10.24-19.01.38:027][874]LogTemp: Display: [IT50Diag] Terminal CommandId=3289119A4E1205228F9C339DA0DA025E Outcome=Interrupted Reason=Step50DiagnosticCancel Count=1 Released=1 Synthetic=0 Result=Passed
+[2026.10.24-19.01.38:186][885]LogTemp: Display: [IT50Diag] LateCallback Kind=OriginalInstance OldCommandId=3289119A4E1205228F9C339DA0DA025E Result=SuppressedLifetime ValidatorExecuted=0
+[2026.10.24-19.01.55:039][ 67]LogTemp: Display: [IT50Diag] LateCallback Kind=NextInstance OldCommandId=3289119A4E1205228F9C339DA0DA025E CurrentCommandId=35670B034A6CE4621EC3F9801B22C324 Result=RejectedContext ValidatorExecuted=1 Effects=0 StateUnchanged=1
+[2026.10.24-19.01.55:039][ 67]LogTemp: Display: [IT50Diag] SubsequentActivation OldCommandId=3289119A4E1205228F9C339DA0DA025E NewCommandId=35670B034A6CE4621EC3F9801B22C324 Result=Passed
+[2026.10.24-19.01.55:530][101]LogTemp: [PokemonCommand] Resolved CommandId=35670B034A6CE4621EC3F9801B22C324 ParentIntentId=3C767D8C4595D2E43FB07D96FC46A21D Outcome=Connected Reason=None
+[2026.10.24-19.20.00:110][542]LogTemp: Display: [IT50Diag] Armed Mode=StrikeHit Delay=0.050 NextAbility=GA_MachPunch_IT21_C
+[2026.10.24-19.20.12:125][365]LogTemp: Display: [IT50Diag] Captured CommandId=8231289E4421B2781D5DDB82DB5C5EDC Ability=GA_MachPunch_IT21_C_0 Synthetic=1
+[2026.10.24-19.20.12:126][365]LogTemp: Display: [IT50Diag] SyntheticDispatch CommandId=8231289E4421B2781D5DDB82DB5C5EDC Outcome=Hit Section=Strike Position=0.8000 NoCombatQueries=1
+[2026.10.24-19.20.12:127][365]LogTemp: Display: [IT50Diag] StrikeQueued CommandId=8231289E4421B2781D5DDB82DB5C5EDC Destination=HitContact StillStrike=1 Result=Passed
+[2026.10.24-19.20.12:208][370]LogTemp: Display: [IT50Diag] StrikeDestination CommandId=8231289E4421B2781D5DDB82DB5C5EDC Section=HitContact Elapsed=0.0809 Minimum=0.0833 Result=Passed
+[2026.10.24-19.20.12:483][388]LogTemp: Display: [IT50Diag] Terminal CommandId=8231289E4421B2781D5DDB82DB5C5EDC Outcome=Missed Reason=None Count=1 Released=1 Synthetic=1 Result=Passed
+[2026.10.24-19.20.50:168][227]LogTemp: Display: [IT50Diag] Armed Mode=StrikeMiss Delay=0.050 NextAbility=GA_MachPunch_IT21_C
+[2026.10.24-19.20.56:383][663]LogTemp: Display: [IT50Diag] Captured CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Ability=GA_MachPunch_IT21_C_3 Synthetic=1
+[2026.10.24-19.20.56:384][663]LogTemp: Display: [IT50Diag] SyntheticDispatch CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Outcome=Miss Section=Strike Position=0.8000 NoCombatQueries=1
+[2026.10.24-19.20.56:385][663]LogTemp: Display: [IT50Diag] StrikeQueued CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Destination=WhiffFollowThrough StillStrike=1 Result=Passed
+[2026.10.24-19.20.56:456][668]LogTemp: Display: [IT50Diag] StrikeDestination CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Section=WhiffFollowThrough Elapsed=0.0727 Minimum=0.0833 Result=Passed
+[2026.10.24-19.20.56:837][696]LogTemp: Display: [IT50Diag] Terminal CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Outcome=Missed Reason=None Count=1 Released=1 Synthetic=1 Result=Passed
+[2026.10.24-19.21.35:829][506]LogTemp: Display: [IT50Diag] Report CommandId=8231289E4421B2781D5DDB82DB5C5EDC Failed=0 ResolutionCount=1 Released=1 CancelIssued=0 OldCallbackSafe=0 NextCallbackRejected=0 Queued=1 Entered=1 Completed=1
+[2026.10.24-19.21.35:829][506]LogTemp: Display: [IT50Diag] Report CommandId=3FB558174C7C6C771E5E3EBACDD3E831 Failed=0 ResolutionCount=1 Released=1 CancelIssued=0 OldCallbackSafe=0 NextCallbackRejected=0 Queued=1 Entered=1 Completed=1
+[2026.10.24-19.22.34:623][967]LogTemp: Display: [IT50Diag] Stopped. Hooks idle; active abilities are not cancelled.
