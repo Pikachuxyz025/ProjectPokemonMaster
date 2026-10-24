@@ -14,6 +14,7 @@
 #include "Animation/AnimMontage.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "Characters/Pokemon_Parent.h"
+#include "Diagnostics/PokemonStep50Diagnostics.h"
 
 bool UPokemonGameplayAbilities::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
@@ -81,7 +82,13 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	// Run the Blueprint Event ActivateAbility first.
 	// This gives the Blueprint a chance to CommitPokemonMove().
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	#if WITH_EDITOR
+	// Only an explicitly armed IT21 synthetic test replaces Blueprint contact work.
+	if (!FStep50RegressionDiagnostics::BeginActivation(this))
+	#endif
+	{
+		Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	}
 
 	// CommitPokemonMove may have failed and the Blueprint may
 	// have called EndAbility().
@@ -114,6 +121,9 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (IsActive() && SequencedCommandId == ActivatingCommandId)
 	{
 		TryPresentAuthoritativeCombatOutcome();
+		#if WITH_EDITOR
+		FStep50RegressionDiagnostics::MontageStarted(this);
+		#endif
 	}
 }
 
@@ -903,6 +913,9 @@ APokemon_Parent* UPokemonGameplayAbilities::GetAvatarPokemon() const
 
 void UPokemonGameplayAbilities::OnAbilityMontageCompleted()
 {
+	#if WITH_EDITOR
+	FStep50RegressionDiagnostics::MontageCompleted(this);
+	#endif
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonGameplayAbilities] Montage completed. Ability=%s"),
 		*GetNameSafe(this));

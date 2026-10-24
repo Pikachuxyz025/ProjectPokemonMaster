@@ -284,6 +284,10 @@ protected:
 	bool bSawRecoveryWindowThisActivation = false;
 
 private:
+	#if WITH_EDITOR
+	friend struct FStep50RegressionDiagnostics;
+	#endif
+
 	// The command ID that this ability is executing in sequence with, if any.
 	FGuid SequencedCommandId;
 

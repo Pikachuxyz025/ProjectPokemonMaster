@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "HAL/IConsoleManager.h"
 #include "TimerManager.h"
+#include "Diagnostics/PokemonStep50Diagnostics.h"
 
 namespace
 {
@@ -504,6 +505,9 @@ bool UPokemonCommandComponent::FinishCommand(FGuid CommandId, EPokemonAttackExec
 	CleanupCommand(Pokemon);
 	bCommandCleanupInProgress = false;
 	if (bReportSequence) LogCommandEvent(TEXT("Resolved"), CommandId, IntentId, Outcome, Reason);
+	#if WITH_EDITOR
+	FStep50RegressionDiagnostics::CommandResolved(this, CommandId, Outcome, Reason);
+	#endif
 	if (Pokemon) Pokemon->OnAttackEnd.Broadcast();
 	// Nothing mutates command ownership after either result bus; listeners may submit.
 	if (bReportSequence) OnTrainerCommandResolved.Broadcast(CommandId, Outcome, Reason);

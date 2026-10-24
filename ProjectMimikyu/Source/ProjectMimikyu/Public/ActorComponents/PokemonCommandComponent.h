@@ -44,6 +44,7 @@ public:
 	bool ExecuteSequencedCommand(FGuid CommandId);
 
 	// Questions if the command is still active and owned by this component. If so, it is cancelled and resolved with a failure outcome.
+	UFUNCTION(BlueprintCallable, Category = "Pokemon|Command")
 	bool CancelSequencedCommand(FGuid OwnedCommandId, FName Reason);
 
 	// Questions if the command is still active and owned by this component. If not, it has been resolved and should be ignored.
