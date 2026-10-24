@@ -654,7 +654,7 @@ bool UPokemonGameplayAbilities::IsAuthoritativeOutcomeContextValid(FGuid Expecte
 		bUseAuthoritativeCombatOutcomes ? 1 : 0,
 		bEnablePresentationBranchTest ? 1 : 0);
 
-	if (bUseAuthoritativeCombatOutcomes
+	if (!bUseAuthoritativeCombatOutcomes
 		|| !bEnablePresentationBranchTest
 		|| !IsActive() || bAuthoritativeCombatOutcomeRetiring
 		|| !ExpectedCommandId.IsValid() || ExpectedCommandId != GetSequencedCommandId())
