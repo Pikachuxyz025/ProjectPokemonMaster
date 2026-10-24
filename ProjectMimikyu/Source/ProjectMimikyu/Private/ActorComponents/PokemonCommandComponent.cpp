@@ -357,6 +357,18 @@ bool UPokemonCommandComponent::HasSequencedContact(FGuid CommandId) const
 	return IsSequencedCommand(CommandId) && bSequencedAttackConnected;
 }
 
+bool UPokemonCommandComponent::OwnsActiveSequencedAbility(const UPokemonGameplayAbilities* Ability, FGuid CommandId) const
+{
+	const AActor* Owner = GetOwner();
+
+	return Owner && Owner->HasAuthority()
+		&& Ability && Ability->IsActive()
+		&& IsSequencedCommand(CommandId) && SequencedAbility.Get() == Ability
+		&& !bSequencedCancellationRequested && !bCommandCleanupInProgress
+		&& SequencedAbilityEndDepth == 0;
+}
+
+
 bool UPokemonCommandComponent::IsSequencedExecutionEnding() const
 {
 	const UPokemonGameplayAbilities* Ability = SequencedAbility.Get();

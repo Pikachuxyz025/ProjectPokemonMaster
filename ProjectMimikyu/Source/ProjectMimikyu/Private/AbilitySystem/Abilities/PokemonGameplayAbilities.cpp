@@ -63,6 +63,22 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	bPresentationMontageFinished = false;
 
+	AuthoritativeCombatOutcome = EAttackOutcome::Unresolved;
+
+	bAuthoritativeCombatOutcomePresented = false;
+	bAuthoritativeCombatOutcomeDispatching = false;
+	bAuthoritativeCombatOutcomeRetiring = false;
+	bAuthoritativeContactEvaluationClosed = false;
+
+	if (bUseAuthoritativeCombatOutcomes
+		&& (!bEnablePresentationBranchTest || !ActivatingCommandId.IsValid()))
+	{
+		RecordSequencedActivationFailure(TEXT("AuthoritativeOutcomeConfigurationInvalid"));
+
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+		return;
+	}
+
 	// Run the Blueprint Event ActivateAbility first.
 	// This gives the Blueprint a chance to CommitPokemonMove().
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -93,6 +109,11 @@ void UPokemonGameplayAbilities::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (bPlayMontageOnActivate)
 	{
 		PlayAbilityMontage();
+	}
+
+	if (IsActive() && SequencedCommandId == ActivatingCommandId)
+	{
+		TryPresentAuthoritativeCombatOutcome();
 	}
 }
 
@@ -160,6 +181,11 @@ void UPokemonGameplayAbilities::HandleAbilityAnimEventReceived(FGameplayEventDat
 
 void UPokemonGameplayAbilities::PreviewConfirmedOutcome(EAttackOutcome Outcome)
 {
+	if (bUseAuthoritativeCombatOutcomes)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Display,
 		TEXT("[PokemonGameplayAbilities] PreviewConfirmedOutcome called. Ability=%s Outcome=%d"),
 		*GetNameSafe(this),
@@ -179,7 +205,7 @@ void UPokemonGameplayAbilities::PreviewConfirmedOutcome(EAttackOutcome Outcome)
 		return;
 	}
 
-	SetPresentationPhaseBasedOnTransition_Sketch(Outcome);
+	SetPresentationPhaseBasedOnOutcome(Outcome);
 }
 
 void UPokemonGameplayAbilities::OnAbilityAnimEventReceived_Implementation(FGameplayEventData Payload)
@@ -243,15 +269,15 @@ FSectionTransition UPokemonGameplayAbilities::DetermineNextPresentationAction(co
 	return Transition;
 }
 
-void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(const EAttackOutcome AttackOutcome)
+bool UPokemonGameplayAbilities::SetPresentationPhaseBasedOnOutcome(const EAttackOutcome AttackOutcome)
 {
 	if (AttackOutcome == EAttackOutcome::Unresolved)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Unresolved outcome. No transition will be applied. Ability=%s Outcome=%d"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Unresolved outcome. No transition will be applied. Ability=%s Outcome=%d"),
 			*GetNameSafe(this),
 			static_cast<int32>(AttackOutcome));
-		return;
+		return false;
 	}
 
 	const FGameplayAbilityActorInfo* ActorInfo = GetCurrentActorInfo();
@@ -259,9 +285,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!ActorInfo)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No ActorInfo found. Ability=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: No ActorInfo found. Ability=%s"),
 			*GetNameSafe(this));
-		return;
+		return false;
 	}
 
 	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
@@ -269,9 +295,9 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!ASC)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No ASC found. Ability=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: No ASC found. Ability=%s"),
 			*GetNameSafe(this));
-		return;
+		return false;
 	}
 
 	UAnimMontage* PresentationMontage = ResolveAbilityMontage();
@@ -279,11 +305,11 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!PresentationMontage || ASC->GetCurrentMontage() != PresentationMontage)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No valid montage found or current "
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: No valid montage found or current "
 				"montage is not the presentation montage.Ability = % s Montage = % s"),
 			*GetNameSafe(this),
 			*GetNameSafe(PresentationMontage));
-		return;
+		return false;
 	}
 
 	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
@@ -292,10 +318,10 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (!AnimInstance || AnimatingAbility != this)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No anim instance found or animating ability "
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: No anim instance found or animating ability "
 				"is not this ability.Ability = % s"),
 			*GetNameSafe(this));
-		return;
+		return false;
 	}
 
 	const FName CurrentSection = AnimInstance->Montage_GetCurrentSection(PresentationMontage);
@@ -305,10 +331,10 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (CurrentSection == NAME_None || !bIsSectionGoodForTransition)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Current section is not valid for transition. Ability=%s CurrentSection=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Current section is not valid for transition. Ability=%s CurrentSection=%s"),
 			*GetNameSafe(this),
 			*CurrentSection.ToString());
-		return;
+		return false;
 	}
 
 	FSectionTransition Transition = DetermineNextPresentationAction(
@@ -319,11 +345,11 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (Transition.NextSectionName == NAME_None || Transition.TransitionType == ESectionTransitionType::None)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: No valid transition determined. Ability=%s CurrentSection=%s Outcome=%d"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: No valid transition determined. Ability=%s CurrentSection=%s Outcome=%d"),
 			*GetNameSafe(this),
 			*CurrentSection.ToString(),
 			static_cast<int32>(AttackOutcome));
-		return;
+		return false;
 	}
 
 	int32 NextSectionIndex = PresentationMontage->GetSectionIndex(Transition.NextSectionName);
@@ -331,20 +357,20 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	if (NextSectionIndex == INDEX_NONE)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Next section name not found in montage. Ability=%s NextSection=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Next section name not found in montage. Ability=%s NextSection=%s"),
 			*GetNameSafe(this),
 			*Transition.NextSectionName.ToString());
-		return;
+		return false;
 	}
 
 	bool bIsMontagePlaying = AnimInstance->Montage_IsPlaying(PresentationMontage);
 	if (!bIsMontagePlaying)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Montage is not playing. Ability=%s Montage=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Montage is not playing. Ability=%s Montage=%s"),
 			*GetNameSafe(this),
 			*GetNameSafe(PresentationMontage));
-		return;
+		return false;
 	}
 
 	switch (Transition.TransitionType)
@@ -352,26 +378,24 @@ void UPokemonGameplayAbilities::SetPresentationPhaseBasedOnTransition_Sketch(con
 	case ESectionTransitionType::JumpImmediately:
 		ASC->CurrentMontageJumpToSection(Transition.NextSectionName);
 		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Jumping to section immediately. Ability=%s CurrentSection=%s NextSection=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Jumping to section immediately. Ability=%s CurrentSection=%s NextSection=%s"),
 			*GetNameSafe(this),
 			*CurrentSection.ToString(),
 			*Transition.NextSectionName.ToString());
-		break;
+		return true;
 
 	case ESectionTransitionType::WaitForEndOfSection:
 
 		ASC->CurrentMontageSetNextSectionName(CurrentSection, Transition.NextSectionName);
 		UE_LOG(LogTemp, Display,
-			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnTransition_Sketch: Will wait for end of section to transition. Ability=%s CurrentSection=%s NextSection=%s"),
+			TEXT("[PokemonGameplayAbilities] SetPresentationPhaseBasedOnOutcome: Will wait for end of section to transition. Ability=%s CurrentSection=%s NextSection=%s"),
 			*GetNameSafe(this),
 			*CurrentSection.ToString(),
 			*Transition.NextSectionName.ToString());
-		break;
-
-	case ESectionTransitionType::None:
+		return true;
 
 	default:
-		break;
+		return false;
 	}
 }
 
@@ -567,6 +591,9 @@ void UPokemonGameplayAbilities::EndAbility(const FGameplayAbilitySpecHandle Hand
 	if (EndingCommandId.IsValid())
 	{
 		if (bSequencedEndInProgress || !IsEndAbilityValid(Handle, ActorInfo)) return;
+
+		bAuthoritativeCombatOutcomeRetiring = true;
+
 		if (ScopeLockCount > 0)
 		{
 			// Preserve the identified override when GAS defers an end until a scope unlocks.
@@ -613,6 +640,130 @@ void UPokemonGameplayAbilities::EndSequencedExecution(FGuid OwnedCommandId, bool
 void UPokemonGameplayAbilities::RecordSequencedActivationFailure(FName Reason)
 {
 	if (SequencedCommandId.IsValid()) SequencedActivationFailure = Reason;
+}
+
+bool UPokemonGameplayAbilities::IsAuthoritativeOutcomeContextValid(FGuid ExpectedCommandId) const
+{
+	UE_LOG(LogTemp, Warning,
+		TEXT("[IT50Context] [IsAuthoritativeOutcomeContextValid] Ability=%s Expected=%s Current=%s "
+			"Active=%d AuthorityMode=%d BranchTest=%d"),
+		*GetNameSafe(this),
+		*ExpectedCommandId.ToString(),
+		*GetSequencedCommandId().ToString(),
+		IsActive() ? 1 : 0,
+		bUseAuthoritativeCombatOutcomes ? 1 : 0,
+		bEnablePresentationBranchTest ? 1 : 0);
+
+	if (bUseAuthoritativeCombatOutcomes
+		|| !bEnablePresentationBranchTest
+		|| !IsActive() || bAuthoritativeCombatOutcomeRetiring
+		|| !ExpectedCommandId.IsValid() || ExpectedCommandId != GetSequencedCommandId())
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Context] Invalid context for authoritative outcome. Ability=%s Expected=%s Current=%s "
+				"Active=%d AuthorityMode=%d BranchTest=%d"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString(),
+			*GetSequencedCommandId().ToString(),
+			IsActive() ? 1 : 0,
+			bUseAuthoritativeCombatOutcomes ? 1 : 0,
+			bEnablePresentationBranchTest ? 1 : 0);
+		return false;
+	}
+
+	APokemon_Parent* Pokemon = GetAvatarPokemon();
+	UPokemonCommandComponent* Command = Pokemon ? Pokemon->GetCommandComponent() : nullptr;
+
+	return Pokemon && Pokemon->HasAuthority()
+		&& Command && Command->OwnsActiveSequencedAbility(this, ExpectedCommandId);
+}
+
+void UPokemonGameplayAbilities::AcceptAuthoritativeCombatOutcome(FGuid ExpectedCommandId, EAttackOutcome Outcome)
+{
+	if(!IsAuthoritativeOutcomeContextValid(ExpectedCommandId)
+		|| (Outcome != EAttackOutcome::Hit && Outcome != EAttackOutcome::Miss))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [AcceptAuthoritativeCombatOutcome] Invalid context for authoritative outcome. Ability=%s Expected=%s Current=%s "
+				"Active=%d AuthorityMode=%d BranchTest=%d Outcome=%d"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString(),
+			*GetSequencedCommandId().ToString(),
+			IsActive() ? 1 : 0,
+			bUseAuthoritativeCombatOutcomes ? 1 : 0,
+			bEnablePresentationBranchTest ? 1 : 0,
+			static_cast<int32>(Outcome));
+		return;
+	}
+
+	if (AuthoritativeCombatOutcome != EAttackOutcome::Unresolved)
+	{
+		if (AuthoritativeCombatOutcome != Outcome)
+		{
+			UE_LOG(LogTemp, Warning,
+				TEXT("[IT50Outcome] Conflicting outcome ignored. "
+					"Ability=%s CommandId=%s Existing=%d Incoming=%d"),
+				*GetNameSafe(this),
+				*ExpectedCommandId.ToString(),
+				static_cast<int32>(AuthoritativeCombatOutcome),
+				static_cast<int32>(Outcome));
+		}
+		return;
+	}
+
+	AuthoritativeCombatOutcome = Outcome;
+
+	UE_LOG(LogTemp, Display,
+		TEXT("[IT50Outcome] [AcceptAuthoritativeCombatOutcome] Confirmed %s. Ability=%s CommandId=%s"),
+		Outcome == EAttackOutcome::Hit ? TEXT("Hit") : TEXT("Miss"),
+		*GetNameSafe(this),
+		*ExpectedCommandId.ToString());
+
+	TryPresentAuthoritativeCombatOutcome();
+}
+
+
+void UPokemonGameplayAbilities::TryPresentAuthoritativeCombatOutcome()
+{
+	const FGuid ExpectedCommandId = GetSequencedCommandId();
+
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId)
+		|| AuthoritativeCombatOutcome == EAttackOutcome::Unresolved
+		|| bAuthoritativeCombatOutcomeDispatching
+		|| bAuthoritativeCombatOutcomePresented
+		)
+	{
+		return;
+	}
+	
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ASC || AuthoritativeCombatOutcome == EAttackOutcome::Unresolved)
+	{
+		return;
+	}
+	
+	// Blueprint activation can resolve an outcome before native activation
+	// has started the montage. Retain that outcome for the activation retry.
+	if (!ASC || ASC->GetAnimatingAbility() != this
+		|| ASC->GetCurrentMontage() != ResolveAbilityMontage())
+	{
+		return;
+	}
+
+	bAuthoritativeCombatOutcomeDispatching = true;
+
+	const bool bPresented = SetPresentationPhaseBasedOnOutcome(AuthoritativeCombatOutcome);
+
+	bAuthoritativeCombatOutcomeDispatching = false;
+	bAuthoritativeCombatOutcomePresented = bPresented;
+
+	if (bPresented)
+	{
+		UE_LOG(LogTemp, Display,
+			TEXT("[IT50Outcome] Presented. Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+	}
 }
 
 void UPokemonGameplayAbilities::TryFinishPresentationDrivenExecution()

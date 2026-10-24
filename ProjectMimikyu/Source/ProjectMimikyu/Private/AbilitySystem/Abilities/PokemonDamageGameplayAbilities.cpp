@@ -21,6 +21,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AbilityTasks/AT_TickTask.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/PokemonAbilitySystemLibrary.h"
 
 FDamageEffectParams UPokemonDamageGameplayAbilities::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
@@ -892,6 +893,182 @@ void UPokemonDamageGameplayAbilities::AbortAirborneWhiffRecovery(FName Reason)
 		CurrentActivationInfo,
 		true,
 		true);
+}
+
+void UPokemonDamageGameplayAbilities::FailAuthoritativeContactEvaluation(FGuid ExpectedCommandId, FName Reason)
+{
+	if(!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [FailAuthoritativeContactEvaluation] Evaluation failed after context invalidated. "
+				"Ability=%s CommandId=%s Reason=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString(),
+			*Reason.ToString());
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("[IT50Outcome] Evaluation failed. "
+			"Ability=%s CommandId=%s Reason=%s"),
+		*GetNameSafe(this),
+		*ExpectedCommandId.ToString(),
+		*Reason.ToString());
+
+	RecordSequencedActivationFailure(Reason);
+	EndAbility(
+		CurrentSpecHandle,
+		CurrentActorInfo,
+		CurrentActivationInfo,
+		true,
+		false);
+}
+
+void UPokemonDamageGameplayAbilities::ApplyAuthoritativeMeleeContact(AActor* TargetActor, FGuid ExpectedCommandId)
+{
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [ApplyAuthoritativeMeleeContact] Contact submitted after context invalidated. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	if (bAuthoritativeContactEvaluationClosed)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [ApplyAuthoritativeMeleeContact] Contact submitted after evaluation closed. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	if (!IsValid(TargetActor))
+	{
+		// A vanished candidate does not establish contact.
+		return;
+	}
+
+	if (!TargetActor->FindComponentByClass<UPokemonImpactResolverComponent>())
+	{
+		FailAuthoritativeContactEvaluation(ExpectedCommandId, TEXT("ContactImpactResolverUnavailable"));
+		return;
+	}
+	
+	FDamageEffectParams Params = MakeDamageEffectParamsFromClassDefaults(TargetActor);
+
+	if (!Params.SourceAbilitySystemComponent
+		|| !Params.TargetAbilitySystemComponent
+		|| !Params.DamageGameplayEffectClass)
+	{
+		FailAuthoritativeContactEvaluation(ExpectedCommandId, TEXT("ContactDamageConfigurationInvalid"));
+		return;
+	}
+
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [AppliedAuthoritativeMeleeContact] Contact evaluation invalidated after damage params creation. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	FPokemonImpactResolution Resolution;
+	Params = ResolveImpactAndModifyDamageParams(TargetActor, Params, Resolution);
+
+	if (Resolution.ImpactResult == EPokemonImpactResult::None)
+	{
+		FailAuthoritativeContactEvaluation(ExpectedCommandId, TEXT("ContactImpactResolutionFailed"));
+		return;
+	}
+
+	// Preserve the existing order: impact consequences, then damage.
+	// A resolved contact still applies its damage if an impact callback
+	// synchronously ends the ability, matching the existing pipeline.
+	UPokemonAbilitySystemLibrary::ApplyDamageEffect(Params);
+
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [AppliedAuthoritativeMeleeContact] Contact evaluation invalidated after damage application. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	UPokemonCommandComponent* Command = GetAvatarPokemon()->GetCommandComponent();
+
+	if (!Command->HasSequencedContact(ExpectedCommandId))
+	{
+		FailAuthoritativeContactEvaluation(ExpectedCommandId, TEXT("ResolvedContactWasNotLatched"));
+		return;
+	}
+
+	AcceptAuthoritativeCombatOutcome(ExpectedCommandId, EAttackOutcome::Hit);
+}
+
+void UPokemonDamageGameplayAbilities::FinalizeAuthoritativeMeleeContactEvaluation(FGuid ExpectedCommandId)
+{
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId)
+		|| bAuthoritativeContactEvaluationClosed)
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [FinalizeAuthoritativeMeleeContactEvaluation] Contact evaluation finalized after context invalidated or already closed. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	// Caller contract: every contact query and every candidate-resolution
+	// operation has finished; no further contact producer remains active.
+	bAuthoritativeContactEvaluationClosed = true;
+
+	UPokemonCommandComponent* Command = GetAvatarPokemon()->GetCommandComponent();
+	if (Command->HasSequencedContact(ExpectedCommandId))
+	{
+		AcceptAuthoritativeCombatOutcome(ExpectedCommandId, EAttackOutcome::Hit);
+		return;
+	}
+
+	// No contact after the complete evaluation establishes Miss.
+	// Airborne recovery is an optional consequence of that Miss.
+	const bool bConfirmedAirborneWhiff = ConfirmAirborneMissAtActiveWindowEnd();
+
+	// The airborne-whiff Blueprint event can invoke public callbacks.
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [FinalizeAuthoritativeMeleeContactEvaluation] Contact evaluation invalidated after airborne whiff confirmation. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	if (bConfirmedAirborneWhiff)
+	{
+		BeginAirborneWhiffRecovery();
+	}
+
+	// Genuine recovery-setup failures may have retired the ability.
+	if (!IsAuthoritativeOutcomeContextValid(ExpectedCommandId))
+	{ 
+		UE_LOG(LogTemp, Warning,
+			TEXT("[IT50Outcome] [FinalizeAuthoritativeMeleeContactEvaluation] Contact evaluation invalidated after airborne whiff recovery attempt. "
+				"Ability=%s CommandId=%s"),
+			*GetNameSafe(this),
+			*ExpectedCommandId.ToString());
+		return;
+	}
+
+	AcceptAuthoritativeCombatOutcome(ExpectedCommandId, EAttackOutcome::Miss);
 }
 
 bool UPokemonDamageGameplayAbilities::CommitPokemonMove()

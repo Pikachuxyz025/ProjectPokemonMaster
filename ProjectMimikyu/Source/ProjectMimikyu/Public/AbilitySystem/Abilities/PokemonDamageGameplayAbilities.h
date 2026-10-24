@@ -103,6 +103,12 @@ public:
      */
 	FPokemonAirborneExecutionProfile ResolveAirborneExecutionProfileForPlanning() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Combat|Presentation")
+	void ApplyAuthoritativeMeleeContact(AActor* TargetActor, FGuid ExpectedCommandId);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Combat|Presentation")
+	void FinalizeAuthoritativeMeleeContactEvaluation(FGuid ExpectedCommandId);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float SpeedMultiplier = 1.f;
 
@@ -184,6 +190,7 @@ private:
 	void StopAirborneWhiffRecovery(bool bKeepLandingIntent = false);
 	void FinishAirborneWhiffRecovery(FName Reason);
 	void AbortAirborneWhiffRecovery(FName Reason);
+	void FailAuthoritativeContactEvaluation(FGuid ExpectedCommandId, FName Reason);
 private:
 
 	FGameplayTag GetCooldownTag() const;

@@ -96,6 +96,7 @@ class PROJECTMIMIKYU_API UPokemonGameplayAbilities : public UGameplayAbility
 
 public:
 	// The command component binds this before Blueprint ActivateAbility can run/end.
+	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
 	FGuid GetSequencedCommandId() const { return SequencedCommandId; }
 
 	UFUNCTION(BlueprintPure, Category = "Pokemon|Command")
@@ -128,6 +129,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Events")
 	bool bOnlyTriggerAnimEventOnce = true;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Pokemon|Presentation|Testing")
+	bool bUseAuthoritativeCombatOutcomes = false;
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|Animation|Events")
 	UAbilityTask_WaitGameplayEvent* ListenForAbilityAnimEvent();
 
@@ -139,7 +143,7 @@ public:
 	UFUNCTION()
 	FSectionTransition DetermineNextPresentationAction(const EAttackPresentationPhase CurrentPhase, const EAttackOutcome InputedOutcome);
 
-	void SetPresentationPhaseBasedOnTransition_Sketch(const EAttackOutcome AttackOutcome);
+	bool SetPresentationPhaseBasedOnOutcome(const EAttackOutcome AttackOutcome);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Pokemon|Animation|Windows")
 	bool bListenForAbilityWindowEvents = false;
@@ -236,6 +240,13 @@ protected:
 		return false;
 	}
 
+	bool IsAuthoritativeOutcomeContextValid(FGuid ExpectedCommandId) const;
+
+	void AcceptAuthoritativeCombatOutcome(FGuid ExpectedCommandId, EAttackOutcome Outcome);
+
+	// Closed only when the evaluator guarantees no more contact checks
+	bool bAuthoritativeContactEvaluationClosed = false;
+
 	// Returns true if the ability is currently in a state where it can finish its presentation-driven execution.
 	void TryFinishPresentationDrivenExecution();
 	void ApplyAbilityCombatStateLock();
@@ -284,4 +295,13 @@ private:
 	bool bSequencedEndInProgress = false;
 
 	EAttackPresentationPhase GetCurrentPresentationPhase(const UAnimMontage* AnimMontage) const;
+
+
+	void TryPresentAuthoritativeCombatOutcome();
+
+	EAttackOutcome AuthoritativeCombatOutcome = EAttackOutcome::Unresolved;
+
+	bool bAuthoritativeCombatOutcomePresented = false;
+	bool bAuthoritativeCombatOutcomeDispatching = false;
+	bool bAuthoritativeCombatOutcomeRetiring = false;
 };

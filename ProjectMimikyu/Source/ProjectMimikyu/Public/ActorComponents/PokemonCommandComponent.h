@@ -40,10 +40,16 @@ public:
 	FPokemonTrainerCommandSubmission ReserveSequencedCommand(UPokemonMoveDataAsset* Move,
 		const FPokemonCommandTarget& Target, FGuid ParentIntentId);
 
+	// Questions if the command is still active and owned by this component. If so, it is executed and resolved with a success outcome.
 	bool ExecuteSequencedCommand(FGuid CommandId);
+
+	// Questions if the command is still active and owned by this component. If so, it is cancelled and resolved with a failure outcome.
 	bool CancelSequencedCommand(FGuid OwnedCommandId, FName Reason);
+
+	// Questions if the command is still active and owned by this component. If not, it has been resolved and should be ignored.
 	bool IsSequencedCommand(FGuid CommandId) const;
 	bool HasSequencedContact(FGuid CommandId) const;
+	bool OwnsActiveSequencedAbility(const UPokemonGameplayAbilities* Ability, FGuid CommandId) const;
 	bool IsSequencedExecutionEnding() const;
 
 	FGuid GetParentIntentId() const { return ParentIntentId; }
