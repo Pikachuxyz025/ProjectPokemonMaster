@@ -47,6 +47,7 @@ class UPokemonCombatSocketComponent;
 class UPokemonImpactResolverComponent;
 class UPokemonCombatStateComponent;
 class UPokemonLandingOrientationComponent;
+class UPokemonAirborneRecoveryTelemetryComponent;
 class UPokemonHitStopComponent;
 class UPokemonStaminaComponent;
 class UTargetableComponent;
@@ -73,6 +74,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPokemonPresentationComponent> PresentationComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPokemonAirborneRecoveryTelemetryComponent> AirborneRecoveryTelemetryComponent;
 
 	EMovementSpeed TraversalMovementSpeedMode = EMovementSpeed::EMS_Running;
 

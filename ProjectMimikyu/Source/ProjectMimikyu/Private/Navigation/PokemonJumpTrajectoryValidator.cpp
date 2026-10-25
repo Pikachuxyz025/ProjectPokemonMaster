@@ -591,7 +591,7 @@ bool FPokemonJumpTrajectoryValidator::ValidateToAirborneContact(APokemon_Parent&
 	{
 		const double Time =static_cast<double>(Candidate.ContactTime) * (static_cast<double>(Index) / static_cast<double>(Segments));
 		
-		const FVector Feet = Body.Center(AirborneContactArcFeet(Candidate, Time));
+		const FVector Feet = AirborneContactArcFeet(Candidate, Time);
 
 		const FVector Position = Body.Center(Feet);
 
@@ -616,39 +616,81 @@ bool FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(APokemon_Parent& Poke
 	FName Failure;
 	FVector ResolvedStart;
 	FVector ResolvedDestination;
-	if (!Body.Init(Pokemon, Failure)
-		|| !Resolve(Body, StartFeet, ResolvedStart, Failure)
-		|| !Resolve(Body, DestinationFeet, ResolvedDestination, Failure))
+
+	if (!Body.Init(Pokemon, Failure))
 	{
+		UE_LOG(LogPokemonJumpValidation, Log,
+			TEXT("[MeasureDiscontinuity] Body Init Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s Failure=%s"),
+			*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+			*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString(),
+			*Failure.ToString());
 		return false;
 	}
+
+	if (!Resolve(Body, DestinationFeet, ResolvedDestination, Failure))
+	{
+		UE_LOG(LogPokemonJumpValidation, Log,
+			TEXT("[MeasureDiscontinuity] DestinationFeet Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s Failure=%s"),
+			*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+			*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString(),
+			*Failure.ToString());
+		return false;
+	}
+
+	if (!Resolve(Body, StartFeet, ResolvedStart, Failure))
+	{
+		UE_LOG(LogPokemonJumpValidation, Log,
+			TEXT("[MeasureDiscontinuity] StartFeet Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s Failure=%s"),
+			*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+			*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString(),
+			*Failure.ToString());
+		return false;
+	}
+
 	const double Distance = FVector::Dist2D(ResolvedStart, ResolvedDestination);
+
 	if (Distance <= UE_KINDA_SMALL_NUMBER)
 	{
+		UE_LOG(LogPokemonJumpValidation, Log,
+			TEXT("[MeasureDiscontinuity] Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s Failure=DiscontinuityTooShort"),
+			*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+			*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString());
 		return false;
 	}
+
 	const float StepHeight = FMath::Max(0.f, Body.Movement->MaxStepHeight)
 		+ UCharacterMovementComponent::MAX_FLOOR_DIST;
+
 	const double UpperZ = FMath::Max(ResolvedStart.Z, ResolvedDestination.Z) + StepHeight;
 	const double LowerZ = FMath::Min(ResolvedStart.Z, ResolvedDestination.Z) - StepHeight;
+
 	bool bMissingSupport = false;
+
 	bool bVerticalDiscontinuity = false;
+
 	FVector PreviousSupport = ResolvedStart;
 	bool bPreviousSupported = true;
+
 	for (int32 Index = 1; Index <= DiscontinuitySegments; ++Index)
 	{
 		const FVector Point = FMath::Lerp(ResolvedStart, ResolvedDestination,
 			static_cast<double>(Index) / DiscontinuitySegments);
+
 		FHitResult Floor;
 		if (!Body.FloorLine(FVector(Point.X, Point.Y, UpperZ), FVector(Point.X, Point.Y, LowerZ), Floor))
 		{
 			bMissingSupport = true;
 			bPreviousSupported = false;
+
 			continue;
 		}
 		if (!Body.Movement->IsWalkable(Floor))
 		{
 			// A wall/penetrating query/unknown surface does not manufacture gap evidence.
+			UE_LOG(LogPokemonJumpValidation, Log,
+				TEXT("[MeasureDiscontinuity] A wall/penetrating query/unknown surface does not manufacture gap evidence. Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s Failure=DiscontinuityUnwalkableSurface"),
+				*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+				*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString());
 			return false;
 		}
 		if (bPreviousSupported)
@@ -660,20 +702,28 @@ bool FPokemonJumpTrajectoryValidator::MeasureDiscontinuity(APokemon_Parent& Poke
 			bVerticalDiscontinuity |= Vertical > StepHeight
 				&& GradientNormalZ < Body.Movement->GetWalkableFloorZ();
 		}
+
 		PreviousSupport = Floor.ImpactPoint;
 		bPreviousSupported = true;
 	}
 	if (!bMissingSupport && !bVerticalDiscontinuity)
 	{
+		UE_LOG(LogPokemonJumpValidation, Log,
+			TEXT("[MeasureDiscontinuity] Request=%s Pokemon=%s StartFeet=%s DestinationFeet=%s  Failure=DiscontinuityNotFound"),
+			*OutRequirement.ParentRequestId.ToString(), *Pokemon.GetName(),
+			*StartFeet.ToCompactString(), *DestinationFeet.ToCompactString());
 		return false;
 	}
+
 	OutRequirement.StartFeetLocation = StartFeet;
 	OutRequirement.DestinationFeetLocation = ResolvedDestination;
 	OutRequirement.bStartSupportKnown = true;
 	OutRequirement.bDestinationSupportKnown = true;
 	OutRequirement.Evidence = EPokemonTraversalEvidence::MeasuredDiscontinuity;
+
 	OutRequirement.Circumstance = bVerticalDiscontinuity
 		? EPokemonTraversalCircumstance::VerticalAccess : EPokemonTraversalCircumstance::GapTraversal;
+
 	return true;
 }
 

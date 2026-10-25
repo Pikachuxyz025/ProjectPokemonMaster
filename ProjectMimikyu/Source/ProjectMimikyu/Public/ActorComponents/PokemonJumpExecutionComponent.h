@@ -69,6 +69,9 @@ public:
 			&& bAirborneExecutionTriggerFired;
 	}
 
+	bool GetActiveAirborneTelemetrySnapshot(FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate,
+		FGuid& OutCommandId) const; 
+
 	void CancelForParentResolution(FGuid RequestId, FName Reason);
 
 	// A future animation notify calls this same handoff; it never resolves a new trajectory.

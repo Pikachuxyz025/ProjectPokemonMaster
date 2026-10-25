@@ -4277,7 +4277,7 @@ FVector UPokemonNavigationComponent::GetFleeLocationFromTarget(const FVector& Th
 
 float UPokemonNavigationComponent::GetTraversalGroundDecisionSpeed() const
 {
-	 APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
+	APokemon_Parent* Pokemon = Cast<APokemon_Parent>(GetOwner());
 
 	if (!Pokemon)
 	{
@@ -4286,7 +4286,7 @@ float UPokemonNavigationComponent::GetTraversalGroundDecisionSpeed() const
 
 	const UCharacterMovementComponent* Movement = Pokemon->GetCharacterMovement();
 
-	if(Movement&&Movement->MaxWalkSpeed>KINDA_SMALL_NUMBER)
+	if (Movement && Movement->MaxWalkSpeed > KINDA_SMALL_NUMBER)
 	{
 		return Movement->MaxWalkSpeed;
 	}
@@ -4659,8 +4659,8 @@ bool UPokemonNavigationComponent::SearchTakeoffAnchors(const FVector& Destinatio
 
 			if (IsCompositePlayerMove() && FVector::Dist(CurrentFeet, SupportedFeet) > 6.f)
 			{
-				// ResolveLanding can adjust height. Prove the actual selected feet are
-				// reachable and cost the real approach, not a chord or the partial endpoint.
+				// ApproachPath is only valid if the current position can reach the takeoff anchor.
+				// Otherwise, the anchor is unreachable.
 				UNavigationPath* ApproachPath = UNavigationSystemV1::FindPathToLocationSynchronously(
 					GetWorld(), CurrentFeet, SupportedFeet, OwnerPawn,
 					CachedAIController ? CachedAIController->GetDefaultNavigationFilterClass() : nullptr);

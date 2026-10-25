@@ -25,6 +25,7 @@
 #include "ActorComponents/PokemonPresentationComponent.h"
 #include "ActorComponents/TargetableComponent.h"
 #include "ActorComponents/PokemonLandingOrientationComponent.h"
+#include "ActorComponents/PokemonAirborneRecoveryTelemetryComponent.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -67,6 +68,8 @@ APokemon_Parent::APokemon_Parent()
 	TargetComponent = CreateDefaultSubobject<UTargetableComponent>("Target Component");
 	LandingOrientationComponent = CreateDefaultSubobject<UPokemonLandingOrientationComponent>("Landing Orientation Component");
 	PresentationComponent = CreateDefaultSubobject<UPokemonPresentationComponent>("Presentation Component");
+	AirborneRecoveryTelemetryComponent = CreateDefaultSubobject<UPokemonAirborneRecoveryTelemetryComponent>("Airborne Recovery Telemetry Component");
+
 
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);

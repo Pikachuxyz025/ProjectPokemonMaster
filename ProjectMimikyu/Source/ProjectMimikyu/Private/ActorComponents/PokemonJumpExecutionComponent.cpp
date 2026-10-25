@@ -229,6 +229,19 @@ bool UPokemonJumpExecutionComponent::RevalidatePreparedJump(FName& OutFailureRea
 	return true;
 }
 
+bool UPokemonJumpExecutionComponent::GetActiveAirborneTelemetrySnapshot(FPokemonAirborneExecutionTrajectoryCandidate& OutCandidate, FGuid& OutCommandId) const
+{
+	if (ActiveContract != EPokemonJumpExecutionContract::AirborneContact)
+	{
+		return false;
+	}
+
+	OutCandidate = ActiveAirborneCandidate;
+	OutCommandId = ActiveParentRequest.ParentAttackCommandId;
+
+	return true;
+}
+
 void UPokemonJumpExecutionComponent::CancelForParentResolution(FGuid RequestId, FName Reason)
 {
 	if (!IsBusy()
