@@ -329,6 +329,7 @@ FPokemonAirborneExecutionProfile UPokemonDamageGameplayAbilities::ResolveAirborn
 
 FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamageParams(AActor* TargetActor, FDamageEffectParams DamageEffectParams, FPokemonImpactResolution& OutImpactResolution)
 {
+	const FGuid ImpactCommandId = GetSequencedCommandId();
 	AActor* Attacker = GetAvatarActorFromActorInfo();
 
 	if (!Attacker || !TargetActor)
@@ -409,6 +410,8 @@ FDamageEffectParams UPokemonDamageGameplayAbilities::ResolveImpactAndModifyDamag
 	);
 
 	FPokemonMoveContactContext ContactContext;
+
+	ContactContext.AttackCommandId = ImpactCommandId;
 	ContactContext.AttackingActor = Attacker;
 	ContactContext.DefendingActor = TargetActor;
 

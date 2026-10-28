@@ -1,5 +1,6 @@
 #include "ActorComponents/PokemonImpactResolverComponent.h"
 #include "ActorComponents/PokemonCombatStateComponent.h"
+#include "ActorComponents/PokemonAirborneRecoveryTelemetryComponent.h"
 #include "GameplayTags/PokemonCombatGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -703,15 +704,27 @@ void UPokemonImpactResolverComponent::ApplyAttackerPostImpactMotion(const FPokem
 
 	}
 
-	// A zero launch vector is not a reliable way to request a complete stop
-	// through CharacterMovement's pending-launch mechanism.
-	if (RequestedVelocity.IsNearlyZero())
+	const bool bStoppedImmediately = RequestedVelocity.IsNearlyZero();
+
+	if (bStoppedImmediately)
 	{
 		Movement->StopMovementImmediately();
 	}
 	else
 	{
 		Character->LaunchCharacter(RequestedVelocity, true, true);
+	}
+
+	if (UPokemonAirborneRecoveryTelemetryComponent* Telemetry =
+		Attacker->FindComponentByClass<
+		UPokemonAirborneRecoveryTelemetryComponent>())
+	{
+		Telemetry->NotifyImpactRequest(
+			ContactContext.AttackCommandId,
+			ImpactResolution,
+			IncomingVelocity,
+			RequestedVelocity,
+			bStoppedImmediately);
 	}
 
 	UE_LOG(LogPokemonImpactResolver, Display, TEXT(

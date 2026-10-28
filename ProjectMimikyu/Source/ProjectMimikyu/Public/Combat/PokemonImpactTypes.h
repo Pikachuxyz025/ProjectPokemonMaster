@@ -47,6 +47,10 @@ struct FPokemonMoveContactContext
 {
 	GENERATED_BODY()
 
+	// Diagnostic correlation only; does not configure gameplay
+	UPROPERTY(Transient)
+	FGuid AttackCommandId;
+
 	UPROPERTY(BlueprintReadWrite,Category = "Combat|Impact")
 	TObjectPtr<AActor> AttackingActor;
 

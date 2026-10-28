@@ -5,7 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-//#include "UObject/Class.h"
+#include "ActorComponents/PokemonAirborneRecoveryTelemetryComponent.h"
 #include "DataAssets/PokemonDataAsset.h"
 #include "DataAssets/PokemonMoveDataAsset.h"
 #include "DataAssets/PokemonMoveAnimationSet.h"
@@ -712,6 +712,17 @@ void UPokemonGameplayAbilities::AcceptAuthoritativeCombatOutcome(FGuid ExpectedC
 	}
 
 	AuthoritativeCombatOutcome = Outcome;
+
+	if (APokemon_Parent* Pokemon = GetAvatarPokemon())
+	{
+		if (UPokemonAirborneRecoveryTelemetryComponent* Telemetry =
+			Pokemon->AirborneRecoveryTelemetryComponent.Get())
+		{
+			Telemetry->NotifyCombatOutcome(
+				ExpectedCommandId,
+				Outcome == EAttackOutcome::Hit);
+		}
+	}
 
 	UE_LOG(LogTemp, Display,
 		TEXT("[IT50Outcome] [AcceptAuthoritativeCombatOutcome] Confirmed %s. Ability=%s CommandId=%s"),
