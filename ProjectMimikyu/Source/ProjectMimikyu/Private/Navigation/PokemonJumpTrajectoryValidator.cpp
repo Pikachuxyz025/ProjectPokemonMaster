@@ -10,6 +10,12 @@
 #include "Navigation/PokemonTraversalTypes.h"
 #include "Navigation/PokemonCompositeMove.h"
 
+#include "Navigation/PokemonRecoveryContinuation.h"
+
+#include <cmath>
+#include <limits>
+
+
 DEFINE_LOG_CATEGORY_STATIC(LogPokemonJumpValidation, Log, All);
 
 namespace PokemonJumpValidation
@@ -755,4 +761,480 @@ FVector FPokemonJumpTrajectoryValidator::EvaluateVelocityAtTime(const FPokemonAi
 	const float ClampedTime = FMath::Clamp(Time, 0.f, Candidate.ContactTime);
 
 	return Candidate.FinalLaunchVelocity - FVector::UpVector * (Candidate.GravityMagnitude * ClampedTime); // v = v_0 - g * t
+}
+
+
+namespace PokemonRecoveryContinuationPrivate
+{
+	using EStatus = EPokemonRecoveryContinuationStatus;
+	using FSample = FPokemonRecoveryBallisticSample;
+
+	struct FSearch
+	{
+		const PokemonJumpValidation::FBodyQueries& Body;
+		const FPokemonRecoveryBallisticInput& Seed;
+		const FPokemonRecoveryContinuationSettings& Settings;
+		const double SpeedBound;
+
+		FPokemonRecoveryContinuationResult Result;
+
+		FSearch(const PokemonJumpValidation::FBodyQueries& InBody, const FPokemonRecoveryBallisticInput& InSeed,
+			const FPokemonRecoveryContinuationSettings& InSettings, double InSpeedBound) :
+			Body(InBody), Seed(InSeed), Settings(InSettings), SpeedBound(InSpeedBound)
+		{
+		}
+
+		// Returns false by default; meant to be used in a chain of early-exit conditions.
+		bool Stop(EStatus Status, FName Reason)
+		{
+			Result.Status = Status;
+			Result.Reason = Reason;
+			return false;
+		}
+
+		// Determines whether the query work budget has been exhausted. Returns false if so.
+		bool Spend(int32 Units)
+		{
+			if (Units > Settings.MaxQueryWork - Result.QueryWorkUsed)
+			{
+				return Stop(
+					EStatus::BudgetExhausted,
+					TEXT("QueryWorkLimit"));
+			}
+
+			Result.QueryWorkUsed += Units;
+			return true;
+		}
+
+		// At a given time, predicts the ballistic state and returns false if the prediction fails.
+		bool Predict(double Time, FPokemonRecoveryBallisticResult& OutPrediction)
+		{
+			FPokemonRecoveryBallisticInput Input = Seed;
+			Input.PredictionTime = Time;
+			OutPrediction = FPokemonRecoveryBallistics::Evaluate(Input);
+
+			if (!OutPrediction.HasPrediction())
+			{
+				const EStatus Status =OutPrediction.Status ==
+					EPokemonRecoveryBallisticStatus::UnsupportedMotion
+					? EStatus::UnsupportedModel
+					: EStatus::InvalidInput;
+
+				return Stop(Status, OutPrediction.Reason);
+			}
+
+			return true;
+		}
+
+		// Determines whether a given hit result is a valid floor contact.
+		// The hit must be walkable, within edge tolerance, and below the capsule's bottom.
+		bool IsFloorContact(const FHitResult& Hit) const
+		{
+			return Hit.IsValidBlockingHit()
+				&& Body.Movement->IsWalkable(Hit)
+				&& Body.Movement->IsWithinEdgeTolerance(
+					Hit.Location, 
+					Hit.ImpactPoint, 
+					Body.Radius)
+				&& Hit.ImpactPoint.Z <
+				Hit.Location.Z - Body.HalfHeight + Body.Radius;
+		}
+
+		// Returns true only when this complete interval was certified clear
+		// by enlarged sweeps. Every other outcome stops the chronological search.
+		bool Visit(const FSample& A, const FSample& B, int32 Depth)
+		{
+			const double Duration = B.Time - A.Time;
+
+			// Constant-acceleration curve-to-chord deviation.
+			const double Deviation =
+				0.125 * -Seed.Gravity.Z * Duration * Duration;
+
+			const double ExpandedHalfHeight = Body.HalfHeight + Deviation;
+
+			if (!FMath::IsFinite(Deviation)
+				|| !FMath::IsFinite(ExpandedHalfHeight)
+				|| ExpandedHalfHeight >=
+				std::numeric_limits<float>::max())
+			{
+				return Stop(
+					EStatus::InvalidInput,
+					TEXT("EnvelopeOverflow"));
+			}
+
+			// Round outward. A float conversion must not shrink the envelope.
+			const float Infinity = std::numeric_limits<float>::infinity();
+
+			const float Radius = std::nextafter(
+				static_cast<float>(Body.Radius + Deviation), Infinity);
+
+			const float HalfHeight = std::nextafter(
+				static_cast<float>(ExpandedHalfHeight), Infinity);
+
+			if (!FMath::IsFinite(Radius) || !FMath::IsFinite(HalfHeight))
+			{
+				return Stop(EStatus::InvalidInput, TEXT("EnvelopeOverflow"));
+			}
+
+			// Always convert with the REAL capsule half-height exactly once.
+			// Inflating the query shape must not move its center.
+			const FVector StartCenter = Body.Center(A.Feet);
+			const FVector EndCenter = Body.Center(B.Feet);
+
+			if (!Spend(1))
+			{
+				return false;
+			}
+
+			FHitResult EnvelopeHit;
+			const bool bEnvelopeHit = Body.World->SweepSingleByChannel(
+				EnvelopeHit,
+				StartCenter,
+				EndCenter,
+				Body.Rotation,
+				Body.Capsule->GetCollisionObjectType(),
+				FCollisionShape::MakeCapsule(Radius, HalfHeight),
+				Body.Query,
+				Body.Response);
+
+			if (!bEnvelopeHit)
+			{
+				Result.ClearThroughTime = B.Time;
+				return true;
+			}
+
+			Result.Hit = EnvelopeHit;
+			Result.ContactIntervalStart = A.Time;
+			Result.ContactIntervalEnd = B.Time;
+
+			const bool bResolvedEnough =
+				Duration <= Settings.ContactTimeTolerance
+				&& SpeedBound * Duration <=
+				Settings.ContactTravelTolerance;
+
+			if (!bResolvedEnough)
+			{
+				if (Depth >= Settings.MaxRefinementDepth)
+				{
+					return Stop(
+						EStatus::CollisionUnresolved,
+						TEXT("RefinementLimit"));
+				}
+
+				const double MiddleTime = A.Time + Duration * 0.5;
+
+				if (MiddleTime <= A.Time || MiddleTime >= B.Time)
+				{
+					return Stop(
+						EStatus::CollisionUnresolved,
+						TEXT("TimeResolutionLimit"));
+				}
+
+				FPokemonRecoveryBallisticResult Middle;
+				if (!Predict(MiddleTime, Middle))
+				{
+					return false;
+				}
+
+				// Do not examine a later interval until the earlier one is clear.
+				if (!Visit(A, Middle.Sample, Depth + 1))
+				{
+					return false;
+				}
+
+				return Visit(Middle.Sample, B, Depth + 1);
+			}
+
+			if (!Spend(1))
+			{
+				return false;
+			}
+
+			FHitResult Hit;
+			if (!Body.Sweep(StartCenter, EndCenter, Hit))
+			{
+				// The curved envelope touched something, but the narrow chord
+				// did not resolve it. Do not skip ahead to a later floor.
+				return Stop(
+					EStatus::CollisionUnresolved,
+					TEXT("EnvelopeOnlyContact"));
+			}
+
+			Result.Hit = Hit;
+
+			if (!EnvelopeHit.IsValidBlockingHit()
+				|| !Hit.IsValidBlockingHit())
+			{
+				return Stop(
+					EStatus::CollisionUnresolved,
+					TEXT("PenetratingContactInterval"));
+			}
+
+			const double Inflation = FMath::Max<double>(
+				Radius - Body.Radius,
+				HalfHeight - Body.HalfHeight);
+
+			// Require the broad and narrow queries to identify a consistent
+			// first surface. Nearby competing surfaces remain unresolved.
+			if (EnvelopeHit.GetComponent() != Hit.GetComponent()
+				|| FVector::DotProduct(
+					EnvelopeHit.ImpactNormal, Hit.ImpactNormal) < 0.99
+				|| FVector::Dist(
+					EnvelopeHit.ImpactPoint, Hit.ImpactPoint) >
+				Settings.ContactTravelTolerance + 2.0 * Inflation)
+			{
+				return Stop(
+					EStatus::CollisionUnresolved,
+					TEXT("CompetingContactSurfaces"));
+			}
+
+			if (A.Velocity.Z >= 0.0
+				|| B.Velocity.Z >= 0.0
+				|| !IsFloorContact(EnvelopeHit)
+				|| !IsFloorContact(Hit))
+			{
+				return Stop(
+					EStatus::LandingRejected,
+					TEXT("NonLandingFirstHit"));
+			}
+
+			const double ContactTime =
+				A.Time + Duration * FMath::Clamp<double>(Hit.Time, 0.0, 1.0);
+
+			FPokemonRecoveryBallisticResult Prediction;
+			if (!Predict(ContactTime, Prediction))
+			{
+				return false;
+			}
+
+			const FVector ContactFeet =
+				Hit.Location - FVector::UpVector * Body.HalfHeight;
+
+			const double Discrepancy =
+				FVector::Dist(Prediction.Sample.Feet, ContactFeet);
+
+			if (!FMath::IsFinite(Discrepancy)
+				|| Discrepancy > Settings.ContactTravelTolerance)
+			{
+				return Stop(
+					EStatus::CollisionUnresolved,
+					TEXT("ContactPositionMismatch"));
+			}
+
+			const FVector SupportedFeet =
+				ContactFeet
+				+ FVector::UpVector * PokemonJumpValidation::FloorGap();
+
+			// Stock UE 5.8 worst case:
+			// 1 occupancy + 4 floor sweeps + 1 floor line + 5 support lines.
+			// Reserve the entire amount even if CheckLanding exits early.
+			if (!Spend(11))
+			{
+				return false;
+			}
+
+			FName Failure;
+			if (!PokemonJumpValidation::CheckLanding(
+				Body, SupportedFeet, Failure))
+			{
+				return Stop(EStatus::LandingRejected, Failure);
+			}
+
+			Result.Status = EStatus::LandingGeometryFound;
+			Result.Reason = NAME_None;
+			Result.ContactPrediction = Prediction;
+			Result.ContactFeet = ContactFeet;
+			Result.SupportedFeet = SupportedFeet;
+			Result.ContactPositionDiscrepancy = Discrepancy;
+			Result.ContactChordDeviationBound = Deviation;
+
+			// Success also stops the search. It does not mark the interval clear.
+			return false;
+		}
+	};
+}
+
+FPokemonRecoveryContinuationResult FPokemonRecoveryContinuation::Evaluate(APokemon_Parent& Pokemon,
+	const FPokemonRecoveryBallisticInput& Seed,
+	const FPokemonRecoveryContinuationSettings& Settings)
+{
+	using namespace PokemonRecoveryContinuationPrivate;
+	
+	// Helper to construct a result and exit early.
+	const auto Fail = [](EStatus Status, FName Reason)
+		{
+			FPokemonRecoveryContinuationResult Result;
+			Result.Status = Status;
+			Result.Reason = Reason;
+			return Result;
+		};
+
+	// Validate the list of input parameters. All bounds must be finite and positive.
+	for (double Value : {
+		Settings.Horizon,
+			Settings.MaxTravel,
+			Settings.MaxStepTime,
+			Settings.MaxSegmentTravel,
+			Settings.MaxChordDeviation,
+			Settings.ContactTimeTolerance,
+			Settings.ContactTravelTolerance })
+	{
+		if (!FMath::IsFinite(Value) || Value <= 0.0)
+		{
+			return Fail(EStatus::InvalidInput, TEXT("InvalidSearchBounds"));
+		}
+	}
+
+	if (Seed.PredictionTime != 0.0
+		|| Settings.MaxRefinementDepth < 0
+		|| Settings.MaxRefinementDepth > 24
+		|| Settings.MaxQueryWork < 1
+		|| Settings.MaxQueryWork > 4096
+		|| Settings.ContactTimeTolerance > Settings.MaxStepTime
+		|| Settings.ContactTravelTolerance > Settings.MaxSegmentTravel)
+	{
+		return Fail(EStatus::InvalidInput, TEXT("InvalidSearchSettings"));
+	}
+
+	if (!Settings.bAssumeFrozenWorld)
+	{
+		return Fail(
+			EStatus::UnsupportedModel,
+			TEXT("FrozenWorldAssumptionRequired"));
+	}
+
+	if (!IsInGameThread())
+	{
+		return Fail(
+			EStatus::UnsupportedModel,
+			TEXT("GameThreadRequired"));
+	}
+
+	const FPokemonRecoveryBallisticResult Start =
+		FPokemonRecoveryBallistics::Evaluate(Seed);
+
+	FPokemonRecoveryBallisticInput EndInput = Seed;
+	EndInput.PredictionTime = Settings.Horizon;
+
+	const FPokemonRecoveryBallisticResult End =
+		FPokemonRecoveryBallistics::Evaluate(EndInput);
+
+	if (!Start.HasPrediction() || !End.HasPrediction())
+	{
+		const FPokemonRecoveryBallisticResult& Failed =
+			!Start.HasPrediction() ? Start : End;
+
+		return Fail(
+			Failed.Status == EPokemonRecoveryBallisticStatus::UnsupportedMotion
+			? EStatus::UnsupportedModel
+			: EStatus::InvalidInput,
+			Failed.Reason);
+	}
+
+	// Velocity varies linearly, so its magnitude is bounded by the larger
+	// endpoint magnitude over the full prediction horizon.
+	const double SpeedBound = FMath::Max(
+		Start.Sample.Velocity.Size(),
+		End.Sample.Velocity.Size());
+
+	if (!FMath::IsFinite(SpeedBound) || SpeedBound <= 0.0)
+	{
+		return Fail(EStatus::InvalidInput, TEXT("InvalidSpeedBound"));
+	}
+
+	PokemonJumpValidation::FBodyQueries Body;
+	FName Failure;
+
+	if (!Body.Init(Pokemon, Failure))
+	{
+		return Fail(EStatus::UnsupportedModel, Failure);
+	}
+
+	// ComputeFloorDist/FloorSweepTest are virtual. The reserved query bound
+	// applies to the stock implementation reviewed for this diagnostic.
+	if (Body.Movement->GetClass() !=
+		UCharacterMovementComponent::StaticClass())
+	{
+		return Fail(
+			EStatus::UnsupportedModel,
+			TEXT("CustomMovementQueryBoundUnknown"));
+	}
+
+	FSearch Search(Body, Seed, Settings, SpeedBound);
+
+	if (!Search.Spend(1))
+	{
+		return Search.Result;
+	}
+
+	if (Body.IsOccupied(Body.Center(Start.Sample.Feet)))
+	{
+		Search.Stop(EStatus::StartBlocked, TEXT("InitialCapsuleOverlap"));
+		return Search.Result;
+	}
+
+	// The search is chronological. The first time a floor contact is found, the search stops.
+	// Horizon is the maximum time to search, but the search may stop earlier if a floor contact is found.
+	// MaxTravel divided by SpeedBound is the maximum time it would take to reach the distance limit.
+	const double EndTime = FMath::Min(
+		Settings.Horizon,
+		Settings.MaxTravel / SpeedBound);
+
+	// The step time is the minimum of the maximum step time, 
+	// the maximum segment travel divided by the speed bound, 
+	// and the square root of 8 times the maximum chord deviation divided by the negative gravity Z.
+	const double StepTime = FMath::Min(
+		Settings.MaxStepTime,
+		FMath::Min(
+			Settings.MaxSegmentTravel / SpeedBound,
+			FMath::Sqrt(
+				8.0 * Settings.MaxChordDeviation / -Seed.Gravity.Z)));
+
+	if (!FMath::IsFinite(StepTime) || StepTime <= 0.0)
+	{
+		Search.Stop(EStatus::InvalidInput, TEXT("InvalidStepResolution"));
+		return Search.Result;
+	}
+
+	FSample Previous = Start.Sample;
+
+	// The search proceeds in chronological order, 
+	// stepping through time until the end time is reached or a floor contact is found.
+	while (Previous.Time < EndTime)
+	{
+		const double NextTime =
+			FMath::Min(Previous.Time + StepTime, EndTime);
+
+		if (NextTime <= Previous.Time)
+		{
+			Search.Stop(
+				EStatus::CollisionUnresolved,
+				TEXT("TimeResolutionLimit"));
+			return Search.Result;
+		}
+
+		FPokemonRecoveryBallisticResult Next;
+		if (!Search.Predict(NextTime, Next))
+		{
+			return Search.Result;
+		}
+
+		Search.Result.QueriedTravelUpperBound =
+			SpeedBound * NextTime;
+
+		if (!Search.Visit(Previous, Next.Sample, 0))
+		{
+			return Search.Result;
+		}
+
+		Previous = Next.Sample;
+	}
+
+	Search.Stop(
+		EStatus::NoLandingWithinBounds,
+		EndTime < Settings.Horizon
+		? FName(TEXT("DistanceLimit"))
+		: FName(TEXT("TimeLimit")));
+
+	return Search.Result;
 }

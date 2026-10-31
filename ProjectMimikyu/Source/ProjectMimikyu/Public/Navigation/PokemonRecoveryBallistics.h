@@ -90,5 +90,5 @@ struct PROJECTMIMIKYU_API FPokemonRecoveryBallisticResult
 // Pure mathmatics. Performs no world queries or gameplay operations.
 struct PROJECTMIMIKYU_API FPokemonRecoveryBallistics
 {
-	FPokemonRecoveryBallisticResult Evaluate(const FPokemonRecoveryBallisticInput& Input);
+	static FPokemonRecoveryBallisticResult Evaluate(const FPokemonRecoveryBallisticInput& Input);
 };

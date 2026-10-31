@@ -65,7 +65,7 @@ FPokemonRecoveryBallisticResult FPokemonRecoveryBallistics::Evaluate(const FPoke
 	if(Input.PredictionTime<0.0
 		|| Input.PredictionTime>Input.MaxPredictionTime)
 	{
-		return Fail(EStatus::InvalidInput, TEXT("PredictionTimeOutOfRange"));
+		return Fail(EStatus::TimeOutOfRange, TEXT("PredictionTimeOutOfRange"));
 	}
 
 	// Increment 1 supports upright, constant downward gravity only.
@@ -74,6 +74,18 @@ FPokemonRecoveryBallisticResult FPokemonRecoveryBallistics::Evaluate(const FPoke
 		|| Input.Gravity.Z >= 0.0)
 	{
 		return Fail(EStatus::UnsupportedMotion, TEXT("NonDownwardGravity"));
+	}
+
+	if (!Motion.bAssumeConstantGravity
+		|| !Motion.bAssumeNoFutureForces
+		|| Motion.bHasRootMotion
+		|| Motion.bHasPendingLaunch
+		|| !Motion.NonGravityAcceleration.IsZero()
+		|| Motion.FallingLateralFriction != 0.0
+		|| Motion.BrakingDecelerationFalling != 0.0
+		|| Motion.EffectiveBrakingFriction != 0.0)
+	{
+		return Fail(EStatus::UnsupportedMotion, TEXT("UnsupportedMovement"));
 	}
 
 	const double Time = Input.PredictionTime;
@@ -128,7 +140,7 @@ FPokemonRecoveryBallisticResult FPokemonRecoveryBallistics::Evaluate(const FPoke
 	Result.Sample.Feet = FVector(X, Y, Z);
 	Result.Sample.Velocity = FVector(Input.StartVelocity.X, Input.StartVelocity.Y, VelocityZ);
 
-	Result.MaxFeetZSinceTakeoff = MaximumZ;
+	Result.MaxFeetZInSegment = MaximumZ;
 
 	if (Input.MaxFeetZThroughStart.IsSet())
 	{
