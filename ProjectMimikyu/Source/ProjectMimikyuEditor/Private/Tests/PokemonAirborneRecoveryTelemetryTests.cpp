@@ -16,6 +16,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/WorldSettings.h"
+#include "GameFramework/PhysicsVolume.h"
 
 IMPLEMENT_COMPLEX_AUTOMATION_TEST(
     FPokemonAirborneRecoveryTelemetryTest,
@@ -36,7 +37,13 @@ IMPLEMENT_COMPLEX_AUTOMATION_TEST(
        TEXT("TakeoffSession"),
        TEXT("Timeout"),
        TEXT("Supersession"),
-       TEXT("Teardown")
+       TEXT("Teardown"),
+       TEXT("PIEMissSeed"),
+       TEXT("PIEBounceSeed"),
+       TEXT("PIELandingBracket"),
+       TEXT("PIEInvalidation"),
+       TEXT("PIEUnsupportedSeed"),
+       TEXT("PIEModelChanges")
     };
 
     for (const TCHAR* Case : Cases)
@@ -87,6 +94,7 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
         return false;
     }
 
+	// Gets the Pokemon's Airborne Recovery Telemetry component.
     UPokemonAirborneRecoveryTelemetryComponent* Telemetry =
         Pokemon->AirborneRecoveryTelemetryComponent.Get();
 
@@ -637,6 +645,10 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             Telemetry->FinishObservation(TEXT("AutomationReset"));
 
             Telemetry->Observation = FAirborneRecoveryObservation();
+
+			Telemetry->PIEComparison = FRecoveryPIEComparison();
+			Telemetry->PIEComparison.bEnabled = Parameters.StartsWith(TEXT("PIE"));
+
             Telemetry->Observation.RequestId = FGuid::NewGuid();
             Telemetry->Observation.CommandId = CommandId;
             Telemetry->Observation.StartFeet =
@@ -650,6 +662,14 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
         };
 
     const FGuid CommandId = FGuid::NewGuid();
+
+    if (Parameters.StartsWith(TEXT("PIE")))
+    {
+        Movement->FallingLateralFriction = 0.f;
+        Movement->BrakingDecelerationFalling = 0.f;
+        Movement->BrakingFriction = 0.f;
+    }
+
     BeginObservation(CommandId);
 
     FPokemonImpactResolution Resolution;
@@ -670,6 +690,7 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 Pokemon->GetActorLocation(),
                 Movement->Velocity);
         };
+
     if (Parameters == TEXT("CommandIdentity"))
     {
         // Two invalid IDs must never establish a match.
@@ -904,13 +925,343 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             Telemetry->Observation.ElapsedMovementTime, FinishedElapsed);
         TestFalse(TEXT("Late outcome cannot modify finished session"),
             Telemetry->Observation.bCombatOutcomeKnown);
+    }
+    else if (Parameters.StartsWith(TEXT("PIE")))
+    {
+        const auto CompleteMiss = [&]()
+            {
+                Telemetry->NotifyCombatOutcome(CommandId, false);
+                Telemetry->HandleExecutionFinished(
+                    Telemetry->Observation.RequestId, true);
+            };
+
+        const auto CheckedMovementUpdate = [&]()
+            {
+                const FVector Location = Pokemon->GetActorLocation();
+                const FVector Velocity = Movement->Velocity;
+                const FVector Pending = Movement->PendingLaunchVelocity;
+                const EMovementMode Mode = Movement->MovementMode;
+                const bool bFloorCheck = Movement->bForceNextFloorCheck;
+                const int32 LaunchCalls = Pokemon->LaunchCalls;
+
+                MovementUpdate();
+
+                TestEqual(TEXT("Diagnostic preserves location"),
+                    Pokemon->GetActorLocation(), Location);
+                TestEqual(TEXT("Diagnostic preserves velocity"),
+                    Movement->Velocity, Velocity);
+                TestEqual(TEXT("Diagnostic preserves pending launch"),
+                    Movement->PendingLaunchVelocity, Pending);
+                TestTrue(TEXT("Diagnostic preserves movement mode"),
+                    Movement->MovementMode == Mode);
+                TestTrue(TEXT("Diagnostic preserves floor cache"),
+                    Movement->bForceNextFloorCheck == bFloorCheck);
+                TestEqual(TEXT("Diagnostic never launches"),
+                    Pokemon->LaunchCalls, LaunchCalls);
+            };
+
+        if (Parameters == TEXT("PIEMissSeed"))
+        {
+            MovementUpdate();
+            TestFalse(TEXT("No seed before outcome"),
+                Telemetry->PIEComparison.bAttempted);
+
+            Telemetry->NotifyCombatOutcome(CommandId, false);
+            MovementUpdate();
+
+            TestFalse(TEXT("No seed before execution finishes"),
+                Telemetry->PIEComparison.bAttempted);
+
+            Telemetry->HandleExecutionFinished(
+                Telemetry->Observation.RequestId, true);
+
+            CheckedMovementUpdate();
+
+            TestTrue(TEXT("Completed post-miss update seeds prediction"),
+                Telemetry->PIEComparison.bAttempted);
+
+            TestEqual(TEXT("Observed feet become the seed"),
+                Telemetry->PIEComparison.Input.StartFeet,
+                Movement->GetActorFeetLocation());
+
+            TestEqual(TEXT("Observed velocity becomes the seed"),
+                Telemetry->PIEComparison.Input.StartVelocity,
+                Movement->Velocity);
+
+            TestTrue(TEXT("Seed uses completed movement time"),
+                FMath::IsNearlyEqual(
+                    Telemetry->PIEComparison.SeedMovementTime,
+                    static_cast<double>(
+                        Telemetry->Observation.ElapsedMovementTime),
+                    0.000001));
+
+            TestFalse(TEXT("Full-jump maximum is not invented"),
+                Telemetry->PIEComparison.Input.MaxFeetZThroughStart.IsSet());
+
+            const double SavedSeedTime =
+                Telemetry->PIEComparison.SeedMovementTime;
+
+            MovementUpdate();
+
+            TestEqual(TEXT("Prediction is attempted only once"),
+                Telemetry->PIEComparison.SeedMovementTime, SavedSeedTime);
+        }
+        else if (Parameters == TEXT("PIEBounceSeed"))
+        {
+            Telemetry->HandleExecutionFinished(
+                Telemetry->Observation.RequestId, true);
+            Telemetry->NotifyCombatOutcome(CommandId, true);
+
+            MovementUpdate();
+
+            TestFalse(TEXT("CombatHit alone cannot seed BounceOff"),
+                Telemetry->PIEComparison.bAttempted);
+
+            const FVector Requested(80.f, -20.f, 300.f);
+            Pokemon->LaunchCharacter(Requested, true, true);
+
+            Telemetry->NotifyImpactRequest(
+                CommandId, Resolution, Movement->Velocity, Requested, false);
+
+            CheckedMovementUpdate();
+
+            TestFalse(TEXT("Pending launch postpones the seed"),
+                Telemetry->PIEComparison.bAttempted);
+
+            if (!TestTrue(TEXT("Movement consumes the launch"),
+                Movement->HandlePendingLaunch()))
+            {
+                return false;
             }
+
+            // Represent the velocity observed after some gravity integration.
+            Movement->Velocity.Z -= 9.8f;
+            const FVector ObservedVelocity = Movement->Velocity;
+
+            CheckedMovementUpdate();
+
+            TestTrue(TEXT("Post-consumption movement seeds prediction"),
+                Telemetry->PIEComparison.bAttempted);
+
+            TestEqual(TEXT("Seed uses observed velocity, not requested impulse"),
+                Telemetry->PIEComparison.Input.StartVelocity, ObservedVelocity);
+
+            TestEqual(TEXT("Impact index retained"),
+                Telemetry->PIEComparison.ImpactIndex, 1);
+        }
+        else if (Parameters == TEXT("PIELandingBracket"))
+        {
+            CompleteMiss();
+            CheckedMovementUpdate(); // Seed at .01.
+
+            MovementUpdate();        // .02
+            MovementUpdate();        // .03
+
+            Movement->Velocity = FVector(40.f, 50.f, -500.f);
+
+            const FVector LandingFeet = Movement->GetActorFeetLocation();
+            const FVector LandingVelocity = Movement->Velocity;
+
+            FHitResult Hit;
+            Hit.bBlockingHit = true;
+            Hit.Normal = FVector::UpVector;
+            Hit.ImpactNormal = FVector::UpVector;
+
+            Pokemon->LandedDelegate.Broadcast(Hit);
+
+            TestTrue(TEXT("Landing event captured"),
+                Telemetry->PIEComparison.bLandingCaptured);
+            TestFalse(TEXT("Landing waits for the completed movement callback"),
+                Telemetry->PIEComparison.bCompared);
+
+            // Later movement must not replace the captured contact-event pose.
+            Pokemon->SetActorLocation(
+                Pokemon->GetActorLocation() + FVector(100.f, 0.f, 0.f));
+
+            // Keep Falling here so existing grounded completion does not yet
+            // retire the observation and clear the comparison.
+            CheckedMovementUpdate(); // .04
+
+            TestTrue(TEXT("Next callback completes comparison"),
+                Telemetry->PIEComparison.bCompared);
+
+            TestTrue(TEXT("Lower contact-time boundary"),
+                FMath::IsNearlyEqual(
+                    Telemetry->PIEComparison.LandingTimeLower, 0.02, 0.00001));
+
+            TestTrue(TEXT("Upper contact-time boundary"),
+                FMath::IsNearlyEqual(
+                    Telemetry->PIEComparison.LandingTimeUpper, 0.03, 0.00001));
+
+            TestEqual(TEXT("Raw landing feet retained"),
+                Telemetry->PIEComparison.FeetAtLandingEvent, LandingFeet);
+
+            TestEqual(TEXT("Landing event velocity retained"),
+                Telemetry->PIEComparison.VelocityAtLandingEvent, LandingVelocity);
+
+            Movement->SetMovementMode(MOVE_Walking);
+            MovementUpdate();
+
+            TestFalse(TEXT("Grounded completion clears comparison"),
+                Telemetry->PIEComparison.bEnabled
+                || Telemetry->PIEComparison.bAttempted
+                || Telemetry->PIEComparison.bLandingCaptured
+                || Telemetry->PIEComparison.bCompared);
+        }
+        else if (Parameters == TEXT("PIEInvalidation"))
+        {
+            CompleteMiss();
+            CheckedMovementUpdate();
+
+            const double SeedTime = Telemetry->PIEComparison.SeedMovementTime;
+
+            Telemetry->NotifyImpactRequest(
+                FGuid::NewGuid(), Resolution,
+                Movement->Velocity, FVector(10.f, 0.f, 200.f), false);
+
+            TestTrue(TEXT("Unrelated impact cannot invalidate comparison"),
+                Telemetry->PIEComparison.InvalidatedReason.IsNone());
+
+            Telemetry->NotifyImpactRequest(
+                CommandId, Resolution,
+                Movement->Velocity, FVector(10.f, 0.f, 200.f), false);
+
+            TestEqual(TEXT("Later matching impact is identified"),
+                Telemetry->PIEComparison.InvalidatedReason,
+                FName(TEXT("LaterImpact")));
+
+            MovementUpdate();
+
+            TestEqual(TEXT("Later impact does not silently replace the seed"),
+                Telemetry->PIEComparison.SeedMovementTime, SeedTime);
+
+            Telemetry->FinishObservation(TEXT("AutomationFinished"));
+
+            TestFalse(TEXT("Retirement clears comparison state"),
+                Telemetry->PIEComparison.bEnabled
+                || Telemetry->PIEComparison.bAttempted
+                || Telemetry->PIEComparison.bLandingCaptured
+                || Telemetry->PIEComparison.bCompared);
+        }
+        else if (Parameters == TEXT("PIEModelChanges"))
+        {
+            AActor* FloorActor = World->SpawnActor<AActor>();
+            if (!TestNotNull(TEXT("Model-check floor actor"), FloorActor))
+            {
+                return false;
+            }
+
+            UBoxComponent* Floor = NewObject<UBoxComponent>(FloorActor);
+            FloorActor->SetRootComponent(Floor);
+            Floor->SetMobility(EComponentMobility::Static);
+            Floor->SetBoxExtent(FVector(2000.f, 2000.f, 20.f));
+            Floor->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+            Floor->SetCollisionObjectType(ECC_WorldStatic);
+            Floor->SetCollisionResponseToAllChannels(ECR_Block);
+            Floor->SetWorldLocation(FVector(0.f, 0.f, -20.f));
+            Floor->RegisterComponent();
+
+            APhysicsVolume* Volume = Movement->GetPhysicsVolume();
+            if (!TestNotNull(TEXT("Physics volume"), Volume))
+            {
+                return false;
+            }
+
+            CompleteMiss();
+            CheckedMovementUpdate();
+
+            if (!TestTrue(TEXT("Real landing geometry enables model monitoring"),
+                Telemetry->PIEComparison.Prediction.HasLandingGeometry()))
+            {
+                return false;
+            }
+
+            const FRecoveryPIEComparison Baseline = Telemetry->PIEComparison;
+            const float OriginalFriction = Movement->FallingLateralFriction;
+            const float OriginalGravityScale = Movement->GravityScale;
+            const float OriginalTerminalSpeed = Volume->TerminalVelocity;
+
+            ON_SCOPE_EXIT
+            {
+                Movement->FallingLateralFriction = OriginalFriction;
+                Movement->GravityScale = OriginalGravityScale;
+                Volume->TerminalVelocity = OriginalTerminalSpeed;
+            };
+
+            // A newly unsupported movement model must invalidate the prediction.
+            Movement->FallingLateralFriction = 0.5f;
+            CheckedMovementUpdate();
+
+            TestEqual(TEXT("Friction change is detected"),
+                Telemetry->PIEComparison.InvalidatedReason,
+                FName(TEXT("UnsupportedMovement")));
+
+            // Later changes must preserve the first invalidation reason.
+            Movement->FallingLateralFriction = OriginalFriction;
+            Movement->GravityScale = OriginalGravityScale * 1.1f;
+            CheckedMovementUpdate();
+
+            TestEqual(TEXT("First invalidation reason is preserved"),
+                Telemetry->PIEComparison.InvalidatedReason,
+                FName(TEXT("UnsupportedMovement")));
+
+            // Restore only the saved diagnostic state to isolate the gravity check.
+            Telemetry->PIEComparison = Baseline;
+            CheckedMovementUpdate();
+
+            TestEqual(TEXT("Changed gravity is detected"),
+                Telemetry->PIEComparison.InvalidatedReason,
+                FName(TEXT("GravityOrTerminalSpeedChanged")));
+
+            Movement->GravityScale = OriginalGravityScale;
+            Telemetry->PIEComparison = Baseline;
+            Volume->TerminalVelocity = OriginalTerminalSpeed + 100.f;
+            CheckedMovementUpdate();
+
+            TestEqual(TEXT("Changed terminal speed is detected"),
+                Telemetry->PIEComparison.InvalidatedReason,
+                FName(TEXT("GravityOrTerminalSpeedChanged")));
+
+            Telemetry->FinishObservation(TEXT("AutomationFinished"));
+        }
+        else if (Parameters == TEXT("PIEUnsupportedSeed"))
+        {
+            Movement->FallingLateralFriction = 0.5f;
+            CompleteMiss();
+            CheckedMovementUpdate();
+
+            TestTrue(TEXT("Unsupported model is recorded"),
+                Telemetry->PIEComparison.bAttempted
+                && Telemetry->PIEComparison.Prediction.Status ==
+                EPokemonRecoveryContinuationStatus::UnsupportedModel);
+
+            TestEqual(TEXT("Unsupported model makes no world queries"),
+                Telemetry->PIEComparison.Prediction.QueryWorkUsed, 0);
+
+            const double SeedTime = Telemetry->PIEComparison.SeedMovementTime;
+
+            Movement->FallingLateralFriction = 0.f;
+            MovementUpdate();
+
+            TestEqual(TEXT("Changed parameters do not cause a silent retry"),
+                Telemetry->PIEComparison.SeedMovementTime, SeedTime);
+
+            TestTrue(TEXT("Original unsupported result retained"),
+                Telemetry->PIEComparison.Prediction.Status ==
+                EPokemonRecoveryContinuationStatus::UnsupportedModel);
+        }
+        else
+        {
+            AddError(TEXT("Unknown PIE comparison test."));
+            return false;
+        }
+    }
     else
     {
         AddError(FString::Printf(
             TEXT("Unknown telemetry test case: %s"), *Parameters));
         return false;
-        }
+    }
 
         if (Parameters == TEXT("CommandIdentity")
             || Parameters == TEXT("HitLatch")

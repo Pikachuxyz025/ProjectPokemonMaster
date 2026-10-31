@@ -4,6 +4,8 @@
 #include "ActorComponents/PokemonAirborneRecoveryTelemetryComponent.h"
 #include "ActorComponents/PokemonHitStopComponent.h"
 #include "ActorComponents/PokemonJumpExecutionComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/PhysicsVolume.h"
 #include "Combat/PokemonImpactTypes.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/World.h"
@@ -21,6 +23,77 @@ namespace
 
     constexpr float RecoverySampleInterval = 0.1f;
 	constexpr float RecoveryObservationTimeout = 30.0f;
+
+    TAutoConsoleVariable<int32> CVarAirborneRecoveryCompare(
+        TEXT("pokemon.Traversal.AirborneRecoveryCompare"),
+        0,
+        TEXT("Compare one observed recovery prediction with actual landing. ")
+        TEXT("Requires AirborneRecoveryTelemetry. Changes apply to new observations."),
+        ECVF_Default);
+
+	static FName ReadRecoveryInput(APokemon_Parent& Pokemon, FPokemonRecoveryBallisticInput& OutInput)
+	{
+		UCharacterMovementComponent* Movement = Pokemon.GetCharacterMovement();
+		if (!Movement)
+		{
+			return FName(TEXT("MovementUnavailable"));
+		}
+
+        OutInput = FPokemonRecoveryBallisticInput();
+		OutInput.StartFeet = Movement->GetActorFeetLocation();
+		OutInput.StartVelocity = Movement->Velocity;
+        OutInput.Gravity = Movement->GetGravityDirection() * -Movement->GetGravityZ();
+
+        // Conditional diagnostic assumptions, not promises about future movement.
+		OutInput.Movement.bAssumeConstantGravity = true;
+		OutInput.Movement.bAssumeNoFutureForces = true;
+
+        OutInput.Movement.bHasRootMotion=Movement->HasAnimRootMotion()
+			|| Movement->HasRootMotionSources()
+			|| Pokemon.IsPlayingRootMotion();
+
+		OutInput.Movement.bHasPendingLaunch = !Movement->PendingLaunchVelocity.IsZero();
+
+		OutInput.Movement.NonGravityAcceleration = Movement->GetCurrentAcceleration();
+
+		OutInput.Movement.FallingLateralFriction = Movement->FallingLateralFriction;
+
+		OutInput.Movement.BrakingDecelerationFalling = Movement->BrakingDecelerationFalling;
+
+        OutInput.Movement.EffectiveBrakingFriction = FMath::Max(0.f,
+            Movement->bUseSeparateBrakingFriction
+            ? Movement->BrakingFriction
+            : Movement->FallingLateralFriction)
+            * FMath::Max(0.f, Movement->BrakingFrictionFactor);
+
+        const APhysicsVolume* Volume = Movement->GetPhysicsVolume();
+		if (!Volume)
+		{
+			return FName(TEXT("PhysicsVolumeUnavailable"));
+		}
+
+		OutInput.Movement.TerminalDownSpeed = Volume->TerminalVelocity;
+
+        // Sparse observations cannot establish the complete previous maximum.
+        OutInput.MaxFeetZThroughStart.Reset();
+
+		if (!Movement->IsFalling())
+		{
+			return FName(TEXT("NotFalling"));
+		}
+		
+        if(Pokemon.IsJumpProvidingForce())
+		{
+			return FName(TEXT("JumpForceActive"));
+		}
+
+        if (!Movement->GetLastUpdateRequestedVelocity().IsZero())
+        {
+            return TEXT("PathFollowingRequestedVelocity");
+        }
+
+        return NAME_None;
+	}
 }
 
 UPokemonAirborneRecoveryTelemetryComponent::UPokemonAirborneRecoveryTelemetryComponent()
@@ -59,6 +132,16 @@ void UPokemonAirborneRecoveryTelemetryComponent::NotifyImpactRequest(FGuid Comma
     const FString PolicyName =
         StaticEnum<EPokemonAttackerMotionPolicy>()->GetNameStringByValue(
             static_cast<int64>(Resolution.AttackerMotionPolicy));
+
+    PIEComparison.LastImpactResult=FName(*ResultName);
+
+    // Preserve the original prediction. A later impact changes the trajectory
+    // being compared, so it must not silently become a replacement seed.
+    if (PIEComparison.bEnabled && PIEComparison.bAttempted
+        && !PIEComparison.bLandingCaptured && PIEComparison.InvalidatedReason.IsNone())
+    {
+        PIEComparison.InvalidatedReason = TEXT("LaterImpact");
+    }
 
     UE_LOG(LogTemp, Display,
         TEXT("[AirRecoveryTrace] ImpactRequested | ")
@@ -159,7 +242,22 @@ void UPokemonAirborneRecoveryTelemetryComponent::FinishObservation(FName Reason)
 
 	if (!bObserving)
 	{
+		PIEComparison = FRecoveryPIEComparison();
 		return;
+	}
+
+	if (PIEComparison.bEnabled && !PIEComparison.bCompared)
+	{
+        UE_LOG(LogTemp, Display,
+            TEXT("[AirRecoveryCompare] Incomplete | ")
+            TEXT("RequestId=%s | CommandId=%s | Reason=%s | ")
+            TEXT("Attempted=%d | LandingCaptured=%d | Invalidated=%s"),
+            *Observation.RequestId.ToString(),
+            *Observation.CommandId.ToString(),
+            *Reason.ToString(),
+            PIEComparison.bAttempted,
+            PIEComparison.bLandingCaptured,
+            *PIEComparison.InvalidatedReason.ToString());
 	}
 
     LogMovementSample(TEXT("FinalState"), Reason);
@@ -192,6 +290,7 @@ void UPokemonAirborneRecoveryTelemetryComponent::FinishObservation(FName Reason)
         Observation.ImpactRequestCount);
 
     SampleAccumulator = 0.f;
+	PIEComparison = FRecoveryPIEComparison();
 }
 
 bool UPokemonAirborneRecoveryTelemetryComponent::MatchesObservedCommand(FGuid CommandId) const
@@ -257,6 +356,8 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleLanded(const FHitResult& 
         Hit.bStartPenetrating,
         *Hit.ImpactNormal.ToCompactString());
 
+	CaptureRecoveryLanding(Hit);
+
     LogMovementSample(TEXT("LandingState"));
 }
 
@@ -295,6 +396,9 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleTakeoff(FGuid RequestId)
     }
 
     Observation = FAirborneRecoveryObservation();
+
+	PIEComparison = FRecoveryPIEComparison();
+	PIEComparison.bEnabled = CVarAirborneRecoveryCompare.GetValueOnGameThread() != 0;
 
     Observation.RequestId = RequestId;
     Observation.CommandId = CommandId;
@@ -418,6 +522,252 @@ void UPokemonAirborneRecoveryTelemetryComponent::LogMovementSample(FName Event, 
         Movement->BrakingFrictionFactor);
 }
 
+void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
+{
+    if (!PIEComparison.bEnabled || PIEComparison.bCompared)
+    {
+        return;
+    }
+
+    if (PIEComparison.bLandingCaptured)
+    {
+        PIEComparison.LandingTimeUpper = FMath::Max(PIEComparison.LandingTimeLower, static_cast<double>(Observation.ElapsedMovementTime)
+            - PIEComparison.SeedMovementTime);
+
+        PIEComparison.bCompared = true;
+
+        const bool bHasPrediction = PIEComparison.Prediction.HasLandingGeometry();
+
+        UE_LOG(LogTemp, Display,
+            TEXT("[AirRecoveryCompare] Landing | ")
+            TEXT("RequestId=%s | CommandId=%s | Kind=%s | ImpactIndex=%d | ")
+            TEXT("ActualTime=[%.6f,%.6f] | FeetAtEvent=%s | ")
+            TEXT("VelocityAtEvent=%s | HasLandingPrediction=%d | Invalidated=%s"),
+            *Observation.RequestId.ToString(),
+            *Observation.CommandId.ToString(),
+            *PIEComparison.SeedKind.ToString(),
+            PIEComparison.ImpactIndex,
+            PIEComparison.LandingTimeLower,
+            PIEComparison.LandingTimeUpper,
+            *PIEComparison.FeetAtLandingEvent.ToCompactString(),
+            *PIEComparison.VelocityAtLandingEvent.ToCompactString(),
+            bHasPrediction,
+            *PIEComparison.InvalidatedReason.ToString());
+
+        if (bHasPrediction)
+        {
+            const FPokemonRecoveryContinuationResult& Prediction = PIEComparison.Prediction;
+
+            const double PositionDelta = FVector::Dist(Prediction.ContactFeet,
+                PIEComparison.FeetAtLandingEvent);
+
+            // This is an event-velocity comparison, not an excat
+            // instantaneous impact-speed error.
+            const double VelocityAtEventDelta = FVector::Dist(Prediction.ContactPrediction.Sample.Velocity,
+                PIEComparison.VelocityAtLandingEvent);
+
+            const double TimeIntervalGap = FMath::Max(0.0, FMath::Max(
+                Prediction.ContactIntervalStart - PIEComparison.LandingTimeUpper,
+                PIEComparison.LandingTimeLower - Prediction.ContactIntervalEnd));
+
+            const bool bSameSupport = PIEComparison.LandingComponent.IsValid()
+                && Prediction.Hit.GetComponent() == PIEComparison.LandingComponent.Get();
+
+            UE_LOG(LogTemp, Display,
+                TEXT("[AirRecoveryCompare] Metrics | ")
+                TEXT("RequestId=%s | CommandId=%s | ")
+                TEXT("PositionDeltaCm=%.6f | VelocityAtEventDeltaCmS=%.6f | ")
+                TEXT("TimeIntervalGapSeconds=%.6f | SameSupport=%d | ")
+                TEXT("Invalidated=%s"),
+                *Observation.RequestId.ToString(),
+                *Observation.CommandId.ToString(),
+                PositionDelta,
+                VelocityAtEventDelta,
+                TimeIntervalGap,
+                bSameSupport,
+                *PIEComparison.InvalidatedReason.ToString());
+        }
+        return;
+    }
+
+    if (PIEComparison.bAttempted)
+    {
+        CheckRecoveryComparisonModel();
+        return;
+    }
+
+    APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement = Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+
+    if (!Movement || !Observation.bCombatOutcomeKnown
+        || !Observation.bReachedContact || !Observation.bExecutionFinished
+        || Observation.bLanded || !Movement->IsFalling()
+        || !Movement->PendingLaunchVelocity.IsZero() || bAwaitingPostImpactMovement)
+    {
+        return;
+    }
+
+    if (Observation.bCombatHit)
+    {
+        if (Observation.ImpactRequestCount == 0
+            || PIEComparison.LastImpactResult != FName(TEXT("BounceOff")))
+        {
+            return;
+        }
+    }
+    else if (Observation.ImpactRequestCount != 0)
+    {
+        // Keep the initial miss comparison unambiguous.
+        return;
+    }
+
+    PIEComparison.bAttempted = true;
+    PIEComparison.SeedKind = Observation.bCombatHit
+        ? FName(TEXT("ObservedBounceOff"))
+        : FName(TEXT("ObservedMiss"));
+
+    PIEComparison.ImpactIndex = Observation.ImpactRequestCount;
+    PIEComparison.SeedMovementTime = Observation.ElapsedMovementTime;
+
+    const FName FailureReason = ReadRecoveryInput(*Pokemon, PIEComparison.Input);
+
+    if (const UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
+    {
+        Capsule->GetScaledCapsuleSize(PIEComparison.SeedCapsuleRadius, PIEComparison.SeedCapsuleHalfHeight);
+    }
+
+    if (FailureReason.IsNone())
+    {
+        FPokemonRecoveryContinuationSettings Settings;
+        Settings.bAssumeFrozenWorld = true;
+
+        PIEComparison.Prediction = FPokemonRecoveryContinuation::Evaluate(*Pokemon, PIEComparison.Input, Settings);
+    }
+    else
+    {
+        PIEComparison.Prediction.Status =
+            EPokemonRecoveryContinuationStatus::UnsupportedModel;
+        PIEComparison.Prediction.Reason = FailureReason;
+    }
+
+    UE_LOG(LogTemp, Display,
+        TEXT("[AirRecoveryCompare] Seed | ")
+        TEXT("RequestId=%s | CommandId=%s | Kind=%s | ImpactIndex=%d | ")
+        TEXT("MovementTime=%.6f | Feet=%s | Velocity=%s | Gravity=%s | ")
+        TEXT("Status=%d | Reason=%s | QueryWork=%d | ")
+        TEXT("FrozenWorld=1 | ConstantGravity=1 | NoFutureForces=1 | ")
+        TEXT("FullHeightKnown=0"),
+        *Observation.RequestId.ToString(),
+        *Observation.CommandId.ToString(),
+        *PIEComparison.SeedKind.ToString(),
+        PIEComparison.ImpactIndex,
+        PIEComparison.SeedMovementTime,
+        *PIEComparison.Input.StartFeet.ToCompactString(),
+        *PIEComparison.Input.StartVelocity.ToCompactString(),
+        *PIEComparison.Input.Gravity.ToCompactString(),
+        static_cast<int32>(PIEComparison.Prediction.Status),
+        *PIEComparison.Prediction.Reason.ToString(),
+        PIEComparison.Prediction.QueryWorkUsed);
+
+    if (PIEComparison.Prediction.HasLandingGeometry())
+    {
+        UE_LOG(LogTemp, Display,
+            TEXT("[AirRecoveryCompare] Prediction | ")
+            TEXT("RequestId=%s | CommandId=%s | ")
+            TEXT("ContactTime=[%.6f,%.6f] | ContactFeet=%s | ")
+            TEXT("SupportedFeet=%s | IncomingVelocity=%s"),
+            *Observation.RequestId.ToString(),
+            *Observation.CommandId.ToString(),
+            PIEComparison.Prediction.ContactIntervalStart,
+            PIEComparison.Prediction.ContactIntervalEnd,
+            *PIEComparison.Prediction.ContactFeet.ToCompactString(),
+            *PIEComparison.Prediction.SupportedFeet.ToCompactString(),
+            *PIEComparison.Prediction.ContactPrediction.Sample.Velocity
+            .ToCompactString());
+    }
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::CaptureRecoveryLanding(const FHitResult& Hit)
+{
+	if (!PIEComparison.bEnabled || !PIEComparison.bAttempted || PIEComparison.bLandingCaptured)
+	{
+		return;
+	}
+
+	APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement = Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+
+    if(!Movement)
+    {
+        return;
+    }
+
+	CheckRecoveryComparisonModel();
+
+	PIEComparison.bLandingCaptured = true;
+	PIEComparison.FeetAtLandingEvent = Movement->GetActorFeetLocation();
+	PIEComparison.VelocityAtLandingEvent = Movement->Velocity;
+	PIEComparison.LandingComponent = Hit.GetComponent();
+
+    // Landed occurs inside movement simulation. The observer's clock still
+    // describes the preceding completed movement update.
+	PIEComparison.LandingTimeLower = FMath::Max(0.0, static_cast<double>(Observation.ElapsedMovementTime)
+        - PIEComparison.SeedMovementTime);
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::CheckRecoveryComparisonModel()
+{
+    if (!PIEComparison.bAttempted || PIEComparison.bLandingCaptured
+        || !PIEComparison.Prediction.HasLandingGeometry() || !PIEComparison.InvalidatedReason.IsNone())
+    {
+        return;
+    }
+
+	APokemon_Parent* Pokemon = PokemonOwner.Get();
+    if (!Pokemon)
+    {
+		PIEComparison.InvalidatedReason = TEXT("OwnerUnavailable");
+        return;
+    }
+
+    FPokemonRecoveryBallisticInput CurrentInput;
+	FName FailureReason = ReadRecoveryInput(*Pokemon, CurrentInput);
+
+    if (FailureReason.IsNone())
+    {
+		const FPokemonRecoveryBallisticResult Check = FPokemonRecoveryBallistics::Evaluate(CurrentInput);
+
+        if(!Check.HasPrediction())
+		{
+			FailureReason = Check.Reason;
+		}
+    }
+
+    if (FailureReason.IsNone()
+        && (!CurrentInput.Gravity.Equals(
+            PIEComparison.Input.Gravity, 0.000001)
+            || CurrentInput.Movement.TerminalDownSpeed !=
+            PIEComparison.Input.Movement.TerminalDownSpeed))
+    {
+        FailureReason = TEXT("GravityOrTerminalSpeedChanged");
+    }
+
+	const UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent();
+
+    if(FailureReason.IsNone()
+        &&(!Capsule||Capsule->GetScaledCapsuleRadius()!=PIEComparison.SeedCapsuleRadius
+            || Capsule->GetScaledCapsuleHalfHeight()!=PIEComparison.SeedCapsuleHalfHeight
+            ||!Capsule->GetUpVector().Equals(FVector::UpVector,0.001)))
+    {
+		FailureReason = TEXT("CapsuleChanged");
+    }
+
+    if (!FailureReason.IsNone())
+    {
+		PIEComparison.InvalidatedReason = FailureReason;
+    }
+}
+
 void UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity)
 {
     if (!bObserving)
@@ -450,6 +800,7 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate(float Delt
     {
         Observation.LastFallingVelocity = Movement->Velocity;
     }
+
     if (bAwaitingPostImpactMovement)
     {
         LogMovementSample(TEXT("ImpactMovementUpdate"));
@@ -459,6 +810,9 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate(float Delt
         bAwaitingPostImpactMovement =
             !Movement->PendingLaunchVelocity.IsZero();
     }
+
+
+    UpdateRecoveryComparison();
 
     // A landing event alone does not establish grounded movement.
     // A queued launch also means another movement transition is pending.

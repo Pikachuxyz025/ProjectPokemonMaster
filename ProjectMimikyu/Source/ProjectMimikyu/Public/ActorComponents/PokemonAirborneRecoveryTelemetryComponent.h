@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Navigation/PokemonRecoveryContinuation.h"
 #include "TimerManager.h"
 #include "PokemonAirborneRecoveryTelemetryComponent.generated.h"
 
 class APokemon_Parent;
 class UPokemonJumpExecutionComponent;
 struct FPokemonImpactResolution;
-
+class UPrimitiveComponent;
 
 struct FAirborneRecoveryObservation
 {
@@ -37,6 +38,35 @@ struct FAirborneRecoveryObservation
     bool bGroundedObserved = false;
 
     int32 ImpactRequestCount = 0;
+};
+
+struct FRecoveryPIEComparison
+{
+    bool bEnabled = false;
+	bool bAttempted = false;
+    bool bLandingCaptured = false;
+    bool bCompared = false;
+
+	FName SeedKind = NAME_None;
+	FName LastImpactResult = NAME_None;
+	FName InvalidatedReason = NAME_None;
+
+    int32 ImpactIndex = 0;
+
+	double SeedMovementTime = 0.0;
+	double LandingTimeLower = 0.0;
+	double LandingTimeUpper = 0.0;
+
+	float SeedCapsuleRadius = 0.f;
+	float SeedCapsuleHalfHeight = 0.f;
+
+    FPokemonRecoveryBallisticInput Input;
+    FPokemonRecoveryContinuationResult Prediction;
+
+	FVector FeetAtLandingEvent = FVector::ZeroVector;
+	FVector VelocityAtLandingEvent = FVector::ZeroVector;
+
+	TWeakObjectPtr<UPrimitiveComponent> LandingComponent;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -76,6 +106,12 @@ private:
     void HandleExecutionFinished(FGuid RequestId, bool bReachedContact, FName Reason = NAME_None);
 	void HandleObservationTimeout();
 	void LogMovementSample(FName Event, FName Reason = NAME_None) const;
+
+	FRecoveryPIEComparison PIEComparison;
+    
+    void UpdateRecoveryComparison();
+    void CaptureRecoveryLanding(const FHitResult& Hit);
+    void CheckRecoveryComparisonModel();
 
     UFUNCTION()
     void HandleMovementUpdate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
