@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Navigation/PokemonRecoveryContinuation.h"
+#include "Engine/EngineTypes.h"
 #include "TimerManager.h"
 #include "PokemonAirborneRecoveryTelemetryComponent.generated.h"
 
@@ -12,6 +13,7 @@ class APokemon_Parent;
 class UPokemonJumpExecutionComponent;
 struct FPokemonImpactResolution;
 class UPrimitiveComponent;
+class ACharacter;
 
 
 // Diagnostic evidence under the supported constant-gravity,
@@ -71,6 +73,27 @@ private:
     FPokemonRecoveryBallisticInput LastState;
 
     void RecordObservedFeet(const FVector& Feet);
+};
+
+struct FAirborneRecoveryHeightRuntime
+{
+    bool bFirstMovementUpdate = true;
+
+    float CapsuleRadius = 0.f;
+    float CapsuleHalfHeight = 0.f;
+
+    TOptional<FVector> PendingReplacementVelocity;
+    FVector ReplacementRequestFeet = FVector::ZeroVector;
+    FVector ReplacementIncomingVelocity = FVector::ZeroVector;
+    bool bReplacementBoundaryKnown = false;
+    int32 ReplacementImpactIndex = 0;
+
+    bool bLandingCaptured = false;
+    FPokemonRecoveryBallisticInput LandingState;
+    FHitResult LandingHit;
+
+    // Scoped movement can dispatch these after Landed.
+    TArray<FHitResult> BlockingHits;
 };
 
 struct FAirborneRecoveryObservation
@@ -154,6 +177,26 @@ private:
     FAirborneRecoveryObservation Observation;
 
 	FAirborneRecoveryHeightHistory HeightHistory;
+
+    FAirborneRecoveryHeightRuntime HeightRuntime;
+
+    FName CheckHeightGeometry() const;
+    void BeginHeightHistory();
+
+    void RememberHeightImpact(const FPokemonImpactResolution& Resolution,  const FVector& IncomingVelocity,
+        const FVector& RequestedVelocity, bool bStoppedImmediately);
+
+    void UpdateHeightHistory(    float DeltaSeconds,   const FVector& OldLocation, const FVector& OldVelocity);
+
+    void CaptureHeightLanding(const FHitResult& Hit);
+    void LogHeightHistory(FName Event) const;
+
+    UFUNCTION()
+    void HandleHeightCapsuleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+    UFUNCTION()
+    void HandleHeightMovementModeChanged(ACharacter* Character,EMovementMode PreviousMode,uint8 PreviousCustomMode);
 
     bool bObserving = false;
 

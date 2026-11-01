@@ -124,7 +124,7 @@ namespace PokemonRecoveryHeightHistoryPrivate
 
         return Check.HasPrediction()
             ? NAME_None
-            : FName(TEXT("UnsupportedState"));
+            : Check.Reason;
     }
 
     static bool SamePhysicalModel(const FPokemonRecoveryBallisticInput& Previous,
@@ -399,6 +399,8 @@ void UPokemonAirborneRecoveryTelemetryComponent::NotifyImpactRequest(FGuid Comma
     ++Observation.ImpactRequestCount;
     bAwaitingPostImpactMovement = true;
 
+    RememberHeightImpact(Resolution, IncomingVelocity, RequestedVelocity, bStoppedImmediately);
+
     const FString ResultName =
         StaticEnum<EPokemonImpactResult>()->GetNameStringByValue(
             static_cast<int64>(Resolution.ImpactResult));
@@ -473,6 +475,15 @@ void UPokemonAirborneRecoveryTelemetryComponent::BeginPlay()
 
 	Pokemon->OnCharacterMovementUpdated.AddDynamic(this,
 		&UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate);
+
+    Pokemon->MovementModeChangedDelegate.AddDynamic(this,
+        &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightMovementModeChanged);
+
+    if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
+    {
+        Capsule->OnComponentHit.AddDynamic(this,
+            &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightCapsuleHit);
+    }
 }
 
 void UPokemonAirborneRecoveryTelemetryComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -490,14 +501,23 @@ void UPokemonAirborneRecoveryTelemetryComponent::EndPlay(const EEndPlayReason::T
 	TriggerDelegateHandle.Reset();
 	ExecutionFinishDelegateHandle.Reset();
 
-	if (APokemon_Parent* Pokemon = PokemonOwner.Get())
-	{
-		Pokemon->LandedDelegate.RemoveDynamic(this,
-			&UPokemonAirborneRecoveryTelemetryComponent::HandleLanded);
+    if (APokemon_Parent* Pokemon = PokemonOwner.Get())
+    {
+        Pokemon->LandedDelegate.RemoveDynamic(this,
+            &UPokemonAirborneRecoveryTelemetryComponent::HandleLanded);
 
-		Pokemon->OnCharacterMovementUpdated.RemoveDynamic(this,
-			&UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate);
-	}
+        Pokemon->OnCharacterMovementUpdated.RemoveDynamic(this,
+            &UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate);
+
+        Pokemon->MovementModeChangedDelegate.RemoveDynamic(this,
+            &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightMovementModeChanged);
+
+        if (UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
+        {
+            Capsule->OnComponentHit.RemoveDynamic(this,
+                &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightCapsuleHit);
+        }
+    }
 
 	ObservedExecutor.Reset();
 	PokemonOwner.Reset();
@@ -517,6 +537,8 @@ void UPokemonAirborneRecoveryTelemetryComponent::FinishObservation(FName Reason)
 	if (!bObserving)
 	{
 		PIEComparison = FRecoveryPIEComparison();
+        HeightHistory.Reset();
+        HeightRuntime = FAirborneRecoveryHeightRuntime();
 		return;
 	}
 
@@ -533,6 +555,13 @@ void UPokemonAirborneRecoveryTelemetryComponent::FinishObservation(FName Reason)
             PIEComparison.bLandingCaptured,
             *PIEComparison.InvalidatedReason.ToString());
 	}
+
+    if (Reason != FName(TEXT("Landed")) || !HeightHistory.bLanded)
+    {
+        HeightHistory.MarkIncomplete(Reason.IsNone()
+            ? FName(TEXT("ObservationEnded"))
+            : Reason);
+    }
 
     LogMovementSample(TEXT("FinalState"), Reason);
     bObserving = false;
@@ -564,7 +593,10 @@ void UPokemonAirborneRecoveryTelemetryComponent::FinishObservation(FName Reason)
         Observation.ImpactRequestCount);
 
     SampleAccumulator = 0.f;
-	PIEComparison = FRecoveryPIEComparison();
+    PIEComparison = FRecoveryPIEComparison();
+
+    HeightHistory.Reset();
+    HeightRuntime = FAirborneRecoveryHeightRuntime();
 }
 
 bool UPokemonAirborneRecoveryTelemetryComponent::MatchesObservedCommand(FGuid CommandId) const
@@ -630,6 +662,7 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleLanded(const FHitResult& 
         Hit.bStartPenetrating,
         *Hit.ImpactNormal.ToCompactString());
 
+	CaptureHeightLanding(Hit);
 	CaptureRecoveryLanding(Hit);
 
     LogMovementSample(TEXT("LandingState"));
@@ -688,6 +721,7 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleTakeoff(FGuid RequestId)
 	}
 
     bObserving = true;
+    BeginHeightHistory();
 
     SampleAccumulator = 0.0f;
     bAwaitingPostImpactMovement = false;
@@ -733,6 +767,13 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleExecutionFinished(FGuid R
     Observation.bExecutionFinished = true;
     Observation.bReachedContact = bReachedContact;
 
+    if (!bReachedContact)
+    {
+        HeightHistory.MarkIncomplete(Reason.IsNone()
+            ? FName(TEXT("ExecutionInterrupted"))
+            : Reason);
+    }
+
     const FName Event = bReachedContact
         ? FName(TEXT("ContactReached"))
         : FName(TEXT("ExecutionFailed"));
@@ -742,7 +783,6 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleExecutionFinished(FGuid R
 
 void UPokemonAirborneRecoveryTelemetryComponent::LogMovementSample(FName Event, FName Reason) const
 {
-
 	APokemon_Parent* Pokemon = PokemonOwner.Get();
 	const UWorld* World = GetWorld();
 	if (!bObserving||!Pokemon || !World)
@@ -794,6 +834,8 @@ void UPokemonAirborneRecoveryTelemetryComponent::LogMovementSample(FName Event, 
         Movement->bUseSeparateBrakingFriction,
         Movement->BrakingFriction,
         Movement->BrakingFrictionFactor);
+
+    LogHeightHistory(Event);
 }
 
 void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
@@ -905,6 +947,25 @@ void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
 
     const FName FailureReason = ReadRecoveryInput(*Pokemon, PIEComparison.Input);
 
+    if (FailureReason.IsNone() && HeightHistory.GetCompleteMaximum().IsSet())
+    {
+        const FPokemonRecoveryBallisticInput& Last = HeightHistory.GetLastState();
+
+        // The seed must describe exactly the state just processed by
+        // the height observer.
+        if (HeightRuntime.bLandingCaptured
+            || HeightRuntime.PendingReplacementVelocity.IsSet()
+            || !PIEComparison.Input.StartFeet.Equals(Last.StartFeet, 0.0)
+            || !PIEComparison.Input.StartVelocity.Equals(Last.StartVelocity, 0.0))
+        {
+            HeightHistory.MarkIncomplete(TEXT("SeedBoundaryMismatch"));
+        }
+        else
+        {
+            PIEComparison.Input.MaxFeetZThroughStart = HeightHistory.GetCompleteMaximum();
+        }
+    }
+
     if (const UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent())
     {
         Capsule->GetScaledCapsuleSize(PIEComparison.SeedCapsuleRadius, PIEComparison.SeedCapsuleHalfHeight);
@@ -930,7 +991,7 @@ void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
         TEXT("MovementTime=%.6f | Feet=%s | Velocity=%s | Gravity=%s | ")
         TEXT("Status=%d | Reason=%s | QueryWork=%d | ")
         TEXT("FrozenWorld=1 | ConstantGravity=1 | NoFutureForces=1 | ")
-        TEXT("FullHeightKnown=0"),
+        TEXT("FullHeightKnown=%d | HeightReason=%s"),
         *Observation.RequestId.ToString(),
         *Observation.CommandId.ToString(),
         *PIEComparison.SeedKind.ToString(),
@@ -941,7 +1002,11 @@ void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
         *PIEComparison.Input.Gravity.ToCompactString(),
         static_cast<int32>(PIEComparison.Prediction.Status),
         *PIEComparison.Prediction.Reason.ToString(),
-        PIEComparison.Prediction.QueryWorkUsed);
+        PIEComparison.Prediction.QueryWorkUsed,
+        PIEComparison.Input.MaxFeetZThroughStart.IsSet(),
+        *(PIEComparison.Input.MaxFeetZThroughStart.IsSet()
+            ? NAME_None : !FailureReason.IsNone()
+            ? FailureReason : HeightHistory.IncompleteReason).ToString());
 
     if (PIEComparison.Prediction.HasLandingGeometry())
     {
@@ -958,6 +1023,30 @@ void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
             *PIEComparison.Prediction.SupportedFeet.ToCompactString(),
             *PIEComparison.Prediction.ContactPrediction.Sample.Velocity
             .ToCompactString());
+
+        const FPokemonRecoveryContinuationResult& Prediction = PIEComparison.Prediction;
+
+        const TOptional<double>& PredictedPeak = Prediction.ContactPrediction.MaxFeetZSinceTakeoff;
+
+        if (PredictedPeak.IsSet())
+        {
+            const double Drop = PredictedPeak.GetValue() - Prediction.ContactFeet.Z;
+
+            if (FMath::IsFinite(Drop) && Drop >= 0.0)
+            {
+                UE_LOG(LogTemp, Display,
+                    TEXT("[AirRecoveryCompare] HeightPrediction | ")
+                    TEXT("RequestId=%s | CommandId=%s | ")
+                    TEXT("PredictedMaxFeetZ=%.6f | ")
+                    TEXT("PredictedPeakToLandingDropCm=%.6f | ")
+                    TEXT("LandingReference=ContactFeet | ")
+                    TEXT("FullHeightKnownAtSeed=1 | ConditionalPrediction=1"),
+                    *Observation.RequestId.ToString(),
+                    *Observation.CommandId.ToString(),
+                    PredictedPeak.GetValue(),
+                    Drop);
+            }
+        }
     }
 }
 
@@ -1069,6 +1158,15 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate(float Delt
     Observation.ElapsedMovementTime += Step;
     SampleAccumulator += Step;
 
+    UpdateHeightHistory(DeltaSeconds, OldLocation, OldVelocity);
+
+    if (PIEComparison.Input.MaxFeetZThroughStart.IsSet()
+        && !HeightHistory.GetCompleteMaximum().IsSet()
+        && PIEComparison.InvalidatedReason.IsNone())
+    {
+        PIEComparison.InvalidatedReason = TEXT("HeightHistoryLost");
+    }
+
     // Update every falling movement callback, even when no log is emitted.
     if (Movement->IsFalling())
     {
@@ -1107,4 +1205,558 @@ void UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate(float Delt
 
         LogMovementSample(TEXT("Sample"));
     }
+}
+
+FName UPokemonAirborneRecoveryTelemetryComponent::CheckHeightGeometry() const
+{
+    const APokemon_Parent* Pokemon = PokemonOwner.Get();
+    const UCharacterMovementComponent* Movement = Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+    const UCapsuleComponent* Capsule = Pokemon ? Pokemon->GetCapsuleComponent() : nullptr;
+
+    if (!Movement || !Capsule)
+    {
+        return TEXT("HeightGeometryUnavailable");
+    }
+
+    if (Movement->GetClass() != UCharacterMovementComponent::StaticClass()
+        || Movement->UpdatedComponent != Capsule
+        || Capsule->IsSimulatingPhysics())
+    {
+        return TEXT("UnsupportedMovementImplementation");
+    }
+
+    const float Radius = Capsule->GetScaledCapsuleRadius();
+    const float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+
+    if (!FMath::IsFinite(Radius)
+        || !FMath::IsFinite(HalfHeight)
+        || Radius <= 0.f
+        || HalfHeight < Radius
+        || Radius != HeightRuntime.CapsuleRadius
+        || HalfHeight != HeightRuntime.CapsuleHalfHeight
+        || !Capsule->GetUpVector().Equals(FVector::UpVector, 0.000001))
+    {
+        return TEXT("CapsuleChanged");
+    }
+
+    return NAME_None;
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::BeginHeightHistory()
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    HeightHistory.Reset();
+    HeightRuntime = FAirborneRecoveryHeightRuntime();
+
+    APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement =Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+    UCapsuleComponent* Capsule =Pokemon ? Pokemon->GetCapsuleComponent() : nullptr;
+
+    if (!Movement || !Capsule)
+    {
+        return;
+    }
+
+    Capsule->GetScaledCapsuleSize(
+        HeightRuntime.CapsuleRadius,
+        HeightRuntime.CapsuleHalfHeight);
+
+    FPokemonRecoveryBallisticInput State;
+    FName Failure = ReadRecoveryInput(*Pokemon, State);
+
+    if (Failure.IsNone())
+    {
+        Failure = CheckHeightGeometry();
+    }
+
+    // HandlePendingLaunch has already assigned Velocity when it
+    // broadcasts the takeoff movement-mode change. Its pending
+    // field is cleared only after that broadcast returns.
+    if (Movement->PendingLaunchVelocity.IsZero()|| Movement->PendingLaunchVelocity.Equals(
+            State.StartVelocity, VelocityToleranceCmS))
+    {
+        // This changes only our diagnostic copy.
+        State.Movement.bHasPendingLaunch = false;
+    }
+    else if (Failure.IsNone())
+    {
+        Failure = TEXT("TakeoffLaunchMismatch");
+    }
+
+    HeightHistory.BeginAtTakeoff(State);
+
+    if (!Failure.IsNone())
+    {
+        HeightHistory.MarkIncomplete(Failure);
+    }
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::RememberHeightImpact(const FPokemonImpactResolution& Resolution, const FVector& IncomingVelocity, const FVector& RequestedVelocity, bool bStoppedImmediately)
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    if (!HeightHistory.bStarted || !HeightHistory.bComplete)
+    {
+        return;
+    }
+
+    APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement =
+        Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+
+    if (!Movement)
+    {
+        HeightHistory.MarkIncomplete(TEXT("MovementUnavailable"));
+        return;
+    }
+
+    if (HeightRuntime.bLandingCaptured)
+    {
+        HeightHistory.MarkIncomplete(TEXT("ImpactAfterLanding"));
+        return;
+    }
+
+    if (bStoppedImmediately
+        || Resolution.ImpactResult != EPokemonImpactResult::BounceOff
+        || Resolution.AttackerMotionPolicy
+        != EPokemonAttackerMotionPolicy::Replace)
+    {
+        HeightHistory.MarkIncomplete(TEXT("UnsupportedImpactMotion"));
+        return;
+    }
+
+    if (HeightRuntime.PendingReplacementVelocity.IsSet())
+    {
+        HeightHistory.MarkIncomplete(TEXT("OverlappingReplacementRequests"));
+        return;
+    }
+
+    // A request inside physics simulation has an ambiguous interval
+    // boundary for this observer.
+    if (Movement->IsMovementInProgress())
+    {
+        HeightHistory.MarkIncomplete(TEXT("ImpactDuringMovementSimulation"));
+        return;
+    }
+
+    const FVector RequestFeet = Movement->GetActorFeetLocation();
+
+    if (!IsFiniteVector(RequestFeet)
+        || !IsFiniteVector(IncomingVelocity)
+        || !IsFiniteVector(RequestedVelocity)
+        || RequestedVelocity.IsNearlyZero()
+        || !Movement->PendingLaunchVelocity.Equals(
+            RequestedVelocity, VelocityToleranceCmS)
+        || !Movement->Velocity.Equals(
+            IncomingVelocity, VelocityToleranceCmS))
+    {
+        HeightHistory.MarkIncomplete(TEXT("ReplacementRequestMismatch"));
+        return;
+    }
+
+    HeightRuntime.PendingReplacementVelocity = RequestedVelocity;
+    HeightRuntime.ReplacementRequestFeet = RequestFeet;
+    HeightRuntime.ReplacementIncomingVelocity = IncomingVelocity;
+    HeightRuntime.ReplacementImpactIndex =    Observation.ImpactRequestCount;
+
+    const FPokemonRecoveryBallisticInput& Last =
+        HeightHistory.GetLastState();
+
+    // A notification can arrive between updates, or earlier in the
+    // same postmovement broadcast than our own listener.
+    HeightRuntime.bReplacementBoundaryKnown =
+        RequestFeet.Equals(Last.StartFeet, PositionToleranceCm)
+        && IncomingVelocity.Equals(Last.StartVelocity, VelocityToleranceCmS);
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::UpdateHeightHistory(float DeltaSeconds, const FVector& OldLocation, const FVector& OldVelocity)
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    if (!HeightHistory.bStarted)
+    {
+        // Synthetic observations and late observers cannot invent
+        // an earlier takeoff.
+        return;
+    }
+
+    if (HeightHistory.bLanded)
+    {
+        if (!HeightRuntime.BlockingHits.IsEmpty())
+        {
+            HeightHistory.MarkIncomplete(TEXT("CollisionAfterLanding"));
+        }
+
+        HeightRuntime.BlockingHits.Reset();
+        return;
+    }
+
+    APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement =
+        Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+
+    if (!Movement)
+    {
+        HeightHistory.MarkIncomplete(TEXT("MovementUnavailable"));
+        return;
+    }
+
+    const FName GeometryFailure = CheckHeightGeometry();
+    if (!GeometryFailure.IsNone())
+    {
+        HeightHistory.MarkIncomplete(GeometryFailure);
+    }
+
+    if (HeightHistory.bComplete)
+    {
+        const FPokemonRecoveryBallisticInput& Last =
+            HeightHistory.GetLastState();
+
+        const FVector ExpectedOldCenter =
+            Last.StartFeet
+            + FVector::UpVector * HeightRuntime.CapsuleHalfHeight;
+
+        if (!IsFiniteVector(OldLocation)
+            || !IsFiniteVector(OldVelocity)
+            || !OldLocation.Equals(
+                ExpectedOldCenter, PositionToleranceCm)
+            || (!HeightRuntime.bFirstMovementUpdate
+                && !OldVelocity.Equals(
+                    Last.StartVelocity, VelocityToleranceCmS)))
+        {
+            HeightHistory.MarkIncomplete(
+                TEXT("MovementBoundaryDiscontinuity"));
+        }
+    }
+
+    // CMC records its first OldVelocity before consuming the
+    // takeoff launch. Later OldVelocity values must be continuous,
+    // including the frame that consumes a BounceOff replacement.
+    HeightRuntime.bFirstMovementUpdate = false;
+
+    for (const FHitResult& Hit : HeightRuntime.BlockingHits)
+    {
+        const bool bMatchesFinalLanding =
+            HeightRuntime.bLandingCaptured
+            && !Hit.bStartPenetrating
+            && Hit.GetComponent() != nullptr
+            && Hit.GetComponent()
+            == HeightRuntime.LandingHit.GetComponent()
+            && Hit.ImpactPoint.Equals(
+                HeightRuntime.LandingHit.ImpactPoint,
+                PositionToleranceCm)
+            && Hit.ImpactNormal.Equals(
+                HeightRuntime.LandingHit.ImpactNormal, 0.000001);
+
+        if (!bMatchesFinalLanding)
+        {
+            HeightHistory.MarkIncomplete(
+                TEXT("UnresolvedBlockingCollision"));
+        }
+    }
+
+    HeightRuntime.BlockingHits.Reset();
+
+    if (HeightRuntime.bLandingCaptured)
+    {
+        if (!FMath::IsFinite(DeltaSeconds) || DeltaSeconds < 0.f)
+        {
+            HeightHistory.MarkIncomplete(TEXT("InvalidMovementDelta"));
+        }
+
+        if (HeightRuntime.PendingReplacementVelocity.IsSet()
+            || !Movement->PendingLaunchVelocity.IsZero())
+        {
+            HeightHistory.MarkIncomplete(
+                TEXT("ReplacementUnresolvedAtLanding"));
+        }
+
+        // Use the captured falling state, never the current walking
+        // state or the whole mixed falling/walking duration.
+        HeightHistory.FinishDescendingLanding(
+            HeightRuntime.LandingState);
+        return;
+    }
+
+    FPokemonRecoveryBallisticInput Current;
+    const FName ReadFailure = ReadRecoveryInput(*Pokemon, Current);
+
+    if (!ReadFailure.IsNone())
+    {
+        HeightHistory.MarkIncomplete(ReadFailure);
+    }
+
+    if (Movement->bJustTeleported)
+    {
+        HeightHistory.MarkIncomplete(TEXT("TeleportDuringFalling"));
+    }
+
+    const double Step = static_cast<double>(DeltaSeconds);
+
+    if (!FMath::IsFinite(Step)
+        || Step < 0.0
+        || Step > HeightHistory.GetLastState().MaxPredictionTime)
+    {
+        HeightHistory.MarkIncomplete(TEXT("InvalidMovementDelta"));
+    }
+
+    const bool bLaunchStillPending =
+        !Movement->PendingLaunchVelocity.IsZero();
+
+    TOptional<FVector> AppliedVelocity;
+
+    if (bLaunchStillPending)
+    {
+        if (HeightRuntime.PendingReplacementVelocity.IsSet()
+            && Movement->PendingLaunchVelocity.Equals(
+                HeightRuntime.PendingReplacementVelocity.GetValue(),
+                VelocityToleranceCmS))
+        {
+            // This queued launch did not belong to the interval
+            // that just completed. Validate that interval using
+            // its previous physical velocity.
+            Current.Movement.bHasPendingLaunch = false;
+        }
+        else
+        {
+            HeightHistory.MarkIncomplete(TEXT("UntrackedPendingLaunch"));
+        }
+    }
+    else if (HeightRuntime.PendingReplacementVelocity.IsSet()
+        && HeightHistory.bComplete)
+    {
+        if (!HeightRuntime.bReplacementBoundaryKnown || Step <= 0.0)
+        {
+            HeightHistory.MarkIncomplete(
+                TEXT("ReplacementBoundaryUnknown"));
+        }
+        else
+        {
+            // Validate before performing vector arithmetic.
+            const FPokemonRecoveryBallisticResult StateCheck =
+                FPokemonRecoveryBallistics::Evaluate(Current);
+
+            if (!StateCheck.HasPrediction())
+            {
+                HeightHistory.MarkIncomplete(StateCheck.Reason);
+            }
+            else
+            {
+                // Reconstruct the applied start velocity from the
+                // observed end state under the supported model.
+                const FVector ReconstructedApplied =
+                    Current.StartVelocity - Current.Gravity * Step;
+
+                if (!ReconstructedApplied.Equals(
+                    HeightRuntime.PendingReplacementVelocity.GetValue(),
+                    VelocityToleranceCmS))
+                {
+                    HeightHistory.MarkIncomplete(
+                        TEXT("AppliedReplacementMismatch"));
+                }
+                else
+                {
+                    AppliedVelocity = ReconstructedApplied;
+                }
+            }
+        }
+    }
+
+    const bool bAdvanced =
+        HeightHistory.Advance(Step, Current, AppliedVelocity);
+
+    if (HeightRuntime.PendingReplacementVelocity.IsSet()
+        && bLaunchStillPending
+        && bAdvanced)
+    {
+        // Handles requests arriving earlier in this same
+        // postmovement broadcast.
+        HeightRuntime.bReplacementBoundaryKnown =
+            Current.StartFeet.Equals(
+                HeightRuntime.ReplacementRequestFeet,
+                PositionToleranceCm)
+            && Current.StartVelocity.Equals(
+                HeightRuntime.ReplacementIncomingVelocity,
+                VelocityToleranceCmS);
+
+        if (!HeightRuntime.bReplacementBoundaryKnown)
+        {
+            HeightHistory.MarkIncomplete(
+                TEXT("PendingReplacementBoundaryMoved"));
+        }
+    }
+
+    if (HeightRuntime.PendingReplacementVelocity.IsSet()
+        && !bLaunchStillPending)
+    {
+        if (bAdvanced && AppliedVelocity.IsSet())
+        {
+            UE_LOG(LogTemp, Display,
+                TEXT("[AirRecoveryTrace] HeightReplacementApplied | ")
+                TEXT("RequestId=%s | CommandId=%s | ImpactIndex=%d | ")
+                TEXT("Requested=%s | ReconstructedApplied=%s | ")
+                TEXT("Evidence=ConsumedAndIntervalMatched"),
+                *Observation.RequestId.ToString(),
+                *Observation.CommandId.ToString(),
+                HeightRuntime.ReplacementImpactIndex,
+                *HeightRuntime.PendingReplacementVelocity.GetValue()
+                .ToCompactString(),
+                *AppliedVelocity.GetValue().ToCompactString());
+        }
+
+        HeightRuntime.PendingReplacementVelocity.Reset();
+        HeightRuntime.bReplacementBoundaryKnown = false;
+    }
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::CaptureHeightLanding(const FHitResult& Hit)
+{
+    if (!HeightHistory.bStarted)
+    {
+        return;
+    }
+
+    if (HeightRuntime.bLandingCaptured)
+    {
+        HeightHistory.MarkIncomplete(TEXT("MultipleLandingEvents"));
+        return;
+    }
+
+    APokemon_Parent* Pokemon = PokemonOwner.Get();
+    UCharacterMovementComponent* Movement =
+        Pokemon ? Pokemon->GetCharacterMovement() : nullptr;
+
+    if (!Movement)
+    {
+        HeightHistory.MarkIncomplete(TEXT("MovementUnavailable"));
+        return;
+    }
+
+    HeightRuntime.bLandingCaptured = true;
+    HeightRuntime.LandingHit = Hit;
+
+    const FName ReadFailure =
+        ReadRecoveryInput(*Pokemon, HeightRuntime.LandingState);
+
+    if (!ReadFailure.IsNone())
+    {
+        HeightHistory.MarkIncomplete(ReadFailure);
+    }
+
+    const FName GeometryFailure = CheckHeightGeometry();
+    if (!GeometryFailure.IsNone())
+    {
+        HeightHistory.MarkIncomplete(GeometryFailure);
+    }
+
+    if (!Hit.IsValidBlockingHit()
+        || !Hit.GetComponent()
+        || !Movement->IsWalkable(Hit))
+    {
+        HeightHistory.MarkIncomplete(TEXT("UnsupportedLandingEvent"));
+    }
+
+    // Terminal-speed clamping is outside this ballistic model.
+    const FPokemonRecoveryBallisticInput& State =
+        HeightRuntime.LandingState;
+
+    if (State.StartVelocity.Z <= -State.Movement.TerminalDownSpeed)
+    {
+        HeightHistory.MarkIncomplete(TEXT("LandingAtTerminalSpeed"));
+    }
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::LogHeightHistory(FName Event) const
+{
+    if (!bObserving || !HeightHistory.bStarted)
+    {
+        return;
+    }
+
+    const auto HeightText = [](const TOptional<double>& Value)
+        {
+            return Value.IsSet()
+                ? FString::Printf(TEXT("%.6f"), Value.GetValue())
+                : FString(TEXT("Unknown"));
+        };
+
+    const bool bLandingValidationPending =
+        HeightRuntime.bLandingCaptured && !HeightHistory.bLanded;
+
+    const bool bFullHeightKnown =
+        HeightHistory.GetCompleteMaximum().IsSet()
+        && !bLandingValidationPending;
+
+    FName Reason = HeightHistory.IncompleteReason;
+
+    if (HeightHistory.bComplete && bLandingValidationPending)
+    {
+        Reason = TEXT("LandingValidationPending");
+    }
+
+    const TCHAR* Stage = HeightHistory.bLanded
+        ? TEXT("Landed")
+        : bLandingValidationPending
+        ? TEXT("LandingPending")
+        : TEXT("ThroughLastMovementUpdate");
+
+    UE_LOG(LogTemp, Display,
+        TEXT("[AirRecoveryTrace] Height | ")
+        TEXT("Event=%s | RequestId=%s | CommandId=%s | ")
+        TEXT("TakeoffFeetZ=%s | ObservedMaxFeetZ=%s | ")
+        TEXT("VerifiedMaxFeetZ=%s | FullHeightKnown=%d | ")
+        TEXT("HeightReason=%s | Stage=%s | ")
+        TEXT("VerifiedMovementSeconds=%.6f | ")
+        TEXT("Evidence=SupportedBallisticModel"),
+        *Event.ToString(),
+        *Observation.RequestId.ToString(),
+        *Observation.CommandId.ToString(),
+        *HeightText(HeightHistory.TakeoffFeetZ),
+        *HeightText(HeightHistory.ObservedMaxFeetZ),
+        *HeightText(HeightHistory.VerifiedMaxFeetZ),
+        bFullHeightKnown,
+        *Reason.ToString(),
+        Stage,
+        HeightHistory.VerifiedMovementSeconds);
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::HandleHeightCapsuleHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (bObserving && HeightHistory.bStarted && Hit.bBlockingHit)
+    {
+        HeightRuntime.BlockingHits.Add(Hit);
+    }
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::HandleHeightMovementModeChanged(ACharacter* Character, EMovementMode PreviousMode, uint8 PreviousCustomMode)
+{
+    if (!bObserving|| !HeightHistory.bStarted|| Character != PokemonOwner.Get())
+    {
+        return;
+    }
+
+    const UCharacterMovementComponent* Movement = Character->GetCharacterMovement();
+
+    if (!Movement)
+    {
+        HeightHistory.MarkIncomplete(TEXT("MovementUnavailable"));
+        return;
+    }
+
+    if (Movement->IsFalling())
+    {
+        if (HeightRuntime.bLandingCaptured)
+        {
+            HeightHistory.MarkIncomplete(TEXT("RelaunchedAfterLanding"));
+        }
+        return;
+    }
+
+    if (HeightRuntime.bLandingCaptured && Movement->IsMovingOnGround())
+    {
+        return;
+    }
+
+    HeightHistory.MarkIncomplete(TEXT("UnexpectedMovementMode"));
 }
