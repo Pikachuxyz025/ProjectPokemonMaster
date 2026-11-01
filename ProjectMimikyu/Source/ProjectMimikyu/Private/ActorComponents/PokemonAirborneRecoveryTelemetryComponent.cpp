@@ -96,6 +96,280 @@ namespace
 	}
 }
 
+namespace PokemonRecoveryHeightHistoryPrivate
+{
+    // Numerical agreement tolerances, not landing-safety limits.
+    constexpr double PositionToleranceCm = 0.05;
+    constexpr double VelocityToleranceCmS = 0.1;
+    constexpr double GravityTolerance = 0.000001;
+
+    static bool IsFiniteVector(const FVector& Value)
+    {
+		return FMath::IsFinite(Value.X)
+			&& FMath::IsFinite(Value.Y)
+			&& FMath::IsFinite(Value.Z);
+    }
+
+    static FName ReadSupportedState(const FPokemonRecoveryBallisticInput& Source,
+        FPokemonRecoveryBallisticInput& OutState)
+    {
+        OutState = Source;
+
+        // Validate the physical state independently of any supplied
+        // future prediction or claimed earlier height history.
+        OutState.PredictionTime = 0.0;
+        OutState.MaxFeetZThroughStart.Reset();
+
+		const FPokemonRecoveryBallisticResult  Check = FPokemonRecoveryBallistics::Evaluate(OutState);
+
+        return Check.HasPrediction()
+            ? NAME_None
+            : FName(TEXT("UnsupportedState"));
+    }
+
+    static bool SamePhysicalModel(const FPokemonRecoveryBallisticInput& Previous,
+		const FPokemonRecoveryBallisticInput& Current)
+	{
+        return Previous.Gravity.Equals(Current.Gravity, GravityTolerance)
+            && Previous.Movement.TerminalDownSpeed == Current.Movement.TerminalDownSpeed;
+	}
+}
+
+void FAirborneRecoveryHeightHistory::Reset()
+{
+	*this = FAirborneRecoveryHeightHistory();
+}
+
+void FAirborneRecoveryHeightHistory::MarkIncomplete(FName Reason)
+{
+    if (!bStarted)
+    {
+        return;
+    }
+
+    // Preserve the first explanation for losing complete history.
+	if (bComplete || IncompleteReason.IsNone())
+	{
+        IncompleteReason = Reason.IsNone()
+            ? FName(TEXT("UnsupportedHeightHistory"))
+            : Reason;
+	}
+
+	bComplete = false;
+}
+
+void FAirborneRecoveryHeightHistory::RecordObservedFeet(const FVector& Feet)
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    if (!IsFiniteVector(Feet))
+    {
+        MarkIncomplete(TEXT("NonFiniteObservedFeet"));
+        return;
+    }
+
+	ObservedMaxFeetZ = ObservedMaxFeetZ.IsSet()
+		? FMath::Max(ObservedMaxFeetZ.GetValue(), Feet.Z)
+		: Feet.Z;
+}
+
+TOptional<double> FAirborneRecoveryHeightHistory::GetCompleteMaximum() const
+{
+	if (bStarted && bComplete && VerifiedMaxFeetZ.IsSet())
+	{
+		return VerifiedMaxFeetZ;
+	}
+	return TOptional<double>();
+}
+
+bool FAirborneRecoveryHeightHistory::BeginAtTakeoff(const FPokemonRecoveryBallisticInput& AppliedState)
+{
+	using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    Reset();
+
+    bStarted = true;
+	IncompleteReason = NAME_None;
+
+	RecordObservedFeet(AppliedState.StartFeet);
+
+    if(IsFiniteVector(AppliedState.StartFeet))
+    {
+        TakeoffFeetZ = AppliedState.StartFeet.Z;
+    }
+
+	const FName Failure = ReadSupportedState(AppliedState, LastState);
+        
+    if (!Failure.IsNone())
+    {
+        MarkIncomplete(Failure);
+        return false;
+    }
+
+    if(!IncompleteReason.IsNone())
+    {
+        return false;
+    }
+
+
+    // At takeoff only the starting has actually been reached.
+    // Do not credit the launch's possible future apex.
+	VerifiedMaxFeetZ = LastState.StartFeet.Z;
+    bComplete = true;
+
+	return true;
+}
+
+bool FAirborneRecoveryHeightHistory::Advance(double MovementDeltaSeconds,
+    const FPokemonRecoveryBallisticInput& CurrentState,
+    TOptional<FVector> AppliedVelocityAtIntervalStart)
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    if (!bStarted || bLanded)
+    {
+        return false;
+    }
+
+    // Continue recording observed heights even after completeness
+    // has been lost. Observations cannot restore missing evidence.
+    RecordObservedFeet(CurrentState.StartFeet);
+
+    if (!bComplete)
+    {
+        return false;
+    }
+
+    const double NextVerifiedTime = VerifiedMovementSeconds + MovementDeltaSeconds;
+
+    if (!FMath::IsFinite(MovementDeltaSeconds)
+        || MovementDeltaSeconds < 0.0
+        || !FMath::IsFinite(NextVerifiedTime))
+    {
+        MarkIncomplete(TEXT("InvalidMovementDelta"));
+        return false;
+    }
+
+    if (AppliedVelocityAtIntervalStart.IsSet()&& MovementDeltaSeconds <= 0.0)
+    {
+        MarkIncomplete(TEXT("AmbiguousReplacementTime"));
+        return false;
+    }
+
+    FPokemonRecoveryBallisticInput EndState;
+    const FName Failure =ReadSupportedState(CurrentState, EndState);
+
+    if (!Failure.IsNone())
+    {
+        MarkIncomplete(Failure);
+        return false;
+    }
+
+    if (!SamePhysicalModel(LastState, EndState))
+    {
+        MarkIncomplete(TEXT("GravityOrTerminalSpeedChanged"));
+        return false;
+    }
+
+    FPokemonRecoveryBallisticInput Interval = LastState;
+    Interval.PredictionTime = MovementDeltaSeconds;
+
+    if (AppliedVelocityAtIntervalStart.IsSet())
+    {
+        Interval.StartVelocity = AppliedVelocityAtIntervalStart.GetValue();
+    }
+
+    const FPokemonRecoveryBallisticResult Prediction = FPokemonRecoveryBallistics::Evaluate(Interval);
+
+    if (!Prediction.HasPrediction())
+    {
+        MarkIncomplete(Prediction.Reason);
+        return false;
+    }
+
+    if (!Prediction.Sample.Feet.Equals(EndState.StartFeet, PositionToleranceCm)
+        || !Prediction.Sample.Velocity.Equals( EndState.StartVelocity, VelocityToleranceCmS))
+    {
+        MarkIncomplete(TEXT("MovementIntervalMismatch"));
+        return false;
+    }
+
+    // Evaluate() includes an apex only if it lies inside this
+    // completed interval. Retain maxima from earlier segments.
+    VerifiedMaxFeetZ = FMath::Max(
+        VerifiedMaxFeetZ.GetValue(),
+        FMath::Max( Prediction.MaxFeetZInSegment, EndState.StartFeet.Z));
+
+    VerifiedMovementSeconds = NextVerifiedTime;
+    LastState = EndState;
+
+    return true;
+}
+
+bool FAirborneRecoveryHeightHistory::FinishDescendingLanding(
+    const FPokemonRecoveryBallisticInput& LandingState)
+{
+    using namespace PokemonRecoveryHeightHistoryPrivate;
+
+    if (!bStarted)
+    {
+        return false;
+    }
+
+    if (bLanded)
+    {
+        return bComplete;
+    }
+
+    RecordObservedFeet(LandingState.StartFeet);
+    bLanded = true;
+
+    if (!bComplete)
+    {
+        return false;
+    }
+
+    FPokemonRecoveryBallisticInput EndState;
+    const FName Failure =
+        ReadSupportedState(LandingState, EndState);
+
+    if (!Failure.IsNone())
+    {
+        MarkIncomplete(Failure);
+        return false;
+    }
+
+    if (!SamePhysicalModel(LastState, EndState))
+    {
+        MarkIncomplete(TEXT("GravityOrTerminalSpeedChanged"));
+        return false;
+    }
+
+    // Landed occurs inside movement simulation. Its surrounding
+    // movement update can also contain walking time, so that whole
+    // duration must not be evaluated as a falling interval.
+    //
+    // Under the unchanged supported model, an already descending
+    // segment cannot introduce another apex before landing.
+    if (LastState.StartVelocity.Z > 0.0
+        || EndState.StartVelocity.Z > 0.0
+        || EndState.StartFeet.Z > LastState.StartFeet.Z + PositionToleranceCm
+        || EndState.StartVelocity.Z > LastState.StartVelocity.Z + VelocityToleranceCmS
+        || !FMath::IsNearlyEqual(EndState.StartVelocity.X, LastState.StartVelocity.X, VelocityToleranceCmS)
+        || !FMath::IsNearlyEqual(EndState.StartVelocity.Y, LastState.StartVelocity.Y, VelocityToleranceCmS))
+    {
+        MarkIncomplete(TEXT("AmbiguousLandingInterval"));
+        return false;
+    }
+
+    VerifiedMaxFeetZ = FMath::Max(
+        VerifiedMaxFeetZ.GetValue(),
+        EndState.StartFeet.Z);
+
+    LastState = EndState;
+    return true;
+}
+
 UPokemonAirborneRecoveryTelemetryComponent::UPokemonAirborneRecoveryTelemetryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;

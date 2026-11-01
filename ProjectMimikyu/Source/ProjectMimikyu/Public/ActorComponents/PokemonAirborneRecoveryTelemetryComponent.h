@@ -13,6 +13,66 @@ class UPokemonJumpExecutionComponent;
 struct FPokemonImpactResolution;
 class UPrimitiveComponent;
 
+
+// Diagnostic evidence under the supported constant-gravity,
+// passive-amount model. This is not recovery-safety authorization.
+struct PROJECTMIMIKYU_API FAirborneRecoveryHeightHistory
+{
+    bool bStarted = false;
+    bool bComplete = false;
+    bool bLanded = false;
+
+	FName IncompleteReason = TEXT("NotObservedFromTakeoff");
+
+    TOptional<double> TakeoffFeetZ;
+    TOptional<double> ObservedMaxFeetZ;
+
+    // Retained verified prefix if a later interval becomes unsupported.
+    // Consult GetCompleteMaximum() before using this as full history
+    TOptional<double> VerifiedMaxFeetZ;
+
+    // Sum of verified, completed falling intervals.
+    // Excludes the final partial interval containing landing
+	double VerifiedMovementSeconds = 0.0;
+
+    void Reset();
+
+    // Call only at actual takeoff, using applied physical state.
+    // A queued launch request is not sufficient.
+	bool BeginAtTakeoff(const FPokemonRecoveryBallisticInput& AppliedState);
+
+    // CurrentState describes the observed end of this interval.
+   //
+   // AppliedVelocityAtIntervalStart may be supplied only when a
+   // replacement was applied at the interval's beginning.
+   // Never supply a merely requested or still-pending launch.
+    bool Advance(double MovementDeltaSeconds,
+        const FPokemonRecoveryBallisticInput& CurrentState,
+        TOptional<FVector> AppliedVelocityAtIntervalStart = TOptional<FVector>());
+
+    // Conservative completion when the preceding verified state
+    // was already descending. The caller must establish a real
+    // landing and exclude intervening unsupported events.
+    bool FinishDescendingLanding(
+        const FPokemonRecoveryBallisticInput& LandingState);
+
+    // Sticky until Reset()/BeginAtTakeoff(). Remains callable after
+    // landing because deferred collision events may arrive later.
+    void MarkIncomplete(FName Reason);
+
+    TOptional<double> GetCompleteMaximum() const;
+
+    const FPokemonRecoveryBallisticInput& GetLastState() const
+    {
+        return LastState;
+    }
+
+private:
+    FPokemonRecoveryBallisticInput LastState;
+
+    void RecordObservedFeet(const FVector& Feet);
+};
+
 struct FAirborneRecoveryObservation
 {
     FGuid RequestId;
@@ -92,6 +152,8 @@ private:
 
 	// The maximum time to wait for the Pokemon to land or be grounded after takeoff.
     FAirborneRecoveryObservation Observation;
+
+	FAirborneRecoveryHeightHistory HeightHistory;
 
     bool bObserving = false;
 
