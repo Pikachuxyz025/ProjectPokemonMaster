@@ -13,6 +13,7 @@ class UTexture2D;
 class UPokemonMoveDataAsset;
 class UPokemonMoveAnimationSet;
 class UPokemonPresentationProfile;
+class UPokemonRecoveryToleranceProfile;
 
 USTRUCT(BlueprintType)
 struct FPokemonMovesetList
@@ -58,6 +59,9 @@ public:
 	// Species takeoff capability in cm/s. Zero disables physical jump execution.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Traversal|Jump", meta = (ClampMin = "0.0", Units = "cm/s"))
 	float BaseVerticalLaunchVelocity = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Traversal|Recovery")
+	TObjectPtr<UPokemonRecoveryToleranceProfile> RecoveryToleranceProfile = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APokemon_Parent> StoredPokemonClass;
@@ -112,7 +116,9 @@ public:
 
 	int32 GetStatFromTag(const FGameplayTag& StatTag);
 	FText GetNameFromTag(const FGameplayTag& StatTag);
+
 	UPokemonMoveDataAsset* FindPokemonMoveForLevel(int32 CurrentLevel);
+
 	UFUNCTION(BlueprintCallable)
 	FPokemonStatInfo CreateStatInfo(const FGameplayTag StatTag, const float PokemonStatValue);
 };
