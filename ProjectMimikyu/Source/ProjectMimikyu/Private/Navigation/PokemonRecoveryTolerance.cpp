@@ -278,7 +278,6 @@ FPokemonRecoveryToleranceResult FPokemonRecoveryTolerance::Evaluate(
         || !IsFiniteVector(Evidence.IncomingVelocity.GetValue()))
     {
         AddReason(Result.LandingSpeed.Reasons, TEXT("InvalidLandingVelocity"));
-        return Result;
     }
     else
     {
