@@ -4,6 +4,9 @@
 #include "Tests/AutomationCommon.h"
 #include "Tests/PokemonJumpAutomationFixture.h"
 #include "ActorComponents/PokemonAirborneRecoveryTelemetryComponent.h"
+#include "ActorComponents/PokemonCommandComponent.h"
+#include "Misc/OutputDevice.h"
+#include "Misc/OutputDeviceRedirector.h"
 #include "Misc/ScopeExit.h"
 #include "ActorComponents/PokemonJumpExecutionComponent.h"
 #include "Components/BoxComponent.h"
@@ -18,14 +21,49 @@
 #include "GameFramework/WorldSettings.h"
 #include "GameFramework/PhysicsVolume.h"
 
-IMPLEMENT_COMPLEX_AUTOMATION_TEST(
-    FPokemonAirborneRecoveryTelemetryTest,
-    "ProjectMimikyu.Traversal.AirborneRecoveryTelemetry",
-    EAutomationTestFlags::EditorContext
-    | EAutomationTestFlags::EngineFilter)
+// Capture the diagnostic record after landing validation,
+// immediately before observation retirement clears its state.
+class FHeightFinalCapture final : public FOutputDevice
+{
+public:
+    FString RequestMarker;
+    TFunction<void()> Capture;
 
-    void FPokemonAirborneRecoveryTelemetryTest::GetTests(
-        TArray<FString>& OutBeautifiedNames,
+    virtual bool CanBeUsedOnMultipleThreads() const override
+    {
+        return true;
+    }
+
+    virtual bool CanBeUsedOnAnyThread() const override
+    {
+        return true;
+    }
+
+    virtual void Serialize(
+        const TCHAR* Text,
+        ELogVerbosity::Type Verbosity,
+        const FName& Category) override
+    {
+        if (!IsInGameThread()
+            || !Capture
+            || !FCString::Strstr(
+                Text,
+                TEXT("[AirRecoveryTrace] Height | Event=FinalState"))
+            || !FCString::Strstr(Text, *RequestMarker))
+        {
+            return;
+        }
+
+        // Copy only. Assertions or logging here could recurse.
+        Capture();
+    }
+};
+
+IMPLEMENT_COMPLEX_AUTOMATION_TEST(FPokemonAirborneRecoveryTelemetryTest,
+"ProjectMimikyu.Traversal.AirborneRecoveryTelemetry",
+    EAutomationTestFlags::EditorContext| EAutomationTestFlags::EngineFilter)
+
+    void FPokemonAirborneRecoveryTelemetryTest::GetTests(TArray<FString>& OutBeautifiedNames,
         TArray<FString>& OutTestCommands) const
 {
     const TCHAR* Cases[] = {
@@ -43,7 +81,19 @@ IMPLEMENT_COMPLEX_AUTOMATION_TEST(
        TEXT("PIELandingBracket"),
        TEXT("PIEInvalidation"),
        TEXT("PIEUnsupportedSeed"),
-       TEXT("PIEModelChanges")
+       TEXT("PIEModelChanges"),
+       TEXT("HeightCore"),
+       TEXT("HeightMiss"),
+       TEXT("HeightAfterApexSeed"),
+       TEXT("HeightBounceBeforeApex"),
+       TEXT("HeightBounceRetainPeak"),
+       TEXT("HeightBounceHigherPeak"),
+       TEXT("HeightGravityChange"),
+       TEXT("HeightFrictionChange"),
+       TEXT("HeightUntrackedLaunch"),
+       TEXT("HeightModeChange"),
+       TEXT("HeightReadOnly"),
+       TEXT("HeightSupersession")
     };
 
     for (const TCHAR* Case : Cases)
@@ -53,9 +103,97 @@ IMPLEMENT_COMPLEX_AUTOMATION_TEST(
     }
 }
 
-bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
-    const FString& Parameters)
+bool FPokemonAirborneRecoveryTelemetryTest::RunTest(const FString& Parameters)
 {
+    if (Parameters == TEXT("HeightCore"))
+    {
+        FPokemonRecoveryBallisticInput State;
+        State.StartFeet = FVector(0, 0, 100);
+        State.StartVelocity = FVector(0, 0, 100);
+        State.Gravity = FVector(0, 0, -100);
+        State.Movement.bAssumeConstantGravity = true;
+        State.Movement.bAssumeNoFutureForces = true;
+        State.Movement.TerminalDownSpeed = 4000.0;
+
+        FAirborneRecoveryHeightHistory History;
+        FAirborneRecoveryHeightHistory LateObserver;
+
+        TestFalse(TEXT("A late update cannot initialize takeoff history"),
+            LateObserver.Advance(0.1, State));
+        TestFalse(TEXT("Late observation cannot invent a complete maximum"),
+            LateObserver.GetCompleteMaximum().IsSet());
+
+        const auto CheckMaximum = [&](double Expected)
+            {
+                const TOptional<double> Maximum =History.GetCompleteMaximum();
+
+                return TestTrue(TEXT("Complete maximum matches analytical value"),
+                    Maximum.IsSet()
+                    && FMath::IsNearlyEqual(Maximum.GetValue(), Expected, 1.e-8));
+            };
+
+        if (!TestTrue(TEXT("Actual starting state initializes history"),
+            History.BeginAtTakeoff(State))
+            || !CheckMaximum(100.0))
+        {
+            return false;
+        }
+
+        TestEqual(TEXT("Takeoff has no elapsed movement"),
+            History.VerifiedMovementSeconds, 0.0);
+
+        // t = 0.6: z = 142, vz = 40. The apex has not happened.
+        State.StartFeet.Z = 142.0;
+        State.StartVelocity.Z = 40.0;
+
+        if (!TestTrue(TEXT("Ascending interval verifies"),
+            History.Advance(0.6, State))
+            || !CheckMaximum(142.0))
+        {
+            return false;
+        }
+
+        // t = 1.4: z = 142, vz = -40.
+        // The unobserved apex at t = 1.0 reached z = 150.
+        State.StartVelocity.Z = -40.0;
+
+        if (!TestTrue(TEXT("Interval crossing the apex verifies"),
+            History.Advance(0.8, State))
+            || !CheckMaximum(150.0))
+        {
+            return false;
+        }
+
+        TestTrue(TEXT("Sampled maximum remains distinct from analytical apex"),
+            History.ObservedMaxFeetZ.IsSet()
+            && FMath::IsNearlyEqual(
+                History.ObservedMaxFeetZ.GetValue(), 142.0, 1.e-8));
+
+        History.MarkIncomplete(TEXT("AutomationUnsupported"));
+
+        State.StartFeet.Z = 137.5;
+        State.StartVelocity.Z = -50.0;
+
+        TestFalse(TEXT("Later supported motion cannot repair missing history"),
+            History.Advance(0.1, State));
+        TestFalse(TEXT("Incomplete history is unavailable to predictions"),
+            History.GetCompleteMaximum().IsSet());
+        TestTrue(TEXT("Verified prefix remains available for diagnostics"),
+            History.VerifiedMaxFeetZ.IsSet()
+            && FMath::IsNearlyEqual(
+                History.VerifiedMaxFeetZ.GetValue(), 150.0, 1.e-8));
+
+        History.Reset();
+
+        TestFalse(TEXT("Reset clears initialization"), History.bStarted);
+        TestFalse(TEXT("Reset clears observed maximum"),
+            History.ObservedMaxFeetZ.IsSet());
+        TestFalse(TEXT("Reset clears verified maximum"),
+            History.VerifiedMaxFeetZ.IsSet());
+
+        return true;
+    }
+
     FTestWorldWrapper TestWorld;
 
     if (!TestTrue(TEXT("Create transient world"),
@@ -115,18 +253,24 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
         return false;
     }
 
+    const bool bHeightCase = Parameters.StartsWith(TEXT("Height"));
+
     const bool bLifecycleCase =
         Parameters == TEXT("TakeoffSession")
         || Parameters == TEXT("Timeout")
         || Parameters == TEXT("Supersession")
         || Parameters == TEXT("Teardown");
 
-    if (bLifecycleCase)
+    if (bLifecycleCase || bHeightCase)
     {
         UPokemonJumpExecutionComponent* Executor =
             Pokemon->JumpExecutionComponent.Get();
 
         UCapsuleComponent* Capsule = Pokemon->GetCapsuleComponent();
+
+        IConsoleVariable* CompareVariable =
+            IConsoleManager::Get().FindConsoleVariable(
+                TEXT("pokemon.Traversal.AirborneRecoveryCompare"));
 
         IConsoleVariable* TraceVariable =
             IConsoleManager::Get().FindConsoleVariable(
@@ -134,7 +278,8 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
 
         if (!TestNotNull(TEXT("Jump executor"), Executor)
             || !TestNotNull(TEXT("Capsule"), Capsule)
-            || !TestNotNull(TEXT("Telemetry console variable"), TraceVariable))
+            || !TestNotNull(TEXT("Telemetry console variable"), TraceVariable)
+            || !TestNotNull(TEXT("Comparison console variable"), CompareVariable))
         {
             return false;
         }
@@ -145,12 +290,30 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             static_cast<EConsoleVariableFlags>(
                 TraceVariable->GetFlags() & ECVF_SetByMask);
 
+        const int32 PreviousCompareValue = CompareVariable->GetInt();
+
+        const EConsoleVariableFlags PreviousComparePriority =
+            static_cast<EConsoleVariableFlags>(
+                CompareVariable->GetFlags() & ECVF_SetByMask);
+
         ON_SCOPE_EXIT
         {
             TraceVariable->Set(PreviousTraceValue, PreviousTracePriority);
+            CompareVariable->Set(PreviousCompareValue, PreviousComparePriority);
         };
 
         TraceVariable->Set(1, PreviousTracePriority);
+
+        if (bHeightCase)
+        {
+            CompareVariable->Set(1, PreviousComparePriority);
+
+            // Set these before preparation so executor restoration
+            // returns to the same supported passive model.
+            Movement->FallingLateralFriction = 0.f;
+            Movement->BrakingDecelerationFalling = 0.f;
+            Movement->BrakingFriction = 0.f;
+        }
 
         AActor* FloorActor = World->SpawnActor<AActor>();
         if (!TestNotNull(TEXT("Support actor"), FloorActor))
@@ -160,7 +323,9 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
 
         UBoxComponent* Floor = NewObject<UBoxComponent>(FloorActor);
         FloorActor->SetRootComponent(Floor);
-        Floor->SetBoxExtent(FVector(250.f, 250.f, 20.f));
+        Floor->SetBoxExtent(bHeightCase
+            ? FVector(2000.f, 2000.f, 20.f)
+            : FVector(250.f, 250.f, 20.f));
         Floor->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         Floor->SetCollisionObjectType(ECC_WorldStatic);
         Floor->SetCollisionResponseToAllChannels(ECR_Block);
@@ -290,7 +455,20 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 TestEqual(TEXT("Queuing launch does not replace observation identity"),
                     Telemetry->Observation.RequestId, PreviousObservedRequest);
 
-                if (!TestTrue(TEXT("CharacterMovement applies launch"),
+                if (bHeightCase)
+                {
+                    // Exercise real PerformMovement ordering, including its
+                    // pre-launch OldVelocity and pending-launch consumption.
+                    const float FirstStep =
+                        FMath::Min(0.037f, Candidate.ContactTime * 0.5f);
+
+                    if (!TestWorld.TickTestWorld(FirstStep))
+                    {
+                        TestWorld.ForwardErrorMessages(this);
+                        return false;
+                    }
+                }
+                else if (!TestTrue(TEXT("CharacterMovement applies launch"),
                     Movement->HandlePendingLaunch()))
                 {
                     return false;
@@ -314,12 +492,32 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 return true;
             };
 
+        const auto CheckHeightCleared = [&]()
+            {
+                TestFalse(TEXT("Retirement clears height initialization"),
+                    Telemetry->HeightHistory.bStarted);
+                TestFalse(TEXT("Retirement clears complete height"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
+                TestFalse(TEXT("Retirement clears observed height"),
+                    Telemetry->HeightHistory.ObservedMaxFeetZ.IsSet());
+                TestFalse(TEXT("Retirement clears verified height"),
+                    Telemetry->HeightHistory.VerifiedMaxFeetZ.IsSet());
+                TestFalse(TEXT("Retirement clears queued replacement"),
+                    Telemetry->HeightRuntime.PendingReplacementVelocity.IsSet());
+                TestFalse(TEXT("Retirement clears captured landing"),
+                    Telemetry->HeightRuntime.bLandingCaptured);
+                TestTrue(TEXT("Retirement clears collision records"),
+                    Telemetry->HeightRuntime.BlockingHits.IsEmpty());
+            };
+
         const FGuid FirstCommandId = FGuid::NewGuid();
 
         if (!PrepareFlight(FirstCommandId))
         {
             return false;
         }
+
+        const FVector FirstTakeoffFeet = Movement->GetActorFeetLocation();
 
         TestFalse(TEXT("Preparation does not start observation"),
             Telemetry->bObserving);
@@ -363,6 +561,536 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
         TestEqual(TEXT("Configured observation timeout"),
             Timers.GetTimerRate(FirstTimer), 30.f);
 
+        if (bHeightCase)
+        {
+            constexpr double HeightToleranceCm = 0.05;
+
+            const auto Tick = [&](float Delta = 0.037f) -> bool
+                {
+                    if (!TestWorld.TickTestWorld(Delta))
+                    {
+                        TestWorld.ForwardErrorMessages(this);
+                        return false;
+                    }
+                    return true;
+                };
+
+            const auto TickUntil = [&](
+                TFunctionRef<bool()> Done,
+                const TCHAR* Description) -> bool
+                {
+                    for (int32 Index = 0;
+                        Index < 300 && !Done() && Telemetry->bObserving;
+                        ++Index)
+                    {
+                        if (!Tick())
+                        {
+                            return false;
+                        }
+                    }
+
+                    return TestTrue(Description, Done());
+                };
+
+            const auto CheckPeak = [&](double Expected) -> bool
+                {
+                    const TOptional<double> Maximum =
+                        Telemetry->HeightHistory.GetCompleteMaximum();
+
+                    return TestTrue(TEXT("Complete peak matches independent calculation"),
+                        Maximum.IsSet()
+                        && FMath::IsNearlyEqual(
+                            Maximum.GetValue(), Expected, HeightToleranceCm));
+                };
+
+            if (!TestTrue(TEXT("Real takeoff initialized complete height history"),
+                Telemetry->HeightHistory.bStarted
+                && Telemetry->HeightHistory.bComplete
+                && Telemetry->HeightHistory.TakeoffFeetZ.IsSet()
+                && Telemetry->HeightHistory.GetCompleteMaximum().IsSet()))
+            {
+                return false;
+            }
+
+            TestTrue(TEXT("Takeoff height comes from actual capsule feet"),
+                FMath::IsNearlyEqual(
+                    Telemetry->HeightHistory.TakeoffFeetZ.GetValue(),
+                    FirstTakeoffFeet.Z, 1.e-6));
+
+            TestTrue(TEXT("First real movement interval was verified"),
+                Telemetry->HeightHistory.VerifiedMovementSeconds > 0.0);
+
+            TestTrue(TEXT("Verified endpoint matches actual movement"),
+                Telemetry->HeightHistory.GetLastState().StartFeet.Equals(
+                    Movement->GetActorFeetLocation(), 1.e-6)
+                && Telemetry->HeightHistory.GetLastState().StartVelocity.Equals(
+                    Movement->Velocity, 1.e-6));
+
+            const double GravityMagnitude = -Movement->GetGravityZ();
+            const double InitialVerticalSpeed = Candidate.FinalLaunchVelocity.Z;
+            const double OriginalApexTime =
+                InitialVerticalSpeed / GravityMagnitude;
+            const double OriginalPeak =
+                FirstTakeoffFeet.Z
+                + InitialVerticalSpeed * InitialVerticalSpeed
+                / (2.0 * GravityMagnitude);
+
+            TestTrue(TEXT("First interval does not credit a future apex"),
+                Telemetry->HeightHistory.GetCompleteMaximum().GetValue()
+                < OriginalPeak);
+
+            if (!TickUntil(
+                [&]() { return Telemetry->Observation.bExecutionFinished; },
+                TEXT("Natural airborne contact completes")))
+            {
+                return false;
+            }
+
+            if (!TestTrue(TEXT("Contact succeeds before the apex"),
+                Telemetry->Observation.bReachedContact
+                && Movement->Velocity.Z > 0.f
+                && Telemetry->HeightHistory.bComplete))
+            {
+                return false;
+            }
+
+            FPokemonAirborneExecutionTrajectoryCandidate ReleasedCandidate;
+            FGuid ReleasedCommand;
+
+            TestFalse(TEXT("Executor releases its active trajectory"),
+                Executor->GetActiveAirborneTelemetrySnapshot(
+                    ReleasedCandidate, ReleasedCommand));
+            TestTrue(TEXT("Height observer survives executor release"),
+                Telemetry->bObserving);
+
+            if (!TestNotNull(TEXT("Global log"), GLog))
+            {
+                return false;
+            }
+
+            FAirborneRecoveryHeightHistory FinalHeight;
+            FName FinalComparisonInvalidation = NAME_None;
+            int32 FinalRecords = 0;
+
+            FHeightFinalCapture FinalCapture;
+            FinalCapture.RequestMarker = FString::Printf(
+                TEXT("RequestId=%s"), *FirstRequestId.ToString());
+
+            FinalCapture.Capture = [&]()
+                {
+                    FinalHeight = Telemetry->HeightHistory;
+                    FinalComparisonInvalidation =
+                        Telemetry->PIEComparison.InvalidatedReason;
+                    ++FinalRecords;
+                };
+
+            const ELogVerbosity::Type PreviousLogVerbosity =
+                LogTemp.GetVerbosity();
+
+            LogTemp.SetVerbosity(ELogVerbosity::Display);
+            GLog->AddOutputDevice(&FinalCapture);
+
+            ON_SCOPE_EXIT
+            {
+                GLog->RemoveOutputDevice(&FinalCapture);
+                LogTemp.SetVerbosity(PreviousLogVerbosity);
+            };
+
+            const bool bEarlyBounce =
+                Parameters == TEXT("HeightBounceBeforeApex");
+            const bool bRetainBounce =
+                Parameters == TEXT("HeightBounceRetainPeak");
+            const bool bHigherBounce =
+                Parameters == TEXT("HeightBounceHigherPeak");
+            const bool bBounce =
+                bEarlyBounce || bRetainBounce || bHigherBounce;
+
+            const bool bAfterApexSeed =
+                Parameters == TEXT("HeightAfterApexSeed");
+            const bool bSupersession =
+                Parameters == TEXT("HeightSupersession");
+
+            const bool bUnsupported =
+                Parameters == TEXT("HeightGravityChange")
+                || Parameters == TEXT("HeightFrictionChange")
+                || Parameters == TEXT("HeightUntrackedLaunch")
+                || Parameters == TEXT("HeightModeChange");
+
+            if (bAfterApexSeed || bRetainBounce
+                || bHigherBounce || bSupersession)
+            {
+                if (!TickUntil(
+                    [&]()
+                    {
+                        return Telemetry->HeightHistory.VerifiedMovementSeconds
+                            >= 1.6 * OriginalApexTime;
+                    },
+                    TEXT("Real movement passes the original apex"))
+                    || !CheckPeak(OriginalPeak))
+                {
+                    return false;
+                }
+
+                TestTrue(TEXT("Post-apex state is descending"),
+                    Movement->Velocity.Z < 0.f);
+            }
+
+            if (bSupersession)
+            {
+                const double PreviousPeak =
+                    Telemetry->HeightHistory.GetCompleteMaximum().GetValue();
+
+                const FGuid NewCommand = FGuid::NewGuid();
+
+                if (!PrepareFlight(NewCommand) || !TakeOff())
+                {
+                    return false;
+                }
+
+                TestTrue(TEXT("New takeoff replaces request identity"),
+                    Telemetry->Observation.RequestId != FirstRequestId);
+                TestEqual(TEXT("New command owns replacement observation"),
+                    Telemetry->Observation.CommandId, NewCommand);
+
+                TestTrue(TEXT("Replacement starts complete history"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
+
+                TestTrue(TEXT("Replacement does not inherit the earlier peak"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet()
+                    && Telemetry->HeightHistory.GetCompleteMaximum().GetValue()
+                    < PreviousPeak);
+
+                TestTrue(TEXT("Replacement clock contains only its first interval"),
+                    Telemetry->HeightHistory.VerifiedMovementSeconds > 0.0
+                    && Telemetry->HeightHistory.VerifiedMovementSeconds
+                    <= 0.037001);
+
+                TestFalse(TEXT("Replacement clears pending-impact metadata"),
+                    Telemetry->HeightRuntime.PendingReplacementVelocity.IsSet());
+                TestFalse(TEXT("Replacement clears prior landing"),
+                    Telemetry->HeightRuntime.bLandingCaptured);
+
+                TestWorld.ForwardErrorMessages(this);
+                return true;
+            }
+
+            if (bUnsupported)
+            {
+                const float SavedGravityScale = Movement->GravityScale;
+                const float SavedFriction = Movement->FallingLateralFriction;
+
+                ON_SCOPE_EXIT
+                {
+                    Movement->GravityScale = SavedGravityScale;
+                    Movement->FallingLateralFriction = SavedFriction;
+                };
+
+                if (Parameters == TEXT("HeightGravityChange"))
+                {
+                    Movement->GravityScale = SavedGravityScale * 1.1f;
+                }
+                else if (Parameters == TEXT("HeightFrictionChange"))
+                {
+                    Movement->FallingLateralFriction = 0.5f;
+                }
+                else if (Parameters == TEXT("HeightUntrackedLaunch"))
+                {
+                    // Physical launch without a matching combat notification.
+                    Pokemon->LaunchCharacter(
+                        Movement->Velocity + FVector(0, 0, 100),
+                        true, true);
+                }
+                else
+                {
+                    // The mode excursion must remain visible even though
+                    // both surrounding completed samples are Falling.
+                    Movement->SetMovementMode(MOVE_Flying);
+                    Movement->SetMovementMode(MOVE_Falling);
+                }
+
+                if (!Tick())
+                {
+                    return false;
+                }
+
+                TestFalse(TEXT("Unsupported interval loses complete history"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
+
+                const FName FirstFailure =
+                    Telemetry->HeightHistory.IncompleteReason;
+
+                TestFalse(TEXT("Incomplete history explains its failure"),
+                    FirstFailure.IsNone());
+
+                Movement->GravityScale = SavedGravityScale;
+                Movement->FallingLateralFriction = SavedFriction;
+
+                if (!Tick())
+                {
+                    return false;
+                }
+
+                TestFalse(TEXT("Restoring the model cannot repair the missing interval"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
+                TestEqual(TEXT("First failure reason remains sticky"),
+                    Telemetry->HeightHistory.IncompleteReason, FirstFailure);
+            }
+
+            double ExpectedPeak = OriginalPeak;
+
+            if (bBounce)
+            {
+                if (!TestTrue(TEXT("Bounce starts with complete prior history"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet()))
+                {
+                    return false;
+                }
+
+                const FVector RequestFeet = Movement->GetActorFeetLocation();
+                const FVector Incoming = Movement->Velocity;
+                const double MaximumBeforeRequest =
+                    Telemetry->HeightHistory.GetCompleteMaximum().GetValue();
+
+                const double ReplacementVerticalSpeed = bEarlyBounce
+                    ? 0.25 * Incoming.Z
+                    : (bRetainBounce ? 0.25 : 1.0) * InitialVerticalSpeed;
+
+                if (!TestTrue(TEXT("Replacement has upward velocity"),
+                    ReplacementVerticalSpeed > 0.0))
+                {
+                    return false;
+                }
+
+                const FVector Requested(-40.0, 20.0, ReplacementVerticalSpeed);
+
+                const double ReplacementPeak =
+                    RequestFeet.Z
+                    + ReplacementVerticalSpeed * ReplacementVerticalSpeed
+                    / (2.0 * GravityMagnitude);
+
+                ExpectedPeak = FMath::Max(
+                    bEarlyBounce ? RequestFeet.Z : OriginalPeak,
+                    ReplacementPeak);
+
+                if (bEarlyBounce)
+                {
+                    TestTrue(TEXT("Early replacement cannot reach the old future apex"),
+                        ExpectedPeak < OriginalPeak);
+                }
+                else if (bRetainBounce)
+                {
+                    TestTrue(TEXT("Lower replacement preserves the earlier apex"),
+                        ReplacementPeak < OriginalPeak);
+                }
+                else
+                {
+                    TestTrue(TEXT("Higher replacement creates an additional apex"),
+                        ReplacementPeak > OriginalPeak);
+                }
+
+                FPokemonImpactResolution Impact;
+                Impact.ImpactResult = EPokemonImpactResult::BounceOff;
+                Impact.AttackerMotionPolicy =
+                    EPokemonAttackerMotionPolicy::Replace;
+
+                Telemetry->NotifyCombatOutcome(FirstCommandId, true);
+
+                const int32 LaunchesBeforeRequest = Pokemon->LaunchCalls;
+
+                Pokemon->LaunchCharacter(Requested, true, true);
+                Telemetry->NotifyImpactRequest(
+                    FirstCommandId, Impact, Incoming, Requested, false);
+
+                TestEqual(TEXT("Only the fixture requests the replacement launch"),
+                    Pokemon->LaunchCalls, LaunchesBeforeRequest + 1);
+                TestTrue(TEXT("Replacement remains pending before movement"),
+                    Movement->PendingLaunchVelocity.Equals(Requested, 1.e-6));
+                TestTrue(TEXT("Observer records the pending replacement"),
+                    Telemetry->HeightRuntime.PendingReplacementVelocity.IsSet());
+
+                TestTrue(TEXT("Request alone contributes no additional peak"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet()
+                    && FMath::IsNearlyEqual(
+                        Telemetry->HeightHistory.GetCompleteMaximum().GetValue(),
+                        MaximumBeforeRequest, 1.e-8));
+            }
+            else
+            {
+                Telemetry->NotifyCombatOutcome(FirstCommandId, false);
+            }
+
+            if (Parameters == TEXT("HeightReadOnly"))
+            {
+                UPokemonCommandComponent* Command =
+                    Pokemon->GetCommandComponent();
+
+                if (!TestNotNull(TEXT("Command component"), Command))
+                {
+                    return false;
+                }
+
+                const FTransform BeforeTransform = Pokemon->GetActorTransform();
+                const FVector BeforeVelocity = Movement->Velocity;
+                const FVector BeforePending = Movement->PendingLaunchVelocity;
+                const auto BeforeMode = Movement->MovementMode;
+                const uint8 BeforeCustomMode = Movement->CustomMovementMode;
+                const int32 BeforeLaunches = Pokemon->LaunchCalls;
+                const FGuid BeforeRequest = Executor->GetParentRequestId();
+                const FGuid BeforeCommand = Command->GetActiveTrainerCommandId();
+                const auto* BeforeMove = Command->GetActiveMove();
+
+                // Explicitly exercise diagnostics at a completed boundary.
+                Telemetry->UpdateHeightHistory(
+                    0.f, Pokemon->GetActorLocation(), Movement->Velocity);
+                Telemetry->UpdateRecoveryComparison();
+                Telemetry->LogHeightHistory(TEXT("AutomationReadOnly"));
+
+                TestTrue(TEXT("Diagnostics preserve actor transform"),
+                    Pokemon->GetActorTransform().Equals(BeforeTransform, 0.0));
+                TestEqual(TEXT("Diagnostics preserve velocity"),
+                    Movement->Velocity, BeforeVelocity);
+                TestEqual(TEXT("Diagnostics preserve pending launch"),
+                    Movement->PendingLaunchVelocity, BeforePending);
+                TestEqual(TEXT("Diagnostics preserve movement mode"),
+                    Movement->MovementMode, BeforeMode);
+                TestEqual(TEXT("Diagnostics preserve custom movement mode"),
+                    Movement->CustomMovementMode, BeforeCustomMode);
+                TestEqual(TEXT("Diagnostics issue no launches"),
+                    Pokemon->LaunchCalls, BeforeLaunches);
+                TestEqual(TEXT("Diagnostics preserve executor request"),
+                    Executor->GetParentRequestId(), BeforeRequest);
+                TestEqual(TEXT("Diagnostics preserve gameplay command"),
+                    Command->GetActiveTrainerCommandId(), BeforeCommand);
+                TestTrue(TEXT("Diagnostics preserve active move"),
+                    Command->GetActiveMove() == BeforeMove);
+                TestTrue(TEXT("Read-only comparison actually evaluated a seed"),
+                    Telemetry->PIEComparison.bAttempted);
+            }
+
+            // Real movement consumes a queued replacement and/or creates
+            // the ordinary post-outcome comparison seed.
+            if (!Tick())
+            {
+                return false;
+            }
+
+            if (!TestTrue(TEXT("Recovery comparison captures a seed"),
+                Telemetry->PIEComparison.bAttempted))
+            {
+                return false;
+            }
+
+            if (bBounce)
+            {
+                TestTrue(TEXT("CMC consumed the replacement"),
+                    Movement->PendingLaunchVelocity.IsZero());
+                TestFalse(TEXT("Observer retires consumed replacement metadata"),
+                    Telemetry->HeightRuntime.PendingReplacementVelocity.IsSet());
+                TestTrue(TEXT("Applied replacement keeps complete history"),
+                    Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
+            }
+
+            if (bUnsupported)
+            {
+                TestFalse(TEXT("Unsupported prior history is omitted from the seed"),
+                    Telemetry->PIEComparison.Input.MaxFeetZThroughStart.IsSet());
+            }
+            else
+            {
+                const FPokemonRecoveryBallisticInput& Seed =
+                    Telemetry->PIEComparison.Input;
+
+                if (!TestTrue(TEXT("Verified history is supplied to the seed"),
+                    Seed.MaxFeetZThroughStart.IsSet()))
+                {
+                    return false;
+                }
+
+                if (bAfterApexSeed)
+                {
+                    TestTrue(TEXT("Delayed seed begins after the apex"),
+                        Seed.StartVelocity.Z < 0.0);
+                    TestTrue(TEXT("Delayed seed retains the earlier maximum"),
+                        FMath::IsNearlyEqual(
+                            Seed.MaxFeetZThroughStart.GetValue(),
+                            OriginalPeak, HeightToleranceCm)
+                        && Seed.MaxFeetZThroughStart.GetValue()
+                        > Seed.StartFeet.Z);
+                }
+
+                if (Parameters == TEXT("HeightMiss"))
+                {
+                    TestTrue(TEXT("Normal miss seed still has future ascent"),
+                        Seed.StartVelocity.Z > 0.0);
+                    TestTrue(TEXT("Seed history excludes the unreached future apex"),
+                        Seed.MaxFeetZThroughStart.GetValue() < OriginalPeak);
+                }
+
+                const FPokemonRecoveryContinuationResult& Prediction =
+                    Telemetry->PIEComparison.Prediction;
+
+                TestTrue(TEXT("Recovery finds strict landing geometry"),
+                    Prediction.HasLandingGeometry());
+
+                TestTrue(TEXT("Prediction combines prior history and future ascent"),
+                    Prediction.ContactPrediction.MaxFeetZSinceTakeoff.IsSet()
+                    && FMath::IsNearlyEqual(
+                        Prediction.ContactPrediction.MaxFeetZSinceTakeoff.GetValue(),
+                        ExpectedPeak, HeightToleranceCm));
+            }
+
+            if (!TickUntil(
+                [&]() { return !Telemetry->bObserving; },
+                TEXT("Real landing retires the observation")))
+            {
+                return false;
+            }
+
+            TestTrue(TEXT("Landing and grounded callbacks were observed"),
+                Telemetry->Observation.bLanded
+                && Telemetry->Observation.bGroundedObserved);
+
+            TestEqual(TEXT("Final height was captured before cleanup"),
+                FinalRecords, 1);
+            TestTrue(TEXT("Final height record includes landing"),
+                FinalHeight.bLanded);
+
+            if (bUnsupported)
+            {
+                TestFalse(TEXT("Landing cannot repair unsupported earlier motion"),
+                    FinalHeight.GetCompleteMaximum().IsSet());
+                TestTrue(TEXT("Incomplete flight still records observed heights"),
+                    FinalHeight.ObservedMaxFeetZ.IsSet());
+            }
+            else
+            {
+                const TOptional<double> FinalMaximum =
+                    FinalHeight.GetCompleteMaximum();
+
+                TestTrue(TEXT("Complete history survives through landing"),
+                    FinalMaximum.IsSet()
+                    && FMath::IsNearlyEqual(
+                        FinalMaximum.GetValue(),
+                        ExpectedPeak, HeightToleranceCm));
+
+                TestTrue(TEXT("Supported comparison remains valid"),
+                    FinalComparisonInvalidation.IsNone());
+
+                if (Parameters == TEXT("HeightMiss"))
+                {
+                    TestTrue(TEXT("Analytical apex exceeds sparse sampled maximum"),
+                        FinalMaximum.IsSet()
+                        && FinalHeight.ObservedMaxFeetZ.IsSet()
+                        && FinalMaximum.GetValue()
+                        > FinalHeight.ObservedMaxFeetZ.GetValue() + 1.e-6);
+                }
+            }
+
+            CheckHeightCleared();
+            TestWorld.ForwardErrorMessages(this);
+            return true;
+        }
+
         if (Parameters == TEXT("TakeoffSession"))
         {
             const FVector SavedContactFeet =
@@ -392,6 +1120,10 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             TestEqual(TEXT("Observer retains copied trajectory"),
                 Telemetry->Observation.RequiredContactFeet,
                 SavedContactFeet);
+            TestTrue(TEXT("Interrupted history remains owned by the observer"),
+                Telemetry->HeightHistory.bStarted);
+            TestFalse(TEXT("Interruption invalidates complete height evidence"),
+                Telemetry->HeightHistory.GetCompleteMaximum().IsSet());
 
             // A later real takeoff supersedes the old observation,
             // but recording remains disabled for the new attempt.
@@ -406,6 +1138,8 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 Timers.TimerExists(FirstTimer));
             TestTrue(TEXT("Telemetry switch does not prevent physical takeoff"),
                 Executor->HasTakenOff());
+
+            CheckHeightCleared();
         }
         else if (Parameters == TEXT("Timeout"))
         {
@@ -447,6 +1181,8 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             TestFalse(TEXT("Late outcome cannot reopen timed-out observation"),
                 Telemetry->bObserving
                 || Telemetry->Observation.bCombatOutcomeKnown);
+
+            CheckHeightCleared();
         }
         else if (Parameters == TEXT("Supersession"))
         {
@@ -536,6 +1272,8 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 Telemetry->bObserving);
             TestFalse(TEXT("Replacement timer removed after expiry"),
                 Timers.TimerExists(SecondTimer));
+
+            CheckHeightCleared();
         }
         else if (Parameters == TEXT("Teardown"))
         {
@@ -561,12 +1299,17 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
             Impact.AttackerMotionPolicy =
                 EPokemonAttackerMotionPolicy::Replace;
 
+            Pokemon->LaunchCharacter(FVector(50.f, 0.f, 200.f), true, true);
+
             Telemetry->NotifyImpactRequest(
                 FirstCommandId,
                 Impact,
                 Movement->Velocity,
                 FVector(50.f, 0.f, 200.f),
                 false);
+
+            TestTrue(TEXT("Teardown begins with recorded replacement metadata"),
+                Telemetry->HeightRuntime.PendingReplacementVelocity.IsSet());
 
             TestTrue(TEXT("Post-impact observation armed before teardown"),
                 Telemetry->bAwaitingPostImpactMovement);
@@ -616,6 +1359,16 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                     Telemetry,
                     &UPokemonAirborneRecoveryTelemetryComponent::HandleMovementUpdate));
 
+            TestFalse(TEXT("Height movement-mode subscription removed"),
+                Pokemon->MovementModeChangedDelegate.IsAlreadyBound(
+                    Telemetry,
+                    &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightMovementModeChanged));
+
+            TestFalse(TEXT("Height collision subscription removed"),
+                Capsule->OnComponentHit.IsAlreadyBound(
+                    Telemetry,
+                    &UPokemonAirborneRecoveryTelemetryComponent::HandleHeightCapsuleHit));
+
             const float FinishedElapsed =
                 Telemetry->Observation.ElapsedMovementTime;
 
@@ -631,8 +1384,9 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(
                 Telemetry->bObserving);
             TestEqual(TEXT("Late movement cannot advance observation"),
                 Telemetry->Observation.ElapsedMovementTime, FinishedElapsed);
-                }
+        }
 
+                CheckHeightCleared();
                 TestWorld.ForwardErrorMessages(this);
                 return true;
     }
