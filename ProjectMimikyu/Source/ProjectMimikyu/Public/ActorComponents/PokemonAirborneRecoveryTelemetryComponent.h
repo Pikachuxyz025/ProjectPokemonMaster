@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Navigation/PokemonRecoveryContinuation.h"
+#include "Navigation/PokemonRecoveryToleranceDiagnostics.h"
 #include "Engine/EngineTypes.h"
 #include "TimerManager.h"
 #include "PokemonAirborneRecoveryTelemetryComponent.generated.h"
@@ -129,6 +130,7 @@ struct FRecoveryPIEComparison
 	bool bAttempted = false;
     bool bLandingCaptured = false;
     bool bCompared = false;
+    bool bToleranceEvaluated = false;
 
 	FName SeedKind = NAME_None;
 	FName LastImpactResult = NAME_None;
@@ -145,6 +147,7 @@ struct FRecoveryPIEComparison
 
     FPokemonRecoveryBallisticInput Input;
     FPokemonRecoveryContinuationResult Prediction;
+	FPokemonRecoveryToleranceDiagnostic Tolerance;
 
 	FVector FeetAtLandingEvent = FVector::ZeroVector;
 	FVector VelocityAtLandingEvent = FVector::ZeroVector;
@@ -215,6 +218,7 @@ private:
 	FRecoveryPIEComparison PIEComparison;
     
     void UpdateRecoveryComparison();
+	void EvaluateRecoveryTolerance();
     void CaptureRecoveryLanding(const FHitResult& Hit);
     void CheckRecoveryComparisonModel();
 

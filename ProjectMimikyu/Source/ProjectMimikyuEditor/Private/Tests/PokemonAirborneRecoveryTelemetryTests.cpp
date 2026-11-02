@@ -20,6 +20,34 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/WorldSettings.h"
 #include "GameFramework/PhysicsVolume.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/PokemonBaseAttributeSet.h"
+#include "Abilities/GameplayAbility.h"
+#include "DataAssets/PokemonDataAsset.h"
+#include "DataAssets/PokemonRecoveryToleranceProfile.h"
+#include "Navigation/PokemonRecoveryToleranceDiagnostics.h"
+#include "UObject/Class.h"
+
+class FRecoveryToleranceLogCapture final : public FOutputDevice
+{
+public:
+    FString RequestMarker;
+    TArray<FString> Records;
+    virtual bool CanBeUsedOnMultipleThreads() const override { return true; }
+    virtual bool CanBeUsedOnAnyThread() const override { return true; }
+    virtual void Serialize(const TCHAR* Text, ELogVerbosity::Type Verbosity,
+        const FName& Category) override
+    {
+        if (IsInGameThread()
+            && FCString::Strstr(Text, TEXT("[AirRecoveryTolerance]"))
+            && FCString::Strstr(Text, *RequestMarker))
+        {
+            // Copy only: logging or assertions here could recurse.
+            Records.Add(FString(Text));
+        }
+    }
+};
+
 
 // Capture the diagnostic record after landing validation,
 // immediately before observation retirement clears its state.
@@ -93,7 +121,19 @@ IMPLEMENT_COMPLEX_AUTOMATION_TEST(FPokemonAirborneRecoveryTelemetryTest,
        TEXT("HeightUntrackedLaunch"),
        TEXT("HeightModeChange"),
        TEXT("HeightReadOnly"),
-       TEXT("HeightSupersession")
+       TEXT("HeightSupersession"),
+       TEXT("HeightToleranceConfigured"),
+       TEXT("HeightToleranceUnconfigured"),
+       TEXT("HeightToleranceMissingProfile"),
+       TEXT("HeightToleranceZeroStamina"),
+       TEXT("HeightToleranceMissingStamina"),
+       TEXT("HeightToleranceInvalidStamina"),
+       TEXT("HeightToleranceIncompleteHistory"),
+       TEXT("HeightToleranceUnsupported"),
+       TEXT("HeightToleranceInvalidated"),
+       TEXT("HeightToleranceReadOnly"),
+       TEXT("HeightToleranceOnce"),
+       TEXT("HeightToleranceBounce")
     };
 
     for (const TCHAR* Case : Cases)
@@ -696,8 +736,65 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(const FString& Parameters)
                 LogTemp.SetVerbosity(PreviousLogVerbosity);
             };
 
+            const bool bToleranceCase = Parameters.StartsWith(TEXT("HeightTolerance"));
+            FRecoveryToleranceLogCapture ToleranceCapture;
+            ToleranceCapture.RequestMarker = FString::Printf(TEXT("RequestId=%s"), *FirstRequestId.ToString());
+            if (bToleranceCase) GLog->AddOutputDevice(&ToleranceCapture);
+
+            ON_SCOPE_EXIT
+            {
+                if (bToleranceCase) GLog->RemoveOutputDevice(&ToleranceCapture);
+            };
+
+            if (bToleranceCase)
+            {
+                UAbilitySystemComponent* ASC = Pokemon->GetAbilitySystemComponent();
+                if (!TestNotNull(TEXT("Tolerance fixture ASC"), ASC)
+                    || !TestNotNull(TEXT("Tolerance fixture species"), Pokemon->PokemonDataAsset)
+                    || !TestNotNull(TEXT("Initialized stamina attributes"), ASC->GetSet<UPokemonBaseAttributeSet>()))
+                {
+                    return false;
+                }
+
+                // Only a transient automation species/profile is changed here.
+                // These deliberately simple numbers are not Lucario balance values.
+                if (Parameters != TEXT("HeightToleranceMissingProfile"))
+                {
+                    auto* Profile = NewObject<UPokemonRecoveryToleranceProfile>(
+                        Pokemon, NAME_None, RF_Transient);
+                    Profile->bConfigured = Parameters != TEXT("HeightToleranceUnconfigured");
+                    Profile->BaseMaxDownwardSpeed = 1600.0;
+                    Profile->BaseMaxPeakDrop = 1000.0;
+                    Profile->SpeedMultiplierAtZeroStamina = 0.5;
+                    Profile->SpeedMultiplierAtFullStamina = 1.0;
+                    Profile->DropMultiplierAtZeroStamina = 0.25;
+                    Profile->DropMultiplierAtFullStamina = 1.0;
+                    Pokemon->PokemonDataAsset->RecoveryToleranceProfile = Profile;
+                }
+                else
+                {
+                    Pokemon->PokemonDataAsset->RecoveryToleranceProfile = nullptr;
+                }
+
+                ASC->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetMaxStaminaAttribute(), 100.f);
+                ASC->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute(),
+                    Parameters == TEXT("HeightToleranceZeroStamina") ? 0.f : 25.f);
+                if (Parameters == TEXT("HeightToleranceInvalidStamina"))
+                {
+                    ASC->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetMaxStaminaAttribute(), 0.f);
+                }
+
+                if (Parameters == TEXT("HeightToleranceReadOnly"))
+                {
+                    // A nonempty granted-ability list makes the preservation check meaningful.
+                    // Grant only; do not activate a combat ability or create a command.
+                    ASC->GiveAbility(FGameplayAbilitySpec(UGameplayAbility::StaticClass(), 1));
+                }
+            }
+
             const bool bEarlyBounce =
-                Parameters == TEXT("HeightBounceBeforeApex");
+                Parameters == TEXT("HeightBounceBeforeApex")
+                || Parameters == TEXT("HeightToleranceBounce");
             const bool bRetainBounce =
                 Parameters == TEXT("HeightBounceRetainPeak");
             const bool bHigherBounce =
@@ -1039,6 +1136,284 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(const FString& Parameters)
                         ExpectedPeak, HeightToleranceCm));
             }
 
+            if (bToleranceCase)
+            {
+                using O = EPokemonRecoveryToleranceOutcome;
+                using S = EPokemonRecoveryLandingEvidenceStatus;
+                using Adapter = FPokemonRecoveryToleranceDiagnostics;
+                const auto Number = [&](const TCHAR* Label, const TOptional<double>& Value, double Expected)
+                    {
+                        TestTrue(Label, Value.IsSet()
+                            && FMath::IsNearlyEqual(Value.GetValue(), Expected, 1.e-6));
+                    };
+                const auto HasReason = [&](const TArray<FName>& Reasons, const TCHAR* Expected)
+                    {
+                        TestTrue(FString::Printf(TEXT("Reason retained: %s"), Expected),
+                            Reasons.Contains(FName(Expected)));
+                    };
+                const auto CheckUnknown = [&](const FPokemonRecoveryToleranceResult& Result, const TCHAR* Reason)
+                    {
+                        TestTrue(TEXT("Overall unknown"), Result.Overall == O::Unknown);
+                        TestTrue(TEXT("Speed unknown"), Result.LandingSpeed.Outcome == O::Unknown);
+                        TestTrue(TEXT("Drop unknown"), Result.PeakDrop.Outcome == O::Unknown);
+                        HasReason(Result.LandingSpeed.Reasons, Reason);
+                        HasReason(Result.PeakDrop.Reasons, Reason);
+                    };
+
+                const auto& Prediction = Telemetry->PIEComparison.Prediction;
+                const auto& Diagnostic = Telemetry->PIEComparison.Tolerance;
+                if (!TestTrue(TEXT("Automatic seed evaluates tolerance"),
+                    Telemetry->PIEComparison.bToleranceEvaluated)
+                    || !TestTrue(TEXT("Real continuation has landing and ballistic contact"),
+                        Prediction.HasLandingGeometry() && Prediction.ContactPrediction.HasPrediction())
+                    || !TestTrue(TEXT("Real takeoff establishes complete predicted history"),
+                        Prediction.ContactPrediction.MaxFeetZSinceTakeoff.IsSet()))
+                {
+                    return false;
+                }
+
+                TestTrue(TEXT("Supported evidence from real predictor"), Diagnostic.Evidence.Status == S::SupportedPrediction);
+                TestTrue(TEXT("Uninflated contact feet copied exactly"), Diagnostic.Evidence.ContactFeet.IsSet()
+                    && Diagnostic.Evidence.ContactFeet.GetValue().Equals(Prediction.ContactFeet, 0.0));
+                TestTrue(TEXT("Pre-contact ballistic velocity copied exactly"), Diagnostic.Evidence.IncomingVelocity.IsSet()
+                    && Diagnostic.Evidence.IncomingVelocity.GetValue().Equals(Prediction.ContactPrediction.Sample.Velocity, 0.0));
+                Number(TEXT("Full predicted peak is copied exactly"), Diagnostic.Evidence.CompleteMaximumFeetZ,
+                    Prediction.ContactPrediction.MaxFeetZSinceTakeoff.GetValue());
+                // ExpectedPeak is independently calculated by the existing real-flight fixture.
+                // Its tolerance is 0.05 cm, so use that allowance for the observed model peak.
+                TestTrue(TEXT("Complete peak matches real-flight expectation"),
+                    Diagnostic.Evidence.CompleteMaximumFeetZ.IsSet()
+                    && FMath::IsNearlyEqual(Diagnostic.Evidence.CompleteMaximumFeetZ.GetValue(), ExpectedPeak, HeightToleranceCm));
+                Number(TEXT("Measured speed uses only downward component"), Diagnostic.Assessment.LandingSpeed.Measured,
+                    FMath::Max(0.0, -Prediction.ContactPrediction.Sample.Velocity.Z));
+                Number(TEXT("Measured drop uses ContactFeet"), Diagnostic.Assessment.PeakDrop.Measured,
+                    Prediction.ContactPrediction.MaxFeetZSinceTakeoff.GetValue() - Prediction.ContactFeet.Z);
+                TestFalse(TEXT("Fixture distinguishes supported pose from contact pose"),
+                    Prediction.ContactFeet.Equals(Prediction.SupportedFeet, 1.e-6));
+
+                const bool bMissingProfile = Parameters == TEXT("HeightToleranceMissingProfile");
+                const bool bUnconfigured = Parameters == TEXT("HeightToleranceUnconfigured");
+                const bool bInvalidStamina = Parameters == TEXT("HeightToleranceInvalidStamina");
+                const bool bZeroStamina = Parameters == TEXT("HeightToleranceZeroStamina");
+                if (bMissingProfile || bUnconfigured || bInvalidStamina)
+                {
+                    CheckUnknown(Diagnostic.Assessment, bMissingProfile ? TEXT("MissingProfile")
+                        : bUnconfigured ? TEXT("ProfileNotConfigured") : TEXT("InvalidStamina"));
+                    TestFalse(TEXT("Invalid input has no speed default"), Diagnostic.Limits.MaxDownwardSpeed.IsSet());
+                    TestFalse(TEXT("Invalid input has no drop default"), Diagnostic.Limits.MaxPeakDrop.IsSet());
+                }
+                else
+                {
+                    TestTrue(TEXT("Transient fixture is within its test limits"), Diagnostic.Assessment.Overall == O::WithinTolerance);
+                    Number(TEXT("Stamina fraction"), Diagnostic.Limits.StaminaFraction, bZeroStamina ? 0.0 : 0.25);
+                    Number(TEXT("Interpolated speed limit"), Diagnostic.Limits.MaxDownwardSpeed, bZeroStamina ? 800.0 : 1000.0);
+                    Number(TEXT("Interpolated drop limit"), Diagnostic.Limits.MaxPeakDrop, bZeroStamina ? 250.0 : 437.5);
+                }
+                TestTrue(TEXT("Existing attribute set is available even at zero/invalid stamina"), Diagnostic.Limits.Stamina.bAvailable);
+                TestEqual(TEXT("Copied current GAS stamina"), Diagnostic.Limits.Stamina.Current, bZeroStamina ? 0.0 : 25.0);
+                TestEqual(TEXT("Copied maximum GAS stamina"), Diagnostic.Limits.Stamina.Maximum, bInvalidStamina ? 0.0 : 100.0);
+
+                const auto CapturedProfile = Adapter::CaptureProfile(*Pokemon);
+                TestEqual(TEXT("Species profile availability"), CapturedProfile.IsSet(), !bMissingProfile);
+                if (CapturedProfile.IsSet())
+                {
+                    TestEqual(TEXT("Asset path identifies the profile"), Diagnostic.Limits.ProfileId,
+                        FName(*Pokemon->PokemonDataAsset->RecoveryToleranceProfile->GetPathName()));
+                    TestEqual(TEXT("Capture does not configure an unfinished profile"), CapturedProfile.GetValue().bConfigured, !bUnconfigured);
+                }
+
+                if (Parameters == TEXT("HeightToleranceMissingStamina"))
+                {
+                    // Isolate missing-ASC and missing-AttributeSet cases without tearing
+                    // production attributes out of a pawn that is still flying.
+                    auto* EmptyASC = NewObject<UAbilitySystemComponent>(Pokemon, NAME_None, RF_Transient);
+                    for (const UAbilitySystemComponent* Source : { static_cast<const UAbilitySystemComponent*>(nullptr),
+                        static_cast<const UAbilitySystemComponent*>(EmptyASC) })
+                    {
+                        const auto Missing = Adapter::CaptureStamina(Source);
+                        TestFalse(TEXT("Missing stamina is unavailable, not zero or full"), Missing.bAvailable);
+                        const auto Limits = FPokemonRecoveryTolerance::BuildEffectiveLimits(CapturedProfile, Missing);
+                        CheckUnknown(FPokemonRecoveryTolerance::Evaluate(Limits, Diagnostic.Evidence), TEXT("MissingStamina"));
+                    }
+                }
+                if (Parameters == TEXT("HeightToleranceIncompleteHistory"))
+                {
+                    auto Incomplete = Prediction;
+                    Incomplete.ContactPrediction.MaxFeetZSinceTakeoff.Reset();
+                    const auto Result = Adapter::Evaluate(*Pokemon, Incomplete, NAME_None, TEXT("AutomationIncompleteHistory"));
+                    TestTrue(TEXT("Missing prefix does not invalidate speed"), Result.Assessment.LandingSpeed.Outcome == O::WithinTolerance);
+                    TestTrue(TEXT("Missing prefix leaves drop and overall unknown"),
+                        Result.Assessment.PeakDrop.Outcome == O::Unknown && Result.Assessment.Overall == O::Unknown);
+                    HasReason(Result.Assessment.PeakDrop.Reasons, TEXT("IncompleteHeightHistory"));
+                    HasReason(Result.Assessment.PeakDrop.Reasons, TEXT("AutomationIncompleteHistory"));
+                    TestTrue(TEXT("Original complete prediction remains intact"), Prediction.ContactPrediction.MaxFeetZSinceTakeoff.IsSet());
+                }
+                if (Parameters == TEXT("HeightToleranceUnsupported"))
+                {
+                    auto Unsupported = Prediction;
+                    Unsupported.Status = EPokemonRecoveryContinuationStatus::UnsupportedModel;
+                    Unsupported.Reason = TEXT("AutomationUnsupportedModel");
+                    auto Result = Adapter::Evaluate(*Pokemon, Unsupported);
+                    CheckUnknown(Result.Assessment, TEXT("UnsupportedMovementModel"));
+                    HasReason(Result.Assessment.LandingSpeed.Reasons, TEXT("AutomationUnsupportedModel"));
+                    TestFalse(TEXT("Stale contact payload is not exposed"), Result.Evidence.ContactFeet.IsSet());
+
+                    Unsupported = Prediction;
+                    Unsupported.ContactPrediction.Status = EPokemonRecoveryBallisticStatus::UnsupportedMotion;
+                    Unsupported.ContactPrediction.Reason = TEXT("AutomationUnsupportedContact");
+                    Result = Adapter::Evaluate(*Pokemon, Unsupported);
+                    CheckUnknown(Result.Assessment, TEXT("UnsupportedMovementModel"));
+                    HasReason(Result.Assessment.PeakDrop.Reasons, TEXT("AutomationUnsupportedContact"));
+
+                    Unsupported.ContactPrediction.Status = EPokemonRecoveryBallisticStatus::InvalidInput;
+                    Unsupported.ContactPrediction.Reason = TEXT("AutomationInvalidContact");
+                    Result = Adapter::Evaluate(*Pokemon, Unsupported);
+                    CheckUnknown(Result.Assessment, TEXT("NoLandingPrediction"));
+                    Unsupported = Prediction;
+                    Unsupported.Status = EPokemonRecoveryContinuationStatus::NoLandingWithinBounds;
+                    Result = Adapter::Evaluate(*Pokemon, Unsupported);
+                    CheckUnknown(Result.Assessment, TEXT("NoLandingPrediction"));
+                }
+                if (Parameters == TEXT("HeightToleranceInvalidated"))
+                {
+                    const auto Result = Adapter::Evaluate(*Pokemon, Prediction, TEXT("AutomationLaterInvalidation"));
+                    CheckUnknown(Result.Assessment, TEXT("PredictionInvalidated"));
+                    HasReason(Result.Assessment.PeakDrop.Reasons, TEXT("AutomationLaterInvalidation"));
+                    TestFalse(TEXT("Invalidated prediction supplies no speed payload"), Result.Evidence.IncomingVelocity.IsSet());
+                    TestFalse(TEXT("Invalidated prediction supplies no peak payload"), Result.Evidence.CompleteMaximumFeetZ.IsSet());
+                    TestTrue(TEXT("Original at-seed snapshot remains historical"), Diagnostic.Assessment.Overall == O::WithinTolerance);
+                }if (Parameters == TEXT("HeightToleranceOnce"))
+                {
+                    UAbilitySystemComponent* ASC = Pokemon->GetAbilitySystemComponent();
+                    auto* Profile = Pokemon->PokemonDataAsset->RecoveryToleranceProfile.Get();
+                    Profile->bConfigured = false;
+                    ASC->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute(), 0.f);
+                    Telemetry->EvaluateRecoveryTolerance();
+                    Telemetry->UpdateRecoveryComparison();
+                    TestEqual(TEXT("Repeat calls produce no extra tolerance records"), ToleranceCapture.Records.Num(), 1);
+                    TestTrue(TEXT("Repeat calls keep the original seed result"), Diagnostic.Assessment.Overall == O::WithinTolerance);
+                    TestEqual(TEXT("Cached stamina remains the evaluation-time value"), Diagnostic.Limits.Stamina.Current, 25.0);
+                    const auto Fresh = Adapter::Evaluate(*Pokemon, Prediction);
+                    CheckUnknown(Fresh.Assessment, TEXT("ProfileNotConfigured"));
+                    TestEqual(TEXT("An explicitly fresh evaluation sees changed stamina"), Fresh.Limits.Stamina.Current, 0.0);
+                    // Restore only test fixture values; the cached historical snapshot stays unchanged.
+                    Profile->bConfigured = true;
+                    ASC->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute(), 25.f);
+                }
+
+                if (Parameters == TEXT("HeightToleranceReadOnly"))
+                {
+                    UAbilitySystemComponent* ASC = Pokemon->GetAbilitySystemComponent();
+                    UPokemonCommandComponent* Command = Pokemon->GetCommandComponent();
+                    if (!TestNotNull(TEXT("Command component"), Command)) return false;
+
+                    const FTransform BeforeTransform = Pokemon->GetActorTransform();
+                    const FVector BeforeVelocity = Movement->Velocity;
+                    const FVector BeforePending = Movement->PendingLaunchVelocity;
+                    const auto BeforeMode = Movement->MovementMode;
+                    const uint8 BeforeCustomMode = Movement->CustomMovementMode;
+                    const int32 BeforeLaunches = Pokemon->LaunchCalls;
+                    const FGuid BeforeExecutor = Executor->GetParentRequestId();
+                    const FGuid BeforeCommand = Command->GetActiveTrainerCommandId();
+                    const FGuid BeforeIntent = Command->GetParentIntentId();
+                    const auto* BeforeMove = Command->GetActiveMove();
+                    const auto BeforeTarget = Command->GetCommandTarget();
+                    const auto BeforePrediction = Prediction;
+                    const auto BeforeStamina = Adapter::CaptureStamina(ASC);
+                    const float BeforeStaminaBase = ASC->GetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute());
+                    const float BeforeMaximumBase = ASC->GetNumericAttributeBase(UPokemonBaseAttributeSet::GetMaxStaminaAttribute());
+                    const TArray<FGameplayAbilitySpec> BeforeAbilities = ASC->GetActivatableAbilities();
+                    TestTrue(TEXT("Ability preservation is exercised on a nonempty list"), !BeforeAbilities.IsEmpty());
+                    TMap<UGameplayAbility*, bool> BeforeInstanceActivity;
+                    for (const FGameplayAbilitySpec& Spec : BeforeAbilities)
+                    {
+                        for (UGameplayAbility* Instance : Spec.GetAbilityInstances())
+                        {
+                            if (Instance) BeforeInstanceActivity.Add(Instance, Instance->IsActive());
+                        }
+                    }
+
+                    int32 AbilityCallbacks = 0;
+                    int32 ResolvedCommands = 0;
+                    const FDelegateHandle Activated = ASC->AbilityActivatedCallbacks.AddLambda(
+                        [&](UGameplayAbility*) { ++AbilityCallbacks; });
+                    const FDelegateHandle Ended = ASC->AbilityEndedCallbacks.AddLambda(
+                        [&](UGameplayAbility*) { ++AbilityCallbacks; });
+                    const FDelegateHandle Resolved = Command->OnTrainerCommandResolved.AddLambda(
+                        [&](FGuid, EPokemonAttackExecutionOutcome, FName) { ++ResolvedCommands; });
+
+                    ON_SCOPE_EXIT
+                    {
+                        ASC->AbilityActivatedCallbacks.Remove(Activated);
+                        ASC->AbilityEndedCallbacks.Remove(Ended);
+                        Command->OnTrainerCommandResolved.Remove(Resolved);
+                    };
+
+                    // No world tick separates these reads and calls. Any difference is caused
+    // synchronously by the diagnostic, rather than ordinary falling simulation.
+                    const auto Fresh = Adapter::Evaluate(*Pokemon, Prediction);
+                    Telemetry->EvaluateRecoveryTolerance(); // Already evaluated: one-shot guard.
+
+                    TestTrue(TEXT("Fresh read-only assessment is valid"), Fresh.Assessment.Overall == O::WithinTolerance);
+                    TestTrue(TEXT("Actor transform unchanged"), Pokemon->GetActorTransform().Equals(BeforeTransform, 0.0));
+                    TestEqual(TEXT("Velocity unchanged"), Movement->Velocity, BeforeVelocity);
+                    TestEqual(TEXT("Pending launch unchanged"), Movement->PendingLaunchVelocity, BeforePending);
+                    TestEqual(TEXT("Movement mode unchanged"), Movement->MovementMode, BeforeMode);
+                    TestEqual(TEXT("Custom mode unchanged"), Movement->CustomMovementMode, BeforeCustomMode);
+                    TestEqual(TEXT("No diagnostic launch"), Pokemon->LaunchCalls, BeforeLaunches);
+                    TestEqual(TEXT("Executor identity unchanged"), Executor->GetParentRequestId(), BeforeExecutor);
+                    TestEqual(TEXT("Command identity unchanged"), Command->GetActiveTrainerCommandId(), BeforeCommand);
+                    TestEqual(TEXT("Parent intent unchanged"), Command->GetParentIntentId(), BeforeIntent);
+                    TestTrue(TEXT("Active move unchanged"), Command->GetActiveMove() == BeforeMove);
+                    TestTrue(TEXT("Command target unchanged"), FPokemonCommandTarget::StaticStruct()->CompareScriptStruct(
+                        &Command->GetCommandTarget(), &BeforeTarget, 0));
+                    TestEqual(TEXT("No command resolution"), ResolvedCommands, 0);
+                    TestEqual(TEXT("No ability activation/end callback"), AbilityCallbacks, 0);
+
+                    const auto AfterStamina = Adapter::CaptureStamina(ASC);
+                    TestTrue(TEXT("Current GAS values unchanged"), AfterStamina.bAvailable == BeforeStamina.bAvailable
+                        && AfterStamina.Current == BeforeStamina.Current && AfterStamina.Maximum == BeforeStamina.Maximum);
+                    TestEqual(TEXT("Stamina base unchanged"), ASC->GetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute()), BeforeStaminaBase);
+                    TestEqual(TEXT("Maximum stamina base unchanged"), ASC->GetNumericAttributeBase(UPokemonBaseAttributeSet::GetMaxStaminaAttribute()), BeforeMaximumBase);
+
+                    const auto& AfterAbilities = ASC->GetActivatableAbilities();
+                    TestEqual(TEXT("Granted ability count unchanged"), AfterAbilities.Num(), BeforeAbilities.Num());
+                    for (int32 Index = 0; Index < FMath::Min(AfterAbilities.Num(), BeforeAbilities.Num()); ++Index)
+                    {
+                        const auto& Before = BeforeAbilities[Index];
+                        const auto& After = AfterAbilities[Index];
+                        TestTrue(TEXT("Ability spec and instances unchanged"), Before.Handle == After.Handle
+                            && Before.Ability == After.Ability && Before.Level == After.Level && Before.InputID == After.InputID
+                            && Before.ActiveCount == After.ActiveCount && Before.InputPressed == After.InputPressed
+                            && Before.RemoveAfterActivation == After.RemoveAfterActivation && Before.PendingRemove == After.PendingRemove
+                            && Before.bActivateOnce == After.bActivateOnce && Before.SourceObject == After.SourceObject
+                            && Before.GetDynamicSpecSourceTags() == After.GetDynamicSpecSourceTags()
+                            && Before.GetAbilityInstances() == After.GetAbilityInstances());
+                    }
+                    for (const auto& Pair : BeforeInstanceActivity)
+                    {
+                        TestEqual(TEXT("Ability instance activity unchanged"), Pair.Key->IsActive(), Pair.Value);
+                    }
+                    TestTrue(TEXT("Recovery search result unchanged"), Prediction.Status == BeforePrediction.Status
+                        && Prediction.Reason == BeforePrediction.Reason && Prediction.QueryWorkUsed == BeforePrediction.QueryWorkUsed
+                        && Prediction.ClearThroughTime == BeforePrediction.ClearThroughTime
+                        && Prediction.QueriedTravelUpperBound == BeforePrediction.QueriedTravelUpperBound
+                        && Prediction.ContactIntervalStart == BeforePrediction.ContactIntervalStart
+                        && Prediction.ContactIntervalEnd == BeforePrediction.ContactIntervalEnd
+                        && Prediction.ContactFeet == BeforePrediction.ContactFeet && Prediction.SupportedFeet == BeforePrediction.SupportedFeet
+                        && Prediction.ContactPositionDiscrepancy == BeforePrediction.ContactPositionDiscrepancy
+                        && Prediction.ContactChordDeviationBound == BeforePrediction.ContactChordDeviationBound
+                        && FHitResult::StaticStruct()->CompareScriptStruct(&Prediction.Hit, &BeforePrediction.Hit, 0));
+                    const auto& Contact = Prediction.ContactPrediction;
+                    const auto& BeforeContact = BeforePrediction.ContactPrediction;
+                    TestTrue(TEXT("Ballistic contact result unchanged"), Contact.Status == BeforeContact.Status
+                        && Contact.Reason == BeforeContact.Reason && Contact.Sample.Time == BeforeContact.Sample.Time
+                        && Contact.Sample.Feet == BeforeContact.Sample.Feet && Contact.Sample.Velocity == BeforeContact.Sample.Velocity
+                        && Contact.MaxFeetZInSegment == BeforeContact.MaxFeetZInSegment
+                        && Contact.MaxFeetZSinceTakeoff == BeforeContact.MaxFeetZSinceTakeoff);
+                    TestEqual(TEXT("Repeated telemetry call does not log twice"), ToleranceCapture.Records.Num(), 1);
+                }
+            }
             if (!TickUntil(
                 [&]() { return !Telemetry->bObserving; },
                 TEXT("Real landing retires the observation")))
@@ -1084,6 +1459,25 @@ bool FPokemonAirborneRecoveryTelemetryTest::RunTest(const FString& Parameters)
                         && FinalMaximum.GetValue()
                         > FinalHeight.ObservedMaxFeetZ.GetValue() + 1.e-6);
                 }
+            }
+
+            if (bToleranceCase)
+            {
+                TestEqual(TEXT("Exactly one tolerance record through landing"),
+                    ToleranceCapture.Records.Num(), 1);
+                if (ToleranceCapture.Records.Num() == 1)
+                {
+                    const FString& Record = ToleranceCapture.Records[0];
+                    TestTrue(TEXT("Log declares historical seed scope"),
+                        Record.Contains(TEXT("Scope=AtSeedSnapshot"))
+                        && Record.Contains(TEXT("StaminaTiming=AtEvaluation"))
+                        && Record.Contains(TEXT("FutureStamina=Unpredicted"))
+                        && Record.Contains(TEXT("ConditionalPrediction=1")));
+                    TestTrue(TEXT("Log carries command identity"),
+                        Record.Contains(FString::Printf(TEXT("CommandId=%s"), *FirstCommandId.ToString())));
+                }
+                TestEqual(TEXT("Only fixture takeoff/BounceOff launches occurred"),
+                    Pokemon->LaunchCalls, bBounce ? 2 : 1);
             }
 
             CheckHeightCleared();

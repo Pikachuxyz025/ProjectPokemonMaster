@@ -1048,6 +1048,82 @@ void UPokemonAirborneRecoveryTelemetryComponent::UpdateRecoveryComparison()
             }
         }
     }
+	EvaluateRecoveryTolerance();
+}
+
+void UPokemonAirborneRecoveryTelemetryComponent::EvaluateRecoveryTolerance()
+{
+    if (!bObserving || !PIEComparison.bEnabled || !PIEComparison.bAttempted
+        || PIEComparison.bToleranceEvaluated)
+    {
+        return;
+    }
+
+    const APokemon_Parent* Pokemon = PokemonOwner.Get();
+    if (!IsValid(Pokemon))
+    {
+        return;
+    }
+
+    PIEComparison.Tolerance = FPokemonRecoveryToleranceDiagnostics::Evaluate(
+        *Pokemon, PIEComparison.Prediction, PIEComparison.InvalidatedReason,
+        HeightHistory.IncompleteReason);
+    PIEComparison.bToleranceEvaluated = true;
+
+    const FPokemonRecoveryToleranceDiagnostic& Diagnostic = PIEComparison.Tolerance;
+    const auto Number = [](const TOptional<double>& Value) -> FString
+        {
+            if (!Value.IsSet()) return TEXT("Unknown");
+            return FMath::IsFinite(Value.GetValue())
+                ? FString::Printf(TEXT("%.6f"), Value.GetValue()) : FString(TEXT("Invalid"));
+        };
+    const auto Reasons = [](const TArray<FName>& Values) -> FString
+        {
+            FString Text;
+            for (const FName& Value : Values)
+            {
+                if (!Text.IsEmpty()) Text += TEXT(",");
+                Text += Value.ToString();
+            }
+            return Text.IsEmpty() ? FString(TEXT("None")) : Text;
+        };
+
+    const auto& Stamina = Diagnostic.Limits.Stamina;
+    const FString Current = Number(Stamina.bAvailable
+        ? TOptional<double>(Stamina.Current) : TOptional<double>());
+    const FString Maximum = Number(Stamina.bAvailable
+        ? TOptional<double>(Stamina.Maximum) : TOptional<double>());
+
+    UE_LOG(LogTemp, Display,
+        TEXT("[AirRecoveryTolerance] Scope=AtSeedSnapshot | ")
+        TEXT("RequestId=%s | CommandId=%s | Kind=%s | ImpactIndex=%d | SeedMovementTime=%.6f | ")
+        TEXT("Profile=%s | StaminaAvailable=%d | CurrentStamina=%s | MaxStamina=%s | StaminaFraction=%s | ")
+        TEXT("SpeedLimitCmS=%s | DropLimitCm=%s | DownwardSpeedCmS=%s | PeakDropCm=%s | ")
+        TEXT("SpeedOutcome=%s | DropOutcome=%s | Overall=%s | SpeedReasons=%s | DropReasons=%s | ")
+        TEXT("EvidenceStatus=%d | PredictionReason=%s | InvalidatedAtSeed=%s | ")
+        TEXT("StaminaTiming=AtEvaluation | FutureStamina=Unpredicted | ConditionalPrediction=1"),
+        *Observation.RequestId.ToString(),
+        *Observation.CommandId.ToString(),
+        *PIEComparison.SeedKind.ToString(),
+        PIEComparison.ImpactIndex,
+        PIEComparison.SeedMovementTime,
+        *(Diagnostic.Limits.ProfileId.IsNone()
+            ? FString(TEXT("Missing")) : Diagnostic.Limits.ProfileId.ToString()),
+        Stamina.bAvailable,
+        *Current, *Maximum,
+        *Number(Diagnostic.Limits.StaminaFraction),
+        *Number(Diagnostic.Limits.MaxDownwardSpeed),
+        *Number(Diagnostic.Limits.MaxPeakDrop),
+        *Number(Diagnostic.Assessment.LandingSpeed.Measured),
+        *Number(Diagnostic.Assessment.PeakDrop.Measured),
+        FPokemonRecoveryTolerance::OutcomeName(Diagnostic.Assessment.LandingSpeed.Outcome),
+        FPokemonRecoveryTolerance::OutcomeName(Diagnostic.Assessment.PeakDrop.Outcome),
+        FPokemonRecoveryTolerance::OutcomeName(Diagnostic.Assessment.Overall),
+        *Reasons(Diagnostic.Assessment.LandingSpeed.Reasons),
+        *Reasons(Diagnostic.Assessment.PeakDrop.Reasons),
+        static_cast<int32>(Diagnostic.Evidence.Status),
+        *Diagnostic.Evidence.PredictionReason.ToString(),
+        *PIEComparison.InvalidatedReason.ToString());
 }
 
 void UPokemonAirborneRecoveryTelemetryComponent::CaptureRecoveryLanding(const FHitResult& Hit)
