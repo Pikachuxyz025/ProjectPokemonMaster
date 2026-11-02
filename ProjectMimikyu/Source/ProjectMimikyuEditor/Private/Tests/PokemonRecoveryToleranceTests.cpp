@@ -31,7 +31,8 @@ IMPLEMENT_COMPLEX_AUTOMATION_TEST(FPokemonRecoveryToleranceTest,
         TEXT("InvalidContactFeet"), TEXT("NegativeWorldHeight"),
         TEXT("DropOverflow"), TEXT("EarlierApex"), TEXT("FutureApex"),
         TEXT("DownwardOnly"), TEXT("AscendingVelocity"), TEXT("ZeroLimits"),
-        TEXT("InvalidEffectiveSnapshot"), TEXT("InvalidEvidenceEnum"), TEXT("ReadOnly")
+        TEXT("InvalidEffectiveSnapshot"), TEXT("InvalidEvidenceEnum"), TEXT("ReadOnly"),
+        TEXT("ProvisionalProfileStamina")
     };
 	for (const TCHAR* Case : Cases)
 	{
@@ -106,6 +107,132 @@ bool FPokemonRecoveryToleranceTest::RunTest(const FString& Parameters)
             Reason(Result.LandingSpeed.Reasons, ExpectedReason);
             Reason(Result.PeakDrop.Reasons, ExpectedReason);
         };
+
+	// The "ProvisionalProfileStamina" case is a special test of the provisional profile logic, 
+    // which is not part of the normal tolerance evaluation. 
+    // It is tested separately to ensure that the provisional profile produces the expected effective limits 
+    // and outcomes based on different stamina levels.
+    if (Parameters == TEXT("ProvisionalProfileStamina"))
+    {
+        FPokemonRecoveryToleranceProfileSnapshot Provisional;
+        Provisional.ProfileId = TEXT("AutomationProvisionalLucario");
+        Provisional.bConfigured = true;
+        Provisional.BaseMaxDownwardSpeed = 1200.0;
+        Provisional.BaseMaxPeakDrop = 600.0;
+        Provisional.SpeedResponse = { 0.5, 1.0 };
+        Provisional.DropResponse = { 0.5, 1.0 };
+
+        FPokemonRecoveryStaminaSnapshot TestStamina;
+        TestStamina.bAvailable = true;
+        TestStamina.Maximum = 100.0;
+
+        FPokemonRecoveryLandingEvidence TestEvidence;
+        TestEvidence.Status = EPokemonRecoveryLandingEvidenceStatus::SupportedPrediction;
+        TestEvidence.ContactFeet = FVector(0, 0, 100);
+        TestEvidence.IncomingVelocity = FVector(0, 0, -950);
+        TestEvidence.CompleteMaximumFeetZ = 500.0; // 400 cm drop.
+
+        struct FRow
+        {
+            double Current;
+            double Fraction;
+            double SpeedLimit;
+            double DropLimit;
+            O SpeedOutcome;
+            O DropOutcome;
+            O Overall;
+        };
+
+        // Independently calculated expected values, in increasing stamina order.
+        const FRow Rows[] = {
+            {30.0, 0.3, 780.0, 390.0, O::ExceedsTolerance, O::ExceedsTolerance, O::ExceedsTolerance},
+            {50.0, 0.5, 900.0, 450.0, O::ExceedsTolerance, O::WithinTolerance, O::ExceedsTolerance},
+            {90.0, 0.9, 1140.0, 570.0, O::WithinTolerance, O::WithinTolerance, O::WithinTolerance}
+        };
+
+        double PreviousSpeedLimit = -1.0;
+        double PreviousDropLimit = -1.0;
+
+        for (const FRow& Row : Rows)
+        {
+            TestStamina.Current = Row.Current;
+            const auto Limits = FPokemonRecoveryTolerance::
+                BuildEffectiveLimits(Provisional, TestStamina);
+
+            if (!TestTrue(TEXT("Provisional profile produces both effective limits"),
+                Limits.Reasons.IsEmpty() && Limits.MaxDownwardSpeed.IsSet() && Limits.MaxPeakDrop.IsSet()))
+            {
+                return false;
+            }
+
+            Number(TEXT("Provisional stamina fraction"), Limits.StaminaFraction, Row.Fraction);
+            Number(TEXT("Provisional speed limit"), Limits.MaxDownwardSpeed, Row.SpeedLimit);
+            Number(TEXT("Provisional drop limit"), Limits.MaxPeakDrop, Row.DropLimit);
+
+            TestTrue(TEXT("Increasing stamina does not decrease either provisional limit"),
+                Limits.MaxDownwardSpeed.GetValue() >= PreviousSpeedLimit
+                && Limits.MaxPeakDrop.GetValue() >= PreviousDropLimit);
+
+            PreviousSpeedLimit = Limits.MaxDownwardSpeed.GetValue();
+            PreviousDropLimit = Limits.MaxPeakDrop.GetValue();
+
+            const auto Result = FPokemonRecoveryTolerance::Evaluate(Limits, TestEvidence);
+            Check(Result, Row.SpeedOutcome, Row.DropOutcome, Row.Overall);
+            Number(TEXT("Fixed predicted downward speed"), Result.LandingSpeed.Measured, 950.0);
+            Number(TEXT("Fixed complete peak-to-contact drop"), Result.PeakDrop.Measured, 400.0);
+            if (Row.SpeedOutcome == O::ExceedsTolerance)
+            {
+                Reason(Result.LandingSpeed.Reasons, TEXT("LandingSpeedExceeded"));
+            }
+            else
+            {
+                TestTrue(TEXT("Accepted speed has no rejection reasons"), Result.LandingSpeed.Reasons.IsEmpty());
+            }
+            if (Row.DropOutcome == O::ExceedsTolerance)
+            {
+                Reason(Result.PeakDrop.Reasons, TEXT("PeakDropExceeded"));
+            }
+            else
+            {
+                TestTrue(TEXT("Accepted drop has no rejection reasons"), Result.PeakDrop.Reasons.IsEmpty());
+            }
+
+            AddInfo(FString::Printf(
+                TEXT("[RecoveryToleranceProvisional] Synthetic=1 | Stamina=%.0f/100 | ")
+                TEXT("SpeedLimit=%.6f | DropLimit=%.6f | Speed=950 | Drop=400 | ")
+                TEXT("SpeedOutcome=%s | DropOutcome=%s | Overall=%s"),
+                Row.Current, Limits.MaxDownwardSpeed.GetValue(), Limits.MaxPeakDrop.GetValue(),
+                FPokemonRecoveryTolerance::OutcomeName(Result.LandingSpeed.Outcome),
+                FPokemonRecoveryTolerance::OutcomeName(Result.PeakDrop.Outcome),
+                FPokemonRecoveryTolerance::OutcomeName(Result.Overall)));
+        }
+
+        // Same provisional profile at 50/100, with a separate synthetic trajectory:
+        // speed 850 <= 900, drop 500 > 450. Only drop must fail.
+        TestStamina.Current = 50.0;
+        TestEvidence.IncomingVelocity = FVector(0, 0, -850);
+        TestEvidence.CompleteMaximumFeetZ = 600.0;
+
+        const auto Limits = FPokemonRecoveryTolerance::BuildEffectiveLimits(Provisional, TestStamina);
+
+        Number(TEXT("Drop-only case speed limit"), Limits.MaxDownwardSpeed, 900.0);
+        Number(TEXT("Drop-only case drop limit"), Limits.MaxPeakDrop, 450.0);
+
+        const auto Result = FPokemonRecoveryTolerance::Evaluate(Limits, TestEvidence);
+
+        Check(Result, O::WithinTolerance, O::ExceedsTolerance, O::ExceedsTolerance);
+
+        Number(TEXT("Drop-only measured speed"), Result.LandingSpeed.Measured, 850.0);
+        Number(TEXT("Drop-only measured drop"), Result.PeakDrop.Measured, 500.0);
+
+        TestTrue(TEXT("Drop violation does not add a speed reason"), Result.LandingSpeed.Reasons.IsEmpty());
+        Reason(Result.PeakDrop.Reasons, TEXT("PeakDropExceeded"));
+
+        AddInfo(TEXT("[RecoveryToleranceProvisional] Synthetic=1 | Stamina=50/100 | ")
+            TEXT("SpeedLimit=900 | DropLimit=450 | Speed=850 | Drop=500 | ")
+            TEXT("SpeedOutcome=WithinTolerance | DropOutcome=ExceedsTolerance | Overall=ExceedsTolerance"));
+        return true;
+    }
 
     // Rejection families iterate all relevant fields, including NaN and infinity.
     if (Parameters == TEXT("InvalidMaximumStamina") || Parameters == TEXT("InvalidCurrentStamina"))
