@@ -69,7 +69,6 @@ private:
 	FPokemonHeldDefenseSession HeldDefense;
 	TWeakObjectPtr<AActor> LastDefenseInputTrainer;
 	int32 LastDefenseActivation = 0;
-	int32 LastDefenseRevision = 0;
 	FTimerHandle HeldDefenseObservationTimer;
 	void SetHeldDefenseState(EPokemonHeldDefenseState State, FName Reason);
 

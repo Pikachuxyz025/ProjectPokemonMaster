@@ -2,6 +2,7 @@
 
 #include "Tests/PokemonCompositeMoveAutomationFixture.h"
 #include "Tests/PokemonAttackAutomationFixture.h"
+#include "AbilitySystem/Abilities/PokemonDodgeGameplayAbility.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
 #include "AbilitySystem/PokemonBaseAttributeSet.h"
 #include "ActorComponents/MovesetComponent.h"
@@ -74,6 +75,25 @@ namespace PokemonHeldDefenseTests
 		}
 		const FPokemonHeldDefenseSession& Session() const { return Intent->GetHeldDefenseSession(); }
 
+		void GrantDodge()
+		{
+			Pokemon->GetPokemonASC()->AddSingleAbility(UPokemonDodgeGameplayAbility::StaticClass(),
+				FGameplayTag::RequestGameplayTag(TEXT("InputTag.Dodge")));
+		}
+		bool SendDirectionalDodge()
+		{
+			UFunction* Rpc = Trainer->FindFunction(TEXT("ServerCommandPokemonDodge"));
+			if (!Test->TestNotNull(TEXT("Directional dodge RPC"), Rpc)) return false;
+			FStructOnScope Frame(Rpc);
+			auto* Tag = FindFProperty<FStructProperty>(Rpc, TEXT("DodgeDirectionTag"));
+			auto* Forward = FindFProperty<FStructProperty>(Rpc, TEXT("ReferenceForward"));
+			if (!Test->TestTrue(TEXT("Directional RPC params"), Tag && Forward)) return false;
+			*Tag->ContainerPtrToValuePtr<FGameplayTag>(Frame.GetStructMemory()) = FGameplayTag::RequestGameplayTag(TEXT("InputTag.Dodge.Forward"));
+			*Forward->ContainerPtrToValuePtr<FVector>(Frame.GetStructMemory()) = FVector::ForwardVector;
+			Trainer->ProcessEvent(Rpc, Frame.GetStructMemory());
+			return true;
+		}
+
 		bool SendInput(int32 Activation, bool bHeld)
 		{
 			UFunction* Rpc = Trainer->FindFunction(TEXT("ServerSetDefensiveDodgeHeld"));
@@ -86,15 +106,11 @@ namespace PokemonHeldDefenseTests
 			FIntProperty* Token = FindFProperty<FIntProperty>(Rpc, TEXT("Activation"));
 			FIntProperty* Revision = FindFProperty<FIntProperty>(Rpc, TEXT("Revision"));
 			FBoolProperty* Held = FindFProperty<FBoolProperty>(Rpc, TEXT("bHeld"));
-			FStructProperty* Direction = FindFProperty<FStructProperty>(Rpc, TEXT("DirectionTag"));
-			FStructProperty* Forward = FindFProperty<FStructProperty>(Rpc, TEXT("ReferenceForward"));
-			if (!Test->TestTrue(TEXT("Reflected input fields"), Actor && Token && Revision && Held && Direction && Forward)) return false;
+			if (!Test->TestTrue(TEXT("Reflected input fields"), Actor && Token && Revision && Held)) return false;
 			Actor->SetObjectPropertyValue_InContainer(Data, Pokemon);
 			Token->SetPropertyValue_InContainer(Data, Activation);
 			Revision->SetPropertyValue_InContainer(Data, bHeld ? 1 : 2);
 			Held->SetPropertyValue_InContainer(Data, bHeld);
-			*Direction->ContainerPtrToValuePtr<FGameplayTag>(Data) = FGameplayTag::RequestGameplayTag(TEXT("InputTag.Dodge.Forward"), false);
-			*Forward->ContainerPtrToValuePtr<FVector>(Data) = FVector::ForwardVector;
 			Trainer->ProcessEvent(Rpc, Data);
 			return true;
 		}
@@ -192,6 +208,14 @@ bool FPokemonHeldDefenseOwnershipChecks::RunTest(const FString&)
 	TestTrue(TEXT("Fresh owning press can bind"), F.Press(3));
 	TestFalse(TEXT("Another trainer cannot release"), F.Intent->ReleaseHeldDefense(Stranger, 3, 2, TEXT("InputReleased")));
 	TestTrue(TEXT("Original session survives rejected input"), F.Session().IsHeld());
+	F.GrantDodge();
+	F.SendDirectionalDodge();
+	TestFalse(TEXT("Directional combo cannot provide a free discrete dodge in MoveTo"), F.Pokemon->GetIsDodging());
+	F.Intent->CancelIntent(F.Session().IntentId, TEXT("AutomationCancelled"));
+	const float StaminaBeforeDodge = F.Pokemon->GetPokemonAS()->GetStamina();
+	F.SendDirectionalDodge();
+	TestTrue(TEXT("Outside MoveTo directional input executes the existing funded GAS dodge"), F.Pokemon->GetIsDodging()
+		&& F.Pokemon->GetPokemonAS()->GetStamina() < StaminaBeforeDodge);
 	return true;
 }
 
@@ -217,6 +241,12 @@ bool FPokemonHeldDefenseInputRPC::RunTest(const FString&)
 	F.SendInput(2, false);
 	TestTrue(TEXT("Delayed old release leaves new authorization intact"), F.Session().IsHeld());
 	TestEqual(TEXT("Delayed release cannot change replacement revision"), F.Session().ServerRevision, New.ServerRevision);
+	if (!F.Move() || !TestFalse(TEXT("Replacing a held MoveTo revokes the matching session"), F.Session().IsHeld())) return false;
+	if (!F.SendInput(4, true) || !TestTrue(TEXT("Fresh press on replacement accepted"), F.Session().IsHeld())) return false;
+	const auto Replacement = F.Session();
+	F.SendInput(3, false); // Release from the retired action after P4 was accepted.
+	TestTrue(TEXT("New action retains its exact bound session"), F.Session().IsHeld() && F.Session().InputActivation == 4
+		&& F.Session().ServerRevision == Replacement.ServerRevision && F.Session().NavigationRequestId != New.NavigationRequestId);
 	return true;
 }
 
@@ -259,7 +289,10 @@ bool FPokemonHeldDefenseAttack::RunTest(const FString&)
 {
 	FHeldDefenseFixture F;
 	if (!F.Start(*this)) return false;
-	GetMutableDefault<UPokemonAttackAutomationAbility>()->MoveActionTag = FGameplayTag::RequestGameplayTag(TEXT("PokemonMoves.MoveAction.Melee"));
+	auto* AbilityDefaults = GetMutableDefault<UPokemonAttackAutomationAbility>();
+	const FGameplayTag OriginalMoveTag = AbilityDefaults->MoveActionTag;
+	ON_SCOPE_EXIT { AbilityDefaults->MoveActionTag = OriginalMoveTag; };
+	AbilityDefaults->MoveActionTag = FGameplayTag::RequestGameplayTag(TEXT("PokemonMoves.MoveAction.Melee"));
 	auto* Move = NewObject<UPokemonMoveDataAsset>(F.Pokemon);
 	Move->Ability = UPokemonAttackAutomationAbility::StaticClass();
 	Move->InputTag = FGameplayTag::RequestGameplayTag(TEXT("InputTag.1"));
@@ -279,7 +312,9 @@ bool FPokemonHeldDefenseAttack::RunTest(const FString&)
 	if (!TestTrue(TEXT("Production attack reserved for approach"), Attack.IsValid() && Reserved.AttackCommandId.IsValid()
 		&& Reserved.Actions.IsValidIndex(Reserved.ActiveActionIndex) && Reserved.Actions[Reserved.ActiveActionIndex].Spec.Type == EPokemonIntentActionType::CombatApproach)) return false;
 	const FGuid CommandId = Reserved.AttackCommandId;
+	F.GrantDodge();
 	F.SendInput(1, true);
+	F.SendDirectionalDodge();
 	TestFalse(TEXT("Reserved attack rejects held authorization"), F.Session().IsHeld());
 	TestFalse(TEXT("Reservation also blocks ordinary dodge"), F.Pokemon->GetIsDodging());
 	TestEqual(TEXT("Reservation survives input"), Command->GetActiveTrainerCommandId(), CommandId);
@@ -291,6 +326,7 @@ bool FPokemonHeldDefenseAttack::RunTest(const FString&)
 	if (!TestTrue(TEXT("Ability committed and owns C"), Probe->bCommitSucceeded && Probe->Ability
 		&& Probe->Ability->IsActive() && F.Intent->IsRunningAttackExecutionForCommand(CommandId))) return false;
 	F.SendInput(2, true);
+	F.SendDirectionalDodge();
 	TestFalse(TEXT("Committed attack rejects held authorization"), F.Session().IsHeld());
 	TestFalse(TEXT("No dodge started"), F.Pokemon->GetIsDodging());
 	TestTrue(TEXT("Same committed ability is still executing"), Probe->Ability->IsActive()
@@ -360,9 +396,15 @@ bool FPokemonHeldDefenseTeardown::RunTest(const FString& Case)
 	}
 	else
 	{
-		// DestroyComponent runs EndPlay synchronously. Inspect the terminal record
-		// immediately, before collection, as in the existing GAS cleanup probes.
+		// Observe the revocation inside the synchronous EndPlay cancellation, while
+		// the component is still valid. Do not send input to a destroyed UObject.
+		bool bRevokedDuringEndPlay = false;
+		F.Intent->OnIntentResolved.AddLambda([&](const FPokemonIntentSequence&)
+		{
+			bRevokedDuringEndPlay = F.Session().State == EState::Revoked;
+		});
 		F.Intent->DestroyComponent();
+		return TestTrue(TEXT("EndPlay revoked authorization before owner retirement"), bRevokedDuringEndPlay);
 	}
 	TestFalse(TEXT("Owner teardown revokes held authorization"), F.Session().IsHeld());
 	TestFalse(TEXT("Delayed release cannot change a revoked owner"), F.Release());

@@ -38,7 +38,13 @@ public class ProjectMimikyuEditor : ModuleRules
             "NavigationSystem",
             "GameplayTags",
             "GameplayTasks",
-            "GameplayBehaviorsModule"
+            "GameplayBehaviorsModule",
+
+            // Dedicated PIE server and owning-client input automation.
+            "CQTest",
+            "EnhancedInput",
+            "NetCore"
         });
+        SetupIrisSupport(Target);
     }
 }

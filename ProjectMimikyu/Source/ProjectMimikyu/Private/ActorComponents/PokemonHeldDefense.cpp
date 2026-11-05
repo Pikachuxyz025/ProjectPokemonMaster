@@ -82,7 +82,7 @@ bool UPokemonIntentSequenceComponent::BeginHeldDefense(AActor* Trainer, int32 Ac
 	OutReason = NAME_None;
 	auto* Pokemon = Cast<APokemon_Parent>(GetOwner());
 	if (!IsHeldDefensePrototypeEnabled() || bEndingPlay || !Pokemon || !Pokemon->HasAuthority()
-		|| !HasCurrentTrainer(Pokemon, Trainer) || Activation <= 0 || Revision <= 0)
+		|| !HasCurrentTrainer(Pokemon, Trainer) || Activation <= 0 || Revision != 1)
 	{
 		OutReason = TEXT("InvalidDefensePress");
 		return false;
@@ -101,9 +101,8 @@ bool UPokemonIntentSequenceComponent::BeginHeldDefense(AActor* Trainer, int32 Ac
 	{
 		LastDefenseInputTrainer = Trainer;
 		LastDefenseActivation = 0;
-		LastDefenseRevision = 0;
 	}
-	if (Activation <= LastDefenseActivation || Revision <= LastDefenseRevision)
+	if (Activation <= LastDefenseActivation)
 	{
 		OutReason = TEXT("StaleDefensePress");
 		return false;
@@ -112,7 +111,6 @@ bool UPokemonIntentSequenceComponent::BeginHeldDefense(AActor* Trainer, int32 Ac
 	// A valid owner's edge is spent even when no MoveTo exists. It cannot be
 	// replayed later to acquire a new action.
 	LastDefenseActivation = Activation;
-	LastDefenseRevision = Revision;
 	if (HeldDefense.IsHeld())
 	{
 		OutReason = TEXT("DefenseAlreadyHeld");
@@ -174,12 +172,11 @@ bool UPokemonIntentSequenceComponent::ReleaseHeldDefense(AActor* Trainer, int32 
 	{
 		return true;
 	}
-	if (!HeldDefense.IsHeld() || Revision <= HeldDefense.InputRevision)
+	if (!HeldDefense.IsHeld() || Revision != 2 || Revision <= HeldDefense.InputRevision)
 	{
 		return false;
 	}
 	HeldDefense.InputRevision = Revision;
-	LastDefenseRevision = FMath::Max(LastDefenseRevision, Revision);
 	SetHeldDefenseState(EPokemonHeldDefenseState::Released, Reason);
 	return true;
 }
