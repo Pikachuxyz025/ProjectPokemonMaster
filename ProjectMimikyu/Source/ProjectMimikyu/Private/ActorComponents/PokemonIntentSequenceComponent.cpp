@@ -105,6 +105,7 @@ void UPokemonIntentSequenceComponent::BeginPlay()
 void UPokemonIntentSequenceComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	bEndingPlay = true;
+	RevokeHeldDefense(TEXT("OwnerEndPlay"));
 	CancelIntent(CurrentSequence.IntentId, TEXT("OwnerEndPlay"));
 	UnbindExecutor();
 	Super::EndPlay(EndPlayReason);
@@ -290,6 +291,7 @@ bool UPokemonIntentSequenceComponent::CancelIntent(FGuid OwnedIntentId, FName Re
 	++IntentMutationSerial;
 
 	// Retire sequence ownership and detach before cancellation can synchronously report.
+	RevokeHeldDefense(Reason.IsNone() ? FName(TEXT("IntentCancelled")) : Reason);
 	UnbindExecutor();
 	Reason = Reason.IsNone() ? FName(TEXT("IntentCancelled")) : Reason;
 	FPokemonIntentActionRecord& Action = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex];
@@ -552,6 +554,8 @@ void UPokemonIntentSequenceComponent::HandleCommandResolved(FGuid ExpectedIntent
 
 void UPokemonIntentSequenceComponent::ApplyActionResult(EPokemonIntentActionState Result, FName Reason, FName Outcome)
 {
+	// Run before advancing the action or notifying synchronous terminal listeners.
+	RevokeHeldDefense(Reason.IsNone() ? FName(TEXT("ActionResolved")) : Reason);
 	UnbindExecutor();
 	FPokemonIntentActionRecord& Action = CurrentSequence.Actions[CurrentSequence.ActiveActionIndex];
 	Action.State = Result;

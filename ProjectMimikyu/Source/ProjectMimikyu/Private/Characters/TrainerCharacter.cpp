@@ -24,6 +24,10 @@
 #include "Characters/Pokemon_Parent.h"
 #include "Player/TrainerPlayerState.h"
 #include "Engine/LocalPlayer.h"
+#include "Engine/GameViewportClient.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Slate/SceneViewport.h"
+#include "TimerManager.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -141,6 +145,7 @@ void ATrainerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 void ATrainerCharacter::OnRep_CurrentPokemon()
 {
 	PokemonASC = nullptr;
+	ClearDodgeInputs();
 }
 
 void ATrainerCharacter::ResetPokemonFieldTransition(const TCHAR* Reason)
@@ -219,6 +224,41 @@ void ATrainerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdateTargetingCamera(DeltaTime);
+	if (IsLocallyControlled() && !DodgeInputs.IsEmpty())
+	{
+		const UGameViewportClient* Client = GetWorld()->GetGameViewport();
+		const FSceneViewport* Viewport = Client ? Client->GetGameViewport() : nullptr;
+		if (Viewport && !Viewport->HasFocus())
+		{
+			ClearDodgeInputs();
+		}
+	}
+}
+
+void ATrainerCharacter::HandleApplicationActivationChanged(bool bActive)
+{
+	if (!bActive)
+	{
+		ClearDodgeInputs();
+	}
+}
+
+void ATrainerCharacter::UnPossessed()
+{
+	ClearDodgeInputs();
+	StopTrackingHeldDefense(TEXT("TrainerUnpossessed"));
+	Super::UnPossessed();
+}
+
+void ATrainerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	ClearDodgeInputs();
+	StopTrackingHeldDefense(TEXT("TrainerEndPlay"));
+	if (ApplicationActivationHandle.IsValid() && FSlateApplication::IsInitialized())
+	{
+		FSlateApplication::Get().OnApplicationActivationStateChanged().Remove(ApplicationActivationHandle);
+	}
+	Super::EndPlay(EndPlayReason);
 }
 
 FPokemonInfo ATrainerCharacter::GetCurrentPokemonInfo()
@@ -228,12 +268,21 @@ FPokemonInfo ATrainerCharacter::GetCurrentPokemonInfo()
 
 void ATrainerCharacter::SetCurrentPokemon(APokemon_Parent* LeadPokemon)
 {
+	if (CurrentPokemon != LeadPokemon)
+	{
+		ClearDodgeInputs();
+		StopTrackingHeldDefense(TEXT("PokemonChanged"));
+	}
 	CurrentPokemon = LeadPokemon;
 	ServerSetPokemon(LeadPokemon);
 }
 
 void ATrainerCharacter::ServerSetPokemon_Implementation(APokemon_Parent* LeadPokemon)
 {
+	if (CurrentPokemon != LeadPokemon)
+	{
+		StopTrackingHeldDefense(TEXT("PokemonChanged"));
+	}
 	CurrentPokemon = LeadPokemon;
 }
 
@@ -489,6 +538,160 @@ void ATrainerCharacter::ServerCommandPokemonDodge_Implementation(FGameplayTag Do
 	CurrentPokemon->Dodge(DodgeDirectionTag, ReferenceForward);
 }
 
+void ATrainerCharacter::ServerSetDefensiveDodgeHeld_Implementation(APokemon_Parent* ExpectedPokemon,
+	int32 Activation, int32 Revision, bool bHeld, FGameplayTag DirectionTag, FVector ReferenceForward)
+{
+	if (Activation <= 0 || Revision != (bHeld ? 1 : 2))
+	{
+		return;
+	}
+
+	FPokemonHeldDefenseSession Reply;
+	Reply.Pokemon = ExpectedPokemon;
+	Reply.Trainer = this;
+	Reply.InputActivation = Activation;
+	Reply.InputRevision = Revision;
+	Reply.State = EPokemonHeldDefenseState::Rejected;
+	UPokemonIntentSequenceComponent* Intent = IsValid(ExpectedPokemon) ? ExpectedPokemon->GetIntentSequenceComponent() : nullptr;
+	if (!bHeld)
+	{
+		// Releasing cannot start an action. It can only retire this trainer's exact bound session.
+		if (Intent && ExpectedPokemon == AcknowledgedPokemon && Activation == AcknowledgedActivation)
+		{
+			Intent->ReleaseHeldDefense(this, Activation, Revision, TEXT("InputReleased"));
+			PollHeldDefenseAcknowledgement(ExpectedPokemon, Activation);
+		}
+		if (Intent)
+		{
+			const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
+			if (Session.Pokemon == ExpectedPokemon && Session.Trainer == this && Session.InputActivation == Activation)
+			{
+				Reply = Session;
+			}
+		}
+		Reply.InputRevision = Revision;
+		if (Reply.Reason.IsNone()) Reply.Reason = TEXT("NoMatchingSession");
+		ClientAcknowledgeHeldDefense(Reply);
+		return;
+	}
+
+	// Reliable RPCs on this trainer share one ordered channel. Consume the press even when rejected,
+	// so a retry after a new MoveTo starts cannot acquire it or activate an extra standalone dodge.
+	if (Activation <= LastServerDodgeActivation)
+	{
+		return;
+	}
+	LastServerDodgeActivation = Activation;
+	if (AcknowledgedActivation != 0)
+	{
+		PollHeldDefenseAcknowledgement(AcknowledgedPokemon, AcknowledgedActivation);
+	}
+	const FPokemonGameplayTags& Tags = FPokemonGameplayTags::Get();
+	const bool bValidDirection = DirectionTag == Tags.InputTag_Dodge_Left || DirectionTag == Tags.InputTag_Dodge_Right
+		|| DirectionTag == Tags.InputTag_Dodge_Forward || DirectionTag == Tags.InputTag_Dodge_Backward;
+	if (!Intent || ExpectedPokemon != CurrentPokemon || !ExpectedPokemon->IsOwnedByTrainer(this))
+	{
+		Reply.Reason = TEXT("PokemonOwnershipMismatch");
+	}
+	else if (!bValidDirection || ReferenceForward.ContainsNaN() || ReferenceForward.GetSafeNormal2D().IsNearlyZero())
+	{
+		Reply.Reason = TEXT("InvalidDodgeInput");
+	}
+	else if (AcknowledgedActivation != 0)
+	{
+		Reply.Reason = TEXT("AnotherInputHeld");
+	}
+	else if (ExpectedPokemon->GetIsCommandActive())
+	{
+		Reply.Reason = TEXT("AttackCommandActive");
+	}
+	else if (UPokemonIntentSequenceComponent::IsHeldDefensePrototypeEnabled() && Intent->HasRunningMoveToAction())
+	{
+		if (Intent->BeginHeldDefense(this, Activation, Revision, Reply.Reason))
+		{
+			Reply = Intent->GetHeldDefenseSession();
+			AcknowledgedPokemon = ExpectedPokemon;
+			AcknowledgedActivation = Activation;
+			LastAcknowledgedRevision = Reply.ServerRevision;
+			FTimerDelegate Observe = FTimerDelegate::CreateUObject(this, &ThisClass::PollHeldDefenseAcknowledgement,
+				AcknowledgedPokemon, Activation);
+			GetWorldTimerManager().SetTimer(DefenseAcknowledgementTimer, Observe, 0.1f, true);
+		}
+	}
+	else
+	{
+		Reply.Reason = TEXT("StandaloneDodgePath");
+		ServerCommandPokemonDodge_Implementation(DirectionTag, ReferenceForward);
+	}
+	ClientAcknowledgeHeldDefense(Reply);
+}
+
+void ATrainerCharacter::PollHeldDefenseAcknowledgement(TWeakObjectPtr<APokemon_Parent> ExpectedPokemon, int32 Activation)
+{
+	if (AcknowledgedPokemon != ExpectedPokemon || AcknowledgedActivation != Activation)
+	{
+		return;
+	}
+	const UPokemonIntentSequenceComponent* Intent = ExpectedPokemon.IsValid() ? ExpectedPokemon->GetIntentSequenceComponent() : nullptr;
+	if (Intent)
+	{
+		const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
+		if (Session.Trainer == this && Session.InputActivation == Activation && Session.Pokemon == ExpectedPokemon.Get())
+		{
+			if (LastAcknowledgedRevision != Session.ServerRevision)
+			{
+				LastAcknowledgedRevision = Session.ServerRevision;
+				ClientAcknowledgeHeldDefense(Session);
+			}
+			if (Session.IsHeld()) return;
+		}
+	}
+	GetWorldTimerManager().ClearTimer(DefenseAcknowledgementTimer);
+	AcknowledgedPokemon.Reset();
+	AcknowledgedActivation = 0;
+}
+
+void ATrainerCharacter::StopTrackingHeldDefense(FName Reason)
+{
+	if (!HasAuthority() || AcknowledgedActivation == 0)
+	{
+		return;
+	}
+	UPokemonIntentSequenceComponent* Intent = AcknowledgedPokemon.IsValid() ? AcknowledgedPokemon->GetIntentSequenceComponent() : nullptr;
+	if (Intent)
+	{
+		const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
+		if (Session.Trainer == this && Session.InputActivation == AcknowledgedActivation && Session.IsHeld())
+		{
+			Intent->RevokeHeldDefense(Reason);
+		}
+	}
+	PollHeldDefenseAcknowledgement(AcknowledgedPokemon, AcknowledgedActivation);
+}
+
+void ATrainerCharacter::ClientAcknowledgeHeldDefense_Implementation(const FPokemonHeldDefenseSession& Snapshot)
+{
+	for (auto It = DodgeInputs.CreateIterator(); It; ++It)
+	{
+		FDodgeInput& Input = It.Value();
+		if (Snapshot.Trainer != this || Input.Pokemon.Get() != Snapshot.Pokemon
+			|| Input.Activation != Snapshot.InputActivation || Input.Revision != Snapshot.InputRevision
+			|| Snapshot.ServerRevision < Input.LastServerRevision)
+		{
+			continue;
+		}
+		Input.LastServerRevision = Snapshot.ServerRevision;
+		LastHeldDefenseAcknowledgement = Snapshot;
+		UE_LOG(LogTemplateCharacter, Display,
+			TEXT("[HeldDefenseAck] Pokemon=%s Activation=%d InputRevision=%d ServerRevision=%d State=%s Reason=%s Intent=%s Action=%s Request=%s"),
+			*GetNameSafe(Snapshot.Pokemon), Snapshot.InputActivation, Snapshot.InputRevision, Snapshot.ServerRevision,
+			*UEnum::GetValueAsString(Snapshot.State), *Snapshot.Reason.ToString(), *Snapshot.IntentId.ToString(),
+			*Snapshot.ActionId.ToString(), *Snapshot.NavigationRequestId.ToString());
+		if (Input.Revision == 2) It.RemoveCurrent();
+		return;
+	}
+}
+
 void ATrainerCharacter::ServerTogglePokemonCombatMode_Implementation()
 {
 	if (!HasAuthority())
@@ -723,7 +926,8 @@ void ATrainerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		PokemonInput->BindAction(IA_CommandMove, ETriggerEvent::Completed, this, &ATrainerCharacter::CommandPokemonMove);
 
 		PokemonInput->BindAbilityActions(InputConfig, this, &ThisClass::SelectMove);
-		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge);
+		PokemonInput->BindDodgeActions(InputConfig, this, &ThisClass::CommandDodge,
+			&ThisClass::ReleaseDodgeInput, &ThisClass::CancelDodgeInput);
 
 		if (IA_TogglePokemonCombatMode)
 		{
@@ -939,7 +1143,64 @@ void ATrainerCharacter::CommandDodge(FGameplayTag GameplayTag)
 
 	const FVector ViewForward = ViewRotation.Vector().GetSafeNormal2D();
 
-	ServerCommandPokemonDodge(GameplayTag, ViewForward);
+	if (!UPokemonIntentSequenceComponent::IsHeldDefensePrototypeEnabled())
+	{
+		ServerCommandPokemonDodge(GameplayTag, ViewForward);
+		return;
+	}
+
+	FDodgeInput& Input = DodgeInputs.FindOrAdd(GameplayTag);
+	if (Input.Revision == 1 || NextDodgeActivation == MAX_int32)
+	{
+		return;
+	}
+	Input = FDodgeInput{};
+	Input.Pokemon = CurrentPokemon;
+	Input.Activation = ++NextDodgeActivation;
+	Input.Revision = 1;
+	if (!ApplicationActivationHandle.IsValid() && FSlateApplication::IsInitialized())
+	{
+		ApplicationActivationHandle = FSlateApplication::Get().OnApplicationActivationStateChanged().AddUObject(
+			this, &ThisClass::HandleApplicationActivationChanged);
+	}
+	ServerSetDefensiveDodgeHeld(Input.Pokemon.Get(), Input.Activation, Input.Revision, true, GameplayTag, ViewForward);
+}
+
+void ATrainerCharacter::ReleaseDodgeInput(FGameplayTag GameplayTag)
+{
+	EndDodgeInput(GameplayTag);
+}
+
+void ATrainerCharacter::CancelDodgeInput(FGameplayTag GameplayTag)
+{
+	EndDodgeInput(GameplayTag);
+}
+
+void ATrainerCharacter::EndDodgeInput(FGameplayTag GameplayTag)
+{
+	FDodgeInput* Input = DodgeInputs.Find(GameplayTag);
+	if (!Input || Input->Revision != 1)
+	{
+		return;
+	}
+	Input->Revision = 2;
+	if (IsLocallyControlled() && Input->Pokemon.IsValid())
+	{
+		// Even before the server acknowledgement, release names the original press and actor.
+		ServerSetDefensiveDodgeHeld(Input->Pokemon.Get(), Input->Activation, Input->Revision, false,
+			GameplayTag, FVector::ZeroVector);
+	}
+}
+
+void ATrainerCharacter::ClearDodgeInputs()
+{
+	// A listen-server acknowledgement can run synchronously inside EndDodgeInput.
+	TArray<FGameplayTag> Keys;
+	DodgeInputs.GetKeys(Keys);
+	for (const FGameplayTag& Key : Keys)
+	{
+		EndDodgeInput(Key);
+	}
 }
 
 void ATrainerCharacter::UpdatePokemonInfoInParty_Implementation(APokemon_Parent* AlteredPokemon)

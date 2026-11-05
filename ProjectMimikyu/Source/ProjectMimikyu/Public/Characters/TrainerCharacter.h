@@ -8,6 +8,7 @@
 #include "Interfaces/PlayerInterface.h"
 #include "ActorComponents/TargetingType.h"
 #include "GameplayTagContainer.h"
+#include "Intent/PokemonHeldDefenseTypes.h"
 #include "Characters/CharacterTypes.h"
 #include "TrainerCharacter.generated.h"
 
@@ -88,6 +89,8 @@ public:
 protected:
 	// Unreal lifecycle
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void UnPossessed() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -101,6 +104,8 @@ protected:
 	void Input_ToggleLockOn();
 	void Input_BeginFocusAim();
 	void Input_EndFocusAim();
+	void ReleaseDodgeInput(FGameplayTag GameplayTag);
+	void CancelDodgeInput(FGameplayTag GameplayTag);
 
 	void ThrowQuickSlotInput();
 	void ThrowSelectedInventoryItemInput();
@@ -157,6 +162,40 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void ServerCommandPokemonDodge(FGameplayTag DodgeDirectionTag,FVector ReferenceForward);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetDefensiveDodgeHeld(APokemon_Parent* ExpectedPokemon, int32 Activation, int32 Revision,
+		bool bHeld, FGameplayTag DirectionTag, FVector ReferenceForward);
+
+	UFUNCTION(Client, Reliable)
+	void ClientAcknowledgeHeldDefense(const FPokemonHeldDefenseSession& Snapshot);
+
+	void EndDodgeInput(FGameplayTag GameplayTag);
+	void ClearDodgeInputs();
+	void HandleApplicationActivationChanged(bool bActive);
+	void PollHeldDefenseAcknowledgement(TWeakObjectPtr<APokemon_Parent> ExpectedPokemon, int32 Activation);
+	void StopTrackingHeldDefense(FName Reason);
+
+	// Each direction can still issue its own standalone dodge. Only the sequence component grants a session.
+	struct FDodgeInput
+	{
+		TWeakObjectPtr<APokemon_Parent> Pokemon;
+		int32 Activation = 0;
+		int32 Revision = 0;
+		int32 LastServerRevision = -1;
+	};
+	TMap<FGameplayTag, FDodgeInput> DodgeInputs;
+	int32 NextDodgeActivation = 0;
+	FDelegateHandle ApplicationActivationHandle;
+	UPROPERTY(Transient, VisibleInstanceOnly, Category = "Pokemon|Defense|Prototype")
+	FPokemonHeldDefenseSession LastHeldDefenseAcknowledgement;
+
+	// The trainer consumes press IDs even if it routes to standalone dodge or rejects the input.
+	int32 LastServerDodgeActivation = 0;
+	TWeakObjectPtr<APokemon_Parent> AcknowledgedPokemon;
+	int32 AcknowledgedActivation = 0;
+	int32 LastAcknowledgedRevision = 0;
+	FTimerHandle DefenseAcknowledgementTimer;
 
 	UFUNCTION(Server, Reliable)
 	void ServerTogglePokemonCombatMode();

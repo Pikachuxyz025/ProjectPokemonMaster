@@ -73,6 +73,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pokemon|AI|Navigation")
 	const FAgentNavigationRequest& GetCurrentNavigationIntent() const;
 
+	// Read-only classification of the retained stationary trainer destination.
+	bool IsCompositePlayerMove() const;
+	bool IsCompositeFailureHeld() const { return bCompositeFailureHeld; }
+
 	UFUNCTION(BlueprintCallable, Category = "Pokemon|AI|Navigation")
 	bool RequestPlayerMoveToLocation(const FVector& RawTargetLocation, bool bAllowSpecialTraversal = true);
 
@@ -153,7 +157,6 @@ private:
 	bool ResolveNavigationRequest(FGuid OwnedRequestId, EPokemonNavigationResolution Result, FName Reason);
 	uint64 NavigationMutationSerial = 0;
 	bool bNavigationEndingPlay = false;
-	bool IsCompositePlayerMove() const;
 	bool TryCompletePlayerMove();
 	void ResetLocalTraversal();
 	void HoldCompositeFailure(FName Reason);

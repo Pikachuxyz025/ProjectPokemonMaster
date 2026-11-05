@@ -2,6 +2,7 @@
 
 
 #include "ActorComponents/PokemonIncapacitationComponent.h"
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 #include "Characters/Pokemon_Parent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "BrainComponent.h"
@@ -155,6 +156,11 @@ void UPokemonIncapacitationComponent::StopCombatAndMovement()
 	if (!OwnerPokemon)
 	{
 		return;
+	}
+
+	if (UPokemonIntentSequenceComponent* Intent = OwnerPokemon->GetIntentSequenceComponent())
+	{
+		Intent->RevokeHeldDefense(TEXT("OwnerIncapacitated"));
 	}
 
 	if (UCharacterMovementComponent* MoveComp = GetPokemonMovement())

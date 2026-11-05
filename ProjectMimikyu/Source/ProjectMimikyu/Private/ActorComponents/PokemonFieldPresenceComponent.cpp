@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ActorComponents/PokemonFieldPresenceComponent.h"
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 
 #include "AIControllers/PokemonAIController.h"
 #include "BrainComponent.h"
@@ -40,6 +41,10 @@ void UPokemonFieldPresenceComponent::PrepareForFieldRemoval()
 	}
 
 	bPreparedForFieldRemoval = true;
+	if (UPokemonIntentSequenceComponent* Intent = Pokemon->GetIntentSequenceComponent())
+	{
+		Intent->RevokeHeldDefense(TEXT("FieldRemoval"));
+	}
 
 	StopAIAndBrain(Pokemon);
 	StopMovement(Pokemon);

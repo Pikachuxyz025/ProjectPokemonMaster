@@ -19,8 +19,9 @@ public:
 	template<class UserClass,typename PressedFuncType>
 	void BindAbilityActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc);
 
-	template<class UserClass, typename PressedFuncType>
-	void BindDodgeActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc);
+	template<class UserClass, typename InputFuncType>
+	void BindDodgeActions(const UPokemonInputConfig* InputConfig, UserClass* Object,
+		InputFuncType Pressed, InputFuncType Released, InputFuncType Canceled);
 
 	template<class UserClass, typename PressedFuncType>
 	void BindKeySequenceActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc);
@@ -43,8 +44,9 @@ template<class UserClass, typename PressedFuncType>
 	 }
 }
 
- template<class UserClass, typename PressedFuncType>
- void UPokemonInputComponent::BindDodgeActions(const UPokemonInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc)
+ template<class UserClass, typename InputFuncType>
+ void UPokemonInputComponent::BindDodgeActions(const UPokemonInputConfig* InputConfig, UserClass* Object,
+	InputFuncType Pressed, InputFuncType Released, InputFuncType Canceled)
  {
 	 check(InputConfig);
 
@@ -52,10 +54,10 @@ template<class UserClass, typename PressedFuncType>
 	 {
 		 if (Action.InputAction)
 		 {
-			 if (PressedFunc)
-			 {
-				 BindAction(Action.InputAction, ETriggerEvent::Started, Object, PressedFunc, Action.InputTag);
-			 }
+			 // A held action stays latched between these edges. Triggered/Ongoing must never replay a press.
+			 BindAction(Action.InputAction, ETriggerEvent::Started, Object, Pressed, Action.InputTag);
+			 BindAction(Action.InputAction, ETriggerEvent::Completed, Object, Released, Action.InputTag);
+			 BindAction(Action.InputAction, ETriggerEvent::Canceled, Object, Canceled, Action.InputTag);
 		 }
 	 }
  }
