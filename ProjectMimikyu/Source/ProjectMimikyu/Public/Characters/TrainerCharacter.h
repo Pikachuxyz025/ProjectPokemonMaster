@@ -173,6 +173,7 @@ private:
 	void HandleApplicationActivationChanged(bool bActive);
 	void PollHeldDefenseAcknowledgement(TWeakObjectPtr<APokemon_Parent> ExpectedPokemon, int32 Activation);
 	void StopTrackingHeldDefense(FName Reason);
+	void ClearDodgeInputs(APokemon_Parent* KeepPokemon = nullptr);
 
 	// Physical button edges own this latch. Direction-combo triggers have independent lifetimes.
 	struct FDodgeInput
@@ -184,7 +185,9 @@ private:
 	};
 	FDodgeInput DodgeInput;
 	int32 NextDodgeActivation = 0;
+
 	bool bDodgeViewportHadFocus = false;
+
 	FDelegateHandle ApplicationActivationHandle;
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = "Pokemon|Defense|Prototype")
 	FPokemonHeldDefenseSession LastHeldDefenseAcknowledgement;

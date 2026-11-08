@@ -59,7 +59,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray< UPokemonMoveDataAsset*> CurrentPokemonMoves;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Moves")
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "Pokemon|Moves")
 	TArray<FPokemonMoveRuntimeState> MoveRuntimeStates;
 
 	void SetupMoveset(TArray< UPokemonMoveDataAsset*> NewMoveset);

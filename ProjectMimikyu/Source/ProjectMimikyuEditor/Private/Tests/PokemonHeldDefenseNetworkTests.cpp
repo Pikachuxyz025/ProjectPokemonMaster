@@ -19,6 +19,15 @@
 
 namespace PokemonHeldDefenseNetwork
 {
+	template<typename PropertyType>
+	PropertyType* RequireProperty(const UStruct* Owner, const TCHAR* Name)
+	{
+		PropertyType* Property = FindFProperty<PropertyType>(Owner, Name);
+
+		checkf(Property, TEXT("Missing text property %s on %s"), Name, *GetNameSafe(Owner));
+		return Property;
+	}
+
 	UClass* TrainerClass()
 	{
 		// The native trainer class is reflected, but it is not exported by the game module.
@@ -38,7 +47,7 @@ namespace PokemonHeldDefenseNetwork
 			// Native trainers normally receive a moveset input config from their
 			// Blueprint. The separate base IA_Dodge binding uses its production default.
 			auto* Config = NewObject<UPokemonInputConfig>(Actor);
-			FindFPropertyChecked<FObjectProperty>(Actor->GetClass(), TEXT("InputConfig"))
+			RequireProperty<FObjectProperty>(Actor->GetClass(), TEXT("InputConfig"))
 				->SetObjectPropertyValue_InContainer(Actor, Config);
 		}
 	}
@@ -75,7 +84,7 @@ namespace PokemonHeldDefenseNetwork
 
 	const FPokemonHeldDefenseSession& ReadClientAck(APawn& Trainer)
 	{
-		const FStructProperty* Ack = FindFPropertyChecked<FStructProperty>(Trainer.GetClass(), TEXT("LastHeldDefenseAcknowledgement"));
+		const FStructProperty* Ack = RequireProperty<FStructProperty>(Trainer.GetClass(), TEXT("LastHeldDefenseAcknowledgement"));
 		return *Ack->ContainerPtrToValuePtr<FPokemonHeldDefenseSession>(&Trainer);
 	}
 }
@@ -135,7 +144,7 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 			Server.Pokemon->ConfigureForAutomation();
 			Server.Pokemon->FinishSpawning(Spawn);
 			Server.Pokemon->SetPokemonTrainer(Server.Trainer);
-			FindFPropertyChecked<FObjectProperty>(TrainerClass(), TEXT("CurrentPokemon"))
+			RequireProperty<FObjectProperty>(TrainerClass(), TEXT("CurrentPokemon"))
 				->SetObjectPropertyValue_InContainer(Server.Trainer, Server.Pokemon);
 			Server.Trainer->ForceNetUpdate();
 			// A retained MoveTo in the empty PIE map keeps the request available
@@ -152,7 +161,7 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 			auto* PC = Client.World->GetFirstPlayerController();
 			Client.Trainer = PC ? PC->GetPawn() : nullptr;
 			if (!Client.Trainer || Client.Trainer->GetClass() != TrainerClass() || !Client.Trainer->InputComponent) return false;
-			const auto* Selection = FindFPropertyChecked<FObjectProperty>(TrainerClass(), TEXT("CurrentPokemon"));
+			const auto* Selection = RequireProperty<FObjectProperty>(TrainerClass(), TEXT("CurrentPokemon"));
 			Client.Pokemon = Cast<APokemonJumpAutomationPawn>(Selection->GetObjectPropertyValue_InContainer(Client.Trainer));
 			return Client.Pokemon && Client.Pokemon->IsOwnedByTrainer(Client.Trainer) && Client.Trainer->IsLocallyControlled();
 		})

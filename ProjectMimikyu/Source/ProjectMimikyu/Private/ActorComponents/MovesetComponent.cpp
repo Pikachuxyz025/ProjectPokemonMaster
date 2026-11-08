@@ -308,4 +308,5 @@ void UMovesetComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UMovesetComponent, MoveRuntimeStates);
+	DOREPLIFETIME(UMovesetComponent, MoveRuntimeStates);
 }

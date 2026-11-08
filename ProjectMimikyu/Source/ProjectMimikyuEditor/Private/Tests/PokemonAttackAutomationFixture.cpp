@@ -29,14 +29,18 @@ void UPokemonAttackAutomationAbility::ActivateAbility(FGameplayAbilitySpecHandle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	UPokemonAttackAutomationProbe* Probe = ActorInfo->AvatarActor->FindComponentByClass<UPokemonAttackAutomationProbe>();
-	if (!Probe) { Finish(); return; }
+
+	if (!Probe) 
+	{ 
+		Finish(); 
+		return;
+	}
+
 	++Probe->Activations;
 	Probe->Ability = this;
 	const auto* Intent = ActorInfo->AvatarActor->FindComponentByClass<UPokemonIntentSequenceComponent>();
-	const auto& Sequence = Intent->GetCurrentSequence();
-	Probe->bOwnedBeforeActivation = Sequence.State == EPokemonIntentSequenceState::Running
-		&& Sequence.Actions.Num() == 1 && Sequence.Actions[0].State == EPokemonIntentActionState::Running
-		&& GetSequencedCommandId().IsValid() && Sequence.Actions[0].ExecutorRequestId == GetSequencedCommandId();
+
+	Probe->bOwnedBeforeActivation = Intent && Intent->IsRunningAttackExecutionForCommand(GetSequencedCommandId());
 	Probe->Task = UAbilityTask_WaitDelay::WaitDelay(this, 100.f);
 	Probe->Task->ReadyForActivation();
 	// Simulate the inspected GA_Base OnEndAbility -> AttackEnded callback from
@@ -45,6 +49,7 @@ void UPokemonAttackAutomationAbility::ActivateAbility(FGameplayAbilitySpecHandle
 	{
 		Probe->GetOwner()->FindComponentByClass<UPokemonCommandComponent>()->AttackEnded();
 	});
+
 	if (Probe->Mode == EPokemonAttackTestMode::RejectCommit)
 	{
 		ActorInfo->AbilitySystemComponent->SetNumericAttributeBase(UPokemonBaseAttributeSet::GetStaminaAttribute(), 0.f);
@@ -52,6 +57,7 @@ void UPokemonAttackAutomationAbility::ActivateAbility(FGameplayAbilitySpecHandle
 		Finish();
 	}
 	else if (Probe->Mode == EPokemonAttackTestMode::CommitAndHold) Probe->bCommitSucceeded = CommitPokemonMove();
+
 	else if (Probe->Mode == EPokemonAttackTestMode::SynchronousMiss) Finish();
 }
 
