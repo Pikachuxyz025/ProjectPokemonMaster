@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ActorComponents/PokemonOwnershipComponent.h"
-
+#include "ActorComponents/PokemonIntentSequenceComponent.h"
 #include "AIControllers/PokemonAIController.h"
 #include "Characters/Pokemon_Parent.h"
 #include "Net/UnrealNetwork.h"
@@ -47,6 +47,14 @@ void UPokemonOwnershipComponent::SetPokemonTrainer(AActor* NewTrainer)
 		PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
 		RefreshAIControllerOwnershipState();
 		return;
+	}
+
+	if (Pokemon->HasAuthority())
+	{
+		if (UPokemonIntentSequenceComponent* Intent =Pokemon->GetIntentSequenceComponent())
+		{
+			Intent->RevokeHeldDefense(TEXT("PokemonOwnershipChanged"));
+		}
 	}
 
 	ClearTrainerBindings();

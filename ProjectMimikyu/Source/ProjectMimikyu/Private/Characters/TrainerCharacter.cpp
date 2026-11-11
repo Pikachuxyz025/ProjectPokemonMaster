@@ -585,31 +585,54 @@ void ATrainerCharacter::ServerSetDefensiveDodgeHeld_Implementation(APokemon_Pare
 
 	if (!bHeld)
 	{
-		// Release identifies the original press without needing 
-		// the server-generated intent or navigation GUIDs.
-		if (Intent && ExpectedPokemon == AcknowledgedPokemon.Get() && Activation == AcknowledgedActivation)
+		bool bMatchingSession = false;
+
+		// A revoked exhaustion binding may outlive acknowledgement
+		// tracking. Route release by its original actor/input identity.
+		if (IsValid(Intent))
 		{
-			const bool bReleased = Intent->ReleaseHeldDefense(this, Activation, Revision, TEXT("InputReleased"));
+			Intent->ReleaseHeldDefense(
+				this,
+				Activation,
+				Revision,
+				TEXT("InputReleased"));
 
-			PollHeldDefenseAcknowledgement(ExpectedPokemon, Activation);
+			const FPokemonHeldDefenseSession& Session =
+				Intent->GetHeldDefenseSession();
 
-			if (bReleased)
-			{
-				return;
-			}
-		}
-
-		if (Intent)
-		{
-			const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
-			if (Session.Pokemon == ExpectedPokemon && Session.Trainer == this && Session.InputActivation == Activation)
+			if (Session.Pokemon == ExpectedPokemon
+				&& Session.Trainer == this
+				&& Session.InputActivation == Activation)
 			{
 				Reply = Session;
+				bMatchingSession = true;
 			}
 		}
-		Reply.InputRevision = Revision;
 
-		if (Reply.Reason.IsNone()) Reply.Reason = TEXT("NoMatchingSession");
+		if (!bMatchingSession)
+		{
+			Reply.Reason = TEXT("NoMatchingSession");
+		}
+
+		// A rejected or already terminal binding still acknowledges the
+		// physical release so the owning client's local latch can clear.
+		// Do not fabricate release of a binding that remains held.
+		if (!bMatchingSession || !Reply.IsHeld())
+		{
+			Reply.InputRevision = Revision;
+		}
+
+		if (AcknowledgedPokemon.Get() == ExpectedPokemon
+			&& AcknowledgedActivation == Activation
+			&& (!bMatchingSession || !Reply.IsHeld()))
+		{
+			GetWorldTimerManager().ClearTimer(
+				DefenseAcknowledgementTimer);
+
+			AcknowledgedPokemon.Reset();
+			AcknowledgedActivation = 0;
+			LastAcknowledgedRevision = 0;
+		}
 
 		ClientAcknowledgeHeldDefense(Reply);
 		return;
@@ -667,23 +690,40 @@ void ATrainerCharacter::PollHeldDefenseAcknowledgement(TWeakObjectPtr<APokemon_P
 	{
 		return;
 	}
-	const UPokemonIntentSequenceComponent* Intent = ExpectedPokemon.IsValid() ? ExpectedPokemon->GetIntentSequenceComponent() : nullptr;
-	if (Intent)
+	
+	UPokemonIntentSequenceComponent* Intent = ExpectedPokemon.IsValid() 
+		? ExpectedPokemon->GetIntentSequenceComponent() : nullptr;
+
+	if (IsValid(Intent))
 	{
-		const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
-		if (Session.Trainer == this && Session.InputActivation == Activation && Session.Pokemon == ExpectedPokemon.Get())
+		// This performs lifecycle validation only; it does not debit stamina.
+		// Exhausted/blocked bindings must still notice owner retirement.
+		Intent->RefreshHeldDefense();
+
+		const FPokemonHeldDefenseSession& Session =
+			Intent->GetHeldDefenseSession();
+
+		if (Session.Trainer == this
+			&& Session.InputActivation == Activation
+			&& Session.Pokemon == ExpectedPokemon.Get())
 		{
 			if (LastAcknowledgedRevision != Session.ServerRevision)
 			{
 				LastAcknowledgedRevision = Session.ServerRevision;
 				ClientAcknowledgeHeldDefense(Session);
 			}
-			if (Session.IsHeld()) return;
+
+			if (Session.IsHeld())
+			{
+				return;
+			}
 		}
 	}
+
 	GetWorldTimerManager().ClearTimer(DefenseAcknowledgementTimer);
 	AcknowledgedPokemon.Reset();
 	AcknowledgedActivation = 0;
+	LastAcknowledgedRevision = 0;
 }
 
 void ATrainerCharacter::StopTrackingHeldDefense(FName Reason)
@@ -726,9 +766,10 @@ void ATrainerCharacter::ClientAcknowledgeHeldDefense_Implementation(const FPokem
 	UE_LOG(
 		LogTemplateCharacter,
 		Display,
-		TEXT("[HeldDefenseAck] Pokemon=%s Activation=%d "
-			"InputRevision=%d ServerRevision=%d State=%s Reason=%s "
-			"Intent=%s Action=%s Request=%s"),
+		TEXT("[HeldDefenseAck] Pokemon=%s Activation=%d ")
+		TEXT("InputRevision=%d ServerRevision=%d State=%s Reason=%s ")
+		TEXT("Intent=%s Action=%s Request=%s ")
+		TEXT("FundedLastInterval=%d ServiceActive=0"),
 		*GetNameSafe(Snapshot.Pokemon),
 		Snapshot.InputActivation,
 		Snapshot.InputRevision,
@@ -737,7 +778,8 @@ void ATrainerCharacter::ClientAcknowledgeHeldDefense_Implementation(const FPokem
 		*Snapshot.Reason.ToString(),
 		*Snapshot.IntentId.ToString(),
 		*Snapshot.ActionId.ToString(),
-		*Snapshot.NavigationRequestId.ToString());
+		*Snapshot.NavigationRequestId.ToString(),
+		Snapshot.bLastIntervalFunded ? 1 : 0);
 
 	// A rejected or revoked press remains latched until release.
 	// Holding the button cannot authorize a replacement MoveTo.
