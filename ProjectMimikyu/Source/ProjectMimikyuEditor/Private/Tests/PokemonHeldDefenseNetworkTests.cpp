@@ -100,24 +100,29 @@ namespace PokemonHeldDefenseNetwork
 		BoundsBox->RegisterComponent();
 		Bounds->AddInstanceComponent(BoundsBox);
 
-		auto* Data = Cast<ARecastNavMesh>(System->GetDefaultNavDataInstance(FNavigationSystem::DontCreate));
+		auto* Data = Cast<ARecastNavMesh>(
+			System->GetDefaultNavDataInstance(FNavigationSystem::DontCreate));
 
 		if (!Data)
+		{
+			Data = World.SpawnActor<ARecastNavMesh>();
+		}
+
+		if (!IsValid(Data))
 		{
 			return false;
 		}
 
-		auto* Generation=RequireProperty<FEnumProperty>(Data->GetClass(), TEXT("RuntimeGeneration"));
+		auto* Generation = RequireProperty<FEnumProperty>(Data->GetClass(), TEXT("RuntimeGeneration"));
 
 		Generation->GetUnderlyingProperty()->SetIntPropertyValue(Generation->ContainerPtrToValuePtr<void>(Data),
-			static_cast<int64>(ERuntimeGenerationType::Dynamic));
+			static_cast<uint64>(ERuntimeGenerationType::Dynamic));
 
 		System->OnNavigationBoundsUpdated(Bounds);
 		System->Build();
 		Data->EnsureBuildCompletion();
 
-		const FVector Feet =
-			Pokemon.GetCharacterMovement()->GetActorFeetLocation();
+		const FVector Feet = Pokemon.GetCharacterMovement()->GetActorFeetLocation();
 
 		const auto* Path = UNavigationSystemV1::FindPathToLocationSynchronously(
 			&World, Feet, Goal, &Pokemon);
