@@ -680,7 +680,20 @@ void ATrainerCharacter::ServerSetDefensiveDodgeHeld_Implementation(APokemon_Pare
 
 		GetWorldTimerManager().SetTimer(DefenseAcknowledgementTimer, Observe, 0.1f, true);
 	}
+	else
 
+	{
+		const FPokemonHeldDefenseSession& Session = Intent->GetHeldDefenseSession();
+
+
+		if (Session.Pokemon == ExpectedPokemon
+			&& Session.Trainer == this
+			&& Session.InputActivation == Activation
+			&& Session.InputRevision == Revision)
+		{
+			Reply = Session;
+		}
+	}
 	ClientAcknowledgeHeldDefense(Reply);
 }
 

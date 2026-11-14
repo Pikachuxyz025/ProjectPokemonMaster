@@ -81,7 +81,7 @@ namespace
 		OutMaximum = Stamina->GetMaxStamina();
 		
 		return FMath::IsFinite(OutCurrent) && FMath::IsFinite(OutMaximum)
-			&& OutMaximum >= 0.f && OutMaximum > 0.f
+			&& OutCurrent >= 0.f && OutMaximum > 0.f
 			&& OutCurrent <= OutMaximum;
 	}
 }
@@ -139,7 +139,7 @@ bool UPokemonIntentSequenceComponent::ValidateHeldDefenseBinding(FName& OutReaso
 		return false;
 	}
 
-	if (!bHeldDefenseChargingRequested != IsHeldDefenseStaminaPrototypeEnabled())
+	if (bHeldDefenseChargingRequested != IsHeldDefenseStaminaPrototypeEnabled())
 	{
 		OutReason = TEXT("StaminaPrototypeChanged");
 		return false;
@@ -229,6 +229,8 @@ bool UPokemonIntentSequenceComponent::BeginHeldDefense(AActor* Trainer, int32 Ac
 
 	StopHeldDefenseObservation();
 	StopHeldDefenseResourceAccounting();
+
+	++HeldDefenseBindingSerial;
 
 	HeldDefense = FPokemonHeldDefenseSession();
 	HeldDefense.Trainer = Trainer;
@@ -329,17 +331,22 @@ bool UPokemonIntentSequenceComponent::ReleaseHeldDefense(AActor* Trainer, int32 
 		return false;
 	}
 
-	if(HeldDefense.InputRevision==2)
+	if (HeldDefense.InputRevision == 2)
 	{
-		return HeldDefense.State == EPokemonHeldDefenseState::Released 
+		return HeldDefense.State == EPokemonHeldDefenseState::Released
 			|| HeldDefense.State == EPokemonHeldDefenseState::Revoked;
 	}
 	
-	const bool bCanReleaseRevokedExhaustion = HeldDefense.State == EPokemonHeldDefenseState::Revoked
-		&& 
-		bHeldDefenseReleaseRequired;
+	if (HeldDefense.InputRevision != 1)
+	{
+		return false;
+	}
 
-	if (!HeldDefense.IsHeld() || !bCanReleaseRevokedExhaustion)
+	const bool bCanReleaseRevokedExhaustion =
+		HeldDefense.State == EPokemonHeldDefenseState::Revoked
+		&& bHeldDefenseReleaseRequired;
+
+	if (!HeldDefense.IsHeld() && !bCanReleaseRevokedExhaustion)
 	{
 		return false;
 	}
@@ -683,7 +690,9 @@ void UPokemonIntentSequenceComponent::InvalidateHeldDefenseMovementSample()
 
 void UPokemonIntentSequenceComponent::AccountHeldDefenseElapsed(double ServerTime)
 {
-	if (bHeldDefenseSpendInProgress)
+	if (!IsValid(GetOwner())
+		|| !GetOwner()->HasAuthority()
+		|| bHeldDefenseSpendInProgress)
 	{
 		return;
 	}
@@ -774,15 +783,51 @@ void UPokemonIntentSequenceComponent::AccountHeldDefenseElapsed(double ServerTim
 	// Retain only the fractional remainder before entering GAS callbacks.
 	HeldDefensePendingCost =
 		FMath::Max(0.0, Due - static_cast<double>(Cost));
+	
+	const bool bDrainsBudget = bInsufficient || Current - Cost <= KINDA_SMALL_NUMBER;
+
+	const bool bPreviousRecoveryRequired = bHeldDefenseRecoveryRequired;
+	const bool bPreviousReleaseRequired = bHeldDefenseReleaseRequired;
+
+	if (bDrainsBudget)
+	{
+		// A listener may release or revoke this binding inside the GAS write.
+		// Make the recovery requirement visible before that listener runs.
+		bHeldDefenseRecoveryRequired = true;
+		bHeldDefenseReleaseRequired = true;
+	}
 
 	bool bPaid = false;
 
 	{
-		TGuardValue<bool> SpendingGuard(
-			bHeldDefenseSpendInProgress,
-			true);
-
+		TGuardValue<bool> SpendingGuard(bHeldDefenseSpendInProgress,true);
 		bPaid = Stamina->TrySpendStamina(Cost);
+	}
+
+	if (bDrainsBudget && HeldDefenseBindingSerial == ExpectedBinding)
+	{
+		if (!bPaid)
+		{
+			// TrySpendStamina rejects before writing the attribute.
+			bHeldDefenseRecoveryRequired = bPreviousRecoveryRequired;
+			bHeldDefenseReleaseRequired = bPreviousReleaseRequired;
+		}
+		else if (!bEndingPlay && HeldDefense.InputRevision == 1 && HeldDefense.HasAuthorization())
+		{
+			FName BindingFailure;
+
+			if (!ValidateHeldDefenseBinding(BindingFailure))
+			{
+				RevokeHeldDefense(BindingFailure);
+			}
+			else
+			{
+				ExhaustHeldDefense(bInsufficient 
+					? FName(TEXT("InsufficientStamina")) 
+					: FName(TEXT("StaminaExhausted")));
+			}
+			return;
+		}
 	}
 
 	// GAS listeners can cancel the intent, change movement ownership,

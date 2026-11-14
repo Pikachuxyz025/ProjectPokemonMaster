@@ -239,8 +239,7 @@ void UPokemonStaminaComponent::EndSustainedSpending(FGuid Token)
 
 	const uint64 ExpectedGeneration = RegenerationGeneration;
 
-	// Retiring an intent must synchronously invoke GAS listeners
-	// through an immediate regeneration step.
+	// Defer the first regeneration step until intent retirement has finished.
 	// 
 	// BeginRegeneration still honors RegenerationAllowedAt. This
 	// deferral does not restart the configured regeneration delay.

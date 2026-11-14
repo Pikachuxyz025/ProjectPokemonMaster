@@ -44,14 +44,16 @@ void UPokemonOwnershipComponent::SetPokemonTrainer(AActor* NewTrainer)
 
 	if (CurrentTrainer == NewTrainer)
 	{
-		PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
+		PokemonStatus = CurrentTrainer? EPokemonStatus::EPS_PlayerTrainer: EPokemonStatus::EPS_Wild;
+
 		RefreshAIControllerOwnershipState();
 		return;
 	}
 
 	if (Pokemon->HasAuthority())
 	{
-		if (UPokemonIntentSequenceComponent* Intent =Pokemon->GetIntentSequenceComponent())
+		if (UPokemonIntentSequenceComponent* Intent =
+			Pokemon->GetIntentSequenceComponent())
 		{
 			Intent->RevokeHeldDefense(TEXT("PokemonOwnershipChanged"));
 		}
@@ -60,6 +62,7 @@ void UPokemonOwnershipComponent::SetPokemonTrainer(AActor* NewTrainer)
 	ClearTrainerBindings();
 
 	CurrentTrainer = NewTrainer;
+
 	PokemonStatus = CurrentTrainer ? EPokemonStatus::EPS_PlayerTrainer : EPokemonStatus::EPS_Wild;
 
 	if (CurrentTrainer)

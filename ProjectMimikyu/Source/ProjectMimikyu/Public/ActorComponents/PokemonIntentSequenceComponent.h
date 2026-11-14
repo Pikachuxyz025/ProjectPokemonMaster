@@ -64,6 +64,7 @@ protected:
 
 private:
 	friend struct FPokemonIntentSequenceTestAccess;
+	friend struct FPokemonHeldDefenseStaminaTestAccess;
 
 	// Provisional diagnostic values, not approved gameplay balance.
 	UPROPERTY(EditDefaultsOnly,Category = "Pokemon|Intent|HeldDefense|Development",meta = (ClampMin = "0.001"))
@@ -135,8 +136,6 @@ private:
 
 	uint64 IntentMutationSerial = 0;
 	bool bEndingPlay = false;
-
-	FTimerHandle HeldDefenseObservationTimer;
 
 	FGuid SubmitSequence(const TArray<FPokemonIntentActionSpec>& Specs, EPokemonIntentType Type = EPokemonIntentType::MoveTo);
 	void StartActiveAction();
