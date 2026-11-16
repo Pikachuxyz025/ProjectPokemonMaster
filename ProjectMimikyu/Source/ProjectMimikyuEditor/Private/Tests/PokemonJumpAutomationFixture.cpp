@@ -4,6 +4,9 @@
 #include "DataAssets/PokemonDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Components/BoxComponent.h"
+#include "Components/SceneComponent.h"
+
 UPokemonJumpAutomationAttributes::UPokemonJumpAutomationAttributes(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -58,4 +61,24 @@ void APokemonJumpAutomationPawn::OnMovementModeChanged(EMovementMode PrevMovemen
 		++FallingTransitions;
 	}
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+}
+
+APokemonHeldDefenseTestFloor::APokemonHeldDefenseTestFloor()
+{
+	bReplicates = true;
+	bAlwaysRelevant = true;
+
+	auto* Origin = CreateDefaultSubobject<USceneComponent>(TEXT("FloorOrigin"));
+	Origin->SetMobility(EComponentMobility::Static);
+	SetRootComponent(Origin);
+
+	auto* Box = CreateDefaultSubobject<UBoxComponent>(TEXT("FloorCollision"));
+	Box->SetupAttachment(Origin);
+	Box->SetMobility(EComponentMobility::Static);
+	Box->SetRelativeLocation(FVector(0.f, 0.f, -20.f));
+	Box->InitBoxExtent(FVector(4000.f, 1000.f, 20.f));
+	Box->SetCollisionObjectType(ECC_WorldStatic);
+	Box->SetCollisionResponseToAllChannels(ECR_Block);
+	Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Box->SetCanEverAffectNavigation(true);
 }

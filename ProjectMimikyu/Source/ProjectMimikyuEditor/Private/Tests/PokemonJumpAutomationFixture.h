@@ -2,6 +2,7 @@
 
 #include "Characters/Pokemon_Parent.h"
 #include "GameplayEffect.h"
+#include "GameFramework/Actor.h"
 #include "PokemonJumpAutomationFixture.generated.h"
 
 // Native test types live in the editor module so packaged gameplay never includes them.
@@ -27,4 +28,13 @@ public:
 
 	int32 LaunchCalls = 0;
 	int32 FallingTransitions = 0;
+};
+
+UCLASS(Transient, NotBlueprintable, NotPlaceable)
+class APokemonHeldDefenseTestFloor : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	APokemonHeldDefenseTestFloor();
 };

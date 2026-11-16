@@ -13,7 +13,8 @@
 #include "GameFramework/PlayerController.h"
 #include "InputAction.h"
 #include "NavigationSystem.h"
-#include "Tests/AutomationCommon.h"
+#include "HAL/IConsoleManager.h"
+#include "Misc/Optional.h"
 #include "Tests/PokemonJumpAutomationFixture.h"
 #include "UObject/UnrealType.h"
 #include "AbilitySystem/PokemonAbilitySystemComponent.h"
@@ -44,6 +45,52 @@ namespace PokemonHeldDefenseNetwork
 		return FindObject<UClass>(nullptr, TEXT("/Script/ProjectMimikyu.TrainerCharacter"));
 	}
 
+	class FScopedDefenseGate
+	{
+	public:
+		FScopedDefenseGate(IConsoleVariable& InVariable, int32 InitialValue)
+			:Variable(InVariable),
+			OriginalValue(InVariable.GetInt()),
+			bWasSetByConsole((InVariable.GetFlags() & ECVF_SetByMask) == ECVF_SetByConsole)
+			{
+				Set(InitialValue);
+			}
+
+			FScopedDefenseGate(const FScopedDefenseGate&) = delete;
+			FScopedDefenseGate& operator=(const FScopedDefenseGate&) = delete;
+
+			~FScopedDefenseGate()
+			{
+				if (bWasSetByConsole)
+				{
+					Variable.Set(OriginalValue, ECVF_SetByConsole);
+
+				}
+				else
+				{
+					Variable.Unset(ECVF_SetByTemp, Tag);
+				}
+			}
+
+			void Set(int32 Value)
+			{
+				if (bWasSetByConsole)
+				{
+					Variable.Set(Value, ECVF_SetByConsole);
+				}
+				else
+				{
+					Variable.Set(Value, ECVF_SetByTemp, Tag);
+				}
+			}
+
+	private:
+		IConsoleVariable& Variable;
+		const int32 OriginalValue;
+		const bool bWasSetByConsole;
+		const FName Tag{TEXT("HeldDefense.Network.OwningClientPressRelease")};
+	};
+
 	void ConfigureClientActor(AActor* Actor)
 	{
 		// Replication spawns a different pawn in the client world. Give it the same
@@ -60,20 +107,6 @@ namespace PokemonHeldDefenseNetwork
 			RequireProperty<FObjectProperty>(Actor->GetClass(), TEXT("InputConfig"))
 				->SetObjectPropertyValue_InContainer(Actor, Config);
 		}
-	}
-
-	void AddFloor(UWorld& World)
-	{
-		auto* Floor = World.SpawnActor<AActor>();
-		auto* Box = NewObject<UBoxComponent>(Floor);
-		Floor->SetRootComponent(Box);
-		Box->SetBoxExtent(FVector(4000.f, 1000.f, 20.f));
-		Box->SetCollisionObjectType(ECC_WorldStatic);
-		Box->SetCollisionResponseToAllChannels(ECR_Block);
-		Box->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Box->SetWorldLocation(FVector(0.f, 0.f, -20.f));
-		Box->SetCanEverAffectNavigation(true);
-		Box->RegisterComponent();
 	}
 
 	bool BuildGroundRoute(UWorld& World, APokemonJumpAutomationPawn& Pokemon, const FVector& Goal)
@@ -119,6 +152,7 @@ namespace PokemonHeldDefenseNetwork
 			static_cast<uint64>(ERuntimeGenerationType::Dynamic));
 
 		System->OnNavigationBoundsUpdated(Bounds);
+		System->Tick(0.f);
 		System->Build();
 		Data->EnsureBuildCompletion();
 
@@ -160,11 +194,13 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 	{
 		APawn* Trainer = nullptr;
 		APokemonJumpAutomationPawn* Pokemon = nullptr;
+		APokemonHeldDefenseTestFloor* Floor = nullptr;
 		FDelegateHandle SpawnHook;
 	};
 
 	FPIENetworkComponent<FPeer> Network{ TestRunner, TestCommandBuilder, bInitializing };
-	TSharedPtr<FScopedTestEnvironment> Environment;
+	TOptional<PokemonHeldDefenseNetwork::FScopedDefenseGate> AuthorizationGate;
+	TOptional<PokemonHeldDefenseNetwork::FScopedDefenseGate> StaminaGate;
 	FGuid IntentId, ActionId, NavigationId;
 	const FVector Destination{ 3000.f, 0.f, 2.f };
 
@@ -174,9 +210,19 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 
 	BEFORE_EACH()
 	{
-		Environment = FScopedTestEnvironment::Get();
-		Environment->SetConsoleVariableValue(TEXT("pokemon.Defense.AuthorizationPrototype"), TEXT("1"));
-		Environment->SetConsoleVariableValue(TEXT("pokemon.Defense.StaminaPrototype"), TEXT("0"));
+		IConsoleManager& Console = IConsoleManager::Get();
+
+		IConsoleVariable* Authorization = Console.FindConsoleVariable(
+			TEXT("pokemon.Defense.AuthorizationPrototype"));
+
+		IConsoleVariable* Stamina = Console.FindConsoleVariable(
+			TEXT("pokemon.Defense.StaminaPrototype"));
+
+		ASSERT_THAT(IsNotNull(Authorization));
+		ASSERT_THAT(IsNotNull(Stamina));
+
+		AuthorizationGate.Emplace(*Authorization, 1);
+		StaminaGate.Emplace(*Stamina, 0);
 
 		FNetworkComponentBuilder<FPeer>().AsDedicatedServer().WithClients(1)
 			.WithGameMode(AGameModeBase::StaticClass()).WithGameInstanceClass(UGameInstance::StaticClass()).Build(Network);
@@ -185,10 +231,13 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 	TEST_METHOD(OwningClientPressRelease)
 	{
 		using namespace PokemonHeldDefenseNetwork;
+
+		Network.SpawnAndReplicate<APokemonHeldDefenseTestFloor, &FPeer::Floor>();
+
 		Network.ThenClient(0, [this](FPeer& Client)
 			{
 				ASSERT_THAT(IsTrue(Client.World->GetNetMode() == NM_Client));
-				AddFloor(*Client.World);
+		
 				Client.SpawnHook = Client.World->AddOnActorPreSpawnInitialization(
 					FOnActorSpawned::FDelegate::CreateStatic(&ConfigureClientActor));
 			})
@@ -196,7 +245,7 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 				{
 					ASSERT_THAT(IsTrue(Server.World->GetNetMode() == NM_DedicatedServer));
 					ASSERT_THAT(IsNotNull(TrainerClass()));
-					AddFloor(*Server.World);
+					
 					if (!UNavigationSystemV1::GetCurrent(Server.World))
 					{
 						FNavigationSystem::AddNavigationSystemToWorld(*Server.World, FNavigationSystemRunMode::GameMode);
@@ -287,8 +336,7 @@ NETWORK_TEST_CLASS(DefensiveInputPIE, "ProjectMimikyu.Intent.HeldDefense")
 
 		Network.ThenServer([this](FPeer& Server)
 			{
-				Environment->SetConsoleVariableValue(
-					TEXT("pokemon.Defense.StaminaPrototype"), TEXT("1"));
+				StaminaGate->Set(1);
 
 				auto* Pokemon = Server.Pokemon;
 				auto* Stamina = Pokemon->GetStaminaComponent();
