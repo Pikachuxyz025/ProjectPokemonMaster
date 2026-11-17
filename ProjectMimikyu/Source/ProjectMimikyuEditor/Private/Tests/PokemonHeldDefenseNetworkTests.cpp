@@ -161,7 +161,23 @@ namespace PokemonHeldDefenseNetwork
 		const auto* Path = UNavigationSystemV1::FindPathToLocationSynchronously(
 			&World, Feet, Goal, &Pokemon);
 
-		return Path && Path->IsValid() && !Path->IsPartial();
+		const bool bComplete =
+			Path && Path->IsValid() && !Path->IsPartial();
+
+		if (!bComplete)
+		{
+			UE_LOG(LogTemp, Error,
+				TEXT("[HeldDefensePIE] GroundRoute failed: "
+					"NavData=%s Feet=%s Goal=%s "
+					"PathValid=%d Partial=%d"),
+				*GetNameSafe(Data),
+				*Feet.ToCompactString(),
+				*Goal.ToCompactString(),
+				Path ? Path->IsValid() : false,
+				Path ? Path->IsPartial() : false);
+		}
+
+		return bComplete;
 	}
 
 	bool SendBoundInput(APawn* Trainer, ETriggerEvent Edge)
