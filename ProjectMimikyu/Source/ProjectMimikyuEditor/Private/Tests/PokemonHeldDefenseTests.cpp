@@ -77,11 +77,65 @@ namespace PokemonHeldDefenseTests
 		}
 	};
 
+	class FScopedDefenseTestCVar
+	{
+	public:
+		FScopedDefenseTestCVar(const TCHAR* Name, int32 Value)
+			: Variable(RequireVariable(Name)),
+			OriginalValue(Variable.GetInt()),
+			bWasSetByConsole((Variable.GetFlags()& ECVF_SetByMask)
+				== ECVF_SetByConsole)
+		{
+			Set(Value);
+		}
+
+		FScopedDefenseTestCVar(const FScopedDefenseTestCVar&) = delete;
+		FScopedDefenseTestCVar& operator=(const FScopedDefenseTestCVar&) = delete;
+
+		~FScopedDefenseTestCVar()
+		{
+			if (bWasSetByConsole)
+			{
+				Variable.Set(OriginalValue, ECVF_SetByConsole);
+			}
+			else
+			{
+				Variable.Unset(ECVF_SetByTemp, Tag);
+			}
+		}
+
+		void Set(int32 Value)
+		{
+			if (bWasSetByConsole)
+			{
+				Variable.Set(Value, ECVF_SetByConsole);
+			}
+			else
+			{
+				Variable.Set(Value, ECVF_SetByTemp, Tag);
+			}
+		}
+
+	private:
+		static IConsoleVariable& RequireVariable(const TCHAR* Name)
+		{
+			IConsoleVariable* Result = IConsoleManager::Get().FindConsoleVariable(Name);
+
+			checkf(Result, TEXT("Missing test CVar: %s"), Name);
+			return *Result;
+		}
+
+		IConsoleVariable& Variable;
+		const int32 OriginalValue;
+		const bool bWasSetByConsole;
+		const FName Tag{ TEXT("HeldDefense.Stamina.TestGate") };
+	};
+
 	struct FHeldDefenseFixture : PokemonCompositeMoveTests::FFixture
 	{
-		FScopedCVar<int32> Prototype{ TEXT("pokemon.Defense.AuthorizationPrototype"), 1 };
+		FScopedDefenseTestCVar Prototype{TEXT("pokemon.Defense.AuthorizationPrototype"), 1};
 
-		FScopedCVar<int32> StaminaPrototype;
+		FScopedDefenseTestCVar StaminaPrototype;
 
 		explicit FHeldDefenseFixture(int32 ChargingEnabled = 0)
 			:StaminaPrototype(TEXT("pokemon.Defense.StaminaPrototype"), ChargingEnabled) {
@@ -790,9 +844,7 @@ bool FPokemonHeldDefenseStaminaCases::RunTest(const FString& Case)
 		TestFalse(TEXT("No paid interval"), F.Session().bLastIntervalFunded);
 		TestFalse(TEXT("No lease"), Access::Lease(*F.Intent).IsValid());
 
-		FScopedCVar<int32> EnableCharging(
-			TEXT("pokemon.Defense.StaminaPrototype"), 1,
-			FName(TEXT("HeldDefenseGateChangeTest")));
+		F.StaminaPrototype.Set(1);
 
 		F.Tick(1, 1.f / 32.f);
 		TestEqual(TEXT("Changing gate retires existing press"),
